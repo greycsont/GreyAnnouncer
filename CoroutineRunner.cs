@@ -4,7 +4,7 @@ using UnityEngine;
 namespace greycsont.GreyAnnouncer
 {
     /// <summary>
-    /// 辅助 MonoBehaviour，用于启动协程
+    /// A helper MonoBehaviour, used to start a coroutine to load audio
     /// </summary>
     public class CoroutineRunner : MonoBehaviour
     {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace greycsont.GreyAnnouncer{
 
-    [BepInPlugin(PluginInfo.GUID, PluginInfo.NAME, PluginInfo.VERSION)]
+    [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
     [BepInProcess("ULTRAKILL.exe")]
     public class Plugin : BaseUnityPlugin{
         private Harmony harmony;
@@ -12,23 +12,48 @@ namespace greycsont.GreyAnnouncer{
         private void Awake()
         {
             Announcer.Initialize();
-            harmony = new Harmony(PluginInfo.GUID+".harmony");
+            harmony = new Harmony(PluginInfo.PLUGIN_GUID+".harmony");
             harmony.PatchAll();
 
-            Logger.LogInfo($"Plugin {PluginInfo.GUID} is loaded!");
+            Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
         }
 
     }
 
-    /// <summary>
-    /// Patch AscendRank
-    /// </summary>
+   [HarmonyPatch(typeof(StyleHUD), "UpdateMeter")]
+    public static class StyleHUDUpdateMeterPatch
+    {
+        private static bool previousWasZero = true;
+
+        static void Prefix(StyleHUD __instance)
+        {
+            
+        }
+
+        static void Postfix(StyleHUD __instance)
+        {
+            float currentMeter = GetCurrentMeter(__instance);
+            bool currentIsNonZero = __instance.rankIndex == 0 && currentMeter > 0;
+
+            if (previousWasZero && currentIsNonZero)
+            {
+                Announcer.PlaySound(0);
+            }
+
+            previousWasZero = __instance.rankIndex == 0 && currentMeter <= 0;
+        }
+
+        private static float GetCurrentMeter(StyleHUD instance)
+        {
+            return Traverse.Create(instance).Field("currentMeter").GetValue<float>();
+        }
+    }
+
     [HarmonyPatch(typeof(StyleHUD), "AscendRank")]
     public static class StyleHUDAscendRankPatch{
-        public static void Postfix(StyleHUD __instance){
-            int currentRankIndex = __instance.rankIndex;
-            Debug.Log($"currentRankIndex: {currentRankIndex}");
-            Announcer.PlaySound(currentRankIndex);
+        static void Postfix(StyleHUD __instance){
+            DebugLogger.Log($"currentRankIndex: {__instance.rankIndex}");
+            Announcer.PlaySound(__instance.rankIndex);
         }
     }
 }
