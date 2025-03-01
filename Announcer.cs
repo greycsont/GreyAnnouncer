@@ -11,7 +11,7 @@ namespace greycsont.GreyAnnouncer
         private static Dictionary<int, AudioClip> audioClips = new Dictionary<int, AudioClip>();
         private static readonly string[] audioNames = { "D", "C", "B", "A", "S", "SS", "SSS", "U"};
         private static float playCooldown = 0f;  // countdown
-        private static float cooldownDuration = 0.5f; // cooldown
+        private static float cooldownDuration = 1.0f; // cooldown
 
         /// <summary>
         /// Initialize audio file
