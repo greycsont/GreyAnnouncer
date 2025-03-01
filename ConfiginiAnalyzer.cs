@@ -48,7 +48,7 @@ namespace greycsont.GreyAnnouncer
             }
             
             DebugLogger.Log("Invalid cooldown value in INI file. Returning default value.");
-            return 1.0f;
+            return 0.5f;
         }
         
         private bool TryGetConfigValue<T>(string section, string key, out T result){
