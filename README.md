@@ -19,7 +19,21 @@ And you can set the cooldown timer in the config.ini
 
 similar to this:
 
-![alt text](image.png)
+D.wav
+
+C.wav
+
+B.wav
+
+A.wav
+
+S.wav
+
+SS.wav
+
+SSS.wav
+
+U.wav
 
 it is fine to not put all the rank sound in the folder, it will automatically skip the rank without the file
 
