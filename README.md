@@ -24,6 +24,8 @@ similar to this:
 it is fine to not put all the rank sound in the folder, it will automatically skip the rank without the file
 
 ### how to customize the setting
+currently there's only one settings to configure
+
 1.open the config.ini near the mod
 
 2.find what you want to edit
