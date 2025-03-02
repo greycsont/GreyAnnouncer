@@ -52,7 +52,6 @@ namespace greycsont.GreyAnnouncer{
     [HarmonyPatch(typeof(StyleHUD), "AscendRank")]
     public static class StyleHUDAscendRankPatch{
         static void Postfix(StyleHUD __instance){
-            DebugLogger.Log($"currentRankIndex: {__instance.rankIndex}");
             Announcer.PlaySound(__instance.rankIndex);
         }
     }

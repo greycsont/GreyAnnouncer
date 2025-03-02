@@ -12,6 +12,7 @@ namespace greycsont.GreyAnnouncer
         private static readonly string[] audioNames = { "D", "C", "B", "A", "S", "SS", "SSS", "U"};
         private static float playCooldown = 0f;  // countdown
         private static float cooldownDuration = 0.75f; // cooldown
+        private static List<string> audioFailedLoading = new List<string>(); // load failed audio
 
         /// <summary>
         /// Initialize audio file
@@ -22,6 +23,8 @@ namespace greycsont.GreyAnnouncer
             var analyzer = new ConfiginiAnalyzer("config.ini");
             cooldownDuration = analyzer.GetCooldownDuration();
             DebugLogger.Log($"Cooldown: {cooldownDuration} seconds");  
+
+            audioFailedLoading.Clear();
                   
             if (!Directory.Exists(audioPath)){
                 Debug.LogError($"audio directory not found: {audioPath}");
@@ -29,7 +32,6 @@ namespace greycsont.GreyAnnouncer
                 return;
             }
 
-            List<string> audioFailedLoading = new List<string>();
             for (int i = 0; i < audioNames.Length; i++)
             {
                 string audioName = audioNames[i];
@@ -41,7 +43,7 @@ namespace greycsont.GreyAnnouncer
                     CoroutineRunner.Instance.StartCoroutine(LoadAudioClip(fullPath, i));
                 }
                 if (!File.Exists(fullPath)) {
-                    audioFailedLoading[i] += audioName;
+                    audioFailedLoading.Add(audioName);
                     continue;
                 }
             }
@@ -84,6 +86,11 @@ namespace greycsont.GreyAnnouncer
 
 
         public static void PlaySound(int rank){
+            if (audioFailedLoading.Contains(audioNames[rank])) {
+                DebugLogger.Log($"Audio {audioNames[rank]} failed to load, skipping.");
+                return;  // skip the playsound if failed loading
+            }
+
             if (audioClips.TryGetValue(rank, out AudioClip clip)){
                 if (playCooldown > 0f) {
                     return; // interupt play sound
@@ -108,7 +115,7 @@ namespace greycsont.GreyAnnouncer
                 CoroutineRunner.Instance.StartCoroutine(CooldownTimer());
             }
             else{
-                Debug.LogError($"audio not found : {rank}");
+                DebugLogger.LogWarning($"audio not found : {rank}");
             }
         }
     }
