@@ -1,9 +1,9 @@
 ### what does it do?
 It will play a sound when you reach to a higher style rank!
 
-You can customize it by replace the .wav file in the <Audio> folder near the plugin.
+You can add the sound by replace the .wav file in the **Audio** folder near the plugin.
 
-And you can set the cooldown timer in the config.ini
+And you can set the cooldown timer in the **config.ini**
 
 ### how to install it
 1.install beplnex
@@ -13,9 +13,9 @@ And you can set the cooldown timer in the config.ini
 3.drag everything in the .zip file to the folder ( highly recommanded to create a individual folder in plugin folder to put mod for easy management )
 
 ### how to add the rank sound
-1.find the <audio> folder near the plugin
+1.find the **audio** folder near the plugin
 
-2.open the <audio> folder
+2.open the **audio** folder
 
 3.add the sound you wanted to the rank sound file format only accept the .wav file
 
@@ -44,7 +44,7 @@ it is fine to not put all the rank sound in the folder, it will automatically sk
 ### how to customize the setting
 currently there's only one settings to configure
 
-1.open the config.ini near the mod
+1.open the **config.ini** near the mod
 
 2.find what you want to edit
 
