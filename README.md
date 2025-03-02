@@ -13,9 +13,13 @@ And you can set the cooldown timer in the config.ini
 3.drag everything in the .zip file to the folder ( highly recommanded to create a individual folder in plugin folder to put mod for easy management )
 
 ### how to add the rank sound
-1.the rank sound file format only accept the .wav file
+1.find the <audio> folder near the plugin
 
-2.the rank sound file's name should rename to the rank,rank include: D C B A S SS SSS U
+2.open the <audio> folder
+
+3.add the sound you wanted to the rank sound file format only accept the .wav file
+
+4.the rank sound file's name should rename to the specific format, include: D C B A S SS SSS U
 
 similar to this:
 
