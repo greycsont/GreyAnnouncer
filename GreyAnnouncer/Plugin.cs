@@ -1,34 +1,39 @@
 ﻿using BepInEx;
+using BepInEx.Logging;
 using HarmonyLib;
-using UnityEngine;
 
 namespace greycsont.GreyAnnouncer{
 
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
     [BepInProcess("ULTRAKILL.exe")]
     public class Plugin : BaseUnityPlugin{
-        private Harmony harmony;
-
+        private Harmony harmony;  // patch
+        internal static ManualLogSource Log;
         private void Awake()
         {
-            Announcer.Initialize();
+            Log = base.Logger;
+            // var analyzer = new ConfiginiAnalyzer("config.ini");
+            // Announcer.Initialize(analyzer.GetCooldownDuration());
+            Announcer.Initialize(this);
             harmony = new Harmony(PluginInfo.PLUGIN_GUID+".harmony");
             harmony.PatchAll();
 
-            Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
+            Log.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
         }
 
     }
 
-   [HarmonyPatch(typeof(StyleHUD), "UpdateMeter")]
+    [HarmonyPatch(typeof(StyleHUD), "AscendRank")]  // For non-D rank
+    public static class StyleHUDAscendRankPatch{
+        static void Postfix(StyleHUD __instance){
+            Announcer.PlaySound(__instance.rankIndex);
+        }
+    }
+
+   [HarmonyPatch(typeof(StyleHUD), "UpdateMeter")]  // For D rank only
     public static class StyleHUDUpdateMeterPatch
     {
         private static bool previousWasZero = true;
-
-        static void Prefix(StyleHUD __instance)
-        {
-            
-        }
 
         static void Postfix(StyleHUD __instance)
         {
@@ -48,11 +53,5 @@ namespace greycsont.GreyAnnouncer{
             return Traverse.Create(instance).Field("currentMeter").GetValue<float>();
         }
     }
-
-    [HarmonyPatch(typeof(StyleHUD), "AscendRank")]
-    public static class StyleHUDAscendRankPatch{
-        static void Postfix(StyleHUD __instance){
-            Announcer.PlaySound(__instance.rankIndex);
-        }
-    }
+    
 }

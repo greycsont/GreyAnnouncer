@@ -1,3 +1,4 @@
+using BepInEx;
 using System.IO;
 using System.Reflection;
 
@@ -6,8 +7,13 @@ namespace greycsont.GreyAnnouncer{
         public static string GetCurrentPluginPath(string filePath)
         {
             string pluginDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string targetPath = Path.Combine(pluginDirectory, filePath);
-            return targetPath;
+            return Path.Combine(pluginDirectory, filePath);
+        }
+
+        public static string GetGamePath(string filePath)
+        {
+            string gameRoot = Paths.GameRootPath;
+            return Path.Combine(gameRoot, filePath);
         }
     }
 }

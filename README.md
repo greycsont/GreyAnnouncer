@@ -49,8 +49,3 @@ currently there's only one settings to configure
 2.find what you want to edit
 
 3.change it
-
-### v0.1.5
-v0.1.5 fixed the bug that will crash the mod if without all the audio required
-
-sorry for the 94 person downloaded the mod.

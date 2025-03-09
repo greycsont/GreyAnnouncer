@@ -1,8 +1,9 @@
+using System.IO;
 using System.Collections;
 using System.Collections.Generic; //audioclip
-using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
+using System;
 
 namespace greycsont.GreyAnnouncer
 {
@@ -10,49 +11,47 @@ namespace greycsont.GreyAnnouncer
     public class Announcer{       
         private static Dictionary<int, AudioClip> audioClips = new Dictionary<int, AudioClip>();
         private static readonly string[] audioNames = { "D", "C", "B", "A", "S", "SS", "SSS", "U"};
-        private static float playCooldown = 0f;  // countdown
-        private static float cooldownDuration = 0.75f; // cooldown
-        private static List<string> audioFailedLoading = new List<string>(); // load failed audio
+        private static float playCooldown = 0f;  // Timer
+        private static float cooldownDuration;
+        private static List<string> audioFailedLoading = new List<string>();
 
         /// <summary>
         /// Initialize audio file
         /// </summary>
-        public static void Initialize(){
+        public static void Initialize(Plugin plugin){
+            cooldownDuration = Math.Max(0,plugin.Config.Bind("General", "CooldownDuration", 0.75f, "Cooldown time for the announcer (seconds)").Value);
+            Plugin.Log.LogInfo($"Cooldown set to : {cooldownDuration} seconds");  
+
             string audioPath = PathManager.GetCurrentPluginPath("audio");
-
-            var analyzer = new ConfiginiAnalyzer("config.ini");
-            cooldownDuration = analyzer.GetCooldownDuration();
-            DebugLogger.Log($"Cooldown: {cooldownDuration} seconds");  
-
+            
             audioFailedLoading.Clear();
                   
             if (!Directory.Exists(audioPath)){
-                Debug.LogError($"audio directory not found: {audioPath}");
+                Plugin.Log.LogError($"audio directory not found: {audioPath}");
                 Directory.CreateDirectory(audioPath);
                 return;
             }
 
             for (int i = 0; i < audioNames.Length; i++)
             {
-                string audioName = audioNames[i];
-                
-                string fullPath = Path.Combine(audioPath, audioName + ".wav");
+                string fullPath = Path.Combine(audioPath, audioNames[i] + ".wav");
+
                 if (File.Exists(fullPath))
                 {
                     // Using a helper MonoBehaviour to start a coroutine to load audio
                     CoroutineRunner.Instance.StartCoroutine(LoadAudioClip(fullPath, i));
                 }
-                if (!File.Exists(fullPath)) {
-                    audioFailedLoading.Add(audioName);
+                else {
+                    audioFailedLoading.Add(audioNames[i]);
                     continue;
                 }
             }
 
             if (audioFailedLoading.Count == 0){
-                Debug.Log("All audios succeesfully loaded");
+                Plugin.Log.LogInfo("All audios succeesfully loaded");
             }
             if (audioFailedLoading.Count > 0){
-                Debug.LogWarning("Failed to load audio files: " + string.Join(", ", audioFailedLoading));
+                Plugin.Log.LogWarning("Failed to load audio files: " + string.Join(", ", audioFailedLoading));
             }
         }
 
@@ -64,7 +63,7 @@ namespace greycsont.GreyAnnouncer
 
                 if (www.result != UnityWebRequest.Result.Success)
                 {
-                    Debug.LogError($"Failed to Load audio ：{key}，Error message ：{www.error}");
+                    Plugin.Log.LogError($"Failed to Load audio ：{key}，Error message ：{www.error}");
                 }
                 else
                 {
@@ -87,13 +86,12 @@ namespace greycsont.GreyAnnouncer
 
         public static void PlaySound(int rank){
             if (audioFailedLoading.Contains(audioNames[rank])) {
-                DebugLogger.Log($"Audio {audioNames[rank]} failed to load, skipping.");
-                return;  // skip the playsound if failed loading
+                return;  // Skip if failed loading
             }
 
             if (audioClips.TryGetValue(rank, out AudioClip clip)){
                 if (playCooldown > 0f) {
-                    return; // interupt play sound
+                    return; // Skip if still in cooldown
                 }
 
                 GameObject audioObj = GameObject.Find("GlobalAudioPlayer");
@@ -109,13 +107,12 @@ namespace greycsont.GreyAnnouncer
                 audioSource.spatialBlend = 0f;
                 audioSource.priority = 0;
                 audioSource.Play();
-                DebugLogger.Log($"Play sound : {rank}");
 
-                playCooldown = cooldownDuration; // set countdown
+                playCooldown = cooldownDuration; // Reset timer
                 CoroutineRunner.Instance.StartCoroutine(CooldownTimer());
             }
             else{
-                DebugLogger.LogWarning($"audio not found : {rank}");
+                Plugin.Log.LogWarning($"audio not found : {rank}");
             }
         }
     }

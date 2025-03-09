@@ -14,7 +14,6 @@
         "outputPath": "H:\\C#Project\\GreyAnnouncer\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "H:\\C#Project\\GreyAnnouncer\\NuGet.Config",
           "C:\\Users\\asd\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -23,8 +22,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://api.nuget.org/v3/index.json": {},
-          "https://nuget.bepinex.dev/v3/index.json": {}
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net472": {
