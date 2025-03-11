@@ -44,22 +44,22 @@ It is fine to not put all the rank sound in the folder, it will automatically sk
 ### How to customize the setting
 Currently there's only one settings to configure
 
-1.Find the .cfg file in the ULTRAKILL/BepInEx/config folder.
+1.Find the .cfg file in the **ULTRAKILL/BepInEx/config** folder.
 
 2.Change the setting you needed.
 
-3.Save it the start the game.
+3.Save it then start the game.
 
 ### Silly message:
 <details>
 <summary>Click to expand</summary>
-Because the default rank is D and if we only patch the 
+Because the default rank is D so if we only patch the 
 
 ```csharp
 AscendRank() // In the StyleHUD class in ULTRAKILL
 ```
 
- It can't announce the D-rank so I create a dogshit and patching it to a function running in every single frame to check it
+ It can't announce the D-rank so I create a dogshit and patching it to a function that running in every single frame to check it
 
 ```csharp
 [HarmonyPatch(typeof(StyleHUD), "UpdateMeter")]  // For D rank only
@@ -86,7 +86,7 @@ AscendRank() // In the StyleHUD class in ULTRAKILL
         }
     }
 ```
-The style meter can be a negative number, the first frame is 0, then it's -0.16 somewhat when there's no style hud display ( main menu, respawn etc. ), that's why it's
+The style meter can even be a negative number, the first frame is 0, then it's -0.16 somewhat when there's no style hud display ( main menu, respawn etc. ), that's why it's
 
 ```csharp
 bool currentIsNonZero = __instance.rankIndex == 0 && currentMeter > 0

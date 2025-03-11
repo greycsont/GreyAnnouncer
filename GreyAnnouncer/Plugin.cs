@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
+using PluginConfig.API;
 
 namespace greycsont.GreyAnnouncer{
 
@@ -12,9 +13,8 @@ namespace greycsont.GreyAnnouncer{
         private void Awake()
         {
             Log = base.Logger;
-            // var analyzer = new ConfiginiAnalyzer("config.ini");
-            // Announcer.Initialize(analyzer.GetCooldownDuration());
             Announcer.Initialize(this);
+            Interface_PluginConfigurator.Initialize(this);
             harmony = new Harmony(PluginInfo.PLUGIN_GUID+".harmony");
             harmony.PatchAll();
 

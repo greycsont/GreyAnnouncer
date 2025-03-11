@@ -13,14 +13,15 @@ namespace greycsont.GreyAnnouncer
         private static readonly string[] audioNames = { "D", "C", "B", "A", "S", "SS", "SSS", "U"};
         private static float playCooldown = 0f;  // Timer
         private static float cooldownDuration;
-        private static List<string> audioFailedLoading = new List<string>();
+        private static readonly HashSet<string> audioFailedLoading = new();
+        private static AudioSource globalAudioSource;
+        private static Plugin plugin;
 
         /// <summary>
         /// Initialize audio file
         /// </summary>
-        public static void Initialize(Plugin plugin){
-            cooldownDuration = Math.Max(0,plugin.Config.Bind("General", "CooldownDuration", 0.75f, "Cooldown time for the announcer (seconds)").Value);
-            Plugin.Log.LogInfo($"Cooldown set to : {cooldownDuration} seconds");  
+        public static void Initialize(Plugin __plugin){
+            plugin = __plugin;
 
             string audioPath = PathManager.GetCurrentPluginPath("audio");
             
@@ -56,7 +57,8 @@ namespace greycsont.GreyAnnouncer
         }
 
        private static IEnumerator LoadAudioClip(string path, int key){
-            string url = "file://" + path;
+            string url = new Uri(path).AbsoluteUri;
+            //string url = "file://" + path;
             using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, AudioType.WAV))
             {
                 yield return www.SendWebRequest();
@@ -67,10 +69,38 @@ namespace greycsont.GreyAnnouncer
                 }
                 else
                 {
-                    AudioClip clip = DownloadHandlerAudioClip.GetContent(www);
-                    audioClips[key] = clip;
+                    audioClips[key] = DownloadHandlerAudioClip.GetContent(www);;
                 }
             }
+        }
+
+        public static void PlaySound(int rank){
+            if (audioFailedLoading.Contains(audioNames[rank])) return;  // Skip if failed loading
+            if (playCooldown > 0f) return; // Skip if still in cooldown
+            if (!audioClips.TryGetValue(rank, out AudioClip clip)) return;
+                
+            AudioSource audioSource = GetGlobalAudioSource();
+            audioSource.clip = clip;
+            audioSource.volume = 1.0f;
+            audioSource.spatialBlend = 0f;
+            audioSource.priority = 0;
+            audioSource.Play();
+
+            // supports in-game configuration
+            cooldownDuration = Math.Max(0,plugin.Config.Bind("General", "CooldownDuration", 0.75f, "Cooldown time for the announcer (seconds)").Value);
+            playCooldown = cooldownDuration; // Reset timer
+            CoroutineRunner.Instance.StartCoroutine(CooldownTimer());
+        }
+
+        private static AudioSource GetGlobalAudioSource()
+        {
+            if (globalAudioSource == null)
+            {
+                GameObject audioObj = GameObject.Find("GlobalAudioPlayer") ?? new GameObject("GlobalAudioPlayer");
+                globalAudioSource = audioObj.GetComponent<AudioSource>() ?? audioObj.AddComponent<AudioSource>();
+                GameObject.DontDestroyOnLoad(audioObj);
+            }
+            return globalAudioSource;
         }
 
         private static IEnumerator CooldownTimer()
@@ -82,38 +112,7 @@ namespace greycsont.GreyAnnouncer
             }
             playCooldown = 0f;
         }
-
-
-        public static void PlaySound(int rank){
-            if (audioFailedLoading.Contains(audioNames[rank])) {
-                return;  // Skip if failed loading
-            }
-
-            if (audioClips.TryGetValue(rank, out AudioClip clip)){
-                if (playCooldown > 0f) {
-                    return; // Skip if still in cooldown
-                }
-
-                GameObject audioObj = GameObject.Find("GlobalAudioPlayer");
-                if (audioObj == null){
-                    audioObj = new GameObject("GlobalAudioPlayer");
-                    audioObj.AddComponent<AudioSource>();
-                    GameObject.DontDestroyOnLoad(audioObj);
-                }
-
-                AudioSource audioSource = audioObj.GetComponent<AudioSource>();
-                audioSource.clip = clip;
-                audioSource.volume = 1.0f;
-                audioSource.spatialBlend = 0f;
-                audioSource.priority = 0;
-                audioSource.Play();
-
-                playCooldown = cooldownDuration; // Reset timer
-                CoroutineRunner.Instance.StartCoroutine(CooldownTimer());
-            }
-            else{
-                Plugin.Log.LogWarning($"audio not found : {rank}");
-            }
-        }
     }
+
+    
 }
