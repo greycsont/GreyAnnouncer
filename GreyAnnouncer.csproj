@@ -18,6 +18,11 @@
       <Private>false</Private>
     </Reference>
 
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>Lib\Unity.TextMeshPro.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
     <Reference Include="UnityEngine">
       <HintPath>Lib\UnityEngine.dll</HintPath>
       <Private>false</Private>
@@ -30,6 +35,11 @@
 
     <Reference Include="UnityEngine.AudioModule">
       <HintPath>Lib\UnityEngine.AudioModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>Lib\UnityEngine.TextRenderingModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
 

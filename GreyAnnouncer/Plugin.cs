@@ -1,7 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
-using PluginConfig.API;
 
 namespace greycsont.GreyAnnouncer{
 
@@ -13,8 +12,9 @@ namespace greycsont.GreyAnnouncer{
         private void Awake()
         {
             Log = base.Logger;
-            Announcer.Initialize(this);
-            Interface_PluginConfigurator.Initialize(this);
+            InstanceConfig.Initialize(this);
+            Announcer.Initialize();
+            IPluginConfigurator.Initialize();
             harmony = new Harmony(PluginInfo.PLUGIN_GUID+".harmony");
             harmony.PatchAll();
 
@@ -34,7 +34,6 @@ namespace greycsont.GreyAnnouncer{
     public static class StyleHUDUpdateMeterPatch
     {
         private static bool previousWasZero = true;
-
         static void Postfix(StyleHUD __instance)
         {
             float currentMeter = GetCurrentMeter(__instance);

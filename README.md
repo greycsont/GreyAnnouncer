@@ -1,101 +1,57 @@
-### What does it do?
+## What does it do?
 It will play a sound when you reach to a higher style rank!
 
-You can add the sound by replace the .wav file in the **Audio** folder near the plugin.
+You can add the sound by replace the .wav file in the **Audio** folder near the plugin!
 
-And you can set the cooldown timer in the **greycsont.ultrakill.GreyAnnouncer.cfg** in the **ULTRAKILL/BepInex/config** folder.
+## How to install it
+1. [r2modman](https://thunderstore.io/c/ultrakill/p/ebkr/r2modman/)
+   > But I'm not sure does it work or not because I never uses it
 
-### How to install it
-1.Install BepInEx.
+2. [BepInEx](https://thunderstore.io/c/ultrakill/p/BepInEx/BepInExPack/) (Manual Installation)
 
-2.Get to the directory to the plugin folder in BepInEx.
+   1. Install **BepInEx**.
+   2. Download the mod.
+   3. Extract all contents from the `.zip` file into the game folder.
+      - **Highly recommended**: Create and name a separate folder inside the `plugins` directory to keep mods organized.
 
-3.Drag everything in the .zip file to the folder ( highly recommanded to create a individual folder in plugin folder to put mod for easy management ).
 
 ### How to add the rank sound
-1.Find the **audio** folder near the plugin.
+1. Find the **audio** folder near the plugin.
 
-2.Open the **audio** folder.
+2. Open the **audio** folder.
 
-3.Add the sound you wanted to the rank sound file format only accept the .wav file.
+3. Add the sound you wanted to the folder ( The file format only accept the .wav file )
 
-4.The rank sound file's name should rename to the specific format, include: D C B A S SS SSS U
+4. The rank sound file's name should rename to the specific format, include: **D C B A S SS SSS U**
 
-Similar to this:
+#### Rank Sound File Naming Convention
 
->D.wav
+The rank sound files should be named in the following specific format:
 
->C.wav
+- `D.wav`
+- `C.wav`
+- `B.wav`
+- `A.wav`
+- `S.wav`
+- `SS.wav`
+- `SSS.wav`
+- `U.wav`
 
->B.wav
+Ensure that all rank sound files follow this naming convention for proper recognition.
 
->A.wav
-
->S.wav
-
->SS.wav
-
->SSS.wav
-
->U.wav
-
-It is fine to not put all the rank sound in the folder, it will automatically skip the rank without the file.
+If a required sound file is missing, the system will:
+- **Skip playback** for that rank.
+- **Not affect other rank sounds** that are correctly configured.
 
 ### How to customize the setting
-Currently there's only one settings to configure
+There's two ways to customize the setting
 
-1.Find the .cfg file in the **ULTRAKILL/BepInEx/config** folder.
+1. Download and Using [PluginConfigurator](https://thunderstore.io/c/ultrakill/p/EternalsTeam/PluginConfigurator/) to edit in-game.
 
-2.Change the setting you needed.
+2. Find the **greycsont.ultrakill.GreyAnnouncer.cfg** file in the **ULTRAKILL/Beplnex/config** folder, then open and edit it manually.
 
-3.Save it then start the game.
-
-### Silly message:
-<details>
-<summary>Click to expand</summary>
-Because the default rank is D so if we only patch the 
-
-```csharp
-AscendRank() // In the StyleHUD class in ULTRAKILL
-```
-
- It can't announce the D-rank so I create a dogshit and patching it to a function that running in every single frame to check it
-
-```csharp
-[HarmonyPatch(typeof(StyleHUD), "UpdateMeter")]  // For D rank only
-    public static class StyleHUDUpdateMeterPatch
-    {
-        private static bool previousWasZero = true;
-
-        static void Postfix(StyleHUD __instance)
-        {
-            float currentMeter = GetCurrentMeter(__instance);
-            bool currentIsNonZero = __instance.rankIndex == 0 && currentMeter > 0;
-
-            if (previousWasZero && currentIsNonZero)
-            {
-                Announcer.PlaySound(0);
-            }
-
-            previousWasZero = __instance.rankIndex == 0 && currentMeter <= 0;
-        }
-
-        private static float GetCurrentMeter(StyleHUD instance)
-        {
-            return Traverse.Create(instance).Field("currentMeter").GetValue<float>();
-        }
-    }
-```
-The style meter can even be a negative number, the first frame is 0, then it's -0.16 somewhat when there's no style hud display ( main menu, respawn etc. ), that's why it's
-
-```csharp
-bool currentIsNonZero = __instance.rankIndex == 0 && currentMeter > 0
-```
-
-instead of
-
-```csharp
-bool currentIsNonZero = __instance.rankIndex == 0 && currentMeter != 0
-```
-</details>
-
+#### Credit
+Thanks:
+- [PluginConfigurator doc](https://github.com/eternalUnion/UKPluginConfigurator/wiki)
+- [Maxwell's puzzling demon](https://store.steampowered.com/app/2770160/)
+<span style="font-size: 6px;">[greycsont](https://space.bilibili.com/408475448) [greythroat](https://prts.wiki/w/%E7%81%B0%E5%96%89)</span>
