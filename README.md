@@ -20,7 +20,7 @@ You can add the sound by replace the .wav file in the **Audio** folder near the 
 
 2. Open the **audio** folder.
 
-3. Add the sound you wanted to the folder ( The file format only accept the .wav file )
+3. Add the sound you wanted to the folder ( The file format only accept the **.wav** format )
 
 4. The rank sound file's name should rename to the specific format, include: **D C B A S SS SSS U**
 
@@ -54,4 +54,5 @@ There's two ways to customize the setting
 Thanks:
 - [PluginConfigurator doc](https://github.com/eternalUnion/UKPluginConfigurator/wiki)
 - [Maxwell's puzzling demon](https://store.steampowered.com/app/2770160/)
-<span style="font-size: 6px;">[greycsont](https://space.bilibili.com/408475448) [greythroat](https://prts.wiki/w/%E7%81%B0%E5%96%89)</span>
+<span style="font-size: 6px;">[greycsont](https://space.bilibili.com/408475448) </span>
+<span style="font-size: 3px;">[greythroat](https://prts.wiki/w/%E7%81%B0%E5%96%89)</span>

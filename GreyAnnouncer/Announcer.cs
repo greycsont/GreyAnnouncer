@@ -5,6 +5,7 @@ using BepInEx.Configuration;
 using UnityEngine;
 using UnityEngine.Networking;
 using System;
+using GameConsole.pcon;
 
 namespace greycsont.GreyAnnouncer
 {
@@ -22,6 +23,11 @@ namespace greycsont.GreyAnnouncer
         /// </summary>
         public static void Initialize(){
             AddStyleConfigEntryToList();
+            FindAvailableAudio();
+        }
+
+        public static void ReloadAudio(){
+            Plugin.Log.LogInfo($"Reload audio...");
             FindAvailableAudio();
         }
 

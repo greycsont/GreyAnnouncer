@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
+using System;
 using HarmonyLib;
 
 namespace greycsont.GreyAnnouncer{
@@ -12,16 +13,31 @@ namespace greycsont.GreyAnnouncer{
         private void Awake()
         {
             Log = base.Logger;
+            LoadMainMod();
+            GetOptionalMod();
+            PatchHarmony();
+            Log.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
+        }
+        private void LoadMainMod(){
             InstanceConfig.Initialize(this);
             Announcer.Initialize();
-            IPluginConfigurator.Initialize();
+        }
+        private void GetOptionalMod(){
+            try{
+                IPluginConfigurator.Initialize();
+            }catch(Exception ex){
+                Log.LogWarning($"skip to load optional mod: {ex}");
+            }   
+        }
+
+        private void PatchHarmony(){
             harmony = new Harmony(PluginInfo.PLUGIN_GUID+".harmony");
             harmony.PatchAll();
-
-            Log.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
         }
 
     }
+
+
 
     [HarmonyPatch(typeof(StyleHUD), "AscendRank")]  // For non-D rank
     public static class StyleHUDAscendRankPatch{
