@@ -53,6 +53,6 @@ There's two ways to customize the setting
 #### Credit
 Thanks:
 - [PluginConfigurator doc](https://github.com/eternalUnion/UKPluginConfigurator/wiki)
-- [Maxwell's puzzling demon](https://store.steampowered.com/app/2770160/)
-<span style="font-size: 6px;">[greycsont](https://space.bilibili.com/408475448) </span>
-<span style="font-size: 3px;">[greythroat](https://prts.wiki/w/%E7%81%B0%E5%96%89)</span>
+- [Maxwell's puzzling demon](https://store.steampowered.com/app/2770160/)<br><br><br><br><br><br><br><br><br><br><br>
+[greycsont](https://space.bilibili.com/408475448)
+[greythroat](https://prts.wiki/w/%E7%81%B0%E5%96%89)
