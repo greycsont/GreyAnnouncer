@@ -1,33 +1,32 @@
 ﻿using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Logging;
 using System;
+using System.Reflection;
 using HarmonyLib;
 
 namespace greycsont.GreyAnnouncer{
 
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
     [BepInProcess("ULTRAKILL.exe")]
+    [BepInDependency(PluginDependencies.PLUGINCONFIGURATOR_GUID, BepInDependency.DependencyFlags.SoftDependency)]
     public class Plugin : BaseUnityPlugin{
         private Harmony harmony;  // patch
         internal static ManualLogSource Log;
         private void Awake()
         {
             Log = base.Logger;
-            LoadMainMod();
-            GetOptionalMod();
+            LoadMainModule();
+            LoadOptionalModule();
             PatchHarmony();
             Log.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
         }
-        private void LoadMainMod(){
+        private void LoadMainModule(){
             InstanceConfig.Initialize(this);
             Announcer.Initialize();
         }
-        private void GetOptionalMod(){
-            try{
-                IPluginConfigurator.Initialize();
-            }catch(Exception ex){
-                Log.LogWarning($"skip to load optional mod: {ex}");
-            }   
+        private void LoadOptionalModule(){
+            CheckPluginLoaded(PluginDependencies.PLUGINCONFIGURATOR_GUID, "greycsont.GreyAnnouncer.IPluginConfigurator");
         }
 
         private void PatchHarmony(){
@@ -35,6 +34,20 @@ namespace greycsont.GreyAnnouncer{
             harmony.PatchAll();
         }
 
+        private void CheckPluginLoaded(string GUID, string assemblyName){
+            if (!Chainloader.PluginInfos.ContainsKey(GUID)) return;
+            try 
+            {
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                Type configuratorType = assembly.GetType(assemblyName);
+                MethodInfo initialize = configuratorType.GetMethod("Initialize", BindingFlags.Public | BindingFlags.Static);
+                initialize?.Invoke(null, null);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"Failed to load module: {ex}");
+            }
+        }
     }
 
 
@@ -46,7 +59,7 @@ namespace greycsont.GreyAnnouncer{
         }
     }
 
-   [HarmonyPatch(typeof(StyleHUD), "UpdateMeter")]  // For D rank only
+    [HarmonyPatch(typeof(StyleHUD), "UpdateMeter")]  // For D rank only
     public static class StyleHUDUpdateMeterPatch
     {
         private static bool previousWasZero = true;
@@ -68,5 +81,4 @@ namespace greycsont.GreyAnnouncer{
             return Traverse.Create(instance).Field("currentMeter").GetValue<float>();
         }
     }
-    
 }

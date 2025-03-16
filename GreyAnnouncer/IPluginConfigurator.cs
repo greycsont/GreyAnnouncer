@@ -1,7 +1,7 @@
 using BepInEx.Configuration;
 using PluginConfig.API;
 using PluginConfig.API.Fields;
-using PluginConfig.API.Functionals;
+using PluginConfig.API.Functionals; // for buttonField only
 
 namespace greycsont.GreyAnnouncer{
     public class IPluginConfigurator{
@@ -13,17 +13,19 @@ namespace greycsont.GreyAnnouncer{
         }
 
         private static void MainPanel(){
-            FloatField cooldown = new FloatField(config.rootPanel,"Cooldown timer(in sec)", "cooldown", InstanceConfig.AnnounceCooldown.Value);
             // ConfigFields(panel, displayname, GUID, default value))
+            FloatField cooldown = new FloatField(config.rootPanel,"Cooldown timer(in sec)", "cooldown", InstanceConfig.AnnounceCooldown.Value);
             cooldown.minimumValue = 0;
             cooldown.maximumValue = 114514;
+            cooldown.defaultValue = 0f;
             cooldown.onValueChange += (FloatField.FloatValueChangeEvent e) =>
             {
                 InstanceConfig.AnnounceCooldown.Value = e.value;
                 Announcer.ResetTimerToZero();
             };
-            cooldown.defaultValue = 0.3f;
+            
             RankEnablePanel();  // You don't have to do this in the MainPanel(). I did this because it makes it more readable by human.
+
             ButtonField button = new ButtonField(config.rootPanel, "Reload Audio", "reload_audio");
             button.onClick += new ButtonField.OnClick(Announcer.ReloadAudio);
         }

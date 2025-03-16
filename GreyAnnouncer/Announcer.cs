@@ -86,13 +86,15 @@ namespace greycsont.GreyAnnouncer
             if (playCooldown > 0f) return; // Skip if still in cooldown
             if (!audioClips.TryGetValue(rank, out AudioClip clip)) return;
             if (EnabledStyleConfigs[rank].Value == false) return;
-                
+            
             AudioSource audioSource = GetGlobalAudioSource();
             audioSource.clip = clip;
             audioSource.volume = 1.0f;
             audioSource.spatialBlend = 0f;
             audioSource.priority = 0;
             audioSource.Play();
+
+            Plugin.Log.LogInfo($"playing audio source : {audioNames[rank]}");
 
             // supports in-game configuration
             playCooldown = Math.Max(0,InstanceConfig.AnnounceCooldown.Value);  //Reset timer

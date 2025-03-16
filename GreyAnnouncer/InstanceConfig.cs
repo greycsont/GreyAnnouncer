@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using BepInEx.Configuration;
 
 namespace greycsont.GreyAnnouncer{
@@ -22,7 +21,7 @@ namespace greycsont.GreyAnnouncer{
             AnnounceCooldown = plugin.Config.Bind(
                 "General", 
                 "Cooldown", 
-                0.75f, 
+                0f, 
                 "Cooldown timer (in sec)"
             );
             
