@@ -35,7 +35,10 @@ namespace greycsont.GreyAnnouncer{
         }
 
         private void CheckPluginLoaded(string GUID, string assemblyName){
-            if (!Chainloader.PluginInfos.ContainsKey(GUID)) return;
+            if (!Chainloader.PluginInfos.ContainsKey(GUID)){
+                Plugin.Log.LogWarning($"Plugin {GUID} not loaded, stopping loading {assemblyName}"); 
+                return;
+            }
             try 
             {
                 Assembly assembly = Assembly.GetExecutingAssembly();

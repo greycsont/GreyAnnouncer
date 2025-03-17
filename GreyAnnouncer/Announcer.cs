@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using System;
 using GameConsole.pcon;
+using System.Drawing.Text;
 
 namespace greycsont.GreyAnnouncer
 {
@@ -13,8 +14,9 @@ namespace greycsont.GreyAnnouncer
     public class Announcer{       
         private static Dictionary<int, AudioClip> audioClips = new Dictionary<int, AudioClip>();
         public static List<ConfigEntry<bool>> EnabledStyleConfigs = new List<ConfigEntry<bool>>();
-        private static readonly string[] audioNames = { "D", "C", "B", "A", "S", "SS", "SSS", "U"};
-        private static float playCooldown = 0f;  // Timer
+        private static readonly string[] rankAudioNames = { "D", "C", "B", "A", "S", "SS", "SSS", "U"};
+        private static float[] rankPlayCooldown = {0f,0f,0f,0f,0f,0f,0f,0f};
+        private static float globalPlayCooldown = 0f;  // Timer
         private static readonly HashSet<string> audioFailedLoading = new();
         private static AudioSource globalAudioSource;
 
@@ -40,9 +42,9 @@ namespace greycsont.GreyAnnouncer
                 return;
             }
 
-            for (int i = 0; i < audioNames.Length; i++)
+            for (int i = 0; i < rankAudioNames.Length; i++)
             {
-                string fullPath = Path.Combine(audioPath, audioNames[i] + ".wav");
+                string fullPath = Path.Combine(audioPath, rankAudioNames[i] + ".wav");
 
                 if (File.Exists(fullPath))
                 {
@@ -50,7 +52,7 @@ namespace greycsont.GreyAnnouncer
                     CoroutineRunner.Instance.StartCoroutine(LoadAudioClip(fullPath, i));
                 }
                 else {
-                    audioFailedLoading.Add(audioNames[i]);
+                    audioFailedLoading.Add(rankAudioNames[i]);
                     continue;
                 }
             }
@@ -72,7 +74,7 @@ namespace greycsont.GreyAnnouncer
 
                 if (www.result != UnityWebRequest.Result.Success)
                 {
-                    Plugin.Log.LogError($"Failed to Load audio ：{key}，Error message ：{www.error}");
+                    Plugin.Log.LogError($"Failed to Load audio : {key}, Error message : {www.error}");
                 }
                 else
                 {
@@ -81,12 +83,34 @@ namespace greycsont.GreyAnnouncer
             }
         }
 
+        private static AudioClip CheckPlayValidation(int rank){
+            if (audioFailedLoading.Contains(rankAudioNames[rank])){ // Skip if failed loading
+                Plugin.Log.LogInfo($"Skip {rankAudioNames[rank]} for Failed loading audio from local to audioclips");
+                return null;
+            }      
+            if (globalPlayCooldown > 0f) {  // Skip if still in cooldown  
+                Plugin.Log.LogInfo($"Skip {rankAudioNames[rank]} for global play cooldown : {globalPlayCooldown}");
+                return null; 
+            }    
+            if (rankPlayCooldown[rank] > 0f) {  // skip if rank is still in cooldown
+                Plugin.Log.LogInfo($"Skip {rankAudioNames[rank]} for rank play cooldown : {rankPlayCooldown[rank]}");
+                return null;
+            }     
+            if (EnabledStyleConfigs[rank].Value == false){  // Skip if the style filter set to false
+                Plugin.Log.LogInfo($"Skip {rankAudioNames[rank]} for Style filter for {rankAudioNames[rank]} set to false");
+                return null;
+            }     
+            if (!audioClips.TryGetValue(rank, out AudioClip clip)){ // skip if failed to get audio clip
+                Plugin.Log.LogInfo($"Skip {rankAudioNames[rank]} for failed loading audio from audioclips");
+                return null; 
+            }    
+            return clip;  
+        }
+
         public static void PlaySound(int rank){
-            if (audioFailedLoading.Contains(audioNames[rank])) return;  // Skip if failed loading
-            if (playCooldown > 0f) return; // Skip if still in cooldown
-            if (!audioClips.TryGetValue(rank, out AudioClip clip)) return;
-            if (EnabledStyleConfigs[rank].Value == false) return;
-            
+            AudioClip clip = CheckPlayValidation(rank);
+            if (clip == null) return;
+
             AudioSource audioSource = GetGlobalAudioSource();
             audioSource.clip = clip;
             audioSource.volume = 1.0f;
@@ -94,22 +118,10 @@ namespace greycsont.GreyAnnouncer
             audioSource.priority = 0;
             audioSource.Play();
 
-            Plugin.Log.LogInfo($"playing audio source : {audioNames[rank]}");
+            Plugin.Log.LogInfo($"playing audio source : {rankAudioNames[rank]}");
 
-            // supports in-game configuration
-            playCooldown = Math.Max(0,InstanceConfig.AnnounceCooldown.Value);  //Reset timer
-            CoroutineRunner.Instance.StartCoroutine(CooldownTimer());
-        }
-        private static void AddStyleConfigEntryToList(){
-            EnabledStyleConfigs.Clear();
-            EnabledStyleConfigs.Add(InstanceConfig.RankD_Enabled);
-            EnabledStyleConfigs.Add(InstanceConfig.RankC_Enabled);
-            EnabledStyleConfigs.Add(InstanceConfig.RankB_Enabled);
-            EnabledStyleConfigs.Add(InstanceConfig.RankA_Enabled);
-            EnabledStyleConfigs.Add(InstanceConfig.RankS_Enabled);
-            EnabledStyleConfigs.Add(InstanceConfig.RankSS_Enabled);
-            EnabledStyleConfigs.Add(InstanceConfig.RankSSS_Enabled);
-            EnabledStyleConfigs.Add(InstanceConfig.RankU_Enabled);
+            CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => globalPlayCooldown = value, InstanceConfig.GlobalPlayCooldown.Value));
+            CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => rankPlayCooldown[rank] = value, InstanceConfig.RankPlayCooldown.Value));
         }
 
         private static AudioSource GetGlobalAudioSource()
@@ -123,16 +135,40 @@ namespace greycsont.GreyAnnouncer
             return globalAudioSource;
         }
 
-        private static IEnumerator CooldownTimer()
+        private static IEnumerator CooldownCoroutine(Action<float> setCooldown, float initialCooldown)
         {
-            while (playCooldown > 0)
+            float cooldown = initialCooldown;
+            setCooldown(cooldown);  //delegate
+
+            while (cooldown > 0)
             {
-                playCooldown = Math.Max(0, playCooldown - Time.deltaTime);
+                cooldown = Math.Max(0, cooldown - Time.deltaTime);
+                setCooldown(cooldown);
                 yield return null;
             }
         }
+
+
         public static void ResetTimerToZero(){
-            playCooldown = 0;
+            globalPlayCooldown = 0f;
+
+            for (int i = 0; i < rankPlayCooldown.Length; i++)
+            {
+                rankPlayCooldown[i] = 0f;
+            }
+        }
+
+        
+        private static void AddStyleConfigEntryToList(){
+            EnabledStyleConfigs.Clear();
+            EnabledStyleConfigs.Add(InstanceConfig.RankD_Enabled);
+            EnabledStyleConfigs.Add(InstanceConfig.RankC_Enabled);
+            EnabledStyleConfigs.Add(InstanceConfig.RankB_Enabled);
+            EnabledStyleConfigs.Add(InstanceConfig.RankA_Enabled);
+            EnabledStyleConfigs.Add(InstanceConfig.RankS_Enabled);
+            EnabledStyleConfigs.Add(InstanceConfig.RankSS_Enabled);
+            EnabledStyleConfigs.Add(InstanceConfig.RankSSS_Enabled);
+            EnabledStyleConfigs.Add(InstanceConfig.RankU_Enabled);
         }
     }
 

@@ -3,7 +3,8 @@ using BepInEx.Configuration;
 namespace greycsont.GreyAnnouncer{
     public static class InstanceConfig
     {
-        public static ConfigEntry<float> AnnounceCooldown;
+        public static ConfigEntry<float> GlobalPlayCooldown;
+        public static ConfigEntry<float> RankPlayCooldown;
         public static ConfigEntry<bool> RankD_Enabled;
         public static ConfigEntry<bool> RankC_Enabled;
         public static ConfigEntry<bool> RankB_Enabled;
@@ -18,11 +19,18 @@ namespace greycsont.GreyAnnouncer{
         }
 
         private static void BindConfigEntryValues(Plugin plugin){
-            AnnounceCooldown = plugin.Config.Bind(
-                "General", 
+            GlobalPlayCooldown = plugin.Config.Bind(
                 "Cooldown", 
+                "Global play cooldown", 
                 0f, 
-                "Cooldown timer (in sec)"
+                "Global play cooldown(in secs)"
+            );
+
+            RankPlayCooldown = plugin.Config.Bind(
+                "Cooldown",
+                "Rank play cooldown",
+                1f,
+                "Rank play cooldown(in secs)"
             );
             
             RankD_Enabled = plugin.Config.Bind(

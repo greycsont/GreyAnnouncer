@@ -14,13 +14,23 @@ namespace greycsont.GreyAnnouncer{
 
         private static void MainPanel(){
             // ConfigFields(panel, displayname, GUID, default value))
-            FloatField cooldown = new FloatField(config.rootPanel,"Cooldown timer(in sec)", "cooldown", InstanceConfig.AnnounceCooldown.Value);
-            cooldown.minimumValue = 0;
-            cooldown.maximumValue = 114514;
-            cooldown.defaultValue = 0f;
-            cooldown.onValueChange += (FloatField.FloatValueChangeEvent e) =>
+            FloatField globalPlayCooldown = new FloatField(config.rootPanel,"Global play cooldown(in secs)", "globalPlayCooldown", InstanceConfig.GlobalPlayCooldown.Value);
+            globalPlayCooldown.minimumValue = 0f;
+            globalPlayCooldown.maximumValue = 114514f;
+            globalPlayCooldown.defaultValue = 0f;
+            globalPlayCooldown.onValueChange += (FloatField.FloatValueChangeEvent e) =>
             {
-                InstanceConfig.AnnounceCooldown.Value = e.value;
+                InstanceConfig.GlobalPlayCooldown.Value = e.value;
+                Announcer.ResetTimerToZero();
+            };
+
+            FloatField rankPlayCooldown = new FloatField(config.rootPanel,"", "rankPlaycooldown", InstanceConfig.GlobalPlayCooldown.Value);
+            rankPlayCooldown.minimumValue = 0f;
+            rankPlayCooldown.maximumValue = 10f;
+            rankPlayCooldown.defaultValue = 1f;
+            rankPlayCooldown.onValueChange += (FloatField.FloatValueChangeEvent e) =>
+            {
+                InstanceConfig.RankPlayCooldown.Value = e.value;
                 Announcer.ResetTimerToZero();
             };
             
