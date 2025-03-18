@@ -14,23 +14,33 @@ namespace greycsont.GreyAnnouncer{
 
         private static void MainPanel(){
             // ConfigFields(panel, displayname, GUID, default value))
-            FloatField globalPlayCooldown = new FloatField(config.rootPanel,"Global play cooldown(in secs)", "globalPlayCooldown", InstanceConfig.GlobalPlayCooldown.Value);
-            globalPlayCooldown.minimumValue = 0f;
-            globalPlayCooldown.maximumValue = 114514f;
-            globalPlayCooldown.defaultValue = 0f;
-            globalPlayCooldown.onValueChange += (FloatField.FloatValueChangeEvent e) =>
+            FloatField sharedRankPlayCooldown = new FloatField(
+                    config.rootPanel,
+                    "Shared rank cooldown", 
+                    "sharedRankPlayCooldown", 
+                    InstanceConfig.SharedRankPlayCooldown.Value
+                    );
+            sharedRankPlayCooldown.minimumValue = 0f;
+            sharedRankPlayCooldown.maximumValue = 114514f;
+            sharedRankPlayCooldown.defaultValue = 0f;
+            sharedRankPlayCooldown.onValueChange += (FloatField.FloatValueChangeEvent e) =>
             {
-                InstanceConfig.GlobalPlayCooldown.Value = e.value;
+                InstanceConfig.SharedRankPlayCooldown.Value = e.value;
                 Announcer.ResetTimerToZero();
             };
 
-            FloatField rankPlayCooldown = new FloatField(config.rootPanel,"", "rankPlaycooldown", InstanceConfig.GlobalPlayCooldown.Value);
-            rankPlayCooldown.minimumValue = 0f;
-            rankPlayCooldown.maximumValue = 10f;
-            rankPlayCooldown.defaultValue = 1f;
-            rankPlayCooldown.onValueChange += (FloatField.FloatValueChangeEvent e) =>
+            FloatField individualRankPlayCooldown = new FloatField(
+                    config.rootPanel,
+                    "Individual rank cooldown", 
+                    "individualRankPlaycooldown", 
+                    InstanceConfig.IndividualRankPlayCooldown.Value
+                    );
+            individualRankPlayCooldown.minimumValue = 0f;
+            individualRankPlayCooldown.maximumValue = 10f;
+            individualRankPlayCooldown.defaultValue = 3f;
+            individualRankPlayCooldown.onValueChange += (FloatField.FloatValueChangeEvent e) =>
             {
-                InstanceConfig.RankPlayCooldown.Value = e.value;
+                InstanceConfig.IndividualRankPlayCooldown.Value = e.value;
                 Announcer.ResetTimerToZero();
             };
             
@@ -41,15 +51,15 @@ namespace greycsont.GreyAnnouncer{
         }
 
         private static void RankEnablePanel(){
-            ConfigPanel rankAnnouncerSettingPanel = new ConfigPanel(config.rootPanel, "Rank filter", "Rank_filter");
-            BoolField rankD = BoolFieldFactory(rankAnnouncerSettingPanel, "Destruction", "rank_D", InstanceConfig.RankD_Enabled, true);
-            BoolField rankC = BoolFieldFactory(rankAnnouncerSettingPanel, "Chaotic", "rank_C", InstanceConfig.RankC_Enabled, true);
-            BoolField rankB = BoolFieldFactory(rankAnnouncerSettingPanel, "Brutal", "rank_B", InstanceConfig.RankB_Enabled, true);
-            BoolField rankA = BoolFieldFactory(rankAnnouncerSettingPanel, "Anarchic", "rank_A", InstanceConfig.RankA_Enabled, true);
-            BoolField rankS = BoolFieldFactory(rankAnnouncerSettingPanel, "Supreme", "rank_S", InstanceConfig.RankS_Enabled, true);
-            BoolField rankSS = BoolFieldFactory(rankAnnouncerSettingPanel, "SSadistic", "rank_SS", InstanceConfig.RankSS_Enabled, true);
-            BoolField rankSSS = BoolFieldFactory(rankAnnouncerSettingPanel, "SSShitstorm", "rank_SSS", InstanceConfig.RankSSS_Enabled, true);
-            BoolField rankU = BoolFieldFactory(rankAnnouncerSettingPanel, "ULTRAKILL", "rank_U", InstanceConfig.RankU_Enabled, true);
+            ConfigPanel rankActivationPanel = new ConfigPanel(config.rootPanel, "Rank Activation", "Rank_Activation");
+            BoolField rankD = BoolFieldFactory(rankActivationPanel, "Destruction", "rank_D", InstanceConfig.RankD_Enabled, InstanceConfig.DEFAULT_RANK_FILTER_ENABLED);
+            BoolField rankC = BoolFieldFactory(rankActivationPanel, "Chaotic", "rank_C", InstanceConfig.RankC_Enabled, InstanceConfig.DEFAULT_RANK_FILTER_ENABLED);
+            BoolField rankB = BoolFieldFactory(rankActivationPanel, "Brutal", "rank_B", InstanceConfig.RankB_Enabled, InstanceConfig.DEFAULT_RANK_FILTER_ENABLED);
+            BoolField rankA = BoolFieldFactory(rankActivationPanel, "Anarchic", "rank_A", InstanceConfig.RankA_Enabled, InstanceConfig.DEFAULT_RANK_FILTER_ENABLED);
+            BoolField rankS = BoolFieldFactory(rankActivationPanel, "Supreme", "rank_S", InstanceConfig.RankS_Enabled, InstanceConfig.DEFAULT_RANK_FILTER_ENABLED);
+            BoolField rankSS = BoolFieldFactory(rankActivationPanel, "SSadistic", "rank_SS", InstanceConfig.RankSS_Enabled, InstanceConfig.DEFAULT_RANK_FILTER_ENABLED);
+            BoolField rankSSS = BoolFieldFactory(rankActivationPanel, "SSShitstorm", "rank_SSS", InstanceConfig.RankSSS_Enabled, InstanceConfig.DEFAULT_RANK_FILTER_ENABLED);
+            BoolField rankU = BoolFieldFactory(rankActivationPanel, "ULTRAKILL", "rank_U", InstanceConfig.RankU_Enabled, InstanceConfig.DEFAULT_RANK_FILTER_ENABLED);
         }
 
         private static BoolField BoolFieldFactory(ConfigPanel parentPanel,string name,string GUID,ConfigEntry<bool> configEntry,bool defaultValue){

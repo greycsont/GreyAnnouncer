@@ -5,8 +5,6 @@ using BepInEx.Configuration;
 using UnityEngine;
 using UnityEngine.Networking;
 using System;
-using GameConsole.pcon;
-using System.Drawing.Text;
 
 namespace greycsont.GreyAnnouncer
 {
@@ -15,8 +13,8 @@ namespace greycsont.GreyAnnouncer
         private static Dictionary<int, AudioClip> audioClips = new Dictionary<int, AudioClip>();
         public static List<ConfigEntry<bool>> EnabledStyleConfigs = new List<ConfigEntry<bool>>();
         private static readonly string[] rankAudioNames = { "D", "C", "B", "A", "S", "SS", "SSS", "U"};
-        private static float[] rankPlayCooldown = {0f,0f,0f,0f,0f,0f,0f,0f};
-        private static float globalPlayCooldown = 0f;  // Timer
+        private static float[] individualRankPlayCooldown = {0f,0f,0f,0f,0f,0f,0f,0f};
+        private static float sharedRankPlayCooldown = 0f;  // Timer
         private static readonly HashSet<string> audioFailedLoading = new();
         private static AudioSource globalAudioSource;
 
@@ -88,12 +86,12 @@ namespace greycsont.GreyAnnouncer
                 Plugin.Log.LogInfo($"Skip {rankAudioNames[rank]} for Failed loading audio from local to audioclips");
                 return null;
             }      
-            if (globalPlayCooldown > 0f) {  // Skip if still in cooldown  
-                Plugin.Log.LogInfo($"Skip {rankAudioNames[rank]} for global play cooldown : {globalPlayCooldown}");
+            if (sharedRankPlayCooldown > 0f) {  // Skip if still in cooldown  
+                Plugin.Log.LogInfo($"Skip {rankAudioNames[rank]} for shared rank play cooldown : {sharedRankPlayCooldown}");
                 return null; 
             }    
-            if (rankPlayCooldown[rank] > 0f) {  // skip if rank is still in cooldown
-                Plugin.Log.LogInfo($"Skip {rankAudioNames[rank]} for rank play cooldown : {rankPlayCooldown[rank]}");
+            if (individualRankPlayCooldown[rank] > 0f) {  // skip if rank is still in cooldown
+                Plugin.Log.LogInfo($"Skip {rankAudioNames[rank]} for individual rank play cooldown : {individualRankPlayCooldown[rank]}");
                 return null;
             }     
             if (EnabledStyleConfigs[rank].Value == false){  // Skip if the style filter set to false
@@ -118,10 +116,8 @@ namespace greycsont.GreyAnnouncer
             audioSource.priority = 0;
             audioSource.Play();
 
-            Plugin.Log.LogInfo($"playing audio source : {rankAudioNames[rank]}");
-
-            CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => globalPlayCooldown = value, InstanceConfig.GlobalPlayCooldown.Value));
-            CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => rankPlayCooldown[rank] = value, InstanceConfig.RankPlayCooldown.Value));
+            CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => sharedRankPlayCooldown = value, InstanceConfig.SharedRankPlayCooldown.Value));
+            CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => individualRankPlayCooldown[rank] = value, InstanceConfig.IndividualRankPlayCooldown.Value));
         }
 
         private static AudioSource GetGlobalAudioSource()
@@ -137,6 +133,12 @@ namespace greycsont.GreyAnnouncer
 
         private static IEnumerator CooldownCoroutine(Action<float> setCooldown, float initialCooldown)
         {
+            if (initialCooldown <= 0)
+            {
+                setCooldown(0);
+                yield break;
+            }
+
             float cooldown = initialCooldown;
             setCooldown(cooldown);  //delegate
 
@@ -150,11 +152,11 @@ namespace greycsont.GreyAnnouncer
 
 
         public static void ResetTimerToZero(){
-            globalPlayCooldown = 0f;
+            sharedRankPlayCooldown = 0f;
 
-            for (int i = 0; i < rankPlayCooldown.Length; i++)
+            for (int i = 0; i < individualRankPlayCooldown.Length; i++)
             {
-                rankPlayCooldown[i] = 0f;
+                individualRankPlayCooldown[i] = 0f;
             }
         }
 

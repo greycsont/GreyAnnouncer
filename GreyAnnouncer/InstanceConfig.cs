@@ -3,8 +3,11 @@ using BepInEx.Configuration;
 namespace greycsont.GreyAnnouncer{
     public static class InstanceConfig
     {
-        public static ConfigEntry<float> GlobalPlayCooldown;
-        public static ConfigEntry<float> RankPlayCooldown;
+        public const float DEFAULT_SHARED_RANK_COOLDOWN = 0f;
+        public const float DEFAULT_INDIVIDUAL_RANK_COOLDOWN = 3f;
+        public const bool DEFAULT_RANK_FILTER_ENABLED = true;
+        public static ConfigEntry<float> SharedRankPlayCooldown;
+        public static ConfigEntry<float> IndividualRankPlayCooldown;
         public static ConfigEntry<bool> RankD_Enabled;
         public static ConfigEntry<bool> RankC_Enabled;
         public static ConfigEntry<bool> RankB_Enabled;
@@ -19,72 +22,72 @@ namespace greycsont.GreyAnnouncer{
         }
 
         private static void BindConfigEntryValues(Plugin plugin){
-            GlobalPlayCooldown = plugin.Config.Bind(
+            SharedRankPlayCooldown = plugin.Config.Bind(
                 "Cooldown", 
-                "Global play cooldown", 
-                0f, 
-                "Global play cooldown(in secs)"
+                "Shared_rank_play_cooldown", 
+                DEFAULT_SHARED_RANK_COOLDOWN, 
+                "Shared rank play cooldown(in secs)"
             );
 
-            RankPlayCooldown = plugin.Config.Bind(
+            IndividualRankPlayCooldown = plugin.Config.Bind(
                 "Cooldown",
-                "Rank play cooldown",
-                1f,
-                "Rank play cooldown(in secs)"
+                "Individual_rank_play_cooldown",
+                DEFAULT_INDIVIDUAL_RANK_COOLDOWN,
+                "Individual rank play cooldown(in secs)"
             );
             
             RankD_Enabled = plugin.Config.Bind(
                 "Enabled Style", 
                 "Destruction", 
-                true, 
+                DEFAULT_RANK_FILTER_ENABLED, 
                 "Set to true to allow announce at D-rank"
             );
 
             RankC_Enabled = plugin.Config.Bind(
                 "Enabled Style", 
                 "Chaotic", 
-                true, 
+                DEFAULT_RANK_FILTER_ENABLED, 
                 "Set to true to allow announce at C-rank"
             );
 
             RankB_Enabled = plugin.Config.Bind(
                 "Enabled Style", 
                 "Brutal", 
-                true, 
+                DEFAULT_RANK_FILTER_ENABLED, 
                 "Set to true to allow announce at B-rank"
             );
 
             RankA_Enabled = plugin.Config.Bind(
                 "Enabled Style", 
                 "Anarchic", 
-                true, 
+                DEFAULT_RANK_FILTER_ENABLED, 
                 "Set to true to allow announce at A-rank"
             );
 
             RankS_Enabled = plugin.Config.Bind(
                 "Enabled Style", 
                 "Supreme", 
-                true, 
+                DEFAULT_RANK_FILTER_ENABLED, 
                 "Set to true to allow announce at S-rank"
             );
             RankSS_Enabled = plugin.Config.Bind(
                 "Enabled Style", 
                 "SSadistic", 
-                true, 
+                DEFAULT_RANK_FILTER_ENABLED, 
                 "Set to true to allow announce at SS-rank"
             );
 
             RankSSS_Enabled = plugin.Config.Bind(
                 "Enabled Style", 
                 "SSShitstorm", 
-                true, 
+                DEFAULT_RANK_FILTER_ENABLED, 
                 "Set to true to allow announce at SSS-rank"
             );
 
             RankU_Enabled = plugin.Config.Bind(
                 "Enabled Style", 
                 "ULTRAKILL", 
-                true, 
+                DEFAULT_RANK_FILTER_ENABLED, 
                 "Set to true to allow announce at U-rank"
             );
         }

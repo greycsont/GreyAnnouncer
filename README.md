@@ -5,7 +5,7 @@ You can add the sound by replace the .wav file in the **Audio** folder near the 
 
 ## How to install it
 1. [r2modman](https://thunderstore.io/c/ultrakill/p/ebkr/r2modman/)
-   > But I'm not sure does it work or not because I never uses it
+   > But I'm not sure does it work because I never uses it
 
 2. [BepInEx](https://thunderstore.io/c/ultrakill/p/BepInEx/BepInExPack/) (Manual Installation)
 
@@ -50,9 +50,12 @@ There's two ways to customize the setting
 
 2. Find the **greycsont.ultrakill.GreyAnnouncer.cfg** file in the **ULTRAKILL/Beplnex/config** folder, then open and edit it manually.
 
+### Bugs & Suggestions
+if you encountered any bug, complains and suggestions, please upload it on [GreyAnnouncer issue](https://github.com/greycsont/GreyAnnouncer/issues).
+
 #### Credit
 Thanks:
 - [PluginConfigurator doc](https://github.com/eternalUnion/UKPluginConfigurator/wiki)
 - [Maxwell's puzzling demon](https://store.steampowered.com/app/2770160/)<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 [greycsont](https://space.bilibili.com/408475448)
-[greythroat](https://prts.wiki/w/%E7%81%B0%E5%96%89)
+[快乐萨卡兹厨](https://space.bilibili.com/93667339)
