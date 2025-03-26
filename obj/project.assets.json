@@ -256,7 +256,8 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\asd\\.nuget\\packages\\": {}
+    "C:\\Users\\asd\\.nuget\\packages\\": {},
+    "G:\\Visual studio\\shared\\NuGetPackages": {}
   },
   "project": {
     "version": "0.0.1",
@@ -267,9 +268,13 @@
       "packagesPath": "C:\\Users\\asd\\.nuget\\packages\\",
       "outputPath": "H:\\C#Project\\GreyAnnouncer\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "G:\\Visual studio\\shared\\NuGetPackages"
+      ],
       "configFilePaths": [
         "H:\\C#Project\\GreyAnnouncer\\NuGet.Config",
         "C:\\Users\\asd\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [

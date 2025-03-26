@@ -17,6 +17,7 @@ namespace greycsont.GreyAnnouncer
         private static float sharedRankPlayCooldown = 0f;  // Timer
         private static readonly HashSet<string> audioFailedLoading = new();
         private static AudioSource globalAudioSource;
+        private static AudioSource localAudioSource;
 
         /// <summary>
         /// Initialize audio file
@@ -24,17 +25,38 @@ namespace greycsont.GreyAnnouncer
         public static void Initialize(){
             AddStyleConfigEntryToList();
             FindAvailableAudio();
+            GetLocalAudioSource();
         }
+
 
         public static void ReloadAudio(){
             Plugin.Log.LogInfo($"Reload audio...");
             FindAvailableAudio();
         }
 
+
+        public static void AddAudioLowPassFilter(){
+            localAudioSource = AudioSourceManager.AddLowPassFilter(localAudioSource);
+        }
+        public static void RemoveAudioLowPassFilter(){
+            localAudioSource = AudioSourceManager.RemoveLowPassFilter(localAudioSource);
+        }
+
+        private static void GetLocalAudioSource(){
+            if (localAudioSource == null){
+                localAudioSource = GetGlobalAudioSource();
+            }
+            localAudioSource.spatialBlend = 0f;
+            localAudioSource.priority = 0;
+            localAudioSource.volume = InstanceConfig.AudioSourceVolume.Value;
+        }
+
+
         private static void FindAvailableAudio(){
             string audioPath = PathManager.GetCurrentPluginPath("audio");
             audioFailedLoading.Clear();
-            if (!Directory.Exists(audioPath)){
+            if (!Directory.Exists(audioPath))
+            {
                 Plugin.Log.LogError($"audio directory not found: {audioPath}");
                 Directory.CreateDirectory(audioPath);
                 return;
@@ -44,8 +66,7 @@ namespace greycsont.GreyAnnouncer
             {
                 string fullPath = Path.Combine(audioPath, rankAudioNames[i] + ".wav");
 
-                if (File.Exists(fullPath))
-                {
+                if (File.Exists(fullPath)){
                     // Using a helper MonoBehaviour to start a coroutine to load audio
                     CoroutineRunner.Instance.StartCoroutine(LoadAudioClip(fullPath, i));
                 }
@@ -62,6 +83,7 @@ namespace greycsont.GreyAnnouncer
                 Plugin.Log.LogWarning("Failed to load audio files: " + string.Join(", ", audioFailedLoading));
             }
         }
+
 
         private static IEnumerator LoadAudioClip(string path, int key){
             string url = new Uri(path).AbsoluteUri;
@@ -81,44 +103,50 @@ namespace greycsont.GreyAnnouncer
             }
         }
 
-        private static AudioClip CheckPlayValidation(int rank){
-            if (audioFailedLoading.Contains(rankAudioNames[rank])){ // Skip if failed loading
-                Plugin.Log.LogInfo($"Skip {rankAudioNames[rank]} for Failed loading audio from local to audioclips");
-                return null;
-            }      
-            if (sharedRankPlayCooldown > 0f) {  // Skip if still in cooldown  
-                Plugin.Log.LogInfo($"Skip {rankAudioNames[rank]} for shared rank play cooldown : {sharedRankPlayCooldown}");
-                return null; 
-            }    
-            if (individualRankPlayCooldown[rank] > 0f) {  // skip if rank is still in cooldown
-                Plugin.Log.LogInfo($"Skip {rankAudioNames[rank]} for individual rank play cooldown : {individualRankPlayCooldown[rank]}");
-                return null;
-            }     
-            if (EnabledStyleConfigs[rank].Value == false){  // Skip if the style filter set to false
-                Plugin.Log.LogInfo($"Skip {rankAudioNames[rank]} for Style filter for {rankAudioNames[rank]} set to false");
-                return null;
-            }     
-            if (!audioClips.TryGetValue(rank, out AudioClip clip)){ // skip if failed to get audio clip
-                Plugin.Log.LogInfo($"Skip {rankAudioNames[rank]} for failed loading audio from audioclips");
-                return null; 
-            }    
-            return clip;  
-        }
-
+        
         public static void PlaySound(int rank){
             AudioClip clip = CheckPlayValidation(rank);
             if (clip == null) return;
-
-            AudioSource audioSource = GetGlobalAudioSource();
-            audioSource.clip = clip;
-            audioSource.volume = 1.0f;
-            audioSource.spatialBlend = 0f;
-            audioSource.priority = 0;
-            audioSource.Play();
+            localAudioSource.clip = clip;
+            localAudioSource.volume = 1.0f;
+            localAudioSource.Play();
 
             CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => sharedRankPlayCooldown = value, InstanceConfig.SharedRankPlayCooldown.Value));
             CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => individualRankPlayCooldown[rank] = value, InstanceConfig.IndividualRankPlayCooldown.Value));
         }
+
+        private static AudioClip CheckPlayValidation(int rank)
+        {
+            ValidationState state = GetValidationState(rank);
+            if (state != ValidationState.Success)
+            {
+                Plugin.Log.LogInfo($"Skip {rankAudioNames[rank]} for {state}");
+                return null;
+            }
+
+           return audioClips.TryGetValue(rank, out AudioClip clip) ? clip : null; 
+        }
+
+        private static ValidationState GetValidationState(int rank)
+        {
+            if (audioFailedLoading.Contains(rankAudioNames[rank])) 
+                return ValidationState.AudioFailedLoading;
+
+            if (sharedRankPlayCooldown > 0f) 
+                return ValidationState.SharedCooldown;
+
+            if (individualRankPlayCooldown[rank] > 0f) 
+                return ValidationState.IndividualCooldown;
+
+            if (!EnabledStyleConfigs[rank].Value) 
+                return ValidationState.DisabledByConfig;
+
+            if (!audioClips.TryGetValue(rank, out _)) 
+                return ValidationState.ClipNotFound;
+
+            return ValidationState.Success;
+        }
+
 
         private static AudioSource GetGlobalAudioSource()
         {
@@ -131,34 +159,31 @@ namespace greycsont.GreyAnnouncer
             return globalAudioSource;
         }
 
+        public static void ResetTimerToZero(){
+            sharedRankPlayCooldown = 0f;
+            for (int i = 0; i < individualRankPlayCooldown.Length; i++)
+            {
+                individualRankPlayCooldown[i] = 0f;
+            }
+        }
+
+
         private static IEnumerator CooldownCoroutine(Action<float> setCooldown, float initialCooldown)
         {
-            if (initialCooldown <= 0)
-            {
+            if (initialCooldown <= 0){
                 setCooldown(0);
                 yield break;
             }
-
             float cooldown = initialCooldown;
             setCooldown(cooldown);  //delegate
 
-            while (cooldown > 0)
-            {
+            while (cooldown > 0){
                 cooldown = Math.Max(0, cooldown - Time.deltaTime);
                 setCooldown(cooldown);
                 yield return null;
             }
         }
 
-
-        public static void ResetTimerToZero(){
-            sharedRankPlayCooldown = 0f;
-
-            for (int i = 0; i < individualRankPlayCooldown.Length; i++)
-            {
-                individualRankPlayCooldown[i] = 0f;
-            }
-        }
 
         
         private static void AddStyleConfigEntryToList(){
@@ -172,7 +197,17 @@ namespace greycsont.GreyAnnouncer
             EnabledStyleConfigs.Add(InstanceConfig.RankSSS_Enabled);
             EnabledStyleConfigs.Add(InstanceConfig.RankU_Enabled);
         }
-    }
 
-    
+        private enum ValidationState //Finite-state machine，启动！
+        {
+            Success,                   
+            AudioFailedLoading,             
+            SharedCooldown,           
+            IndividualCooldown,         
+            DisabledByConfig,          
+            ClipNotFound                
+        }
+
+
+    }
 }

@@ -1,4 +1,5 @@
 using BepInEx.Configuration;
+using UnityEngine;
 
 namespace greycsont.GreyAnnouncer{
     public static class InstanceConfig
@@ -6,8 +7,8 @@ namespace greycsont.GreyAnnouncer{
         public const float DEFAULT_SHARED_RANK_COOLDOWN = 0f;
         public const float DEFAULT_INDIVIDUAL_RANK_COOLDOWN = 3f;
         public const bool DEFAULT_RANK_FILTER_ENABLED = true;
-        public static ConfigEntry<float> SharedRankPlayCooldown;
-        public static ConfigEntry<float> IndividualRankPlayCooldown;
+        public static ConfigEntry<float> SharedRankPlayCooldown;    // Range : 0f ~ 10f
+        public static ConfigEntry<float> IndividualRankPlayCooldown;    // Range : 0f ~ 114514f
         public static ConfigEntry<bool> RankD_Enabled;
         public static ConfigEntry<bool> RankC_Enabled;
         public static ConfigEntry<bool> RankB_Enabled;
@@ -16,6 +17,7 @@ namespace greycsont.GreyAnnouncer{
         public static ConfigEntry<bool> RankSS_Enabled;
         public static ConfigEntry<bool> RankSSS_Enabled;
         public static ConfigEntry<bool> RankU_Enabled;
+        public static ConfigEntry<float> AudioSourceVolume; // Range : 0f ~ 1f
         public static void Initialize(Plugin plugin)
         {
             BindConfigEntryValues(plugin);

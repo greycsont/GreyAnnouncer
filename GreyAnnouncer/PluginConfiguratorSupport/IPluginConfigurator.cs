@@ -18,10 +18,8 @@ namespace greycsont.GreyAnnouncer{
                     config.rootPanel,
                     "Shared rank cooldown", 
                     "sharedRankPlayCooldown", 
-                    InstanceConfig.SharedRankPlayCooldown.Value
+                    InstanceConfig.SharedRankPlayCooldown.Value, 0f, 114514f
                     );
-            sharedRankPlayCooldown.minimumValue = 0f;
-            sharedRankPlayCooldown.maximumValue = 114514f;
             sharedRankPlayCooldown.defaultValue = 0f;
             sharedRankPlayCooldown.onValueChange += (FloatField.FloatValueChangeEvent e) =>
             {
@@ -33,10 +31,8 @@ namespace greycsont.GreyAnnouncer{
                     config.rootPanel,
                     "Individual rank cooldown", 
                     "individualRankPlaycooldown", 
-                    InstanceConfig.IndividualRankPlayCooldown.Value
+                    InstanceConfig.IndividualRankPlayCooldown.Value, 0f, 10f
                     );
-            individualRankPlayCooldown.minimumValue = 0f;
-            individualRankPlayCooldown.maximumValue = 10f;
             individualRankPlayCooldown.defaultValue = 3f;
             individualRankPlayCooldown.onValueChange += (FloatField.FloatValueChangeEvent e) =>
             {
@@ -52,17 +48,17 @@ namespace greycsont.GreyAnnouncer{
 
         private static void RankEnablePanel(){
             ConfigPanel rankActivationPanel = new ConfigPanel(config.rootPanel, "Rank Activation", "Rank_Activation");
-            BoolField rankD = BoolFieldFactory(rankActivationPanel, "Destruction", "rank_D", InstanceConfig.RankD_Enabled, InstanceConfig.DEFAULT_RANK_FILTER_ENABLED);
-            BoolField rankC = BoolFieldFactory(rankActivationPanel, "Chaotic", "rank_C", InstanceConfig.RankC_Enabled, InstanceConfig.DEFAULT_RANK_FILTER_ENABLED);
-            BoolField rankB = BoolFieldFactory(rankActivationPanel, "Brutal", "rank_B", InstanceConfig.RankB_Enabled, InstanceConfig.DEFAULT_RANK_FILTER_ENABLED);
-            BoolField rankA = BoolFieldFactory(rankActivationPanel, "Anarchic", "rank_A", InstanceConfig.RankA_Enabled, InstanceConfig.DEFAULT_RANK_FILTER_ENABLED);
-            BoolField rankS = BoolFieldFactory(rankActivationPanel, "Supreme", "rank_S", InstanceConfig.RankS_Enabled, InstanceConfig.DEFAULT_RANK_FILTER_ENABLED);
-            BoolField rankSS = BoolFieldFactory(rankActivationPanel, "SSadistic", "rank_SS", InstanceConfig.RankSS_Enabled, InstanceConfig.DEFAULT_RANK_FILTER_ENABLED);
-            BoolField rankSSS = BoolFieldFactory(rankActivationPanel, "SSShitstorm", "rank_SSS", InstanceConfig.RankSSS_Enabled, InstanceConfig.DEFAULT_RANK_FILTER_ENABLED);
-            BoolField rankU = BoolFieldFactory(rankActivationPanel, "ULTRAKILL", "rank_U", InstanceConfig.RankU_Enabled, InstanceConfig.DEFAULT_RANK_FILTER_ENABLED);
+            BoolField rankD = BoolFieldFactory(rankActivationPanel, "Destruction", "rank_D", InstanceConfig.RankD_Enabled);
+            BoolField rankC = BoolFieldFactory(rankActivationPanel, "Chaotic", "rank_C", InstanceConfig.RankC_Enabled);
+            BoolField rankB = BoolFieldFactory(rankActivationPanel, "Brutal", "rank_B", InstanceConfig.RankB_Enabled);
+            BoolField rankA = BoolFieldFactory(rankActivationPanel, "Anarchic", "rank_A", InstanceConfig.RankA_Enabled);
+            BoolField rankS = BoolFieldFactory(rankActivationPanel, "Supreme", "rank_S", InstanceConfig.RankS_Enabled);
+            BoolField rankSS = BoolFieldFactory(rankActivationPanel, "SSadistic", "rank_SS", InstanceConfig.RankSS_Enabled);
+            BoolField rankSSS = BoolFieldFactory(rankActivationPanel, "SSShitstorm", "rank_SSS", InstanceConfig.RankSSS_Enabled);
+            BoolField rankU = BoolFieldFactory(rankActivationPanel, "ULTRAKILL", "rank_U", InstanceConfig.RankU_Enabled);
         }
 
-        private static BoolField BoolFieldFactory(ConfigPanel parentPanel,string name,string GUID,ConfigEntry<bool> configEntry,bool defaultValue){
+        private static BoolField BoolFieldFactory(ConfigPanel parentPanel,string name,string GUID,ConfigEntry<bool> configEntry,bool defaultValue = true){
             BoolField boolField = new BoolField(parentPanel, name, GUID, configEntry.Value);
             boolField.onValueChange += (BoolField.BoolValueChangeEvent e) =>
             {
@@ -71,5 +67,6 @@ namespace greycsont.GreyAnnouncer{
             boolField.defaultValue = defaultValue;
             return boolField;
         }
+
     }
 }

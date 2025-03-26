@@ -1,16 +1,17 @@
 using HarmonyLib;
 
+/* This patch is used to determine the changes of rankIndex */
 namespace greycsont.GreyAnnouncer{
     
     [HarmonyPatch(typeof(StyleHUD), "AscendRank")]  // For non-D rank
-        public static class StyleHUDAscendRankPatch{
-            static void Postfix(StyleHUD __instance){
-                Announcer.PlaySound(__instance.rankIndex);
-            }
+    public static class StyleHUDAscendRank_Patch{
+        static void Postfix(StyleHUD __instance){
+            Announcer.PlaySound(__instance.rankIndex);
         }
+    }
 
     [HarmonyPatch(typeof(StyleHUD), "UpdateMeter")]  // For D rank only
-    public static class StyleHUDUpdateMeterPatch
+    public static class StyleHUDUpdateMeter_Patch
     {
         private static bool previousWasZero = true;
         static void Postfix(StyleHUD __instance)
