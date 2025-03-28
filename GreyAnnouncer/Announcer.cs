@@ -70,6 +70,7 @@ namespace greycsont.GreyAnnouncer
         private static void FindAvailableAudio(string audioPath){
             if (limitOfRecursive >= 2 ){
                 limitOfRecursive = 0;
+                Plugin.Log.LogError($"Failed to find audio from \n New directory : {PathManager.GetGamePath(Path.Combine("ULTRAKILL_DATA","Audio"))}\n Legacy directory : {PathManager.GetCurrentPluginPath("audio")}");
                 return;
             }
             limitOfRecursive++;
