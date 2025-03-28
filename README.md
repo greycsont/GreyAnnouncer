@@ -25,7 +25,7 @@ You can add the sound by replace the .wav file in the **Audio** folder near the 
 
       4. Go to a **Audio** Folder ( if not, create a new one )
 
-   - Legacy method ( Put the audio near the plugin but still work)
+   - Legacy method ( Put the audio near the plugin, it still work )
       1. Find directory path of the plugin/.dll
 
       2. Find the **Audio** folder near the plugin/.dll.
