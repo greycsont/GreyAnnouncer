@@ -1,4 +1,3 @@
-using System.Drawing.Text;
 using BepInEx.Configuration;
 
 namespace greycsont.GreyAnnouncer{

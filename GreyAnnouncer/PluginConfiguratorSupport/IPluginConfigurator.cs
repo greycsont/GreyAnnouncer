@@ -35,7 +35,7 @@ namespace greycsont.GreyAnnouncer{
                     config.rootPanel,
                     "Individual rank cooldown", 
                     "individualRankPlaycooldown", 
-                    InstanceConfig.IndividualRankPlayCooldown.Value, 0f, 10f
+                    InstanceConfig.IndividualRankPlayCooldown.Value, 0f, 1113f
                     );  
             individualRankPlayCooldown.defaultValue = 3f;
             individualRankPlayCooldown.onValueChange += (FloatField.FloatValueChangeEvent e) =>
@@ -46,14 +46,15 @@ namespace greycsont.GreyAnnouncer{
 
             FloatSliderField audioSourceVolume = new FloatSliderField(
                     config.rootPanel,
-                    "Volume of sound", 
-                    "VolumeOfSound", 
+                    "Audio Volume", 
+                    "Audio_Volume", 
                     Tuple.Create(0f, 1f), InstanceConfig.AudioSourceVolume.Value, 2
                     );
             audioSourceVolume.defaultValue = 1f;
             audioSourceVolume.onValueChange += (FloatSliderField.FloatSliderValueChangeEvent e) =>
             {
                 InstanceConfig.AudioSourceVolume.Value = e.newValue;
+                Announcer.UpdateAudioSourceVolume(e.newValue);
             };      
 
             /* You don't have to do this in the MainPanel(). I did this because it makes it more readable by human. */

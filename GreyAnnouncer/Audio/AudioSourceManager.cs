@@ -1,4 +1,7 @@
 using UnityEngine;
+using System;
+using System.Collections;
+
 
 namespace greycsont.GreyAnnouncer{
 
@@ -17,9 +20,24 @@ namespace greycsont.GreyAnnouncer{
             if (audioSource == null) return null;
             AudioLowPassFilter lowPassFilter = audioSource.GetComponent<AudioLowPassFilter>();
             if (lowPassFilter != null){
-                Object.Destroy(lowPassFilter);
+                GameObject.Destroy(lowPassFilter);
             }
             return audioSource;
+        }
+
+        public static IEnumerator FadeVolume(AudioSource audioSource, float targetVolume, float duration)
+        {
+            if (audioSource == null) yield break;
+            float startVolume = audioSource.volume;
+            float timeStep = duration / 5f;
+            float time = 0f;
+            while (time < duration)
+            {
+                audioSource.volume = Mathf.Lerp(startVolume, targetVolume, time / duration);
+                time += timeStep;
+                yield return new WaitForSeconds(timeStep);
+            }
+            audioSource.volume = targetVolume;
         }
     }
 }

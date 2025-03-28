@@ -1,11 +1,10 @@
 ## What does it do?
-It will play a sound when you reach to a higher style rank!
+It will play a **audio** when you reach to a higher style rank!
 
 You can add the sound by replace the .wav file in the **Audio** folder near the plugin!
 
 ## How to install it
 1. [r2modman](https://thunderstore.io/c/ultrakill/p/ebkr/r2modman/)
-   > But I'm not sure does it work because I never uses it
 
 2. [BepInEx](https://thunderstore.io/c/ultrakill/p/BepInEx/BepInExPack/) (Manual Installation)
 
@@ -17,18 +16,16 @@ You can add the sound by replace the .wav file in the **Audio** folder near the 
 
 ### How to add the rank sound
 1. Find the directory path of the audio
-   - Put the audio inside ULTRAKILL
+   - audio folder inside ULTRAKILL_DATA
       1. Right click your ULTRAKILL on steam
 
-      2. **Manage** --> **view local file**
+      2. **Manage** --> **Browse Local Files**
 
       3. Go to the **ULTRAKILL_DATA** folder
 
-      4. Create a **Audio** Folder
-      > But the mod will automatically create it(
-   
+      4. Go to a **Audio** Folder ( if not, create a new one )
 
-   - Legacy method but still work
+   - Legacy method ( Put the audio near the plugin but still work)
       1. Find directory path of the plugin/.dll
 
       2. Find the **Audio** folder near the plugin/.dll.
@@ -65,14 +62,22 @@ There's two ways to customize the setting
 
 2. Find the **greycsont.ultrakill.GreyAnnouncer.cfg** file in the **ULTRAKILL/Beplnex/config** folder, then open and edit it manually.
 
+### Some warning
+1. Do not put audio that have over 20 mins long, I can image how chaos of the game's audio if you using the parallel play mode.
+
 ### Bugs & Suggestions
 if you encountered any bug, complains and suggestions, please upload it on [GreyAnnouncer issue](https://github.com/greycsont/GreyAnnouncer/issues).
 
 #### Credit
+
+
 Thanks:
+- [Announcer Mod](https://www.nexusmods.com/ultrakill/mods/54)
 - [PluginConfigurator doc](https://github.com/eternalUnion/UKPluginConfigurator/wiki)
-- [Maxwell's puzzling demon](https://store.steampowered.com/app/2770160/)<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-[greycsont](https://space.bilibili.com/408475448)
-[快乐萨卡兹厨](https://space.bilibili.com/93667339)
+- [Maxwell's puzzling demon](https://store.steampowered.com/app/2770160/)<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
-
+###### Easter egg
+The ULTRA_REVAMP update DESTROYed my favorite mod, So ......
+(But the mod updated to the ULTRA_REVAMP, please check **Announcer** in the Thanks)
+- [greycsont](https://space.bilibili.com/408475448)
+- [快乐萨卡兹厨](https://space.bilibili.com/93667339)

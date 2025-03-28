@@ -5,7 +5,6 @@ using BepInEx.Configuration;
 using UnityEngine;
 using UnityEngine.Networking;
 using System;
-using System.Linq;
 
 /* Announcer.cs requires :
             PathManager.cs to find and fetch audio
@@ -92,12 +91,22 @@ namespace greycsont.GreyAnnouncer
             }
         }
         private static void TryToFetchAudios(string audioPath){
+            string[] supportedExtensions = new string[] { ".wav", ".mp3", ".ogg", ".aiff", ".aif" };
             for (int i = 0; i < rankAudioNames.Length; i++)
             {
-                string fullPath = Path.Combine(audioPath, rankAudioNames[i] + ".wav");
-                if (File.Exists(fullPath)){
+                string filePath = null;
+                foreach (var ext in supportedExtensions)
+                {
+                    string potentialPath = Path.Combine(audioPath, rankAudioNames[i] + ext);
+                    if (File.Exists(potentialPath))
+                    {
+                        filePath = potentialPath;
+                        break;
+                    }
+                }
+                if (File.Exists(filePath)){
                     // Using a helper MonoBehaviour to start a coroutine to load audio
-                    CoroutineRunner.Instance.StartCoroutine(LoadAudioClip(fullPath, i));
+                    CoroutineRunner.Instance.StartCoroutine(LoadAudioClip(filePath, i));
                 }
                 else {
                     audioFailedLoading.Add(rankAudioNames[i]);
@@ -117,7 +126,7 @@ namespace greycsont.GreyAnnouncer
             string url = new Uri(path).AbsoluteUri;
             //string url = "file://" + path;
             AudioType audioType = GetAudioTypeFromExtension(url);
-            Plugin.Log.LogInfo($"Loading audio : {rankAudioNames[key]} from {url} with audioType {audioType}");
+            Plugin.Log.LogInfo($"Loading audio : {rankAudioNames[key]} from {url}");
             using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, audioType))
             {
                 yield return www.SendWebRequest();
@@ -202,6 +211,11 @@ namespace greycsont.GreyAnnouncer
             }
         }
 
+        public static void UpdateAudioSourceVolume(float targetVolume, float duration = 0.35f){
+             CoroutineRunner.Instance.StartCoroutine(AudioSourceManager.FadeVolume(localAudioSource, targetVolume, duration));
+        }
+
+
 
         private static IEnumerator CooldownCoroutine(Action<float> setCooldown, float initialCooldown)
         {
@@ -244,7 +258,6 @@ namespace greycsont.GreyAnnouncer
             ClipNotFound,
             InvaildRankIndex                
         }
-
 
     }
 }
