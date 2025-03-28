@@ -62,9 +62,6 @@ There's two ways to customize the setting
 
 2. Find the **greycsont.ultrakill.GreyAnnouncer.cfg** file in the **ULTRAKILL/Beplnex/config** folder, then open and edit it manually.
 
-### Some warning
-1. Do not put audio that have over 20 mins long, I can image how chaos of the game's audio if you using the parallel play mode.
-
 ### Bugs & Suggestions
 if you encountered any bug, complains and suggestions, please upload it on [GreyAnnouncer issue](https://github.com/greycsont/GreyAnnouncer/issues).
 
