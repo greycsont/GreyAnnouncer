@@ -16,13 +16,28 @@ You can add the sound by replace the .wav file in the **Audio** folder near the 
 
 
 ### How to add the rank sound
-1. Find the **audio** folder near the plugin.
+1. Find the directory path of the audio
+   - Put the audio inside ULTRAKILL
+      1. Right click your ULTRAKILL on steam
 
-2. Open the **audio** folder.
+      2. **Manage** --> **view local file**
 
-3. Add the sound you wanted to the folder ( The file format only accept the **.wav** format )
+      3. Go to the **ULTRAKILL_DATA** folder
 
-4. The rank sound file's name should rename to the specific format, include: **D C B A S SS SSS U**
+      4. Create a **Audio** Folder
+      > But the mod will automatically create it(
+   
+
+   - Legacy method but still work
+      1. Find directory path of the plugin/.dll
+
+      2. Find the **Audio** folder near the plugin/.dll.
+
+2. Open the **Audio** folder.
+
+3. Add the sound you wanted to the folder ( The file format is recommanded to using **.mp3** and **.wav** format, Not support **.flac** and **.acc** )
+
+4. The rank sound file's name should rename to the specific format, include: **D C B A S SS SSS U**   
 
 #### Rank Sound File Naming Convention
 
@@ -59,3 +74,5 @@ Thanks:
 - [Maxwell's puzzling demon](https://store.steampowered.com/app/2770160/)<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 [greycsont](https://space.bilibili.com/408475448)
 [快乐萨卡兹厨](https://space.bilibili.com/93667339)
+
+

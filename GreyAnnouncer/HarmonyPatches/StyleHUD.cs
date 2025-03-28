@@ -1,11 +1,15 @@
 using HarmonyLib;
 
-/* This patch is used to determine the changes of rankIndex */
+/* This patch is used to determine the changes of rankIndex
+    The rankIndex is basically the pointer to another arrays, list sth.
+    More information in the Announcer.cs 
+    StyleHUD.cs -> Announcer.cs */
+    
 namespace greycsont.GreyAnnouncer{
     
-    [HarmonyPatch(typeof(StyleHUD), "AscendRank")]  // For non-D rank
+    [HarmonyPatch(typeof(StyleHUD), "AscendRank")]  // For non-D ranks
     public static class StyleHUDAscendRank_Patch{
-        static void Postfix(StyleHUD __instance){
+        static void Postfix(StyleHUD __instance){  
             Announcer.PlaySound(__instance.rankIndex);
         }
     }

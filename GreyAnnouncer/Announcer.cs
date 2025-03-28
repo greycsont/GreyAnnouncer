@@ -5,10 +5,15 @@ using BepInEx.Configuration;
 using UnityEngine;
 using UnityEngine.Networking;
 using System;
+using System.Linq;
 
+/* Announcer.cs requires :
+            PathManager.cs to find and fetch audio
+            AudioSourceManager.cs to add LowPassFilter
+            CoroutineRunner.cs for set timer
+            InstanceConfig for setting */
 namespace greycsont.GreyAnnouncer
 {
-    
     public class Announcer{       
         private static Dictionary<int, AudioClip> audioClips = new Dictionary<int, AudioClip>();
         public static List<ConfigEntry<bool>> EnabledStyleConfigs = new List<ConfigEntry<bool>>();
@@ -24,21 +29,22 @@ namespace greycsont.GreyAnnouncer
         /// </summary>
         public static void Initialize(){
             AddStyleConfigEntryToList();
-            FindAvailableAudio();
-            GetLocalAudioSource();
+            FindAvailableAudio(PathManager.GetGamePath(Path.Combine("ULTRAKILL_DATA","Audio")));
         }
 
 
         public static void ReloadAudio(){
             Plugin.Log.LogInfo($"Reload audio...");
-            FindAvailableAudio();
+            FindAvailableAudio(PathManager.GetGamePath(Path.Combine("ULTRAKILL_DATA","Audio")));
         }
 
 
         public static void AddAudioLowPassFilter(){
+            if (localAudioSource == null) GetLocalAudioSource();
             localAudioSource = AudioSourceManager.AddLowPassFilter(localAudioSource);
         }
         public static void RemoveAudioLowPassFilter(){
+            if (localAudioSource == null) GetLocalAudioSource();
             localAudioSource = AudioSourceManager.RemoveLowPassFilter(localAudioSource);
         }
 
@@ -48,24 +54,47 @@ namespace greycsont.GreyAnnouncer
             }
             localAudioSource.spatialBlend = 0f;
             localAudioSource.priority = 0;
-            localAudioSource.volume = InstanceConfig.AudioSourceVolume.Value;
         }
 
+        private static AudioSource GetGlobalAudioSource()
+        {
+            if (globalAudioSource == null)
+            {
+                GameObject audioObj = GameObject.Find("GlobalAudioPlayer") ?? new GameObject("GlobalAudioPlayer");
+                globalAudioSource = audioObj.GetComponent<AudioSource>() ?? audioObj.AddComponent<AudioSource>();
+                GameObject.DontDestroyOnLoad(audioObj);
+            }
+            return globalAudioSource;
+        }
 
-        private static void FindAvailableAudio(){
-            string audioPath = PathManager.GetCurrentPluginPath("audio");
+        private static int limitOfRecursive = 0;
+        private static void FindAvailableAudio(string audioPath){
+            if (limitOfRecursive >= 2 ){
+                limitOfRecursive = 0;
+                return;
+            }
+            limitOfRecursive++;
             audioFailedLoading.Clear();
+            TryToFindDirectoryOfAudioFolder(audioPath);
+            TryToFetchAudios(audioPath);
+            LoggingAudioFailedLoading();
+            if (audioFailedLoading.SetEquals(rankAudioNames)){  // array compare to hashset
+                Plugin.Log.LogWarning($"No audio files found in the directory : {audioPath}. Start to search the legacy folder which is near the plugin/dll.");
+                FindAvailableAudio(PathManager.GetCurrentPluginPath("audio"));
+            }
+        }
+        private static void TryToFindDirectoryOfAudioFolder(string audioPath){
             if (!Directory.Exists(audioPath))
             {
-                Plugin.Log.LogError($"audio directory not found: {audioPath}");
+                Plugin.Log.LogWarning($"audio directory not found : {audioPath}");
                 Directory.CreateDirectory(audioPath);
                 return;
             }
-
+        }
+        private static void TryToFetchAudios(string audioPath){
             for (int i = 0; i < rankAudioNames.Length; i++)
             {
                 string fullPath = Path.Combine(audioPath, rankAudioNames[i] + ".wav");
-
                 if (File.Exists(fullPath)){
                     // Using a helper MonoBehaviour to start a coroutine to load audio
                     CoroutineRunner.Instance.StartCoroutine(LoadAudioClip(fullPath, i));
@@ -75,20 +104,21 @@ namespace greycsont.GreyAnnouncer
                     continue;
                 }
             }
-
+        }
+        private static void LoggingAudioFailedLoading(){
             if (audioFailedLoading.Count == 0){
                 Plugin.Log.LogInfo("All audios succeesfully loaded");
-            }
-            if (audioFailedLoading.Count > 0){
+            }else{
                 Plugin.Log.LogWarning("Failed to load audio files: " + string.Join(", ", audioFailedLoading));
             }
         }
 
-
         private static IEnumerator LoadAudioClip(string path, int key){
             string url = new Uri(path).AbsoluteUri;
             //string url = "file://" + path;
-            using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, AudioType.WAV))
+            AudioType audioType = GetAudioTypeFromExtension(url);
+            Plugin.Log.LogInfo($"Loading audio : {rankAudioNames[key]} from {url} with audioType {audioType}");
+            using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, audioType))
             {
                 yield return www.SendWebRequest();
 
@@ -103,12 +133,26 @@ namespace greycsont.GreyAnnouncer
             }
         }
 
+        private static AudioType GetAudioTypeFromExtension(string path) {
+            string extension = Path.GetExtension(path).ToLower();
+            switch (extension) {
+                case ".wav": return AudioType.WAV;
+                case ".mp3": return AudioType.MPEG;
+                case ".ogg": return AudioType.OGGVORBIS;
+                case ".aiff": case ".aif": return AudioType.AIFF;
+                default:
+                    Plugin.Log.LogWarning($"Unsupported audio format: {extension}, defaulting to WAV");
+                    return AudioType.WAV;
+    }
+        }
+
         
         public static void PlaySound(int rank){
             AudioClip clip = CheckPlayValidation(rank);
             if (clip == null) return;
+            if (localAudioSource == null) GetLocalAudioSource();
             localAudioSource.clip = clip;
-            localAudioSource.volume = 1.0f;
+            localAudioSource.volume = InstanceConfig.AudioSourceVolume.Value < 1f ? InstanceConfig.AudioSourceVolume.Value : 1f;
             localAudioSource.Play();
 
             CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => sharedRankPlayCooldown = value, InstanceConfig.SharedRankPlayCooldown.Value));
@@ -117,7 +161,7 @@ namespace greycsont.GreyAnnouncer
 
         private static AudioClip CheckPlayValidation(int rank)
         {
-            ValidationState state = GetValidationState(rank);
+            ValidationState state = GetPlayValidationState(rank);
             if (state != ValidationState.Success)
             {
                 Plugin.Log.LogInfo($"Skip {rankAudioNames[rank]} for {state}");
@@ -127,8 +171,11 @@ namespace greycsont.GreyAnnouncer
            return audioClips.TryGetValue(rank, out AudioClip clip) ? clip : null; 
         }
 
-        private static ValidationState GetValidationState(int rank)
+        private static ValidationState GetPlayValidationState(int rank)
         {
+            if (rank < 0 || rank > 7)   // To compatible with another mods, 0 ~ 7, maybe support to add more ranks
+                return ValidationState.InvaildRankIndex;
+
             if (audioFailedLoading.Contains(rankAudioNames[rank])) 
                 return ValidationState.AudioFailedLoading;
 
@@ -147,18 +194,6 @@ namespace greycsont.GreyAnnouncer
             return ValidationState.Success;
         }
 
-
-        private static AudioSource GetGlobalAudioSource()
-        {
-            if (globalAudioSource == null)
-            {
-                GameObject audioObj = GameObject.Find("GlobalAudioPlayer") ?? new GameObject("GlobalAudioPlayer");
-                globalAudioSource = audioObj.GetComponent<AudioSource>() ?? audioObj.AddComponent<AudioSource>();
-                GameObject.DontDestroyOnLoad(audioObj);
-            }
-            return globalAudioSource;
-        }
-
         public static void ResetTimerToZero(){
             sharedRankPlayCooldown = 0f;
             for (int i = 0; i < individualRankPlayCooldown.Length; i++)
@@ -175,12 +210,13 @@ namespace greycsont.GreyAnnouncer
                 yield break;
             }
             float cooldown = initialCooldown;
+            float updateInterval = (cooldown < 0.5f) ? cooldown / 3f : cooldown / 10f;
             setCooldown(cooldown);  //delegate
 
             while (cooldown > 0){
-                cooldown = Math.Max(0, cooldown - Time.deltaTime);
+                yield return new WaitForSeconds(updateInterval);
+                cooldown = Math.Max(0, cooldown - updateInterval);
                 setCooldown(cooldown);
-                yield return null;
             }
         }
 
@@ -205,7 +241,8 @@ namespace greycsont.GreyAnnouncer
             SharedCooldown,           
             IndividualCooldown,         
             DisabledByConfig,          
-            ClipNotFound                
+            ClipNotFound,
+            InvaildRankIndex                
         }
 
 

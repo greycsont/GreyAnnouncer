@@ -1,10 +1,10 @@
 ﻿using BepInEx;
 using BepInEx.Bootstrap;
 using BepInEx.Logging;
-using System;
-using System.Reflection;
 using HarmonyLib;
 
+/* The StyleHUD.cs in the HarmonyPatches folder is the starting point of the whole sequence of announcer 
+   But for the initialize of the program like loading audio or something, you should start from here */
 namespace greycsont.GreyAnnouncer{
 
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
@@ -34,22 +34,14 @@ namespace greycsont.GreyAnnouncer{
             harmony.PatchAll();
         }
 
-        private void CheckPluginLoaded(string GUID, string assemblyName){
+        public void CheckPluginLoaded(string GUID, string assemblyName){
             if (!Chainloader.PluginInfos.ContainsKey(GUID)){
                 Plugin.Log.LogWarning($"Plugin {GUID} not loaded, stopping loading {assemblyName}"); 
                 return;
             }
-            try 
-            {
-                Assembly assembly = Assembly.GetExecutingAssembly();
-                Type configuratorType = assembly.GetType(assemblyName);
-                MethodInfo initialize = configuratorType.GetMethod("Initialize", BindingFlags.Public | BindingFlags.Static);
-                initialize?.Invoke(null, null);
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError($"Failed to load module: {ex}");
-            }
+            ReflectionManager.LoadByReflection(assemblyName);
         }
+
+        
     }
 }
