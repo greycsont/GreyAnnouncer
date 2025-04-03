@@ -15,7 +15,6 @@ namespace greycsont.GreyAnnouncer
 {
     public class Announcer{       
         private static Dictionary<int, AudioClip> audioClips = new Dictionary<int, AudioClip>();
-        public static List<ConfigEntry<bool>> EnabledStyleConfigs = new List<ConfigEntry<bool>>();
         private static readonly string[] rankAudioNames = { "D", "C", "B", "A", "S", "SS", "SSS", "U"};
         private static float[] individualRankPlayCooldown = {0f,0f,0f,0f,0f,0f,0f,0f};
         private static float sharedRankPlayCooldown = 0f;  // Timer
@@ -27,7 +26,6 @@ namespace greycsont.GreyAnnouncer
         /// Initialize audio file
         /// </summary>
         public static void Initialize(){
-            AddStyleConfigEntryToList();
             FindAvailableAudio(PathManager.GetGamePath(Path.Combine("ULTRAKILL_DATA","Audio")));
         }
 
@@ -79,7 +77,7 @@ namespace greycsont.GreyAnnouncer
             TryToFetchAudios(audioPath);
             LoggingAudioFailedLoading();
             if (audioFailedLoading.SetEquals(rankAudioNames)){  // array compare to hashset
-                Plugin.Log.LogWarning($"No audio files found in the directory : {audioPath}. Start to search the legacy folder which is near the plugin/dll.");
+                Plugin.Log.LogWarning($"No audio files found in the directory : {audioPath}.");
                 FindAvailableAudio(PathManager.GetCurrentPluginPath("audio"));
             }
         }
@@ -195,7 +193,7 @@ namespace greycsont.GreyAnnouncer
             if (individualRankPlayCooldown[rank] > 0f) 
                 return ValidationState.IndividualCooldown;
 
-            if (!EnabledStyleConfigs[rank].Value) 
+            if (!InstanceConfig.Rank_EnabledDict[rankAudioNames[rank]].Value) 
                 return ValidationState.DisabledByConfig;
 
             if (!audioClips.TryGetValue(rank, out _)) 
@@ -235,19 +233,6 @@ namespace greycsont.GreyAnnouncer
             }
         }
 
-
-        
-        private static void AddStyleConfigEntryToList(){
-            EnabledStyleConfigs.Clear();
-            EnabledStyleConfigs.Add(InstanceConfig.RankD_Enabled);
-            EnabledStyleConfigs.Add(InstanceConfig.RankC_Enabled);
-            EnabledStyleConfigs.Add(InstanceConfig.RankB_Enabled);
-            EnabledStyleConfigs.Add(InstanceConfig.RankA_Enabled);
-            EnabledStyleConfigs.Add(InstanceConfig.RankS_Enabled);
-            EnabledStyleConfigs.Add(InstanceConfig.RankSS_Enabled);
-            EnabledStyleConfigs.Add(InstanceConfig.RankSSS_Enabled);
-            EnabledStyleConfigs.Add(InstanceConfig.RankU_Enabled);
-        }
 
         private enum ValidationState //Finite-state machine，启动！
         {

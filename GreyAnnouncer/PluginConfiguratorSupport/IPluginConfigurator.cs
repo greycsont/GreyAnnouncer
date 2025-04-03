@@ -1,9 +1,10 @@
 using System;
+using System.Collections.Generic;
 using BepInEx.Configuration;
 using PluginConfig.API;
 using PluginConfig.API.Fields;
 using PluginConfig.API.Decorators;  // for ConfigHeader
-using PluginConfig.API.Functionals; // for buttonField only
+using PluginConfig.API.Functionals; // for ButtonField only
 
 namespace greycsont.GreyAnnouncer{
     public class IPluginConfigurator{
@@ -68,14 +69,30 @@ namespace greycsont.GreyAnnouncer{
             ConfigPanel rankActivationPanel = new ConfigPanel(config.rootPanel, "Rank Activation", "Rank_Activation");
             ConfigHeader rankActivationHeader = new ConfigHeader(rankActivationPanel, "Rank Activation");
             rankActivationHeader.textColor = new UnityEngine.Color(0.85f, 0.85f, 0.85f, 1f);
-            BoolField rankD_Enabled = BoolFieldFactory(rankActivationPanel, "Destruction", "rank_D", InstanceConfig.RankD_Enabled);
-            BoolField rankC_Enabled = BoolFieldFactory(rankActivationPanel, "Chaotic", "rank_C", InstanceConfig.RankC_Enabled);
-            BoolField rankB_Enabled = BoolFieldFactory(rankActivationPanel, "Brutal", "rank_B", InstanceConfig.RankB_Enabled);
-            BoolField rankA_Enabled = BoolFieldFactory(rankActivationPanel, "Anarchic", "rank_A", InstanceConfig.RankA_Enabled);
-            BoolField rankS_Enabled = BoolFieldFactory(rankActivationPanel, "Supreme", "rank_S", InstanceConfig.RankS_Enabled);
-            BoolField rankSS_Enabled = BoolFieldFactory(rankActivationPanel, "SSadistic", "rank_SS", InstanceConfig.RankSS_Enabled);
-            BoolField rankSSS_Enabled = BoolFieldFactory(rankActivationPanel, "SSShitstorm", "rank_SSS", InstanceConfig.RankSSS_Enabled);
-            BoolField rankU_Enabled = BoolFieldFactory(rankActivationPanel, "ULTRAKILL", "rank_U", InstanceConfig.RankU_Enabled);
+            var rankBoolFields = new Dictionary<string, (string Name, string GUID)>
+            {
+                { "D", ("Destruction", "rank_D") },
+                { "C", ("Chaotic", "rank_C") },
+                { "B", ("Brutal", "rank_B") },
+                { "A", ("Anarchic", "rank_A") },
+                { "S", ("Supreme", "rank_S") },
+                { "SS", ("SSadistic", "rank_SS") },
+                { "SSS", ("SSShitstorm", "rank_SSS") },
+                { "U", ("ULTRAKILL", "rank_U") }
+            };
+
+            foreach (var rank in rankBoolFields)
+            {
+                BoolFieldFactory(rankActivationPanel, rank.Value.Name, rank.Value.GUID, InstanceConfig.Rank_EnabledDict[rank.Key]);
+            }
+            //BoolField rankD_Enabled = BoolFieldFactory(rankActivationPanel, "Destruction", "rank_D", InstanceConfig.RankD_Enabled);
+            //BoolField rankC_Enabled = BoolFieldFactory(rankActivationPanel, "Chaotic", "rank_C", InstanceConfig.RankC_Enabled);
+            //BoolField rankB_Enabled = BoolFieldFactory(rankActivationPanel, "Brutal", "rank_B", InstanceConfig.RankB_Enabled);
+            //BoolField rankA_Enabled = BoolFieldFactory(rankActivationPanel, "Anarchic", "rank_A", InstanceConfig.RankA_Enabled);
+            //BoolField rankS_Enabled = BoolFieldFactory(rankActivationPanel, "Supreme", "rank_S", InstanceConfig.RankS_Enabled);
+            //BoolField rankSS_Enabled = BoolFieldFactory(rankActivationPanel, "SSadistic", "rank_SS", InstanceConfig.RankSS_Enabled);
+            //BoolField rankSSS_Enabled = BoolFieldFactory(rankActivationPanel, "SSShitstorm", "rank_SSS", InstanceConfig.RankSSS_Enabled);
+            //BoolField rankU_Enabled = BoolFieldFactory(rankActivationPanel, "ULTRAKILL", "rank_U", InstanceConfig.RankU_Enabled);
         }
 
         private static void AdvancedOptionPanel(){
@@ -94,7 +111,7 @@ namespace greycsont.GreyAnnouncer{
                     });    //In Water.cs
         }
 
-        private static BoolField BoolFieldFactory(ConfigPanel parentPanel,string name,string GUID,ConfigEntry<bool> configEntry,bool defaultValue = true,params Action<BoolField.BoolValueChangeEvent>[] eventCallbacks)  // 额外事件绑定
+        private static BoolField BoolFieldFactory(ConfigPanel parentPanel,string name,string GUID,ConfigEntry<bool> configEntry,bool defaultValue = true,params Action<BoolField.BoolValueChangeEvent>[] eventCallbacks)
         {
             BoolField boolField = new BoolField(parentPanel, name, GUID, configEntry.Value);
             boolField.onValueChange += (BoolField.BoolValueChangeEvent e) =>

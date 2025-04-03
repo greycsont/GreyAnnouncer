@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using BepInEx.Configuration;
 
 namespace greycsont.GreyAnnouncer{
@@ -10,6 +11,7 @@ namespace greycsont.GreyAnnouncer{
         public const bool DEFAULT_LOW_PASS_FILTER_ENABLED = true;
         public static ConfigEntry<float> SharedRankPlayCooldown;    // Range : 0f ~ 10f
         public static ConfigEntry<float> IndividualRankPlayCooldown;    // Range : 0f ~ 114514f
+        public static Dictionary<string, ConfigEntry<bool>> Rank_EnabledDict = new();
         public static ConfigEntry<bool> RankD_Enabled;
         public static ConfigEntry<bool> RankC_Enabled;
         public static ConfigEntry<bool> RankB_Enabled;
@@ -46,60 +48,29 @@ namespace greycsont.GreyAnnouncer{
             );
         }
         private static void BindRankEnabledConfigEntryValues(Plugin plugin){
-            RankD_Enabled = plugin.Config.Bind(
-                "Enabled Style", 
-                "Destruction", 
-                DEFAULT_RANK_FILTER_ENABLED, 
-                "Set to true to allow announce at D-rank"
-            );
+            var rankNames = new Dictionary<string, string>
+            {
+                { "D", "Destruction" },
+                { "C", "Chaotic" },
+                { "B", "Brutal" },
+                { "A", "Anarchic" },
+                { "S", "Supreme" },
+                { "SS", "SSadistic" },
+                { "SSS", "SSShitstorm" },
+                { "U", "ULTRAKILL" }
+            };
 
-            RankC_Enabled = plugin.Config.Bind(
-                "Enabled Style", 
-                "Chaotic", 
-                DEFAULT_RANK_FILTER_ENABLED, 
-                "Set to true to allow announce at C-rank"
-            );
+            foreach (var rank in rankNames)
+            {
+                var configEntry = plugin.Config.Bind(
+                    "Enabled Style",
+                    rank.Value,
+                    DEFAULT_RANK_FILTER_ENABLED,
+                    $"Set to true to allow announce at {rank.Key}-rank"
+                );
 
-            RankB_Enabled = plugin.Config.Bind(
-                "Enabled Style", 
-                "Brutal", 
-                DEFAULT_RANK_FILTER_ENABLED, 
-                "Set to true to allow announce at B-rank"
-            );
-
-            RankA_Enabled = plugin.Config.Bind(
-                "Enabled Style", 
-                "Anarchic", 
-                DEFAULT_RANK_FILTER_ENABLED, 
-                "Set to true to allow announce at A-rank"
-            );
-
-            RankS_Enabled = plugin.Config.Bind(
-                "Enabled Style", 
-                "Supreme", 
-                DEFAULT_RANK_FILTER_ENABLED, 
-                "Set to true to allow announce at S-rank"
-            );
-            RankSS_Enabled = plugin.Config.Bind(
-                "Enabled Style", 
-                "SSadistic", 
-                DEFAULT_RANK_FILTER_ENABLED, 
-                "Set to true to allow announce at SS-rank"
-            );
-
-            RankSSS_Enabled = plugin.Config.Bind(
-                "Enabled Style", 
-                "SSShitstorm", 
-                DEFAULT_RANK_FILTER_ENABLED, 
-                "Set to true to allow announce at SSS-rank"
-            );
-
-            RankU_Enabled = plugin.Config.Bind(
-                "Enabled Style", 
-                "ULTRAKILL", 
-                DEFAULT_RANK_FILTER_ENABLED, 
-                "Set to true to allow announce at U-rank"
-            );
+                Rank_EnabledDict[rank.Key] = configEntry;
+            }
             
         }
         private static void BindAudioRelatedConfigEntryValues(Plugin plugin){

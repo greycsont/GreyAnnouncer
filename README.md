@@ -10,7 +10,7 @@ You can add the sound by replace the .wav file in the **Audio** folder near the 
 
    1. Install **BepInEx**.
    2. Download the mod.
-   3. Extract all contents from the `.zip` file into the game folder.
+   3. Extract all contents from the `.zip` file into the **ULTRAKILL\BepInEx\plugin** folder.
       - **Highly recommended**: Create and name a separate folder inside the `plugins` directory to keep mods organized.
 
 
