@@ -84,7 +84,7 @@ namespace greycsont.GreyAnnouncer{
 
             foreach (var rank in rankBoolFields)
             {
-                var boolField = BoolFieldFactory(rankActivationPanel, rank.Value.Name, rank.Value.GUID, InstanceConfig.Rank_EnabledDict[rank.Key]);
+                var boolField = BoolFieldFactory(rankActivationPanel, rank.Value.Name, rank.Value.GUID, InstanceConfig.RankToggleDict[rank.Key]);
                 rankToggleFieldDict.Add(rank.Key, boolField);
             }
         }

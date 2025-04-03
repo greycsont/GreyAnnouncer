@@ -11,7 +11,7 @@ namespace greycsont.GreyAnnouncer{
         public const bool DEFAULT_LOW_PASS_FILTER_ENABLED = true;
         public static ConfigEntry<float> SharedRankPlayCooldown;    // Range : 0f ~ 10f
         public static ConfigEntry<float> IndividualRankPlayCooldown;    // Range : 0f ~ 114514f
-        public static Dictionary<string, ConfigEntry<bool>> Rank_EnabledDict = new();
+        public static Dictionary<string, ConfigEntry<bool>> RankToggleDict = new();
         public static ConfigEntry<float> AudioSourceVolume; // Range : 0f ~ 1f
         public static ConfigEntry<bool> LowPassFilter_Enabled;
         public static void Initialize(Plugin plugin)
@@ -61,7 +61,7 @@ namespace greycsont.GreyAnnouncer{
                     $"Set to true to allow announce at {rank.Key}-rank"
                 );
 
-                Rank_EnabledDict[rank.Key] = configEntry;
+                RankToggleDict[rank.Key] = configEntry;
             }
             
         }

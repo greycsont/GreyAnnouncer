@@ -192,7 +192,7 @@ namespace greycsont.GreyAnnouncer
             if (individualRankPlayCooldown[rank] > 0f) 
                 return ValidationState.IndividualCooldown;
 
-            if (!InstanceConfig.Rank_EnabledDict[rankAudioNames[rank]].Value) 
+            if (!InstanceConfig.RankToggleDict[rankAudioNames[rank]].Value) 
                 return ValidationState.DisabledByConfig;
 
             if (!audioClips.TryGetValue(rank, out _)) 

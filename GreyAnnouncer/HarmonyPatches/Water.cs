@@ -16,7 +16,7 @@ namespace greycsont.GreyAnnouncer{
     
     
     [HarmonyPatch(typeof(UnderwaterController), "EnterWater")]
-    public static class AddLowPassFilters_Patch
+    public static class EnterWater_Patch
     {
         public static void Postfix()
         {
@@ -25,7 +25,7 @@ namespace greycsont.GreyAnnouncer{
         }
     }
     [HarmonyPatch(typeof(UnderwaterController), "OutWater")]
-    public static class RemoveLowPassFilters_Patch
+    public static class OutWater_Patch
     {
         public static void Postfix()
         {

@@ -66,12 +66,12 @@ There's two ways to customize the setting
 if you encountered any bug, complains and suggestions, please upload it on [GreyAnnouncer issue](https://github.com/greycsont/GreyAnnouncer/issues).
 
 #### Credit
-
-
 Thanks:
 - [Announcer Mod](https://www.nexusmods.com/ultrakill/mods/54)
 - [PluginConfigurator doc](https://github.com/eternalUnion/UKPluginConfigurator/wiki)
-- [Maxwell's puzzling demon](https://store.steampowered.com/app/2770160/)<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+- [Maxwell's puzzling demon](https://store.steampowered.com/app/2770160/)
+- [Everything](https://www.voidtools.com/) Saved my mod's thumbnail and manifest deleted by vscode or git by unknown reason
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 ###### Easter egg
 The ULTRA_REVAMP update DESTROYed my favorite mod, So ......

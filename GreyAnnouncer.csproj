@@ -66,4 +66,8 @@
     <PackageReference Include="BepInEx.Analyzers" Version="1.0.8" PrivateAssets="all" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <OutputPath>$(SolutionDir)BuildOutput\</OutputPath>
+  </PropertyGroup>
+
 </Project>
