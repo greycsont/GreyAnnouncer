@@ -8,6 +8,7 @@ using PluginConfig.API.Functionals; // for ButtonField only
 
 namespace greycsont.GreyAnnouncer{
     public class IPluginConfigurator{
+        private static Dictionary<string, BoolField> rankToggleFieldDict = new Dictionary<string, BoolField>();
         private static PluginConfigurator config;
         public static void Initialize(){
             config = PluginConfigurator.Create(PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_GUID);
@@ -59,13 +60,13 @@ namespace greycsont.GreyAnnouncer{
             };      
 
             /* You don't have to do this in the MainPanel(). I did this because it makes it more readable by human. */
-            RankEnablePanel();  
+            RankTogglePanel();  
             AdvancedOptionPanel();
             ButtonField button = new ButtonField(config.rootPanel, "Reload Audio", "reload_audio");
             button.onClick += new ButtonField.OnClick(Announcer.ReloadAudio);
         }
 
-        private static void RankEnablePanel(){
+        private static void RankTogglePanel(){
             ConfigPanel rankActivationPanel = new ConfigPanel(config.rootPanel, "Rank Activation", "Rank_Activation");
             ConfigHeader rankActivationHeader = new ConfigHeader(rankActivationPanel, "Rank Activation");
             rankActivationHeader.textColor = new UnityEngine.Color(0.85f, 0.85f, 0.85f, 1f);
@@ -83,16 +84,9 @@ namespace greycsont.GreyAnnouncer{
 
             foreach (var rank in rankBoolFields)
             {
-                BoolFieldFactory(rankActivationPanel, rank.Value.Name, rank.Value.GUID, InstanceConfig.Rank_EnabledDict[rank.Key]);
+                var boolField = BoolFieldFactory(rankActivationPanel, rank.Value.Name, rank.Value.GUID, InstanceConfig.Rank_EnabledDict[rank.Key]);
+                rankToggleFieldDict.Add(rank.Key, boolField);
             }
-            //BoolField rankD_Enabled = BoolFieldFactory(rankActivationPanel, "Destruction", "rank_D", InstanceConfig.RankD_Enabled);
-            //BoolField rankC_Enabled = BoolFieldFactory(rankActivationPanel, "Chaotic", "rank_C", InstanceConfig.RankC_Enabled);
-            //BoolField rankB_Enabled = BoolFieldFactory(rankActivationPanel, "Brutal", "rank_B", InstanceConfig.RankB_Enabled);
-            //BoolField rankA_Enabled = BoolFieldFactory(rankActivationPanel, "Anarchic", "rank_A", InstanceConfig.RankA_Enabled);
-            //BoolField rankS_Enabled = BoolFieldFactory(rankActivationPanel, "Supreme", "rank_S", InstanceConfig.RankS_Enabled);
-            //BoolField rankSS_Enabled = BoolFieldFactory(rankActivationPanel, "SSadistic", "rank_SS", InstanceConfig.RankSS_Enabled);
-            //BoolField rankSSS_Enabled = BoolFieldFactory(rankActivationPanel, "SSShitstorm", "rank_SSS", InstanceConfig.RankSSS_Enabled);
-            //BoolField rankU_Enabled = BoolFieldFactory(rankActivationPanel, "ULTRAKILL", "rank_U", InstanceConfig.RankU_Enabled);
         }
 
         private static void AdvancedOptionPanel(){

@@ -6,20 +6,12 @@ namespace greycsont.GreyAnnouncer{
     {
         public const float DEFAULT_SHARED_RANK_COOLDOWN = 0f;
         public const float DEFAULT_INDIVIDUAL_RANK_COOLDOWN = 3f;
-        public const bool DEFAULT_RANK_FILTER_ENABLED = true;
+        public const bool DEFAULT_RANK_TOGGLED = true;
         public const float DEFAULT_AUDIO_SOURCE_VOLUME = 1f;
         public const bool DEFAULT_LOW_PASS_FILTER_ENABLED = true;
         public static ConfigEntry<float> SharedRankPlayCooldown;    // Range : 0f ~ 10f
         public static ConfigEntry<float> IndividualRankPlayCooldown;    // Range : 0f ~ 114514f
         public static Dictionary<string, ConfigEntry<bool>> Rank_EnabledDict = new();
-        public static ConfigEntry<bool> RankD_Enabled;
-        public static ConfigEntry<bool> RankC_Enabled;
-        public static ConfigEntry<bool> RankB_Enabled;
-        public static ConfigEntry<bool> RankA_Enabled;
-        public static ConfigEntry<bool> RankS_Enabled;
-        public static ConfigEntry<bool> RankSS_Enabled;
-        public static ConfigEntry<bool> RankSSS_Enabled;
-        public static ConfigEntry<bool> RankU_Enabled;
         public static ConfigEntry<float> AudioSourceVolume; // Range : 0f ~ 1f
         public static ConfigEntry<bool> LowPassFilter_Enabled;
         public static void Initialize(Plugin plugin)
@@ -65,7 +57,7 @@ namespace greycsont.GreyAnnouncer{
                 var configEntry = plugin.Config.Bind(
                     "Enabled Style",
                     rank.Value,
-                    DEFAULT_RANK_FILTER_ENABLED,
+                    DEFAULT_RANK_TOGGLED,
                     $"Set to true to allow announce at {rank.Key}-rank"
                 );
 
