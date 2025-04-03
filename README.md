@@ -1,4 +1,5 @@
-## What does it do?
+<img alt="Static Badge" src="https://img.shields.io/badge/Grey-Announcer-00FFFF" width="150">
+
 It will play a **audio** when you reach to a higher style rank!
 
 You can add the sound by replace the .wav file in the **Audio** folder near the plugin!
@@ -70,9 +71,17 @@ Thanks:
 - [Announcer Mod](https://www.nexusmods.com/ultrakill/mods/54)
 - [PluginConfigurator doc](https://github.com/eternalUnion/UKPluginConfigurator/wiki)
 - [Maxwell's puzzling demon](https://store.steampowered.com/app/2770160/)
-- [Everything](https://www.voidtools.com/) Saved my mod's thumbnail and manifest deleted by vscode or git by unknown reason
+- [Everything](https://www.voidtools.com/) Saved my mod's thumbnail and manifest by VSCODE's github extention's auto correction.
+
+#### License
+- This project is not open-sourced under the MIT License.
+- The code/software is licensed under the MIT License.
+- The icons and assets are not covered by the MIT License and are subject to separate licensing terms.
+- The icons and assets are provided only for use within this project. **Unauthorized commercial use is prohibited**.
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
+###### Future
+- json to allow custom audio name instead naming stuff, but idk how do i shown it in the pluginConfigurator
 ###### Easter egg
 The ULTRA_REVAMP update DESTROYed my favorite mod, So ......
 (But the mod updated to the ULTRA_REVAMP, please check **Announcer** in the Thanks)

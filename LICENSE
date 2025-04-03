@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2025 greycsont (or csont and 灰喉攻略组)
+Copyright (c) 2025 greycsont aka csont aka 灰喉攻略组
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,15 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-
----
-
-Licensing Notice:
-
-This project consists of both source code and assets. They are licensed separately:
-
-- Source Code: Licensed under the MIT License (see above).
-- Assets (including images, icons, graphics, and other non-code resources): Licensed under the AGPL-3.0 License (see LICENSE-AGPL-3.0).
-
-By using this project, you agree to comply with the respective license terms.
-

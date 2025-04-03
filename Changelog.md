@@ -1,3 +1,8 @@
+### v1.0.2
+- changed the mod's icon (because the old icon directly uses the Arknights's asset)
+- using dictionary to decoupe code like PluginConfigurator field's etc.
+- some changes of license (seen in README.md)
+
 ### v1.0.1
 - Added LowPassFilter(Muffle) when under water (Thanks Clover for DM in discord)
 - Added more option (Volume of all rank etc.)
