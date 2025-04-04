@@ -2,16 +2,12 @@ using System.Collections.Generic;
 using BepInEx.Configuration;
 
 namespace greycsont.GreyAnnouncer{
+    
     public static class InstanceConfig
     {
-        public const float DEFAULT_SHARED_RANK_COOLDOWN = 0f;
-        public const float DEFAULT_INDIVIDUAL_RANK_COOLDOWN = 3f;
-        public const bool DEFAULT_RANK_TOGGLED = true;
-        public const float DEFAULT_AUDIO_SOURCE_VOLUME = 1f;
-        public const bool DEFAULT_LOW_PASS_FILTER_ENABLED = true;
+        public static Dictionary<string, ConfigEntry<bool>> RankToggleDict = new();
         public static ConfigEntry<float> SharedRankPlayCooldown;    // Range : 0f ~ 10f
         public static ConfigEntry<float> IndividualRankPlayCooldown;    // Range : 0f ~ 114514f
-        public static Dictionary<string, ConfigEntry<bool>> RankToggleDict = new();
         public static ConfigEntry<float> AudioSourceVolume; // Range : 0f ~ 1f
         public static ConfigEntry<bool> LowPassFilter_Enabled;
         public static void Initialize(Plugin plugin)
@@ -25,6 +21,11 @@ namespace greycsont.GreyAnnouncer{
             BindAudioRelatedConfigEntryValues(plugin);
         }
         private static void BindCooldownConfigEntryValues(Plugin plugin){
+            var cooldownNames = new Dictionary<string, string>
+            {
+                { "Shared", "Shared"},
+                { "Individual", "Individual"}
+            };
             SharedRankPlayCooldown = plugin.Config.Bind(
                 "Cooldown", 
                 "Shared_rank_play_cooldown", 
@@ -63,7 +64,6 @@ namespace greycsont.GreyAnnouncer{
 
                 RankToggleDict[rank.Key] = configEntry;
             }
-            
         }
         private static void BindAudioRelatedConfigEntryValues(Plugin plugin){
             AudioSourceVolume = plugin.Config.Bind(
@@ -80,5 +80,12 @@ namespace greycsont.GreyAnnouncer{
                 "Set to true to enable muffle effect when under water"
             );
         }
+
+        public const float DEFAULT_SHARED_RANK_COOLDOWN = 0f;
+        public const float DEFAULT_INDIVIDUAL_RANK_COOLDOWN = 3f;
+        public const bool DEFAULT_RANK_TOGGLED = true;
+        public const float DEFAULT_AUDIO_SOURCE_VOLUME = 1f;
+        public const bool DEFAULT_LOW_PASS_FILTER_ENABLED = true;
+        
     }
 }
