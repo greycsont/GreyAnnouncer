@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "AY8ebl7mTduWNUtlnp5UlsqRIMD0m++XKGH1Q7NJg7YrM95KeR/ufhhVjg5LeSRtaMkyUFFrUg4daXqUWkCtDA==",
+  "dgSpecHash": "LPX0T4yr9TqAbVHEXdg3ab+4jkFD+LECjMlRgQI2Xq0CX9xFnM/xbsiZmmq81R4UohJhHxyytpJKQjwZwC9aTg==",
   "success": true,
   "projectFilePath": "H:\\C#Project\\GreyAnnouncer\\GreyAnnouncer.csproj",
   "expectedPackageFiles": [
@@ -8,9 +8,18 @@
     "C:\\Users\\asd\\.nuget\\packages\\bepinex.baselib\\5.4.20\\bepinex.baselib.5.4.20.nupkg.sha512",
     "C:\\Users\\asd\\.nuget\\packages\\bepinex.core\\5.4.21\\bepinex.core.5.4.21.nupkg.sha512",
     "C:\\Users\\asd\\.nuget\\packages\\harmonyx\\2.10.2\\harmonyx.2.10.2.nupkg.sha512",
+    "C:\\Users\\asd\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\8.0.0\\microsoft.bcl.asyncinterfaces.8.0.0.nupkg.sha512",
     "C:\\Users\\asd\\.nuget\\packages\\mono.cecil\\0.11.4\\mono.cecil.0.11.4.nupkg.sha512",
     "C:\\Users\\asd\\.nuget\\packages\\monomod.runtimedetour\\22.3.23.4\\monomod.runtimedetour.22.3.23.4.nupkg.sha512",
-    "C:\\Users\\asd\\.nuget\\packages\\monomod.utils\\22.3.23.4\\monomod.utils.22.3.23.4.nupkg.sha512"
+    "C:\\Users\\asd\\.nuget\\packages\\monomod.utils\\22.3.23.4\\monomod.utils.22.3.23.4.nupkg.sha512",
+    "C:\\Users\\asd\\.nuget\\packages\\system.buffers\\4.5.1\\system.buffers.4.5.1.nupkg.sha512",
+    "C:\\Users\\asd\\.nuget\\packages\\system.memory\\4.5.5\\system.memory.4.5.5.nupkg.sha512",
+    "C:\\Users\\asd\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512",
+    "C:\\Users\\asd\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
+    "C:\\Users\\asd\\.nuget\\packages\\system.text.encodings.web\\8.0.0\\system.text.encodings.web.8.0.0.nupkg.sha512",
+    "C:\\Users\\asd\\.nuget\\packages\\system.text.json\\8.0.0\\system.text.json.8.0.0.nupkg.sha512",
+    "C:\\Users\\asd\\.nuget\\packages\\system.threading.tasks.extensions\\4.5.4\\system.threading.tasks.extensions.4.5.4.nupkg.sha512",
+    "C:\\Users\\asd\\.nuget\\packages\\system.valuetuple\\4.5.0\\system.valuetuple.4.5.0.nupkg.sha512"
   ],
   "logs": []
 }
