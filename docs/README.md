@@ -41,6 +41,8 @@ You can add the sound by replace the .wav file in the **Audio** folder near the 
 
 The rank sound files should be named in the following specific format:
 
+<img align="right" width="300" src="https://github.com/seerge/g-helper/assets/5920850/3e119674-db8d-486b-aa65-2bf9b61f9aa6">
+
 - `D.wav`
 - `C.wav`
 - `B.wav`
