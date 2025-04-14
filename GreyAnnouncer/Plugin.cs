@@ -2,6 +2,7 @@
 using BepInEx.Bootstrap;
 using BepInEx.Logging;
 using HarmonyLib;
+using Newtonsoft.Json;
 
 /* The StyleHUD.cs in the HarmonyPatches folder is the starting point of the whole sequence of announcer 
    But for the initialize of the program like loading audio or something, you should start from here */
@@ -22,6 +23,7 @@ namespace greycsont.GreyAnnouncer{
             Log.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
         }
         private void LoadMainModule(){
+            JsonManager.Initialze();
             InstanceConfig.Initialize(this);
             Announcer.Initialize();
         }

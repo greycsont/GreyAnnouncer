@@ -1,0 +1,15 @@
+{
+  "RankSetting": {
+    "ranks": [ "D", "C", "B", "A", "S", "SS", "SSS", "U" ],
+    "audioNames": [
+      "D",
+      "C",
+      "B",
+      "A",
+      "S",
+      "SS",
+      "SSS",
+      "U"
+    ]
+  }
+}

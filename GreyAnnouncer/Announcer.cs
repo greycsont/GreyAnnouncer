@@ -180,7 +180,7 @@ namespace greycsont.GreyAnnouncer
 
         private static ValidationState GetPlayValidationState(int rank)
         {
-            if (rank < 0 || rank > 7)   // To compatible with another mods, 0 ~ 7, maybe support to add more ranks
+            if (rank < 0 || rank > rankAudioNames.Length - 1)   // To compatible with another mods, 0 ~ 7, maybe support to add more ranks
                 return ValidationState.InvaildRankIndex;
 
             if (audioFailedLoading.Contains(rankAudioNames[rank])) 

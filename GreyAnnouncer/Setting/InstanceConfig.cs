@@ -88,4 +88,6 @@ namespace greycsont.GreyAnnouncer{
         public const bool DEFAULT_LOW_PASS_FILTER_ENABLED = true;
         
     }
+
+    
 }
