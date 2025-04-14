@@ -23,7 +23,7 @@ namespace greycsont.GreyAnnouncer{
             Log.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
         }
         private void LoadMainModule(){
-            JsonManager.Initialze();
+            JsonManager.Initialize();
             InstanceConfig.Initialize(this);
             Announcer.Initialize();
         }

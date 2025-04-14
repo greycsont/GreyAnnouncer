@@ -1,56 +1,47 @@
-using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 
-namespace greycsont.GreyAnnouncer {
-    public class RankSettings
-    {
-        public string[] ranks { get; set; }
-        public string[] audioNames { get; set; }
-    }
-    public class RootObject
-    {
-        public RankSettings RankSettings { get; set; }
-    }
-
+namespace greycsont.GreyAnnouncer
+{
     public class JsonManager
     {
         private const string JSON_NAME = "JsonSettings.json";
-        public static void Initialze()
+        private static string JSON_FILE_PATH = PathManager.GetCurrentPluginPath(JSON_NAME);
+
+        public static void Initialize()
         {
             TryToFetchJson();
         }
 
-        private static bool CheckDoesJsonExists() {
-            if (!File.Exists("ExtensiveSetting.json")) return false;
-            return true;
+        private static void TryToFetchJson()
+        {
+            if (!CheckDoesJsonExists()) CreateJsonFile();
+            ReadJson();
         }
 
-        private static void TryToFetchJson(){
-            if (CheckDoesJsonExists() == false){
-                CreateJsonFile();
-            }
+        private static bool CheckDoesJsonExists()
+        {
+            return File.Exists(JSON_FILE_PATH);
         }
 
-        private static void CreateJsonFile(){
-            var rankSettings = new List<RankSettings>
+        private static void CreateJsonFile()
+        {
+            var rankSettings = new RankSettings
             {
-                new RankSettings { ranks = new[] {"D", "C", "B", "A", "S", "SS", "SSS", "U" } },
-                new RankSettings { audioNames = new[] {"D", "C", "B", "A", "S", "SS", "SSS", "U" }}
+                ranks = new[] { "D", "C", "B", "A", "S", "SS", "SSS", "U" },
+                audioNames = new[] { "D", "C", "B", "A", "S", "SS", "SSS", "U" }
             };
-            string json = JsonConvert.SerializeObject(rankSettings, Formatting.Indented);
-            File.WriteAllText(JSON_NAME, json);
-            Plugin.Log.LogInfo($"Initialzied {JSON_NAME}");
+
+            var rootObject = new RootObject { RankSettings = rankSettings };
+            string json = JsonConvert.SerializeObject(rootObject, Formatting.Indented);
+            File.WriteAllText(JSON_FILE_PATH, json);
+            Plugin.Log.LogInfo($"Initialized {JSON_NAME}");
         }
 
-        private static void ReadJson(){
-            string loadedJson = File.ReadAllText(JSON_NAME);
-            var settings = JsonConvert.DeserializeObject<RootObject>(loadedJson);
-
-            foreach (var rank in settings.RankSettings.ranks)
-            {
-                Plugin.Log.LogInfo(rank);
-            }
+        public static void ReadJson()
+        {
+            string loadedJson = File.ReadAllText(JSON_FILE_PATH);
+            JsonSetting.Settings = JsonConvert.DeserializeObject<RootObject>(loadedJson);
         }
     }
 }

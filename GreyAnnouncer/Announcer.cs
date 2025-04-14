@@ -9,12 +9,12 @@ using System;
             PathManager.cs to find and fetch audio
             AudioSourceManager.cs to add LowPassFilter
             CoroutineRunner.cs for set timer
-            InstanceConfig for setting */
+            InstanceConfig.cs for setting
+            JsonSetting.cs for setting */
 namespace greycsont.GreyAnnouncer
 {
     public class Announcer{       
         private static Dictionary<int, AudioClip> audioClips = new Dictionary<int, AudioClip>();
-        private static readonly string[] rankAudioNames = { "D", "C", "B", "A", "S", "SS", "SSS", "U"};
         private static float[] individualRankPlayCooldown = {0f,0f,0f,0f,0f,0f,0f,0f};
         private static float sharedRankPlayCooldown = 0f;  // Timer
         private static readonly HashSet<string> audioFailedLoading = new();
@@ -48,8 +48,8 @@ namespace greycsont.GreyAnnouncer
             if (localAudioSource == null){
                 localAudioSource = GetGlobalAudioSource();
             }
-            localAudioSource.spatialBlend = 0f;
-            localAudioSource.priority = 0;
+            localAudioSource.spatialBlend = 0f; // 2D
+            localAudioSource.priority = 0; // Make sure you can hear the announce
         }
 
         private static AudioSource GetGlobalAudioSource()
@@ -75,7 +75,7 @@ namespace greycsont.GreyAnnouncer
             TryToFindDirectoryOfAudioFolder(audioPath);
             TryToFetchAudios(audioPath);
             LoggingAudioFailedLoading();
-            if (audioFailedLoading.SetEquals(rankAudioNames)){  // array compare to hashset
+            if (audioFailedLoading.SetEquals(JsonSetting.Settings.RankSettings.ranks)){  // array compare to hashset
                 Plugin.Log.LogWarning($"No audio files found in the directory : {audioPath}.");
                 FindAvailableAudio(PathManager.GetCurrentPluginPath("audio"));
             }
@@ -90,12 +90,12 @@ namespace greycsont.GreyAnnouncer
         }
         private static void TryToFetchAudios(string audioPath){
             string[] supportedExtensions = new string[] { ".wav", ".mp3", ".ogg", ".aiff", ".aif" };
-            for (int i = 0; i < rankAudioNames.Length; i++)
+            for (int i = 0; i < JsonSetting.Settings.RankSettings.ranks.Length; i++)
             {
                 string filePath = null;
                 foreach (var ext in supportedExtensions)
                 {
-                    string potentialPath = Path.Combine(audioPath, rankAudioNames[i] + ext);
+                    string potentialPath = Path.Combine(audioPath, JsonSetting.Settings.RankSettings.audioNames[i] + ext);
                     if (File.Exists(potentialPath))
                     {
                         filePath = potentialPath;
@@ -107,7 +107,7 @@ namespace greycsont.GreyAnnouncer
                     CoroutineRunner.Instance.StartCoroutine(LoadAudioClip(filePath, i));
                 }
                 else {
-                    audioFailedLoading.Add(rankAudioNames[i]);
+                    audioFailedLoading.Add(JsonSetting.Settings.RankSettings.ranks[i]);
                     continue;
                 }
             }
@@ -124,7 +124,7 @@ namespace greycsont.GreyAnnouncer
             string url = new Uri(path).AbsoluteUri;
             //string url = "file://" + path;
             AudioType audioType = GetAudioTypeFromExtension(url);
-            Plugin.Log.LogInfo($"Loading audio : {rankAudioNames[key]} from {url}");
+            Plugin.Log.LogInfo($"Loading audio : {JsonSetting.Settings.RankSettings.audioNames[key]} for Rank : {JsonSetting.Settings.RankSettings.ranks[key]} from {url}");
             using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, audioType))
             {
                 yield return www.SendWebRequest();
@@ -171,7 +171,7 @@ namespace greycsont.GreyAnnouncer
             ValidationState state = GetPlayValidationState(rank);
             if (state != ValidationState.Success)
             {
-                Plugin.Log.LogInfo($"Skip {rankAudioNames[rank]} for {state}");
+                Plugin.Log.LogInfo($"Skip {JsonSetting.Settings.RankSettings.audioNames[rank]} for {state}");
                 return null;
             }
 
@@ -180,10 +180,10 @@ namespace greycsont.GreyAnnouncer
 
         private static ValidationState GetPlayValidationState(int rank)
         {
-            if (rank < 0 || rank > rankAudioNames.Length - 1)   // To compatible with another mods, 0 ~ 7, maybe support to add more ranks
+            if (rank < 0 || rank > JsonSetting.Settings.RankSettings.ranks.Length - 1)   // To compatible with another mods, 0 ~ 7, maybe support to add more ranks
                 return ValidationState.InvaildRankIndex;
 
-            if (audioFailedLoading.Contains(rankAudioNames[rank])) 
+            if (audioFailedLoading.Contains(JsonSetting.Settings.RankSettings.ranks[rank])) 
                 return ValidationState.AudioFailedLoading;
 
             if (sharedRankPlayCooldown > 0f) 
@@ -192,7 +192,7 @@ namespace greycsont.GreyAnnouncer
             if (individualRankPlayCooldown[rank] > 0f) 
                 return ValidationState.IndividualCooldown;
 
-            if (!InstanceConfig.RankToggleDict[rankAudioNames[rank]].Value) 
+            if (!InstanceConfig.RankToggleDict[JsonSetting.Settings.RankSettings.ranks[rank]].Value) 
                 return ValidationState.DisabledByConfig;
 
             if (!audioClips.TryGetValue(rank, out _)) 
