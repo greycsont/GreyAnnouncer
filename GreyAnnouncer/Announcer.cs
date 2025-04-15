@@ -45,9 +45,7 @@ namespace greycsont.GreyAnnouncer
         }
 
         private static void GetLocalAudioSource(){
-            if (localAudioSource == null){
-                localAudioSource = GetGlobalAudioSource();
-            }
+            localAudioSource ??= GetGlobalAudioSource();
             localAudioSource.spatialBlend = 0f; // 2D
             localAudioSource.priority = 0; // Make sure you can hear the announce
         }
@@ -71,10 +69,12 @@ namespace greycsont.GreyAnnouncer
                 return;
             }
             limitOfRecursive++;
+
             audioFailedLoading.Clear();
             TryToFindDirectoryOfAudioFolder(audioPath);
             TryToFetchAudios(audioPath);
             LoggingAudioFailedLoading();
+            
             if (audioFailedLoading.SetEquals(JsonSetting.Settings.RankSettings.ranks)){  // array compare to hashset
                 Plugin.Log.LogWarning($"No audio files found in the directory : {audioPath}.");
                 FindAvailableAudio(PathManager.GetCurrentPluginPath("audio"));
@@ -155,15 +155,24 @@ namespace greycsont.GreyAnnouncer
 
         
         public static void PlaySound(int rank){
-            AudioClip clip = CheckPlayValidation(rank);
-            if (clip == null) return;
-            if (localAudioSource == null) GetLocalAudioSource();
-            localAudioSource.clip = clip;
-            localAudioSource.volume = InstanceConfig.AudioSourceVolume.Value < 1f ? InstanceConfig.AudioSourceVolume.Value : 1f;
-            localAudioSource.Play();
+            /* I don't like to use the try-catch, but when I testing the mod, there's a bug I meet :
+               Parry balls of Maurice -> Hit Maurice -> AscendingRank() -> Postfix() -> PlaySound() -> CheckPlayValidation() 
+               There's some conflict of pointer in the ValidationState.DisabledByConfig ("D" -- "Rank_D")
+               And it gives a nullPointerException and skiped the explosion on the maurice
+               So that's why I uses a try-catch in here*/
+            try {
+                AudioClip clip = CheckPlayValidation(rank);
+                if (clip == null) return;
+                if (localAudioSource == null) GetLocalAudioSource();
+                localAudioSource.clip = clip;
+                localAudioSource.volume = InstanceConfig.AudioSourceVolume.Value < 1f ? InstanceConfig.AudioSourceVolume.Value : 1f;
+                localAudioSource.Play();
 
-            CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => sharedRankPlayCooldown = value, InstanceConfig.SharedRankPlayCooldown.Value));
-            CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => individualRankPlayCooldown[rank] = value, InstanceConfig.IndividualRankPlayCooldown.Value));
+                CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => sharedRankPlayCooldown = value, InstanceConfig.SharedRankPlayCooldown.Value));
+                CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => individualRankPlayCooldown[rank] = value, InstanceConfig.IndividualRankPlayCooldown.Value));
+            }catch (Exception ex){
+                Plugin.Log.LogError($"Error in PlaySound() : {ex}");
+            }    
         }
 
         private static AudioClip CheckPlayValidation(int rank)

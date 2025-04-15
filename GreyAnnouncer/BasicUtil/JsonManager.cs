@@ -29,6 +29,7 @@ namespace greycsont.GreyAnnouncer
             var rankSettings = new RankSettings
             {
                 ranks = new[] { "D", "C", "B", "A", "S", "SS", "SSS", "U" },
+                fullRankNames = new[] {"Destruction", "Chaotic", "Brutal", "Anarchic", "Supreme", "SSadistic", "SSShitstorm", "ULTRAKILL"},
                 audioNames = new[] { "D", "C", "B", "A", "S", "SS", "SSS", "U" }
             };
 

@@ -8,8 +8,10 @@ using PluginConfig.API.Functionals; // for ButtonField only
 
 namespace greycsont.GreyAnnouncer{
     public class IPluginConfigurator{
+        
         private static Dictionary<string, BoolField> rankToggleFieldDict = new Dictionary<string, BoolField>();
         private static PluginConfigurator config;
+        
         public static void Initialize(){
             config = PluginConfigurator.Create(PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_GUID);
             config.SetIconWithURL(PathManager.GetCurrentPluginPath("icon.png"));
@@ -18,14 +20,14 @@ namespace greycsont.GreyAnnouncer{
 
         private static void MainPanel(){
             ConfigHeader mainHeader = new ConfigHeader(config.rootPanel, "Main Settings");
+            
             mainHeader.textColor = new UnityEngine.Color(0.85f, 0.85f, 0.85f, 1f);
-            // ConfigFields(panel, displayname, GUID, default value))
-            FloatField sharedRankPlayCooldown = new FloatField(
-                    config.rootPanel,
+            
+            FloatField sharedRankPlayCooldown = new FloatField(config.rootPanel,
                     "Shared rank cooldown", 
                     "sharedRankPlayCooldown", 
                     InstanceConfig.SharedRankPlayCooldown.Value, 0f, 114514f
-                    );
+                    );  // ConfigFields(panel, displayname, GUID, default value))
             sharedRankPlayCooldown.defaultValue = 0f;
             sharedRankPlayCooldown.onValueChange += (FloatField.FloatValueChangeEvent e) =>
             {
@@ -70,22 +72,13 @@ namespace greycsont.GreyAnnouncer{
             ConfigPanel rankActivationPanel = new ConfigPanel(config.rootPanel, "Rank Activation", "Rank_Activation");
             ConfigHeader rankActivationHeader = new ConfigHeader(rankActivationPanel, "Rank Activation");
             rankActivationHeader.textColor = new UnityEngine.Color(0.85f, 0.85f, 0.85f, 1f);
-            var rankBoolFields = new Dictionary<string, (string Name, string GUID)>
-            {
-                { "D", ("Destruction", "rank_D") },
-                { "C", ("Chaotic", "rank_C") },
-                { "B", ("Brutal", "rank_B") },
-                { "A", ("Anarchic", "rank_A") },
-                { "S", ("Supreme", "rank_S") },
-                { "SS", ("SSadistic", "rank_SS") },
-                { "SSS", ("SSShitstorm", "rank_SSS") },
-                { "U", ("ULTRAKILL", "rank_U") }
-            };
 
-            foreach (var rank in rankBoolFields)
+            foreach (var entry in InstanceConfig.ConfigEntries)
             {
-                var boolField = BoolFieldFactory(rankActivationPanel, rank.Value.Name, rank.Value.GUID, InstanceConfig.RankToggleDict[rank.Key]);
-                rankToggleFieldDict.Add(rank.Key, boolField);
+                if (!entry.Value.section.Equals("Enabled Style")) continue;
+
+                var boolField = BoolFieldFactory(rankActivationPanel, entry.Value.name, entry.Key, InstanceConfig.RankToggleDict[entry.Key]);
+                rankToggleFieldDict.Add(entry.Key, boolField);
             }
         }
 
@@ -107,7 +100,7 @@ namespace greycsont.GreyAnnouncer{
 
         private static BoolField BoolFieldFactory(ConfigPanel parentPanel,string name,string GUID,ConfigEntry<bool> configEntry,bool defaultValue = true,params Action<BoolField.BoolValueChangeEvent>[] eventCallbacks)
         {
-            BoolField boolField = new BoolField(parentPanel, name, GUID, configEntry.Value);
+            BoolField boolField = new BoolField(parentPanel, name, GuidPrefixAdder.AddPrefixToGUID(GUID), configEntry.Value);
             boolField.onValueChange += (BoolField.BoolValueChangeEvent e) =>
             {
                 configEntry.Value = e.value;
@@ -121,6 +114,25 @@ namespace greycsont.GreyAnnouncer{
             };
             boolField.defaultValue = defaultValue;
             return boolField;
+        }
+    }
+
+    public static class GuidPrefixAdder //this motherfucker should be added to all items, but idk how to decoupe the code
+    {
+        public static string AddPrefixToGUID(string rankKey)
+        {
+            // 可加入前缀保持统一命名风格
+            return $"GreyAnnouncer_{rankKey.ToUpper()}";
+        }
+
+        public static string RemovePrefixFromGUID(string guid)
+        {
+            // 可选：反向转换，防止 guid 显示太“技术”
+            if (guid.StartsWith("InstanceConfig_Rank_"))
+            {
+                return guid.Substring("InstanceConfig_Rank_".Length);
+            }
+            return guid;
         }
     }
 }

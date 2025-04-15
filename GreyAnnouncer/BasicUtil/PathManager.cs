@@ -4,10 +4,10 @@ using System.Reflection;
 
 namespace greycsont.GreyAnnouncer{
     public class PathManager{
-        public static string GetCurrentPluginPath(string filePath)
+        public static string GetCurrentPluginPath(string filePath = null)
         {
             string pluginDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            return Path.Combine(pluginDirectory, filePath);
+            return Path.Combine(pluginDirectory, filePath ?? string.Empty);
         }
 
         public static string GetGamePath(string filePath)
