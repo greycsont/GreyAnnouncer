@@ -2,10 +2,13 @@ using UnityEngine;
 using System.Collections;
 
 
-namespace greycsont.GreyAnnouncer{
+namespace greycsont.GreyAnnouncer
+{
 
-    public class AudioSourceManager{
-        public static AudioSource AddLowPassFilter(AudioSource audioSource){
+    public class AudioSourceManager
+    {
+        public static AudioSource AddLowPassFilter(AudioSource audioSource)
+        {
             if (InstanceConfig.LowPassFilter_Enabled.Value == false) return audioSource;
             if (audioSource == null) return null;
             AudioLowPassFilter lowPassFilter = audioSource.gameObject.GetComponent<AudioLowPassFilter>()
@@ -15,10 +18,12 @@ namespace greycsont.GreyAnnouncer{
             return audioSource;
         }
 
-        public static AudioSource RemoveLowPassFilter(AudioSource audioSource){
+        public static AudioSource RemoveLowPassFilter(AudioSource audioSource)
+        {
             if (audioSource == null) return null;
             AudioLowPassFilter lowPassFilter = audioSource.GetComponent<AudioLowPassFilter>();
-            if (lowPassFilter != null){
+            if (lowPassFilter != null)
+            {
                 GameObject.Destroy(lowPassFilter);
             }
             return audioSource;

@@ -12,7 +12,7 @@ namespace greycsont.GreyAnnouncer{
     [BepInProcess("ULTRAKILL.exe")]
     [BepInDependency(PluginDependencies.PLUGINCONFIGURATOR_GUID, BepInDependency.DependencyFlags.SoftDependency)]
     public class Plugin : BaseUnityPlugin{
-        private Harmony harmony;  // patch
+        private Harmony                 harmony;  // patch
         internal static ManualLogSource Log;
         private void Awake()
         {
@@ -42,8 +42,6 @@ namespace greycsont.GreyAnnouncer{
                 return;
             }
             ReflectionManager.LoadByReflection(assemblyName);
-        }
-
-        
+        }   
     }
 }
