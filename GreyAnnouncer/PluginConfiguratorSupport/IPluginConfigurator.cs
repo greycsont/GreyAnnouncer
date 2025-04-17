@@ -4,25 +4,36 @@ using BepInEx.Configuration;
 using PluginConfig.API;
 using PluginConfig.API.Fields;
 using PluginConfig.API.Decorators;  // for ConfigHeader
-using PluginConfig.API.Functionals; // for ButtonField only
+using PluginConfig.API.Functionals;
+using System.ComponentModel; // for ButtonField only
 
 namespace greycsont.GreyAnnouncer{
+
+    [Description("This object is loaded via reflection from Plugin.cs")]
     public class IPluginConfigurator{
         
         private static Dictionary<string, BoolField> rankToggleFieldDict = new Dictionary<string, BoolField>();
         private static PluginConfigurator config;
         
         public static void Initialize(){
+            CreatePluginPages();
+            MainPanel();
+            RankTogglePanel();  
+            AdvancedOptionPanel();
+        }
+
+        private static void CreatePluginPages(){
             config = PluginConfigurator.Create(PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_GUID);
             config.SetIconWithURL(PathManager.GetCurrentPluginPath("icon.png"));
-            MainPanel();
         }
 
         private static void MainPanel(){
             ConfigHeader mainHeader = new ConfigHeader(config.rootPanel, "Main Settings");
-            
             mainHeader.textColor = new UnityEngine.Color(0.85f, 0.85f, 0.85f, 1f);
-            
+            CreateCooldownControls();
+            CreateAudioControls();
+        }
+        private static void CreateCooldownControls(){
             FloatField sharedRankPlayCooldown = new FloatField(config.rootPanel,
                     "Shared rank cooldown", 
                     "sharedRankPlayCooldown", 
@@ -47,25 +58,6 @@ namespace greycsont.GreyAnnouncer{
                 InstanceConfig.IndividualRankPlayCooldown.Value = e.value;
                 Announcer.ResetTimerToZero();
             };
-
-            FloatSliderField audioSourceVolume = new FloatSliderField(
-                    config.rootPanel,
-                    "Audio Volume", 
-                    "Audio_Volume", 
-                    Tuple.Create(0f, 1f), InstanceConfig.AudioSourceVolume.Value, 2
-                    );
-            audioSourceVolume.defaultValue = 1f;
-            audioSourceVolume.onValueChange += (FloatSliderField.FloatSliderValueChangeEvent e) =>
-            {
-                InstanceConfig.AudioSourceVolume.Value = e.newValue;
-                Announcer.UpdateAudioSourceVolume(e.newValue);
-            };      
-
-            /* You don't have to do this in the MainPanel(). I did this because it makes it more readable by human. */
-            RankTogglePanel();  
-            AdvancedOptionPanel();
-            ButtonField button = new ButtonField(config.rootPanel, "Reload Audio", "reload_audio");
-            button.onClick += new ButtonField.OnClick(Announcer.ReloadAudio);
         }
 
         private static void RankTogglePanel(){
@@ -98,6 +90,26 @@ namespace greycsont.GreyAnnouncer{
                     });    //In Water.cs
         }
 
+        private static void CreateAudioControls(){
+            FloatSliderField audioSourceVolume = new FloatSliderField(
+                    config.rootPanel,
+                    "Audio Volume", 
+                    "Audio_Volume", 
+                    Tuple.Create(0f, 1f), InstanceConfig.AudioSourceVolume.Value, 2
+                    );
+            audioSourceVolume.defaultValue = 1f;
+            audioSourceVolume.onValueChange += (FloatSliderField.FloatSliderValueChangeEvent e) =>
+            {
+                InstanceConfig.AudioSourceVolume.Value = e.newValue;
+                Announcer.UpdateAudioSourceVolume(e.newValue);
+            };      
+
+            ButtonField button = new ButtonField(config.rootPanel, "Reload Audio", "reload_audio");
+            button.onClick += new ButtonField.OnClick(Announcer.ReloadAudio);
+        }
+
+        
+
         private static BoolField BoolFieldFactory(ConfigPanel parentPanel,string name,string GUID,ConfigEntry<bool> configEntry,bool defaultValue = true,params Action<BoolField.BoolValueChangeEvent>[] eventCallbacks)
         {
             BoolField boolField = new BoolField(parentPanel, name, GuidPrefixAdder.AddPrefixToGUID(GUID), configEntry.Value);
@@ -114,25 +126,6 @@ namespace greycsont.GreyAnnouncer{
             };
             boolField.defaultValue = defaultValue;
             return boolField;
-        }
-    }
-
-    public static class GuidPrefixAdder //this motherfucker should be added to all items, but idk how to decoupe the code
-    {
-        public static string AddPrefixToGUID(string rankKey)
-        {
-            // 可加入前缀保持统一命名风格
-            return $"GreyAnnouncer_{rankKey.ToUpper()}";
-        }
-
-        public static string RemovePrefixFromGUID(string guid)
-        {
-            // 可选：反向转换，防止 guid 显示太“技术”
-            if (guid.StartsWith("InstanceConfig_Rank_"))
-            {
-                return guid.Substring("InstanceConfig_Rank_".Length);
-            }
-            return guid;
         }
     }
 }

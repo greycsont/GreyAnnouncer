@@ -1,11 +1,7 @@
-using System.Collections.Generic;
-
 namespace greycsont.GreyAnnouncer
 {
     public class RankSettings
     {
-        public string[] ranks { get; set; }
-        public string[] fullRankNames { get; set; }
         public string[] audioNames { get; set; }
     }
 

@@ -48,7 +48,7 @@ namespace greycsont.GreyAnnouncer{
             {
                 var configEntry = plugin.Config.Bind(
                     section,
-                    key,
+                    name,
                     (bool)defaultValue,
                     description
                 );

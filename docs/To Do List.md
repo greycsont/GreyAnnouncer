@@ -1,3 +1,1 @@
-- Remove IPluginConfig hardcoding dependences.
-- Dynamic build PluginConfiguator Interface.
 - Tech Announcer.
