@@ -15,7 +15,7 @@ namespace greycsont.GreyAnnouncer
     {
 
         private static Dictionary<string, BoolField> rankToggleFieldDict = new Dictionary<string, BoolField>();
-        private static PluginConfigurator config;
+        private static PluginConfigurator            config;
 
         public static void Initialize()
         {

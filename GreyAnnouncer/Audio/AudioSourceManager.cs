@@ -13,7 +13,7 @@ namespace greycsont.GreyAnnouncer
             if (audioSource == null) return null;
             AudioLowPassFilter lowPassFilter = audioSource.gameObject.GetComponent<AudioLowPassFilter>()
                                                ?? audioSource.gameObject.AddComponent<AudioLowPassFilter>();
-            lowPassFilter.cutoffFrequency = 1000f;
+            lowPassFilter.cutoffFrequency   = 1000f;
             lowPassFilter.lowpassResonanceQ = 1f;
             return audioSource;
         }
@@ -33,8 +33,8 @@ namespace greycsont.GreyAnnouncer
         {
             if (audioSource == null) yield break;
             float startVolume = audioSource.volume;
-            float timeStep = duration / 5f;
-            float time = 0f;
+            float timeStep    = duration / 5f;
+            float time        = 0f;
             while (time < duration)
             {
                 audioSource.volume = Mathf.Lerp(startVolume, targetVolume, time / duration);

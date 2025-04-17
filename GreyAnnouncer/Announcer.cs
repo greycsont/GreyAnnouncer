@@ -1,6 +1,6 @@
 using System.IO;
 using System.Collections;
-using System.Collections.Generic; //audioclip
+using System.Collections.Generic; //audio clip
 using UnityEngine;
 using UnityEngine.Networking;
 using System;
@@ -16,11 +16,11 @@ namespace greycsont.GreyAnnouncer
 {
     public class Announcer{       
         private static Dictionary<int, AudioClip> audioClips                 = new Dictionary<int, AudioClip>();
-        private static readonly string[]          supportedExtensions        = new string[] { ".wav", ".mp3", ".ogg", ".aiff", ".aif" };
+        private static readonly HashSet<string>   RankFailedLoading          = new();
+        private static readonly string[]          SupportedExtensions        = new string[] { ".wav", ".mp3", ".ogg", ".aiff", ".aif" };
+        private static readonly string[]          RankNames                  = new string[] {"D", "C", "B", "A", "S", "SS", "SSS", "U"};
         private static float[]                    individualRankPlayCooldown = {0f,0f,0f,0f,0f,0f,0f,0f};
-        private static readonly string[]          rankNames                  = new string[] {"D", "C", "B", "A", "S", "SS", "SSS", "U"};
         private static float                      sharedRankPlayCooldown     = 0f;  // Timer
-        private static readonly HashSet<string>   rankFailedLoading          = new();
         private static AudioSource                globalAudioSource;
         private static AudioSource                localAudioSource;
 
@@ -35,17 +35,16 @@ namespace greycsont.GreyAnnouncer
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void PlaySound(int rank)
         {
-            
             /* Parry balls of Maurice -> Hit Maurice -> AscendingRank() -> Postfix() -> PlaySound() -> CheckPlayValidation() */
-
-            AudioClip clip = CheckPlayValidation(rank);
+            /* This bug will skip all the function before CheckPlayValidation(),  The try-catch has implemented in the fucntion*/
+            AudioClip clip = TryToGetAudioClip(rank);
             if (clip == null) return;
             if (localAudioSource == null) GetLocalAudioSource();
-            localAudioSource.clip = clip;
+            localAudioSource.clip   = clip;
             localAudioSource.volume = InstanceConfig.AudioSourceVolume.Value < 1f ? InstanceConfig.AudioSourceVolume.Value : 1f;
             localAudioSource.Play();
 
-            CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => sharedRankPlayCooldown = value, InstanceConfig.SharedRankPlayCooldown.Value));
+            CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => sharedRankPlayCooldown           = value, InstanceConfig.SharedRankPlayCooldown.Value));
             CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => individualRankPlayCooldown[rank] = value, InstanceConfig.IndividualRankPlayCooldown.Value));
 
         }
@@ -70,9 +69,9 @@ namespace greycsont.GreyAnnouncer
 
         private static void GetLocalAudioSource()
         {
-            localAudioSource ??= GetGlobalAudioSource();
-            localAudioSource.spatialBlend = 0f; // 2D
-            localAudioSource.priority = 0; // Make sure you can hear the announce
+            localAudioSource              ??= GetGlobalAudioSource();
+            localAudioSource.spatialBlend   = 0f; // 2D
+            localAudioSource.priority       = 0; // Make sure you can hear the announce
         }
 
         private static AudioSource GetGlobalAudioSource()
@@ -80,36 +79,36 @@ namespace greycsont.GreyAnnouncer
             if (globalAudioSource == null)
             {
                 GameObject audioObj = GameObject.Find("GlobalAudioPlayer") ?? new GameObject("GlobalAudioPlayer");
-                globalAudioSource = audioObj.GetComponent<AudioSource>() ?? audioObj.AddComponent<AudioSource>();
+                globalAudioSource   = audioObj.GetComponent<AudioSource>() ?? audioObj.AddComponent<AudioSource>();
                 GameObject.DontDestroyOnLoad(audioObj);
             }
             return globalAudioSource;
         }
 
-        private static int FindAvailableAudioRecursive = 0;
+        private static int findAvailableAudioRecursive = 0;
         private static void FindAvailableAudio(string audioPath)
         {
-            if (FindAvailableAudioRecursive >= 2 )
+            if (findAvailableAudioRecursive >= 2 )
             {
-                FindAvailableAudioRecursive = 0;
+                findAvailableAudioRecursive = 0;
                 Plugin.Log.LogError($"Failed to find audio from \n New directory : {PathManager.GetGamePath(Path.Combine("ULTRAKILL_DATA","Audio"))}\n Legacy directory : {PathManager.GetCurrentPluginPath("audio")}");
                 return;
             }
-            FindAvailableAudioRecursive++;
+            findAvailableAudioRecursive++;
 
-            rankFailedLoading.Clear();
+            RankFailedLoading.Clear();
             TryToFindDirectoryOfAudioFolder(audioPath);
             TryToFetchAudios(audioPath);
             LoggingAudioFailedLoading();
             
-            if (rankFailedLoading.SetEquals(rankNames))
+            if (RankFailedLoading.SetEquals(RankNames))
             {  // array compare to hashset
                 Plugin.Log.LogWarning($"No audio files found in the directory : {audioPath}.");
                 FindAvailableAudio(PathManager.GetCurrentPluginPath("audio"));
             }
             else
             {
-                FindAvailableAudioRecursive = 0;
+                findAvailableAudioRecursive = 0;
             }
         }
         private static void TryToFindDirectoryOfAudioFolder(string audioPath)
@@ -124,10 +123,10 @@ namespace greycsont.GreyAnnouncer
         private static void TryToFetchAudios(string audioPath)
         {
 
-            for (int i = 0; i < rankNames.Length; i++)
+            for (int i = 0; i < RankNames.Length; i++)
             {
                 string filePath = null;
-                foreach (var ext in supportedExtensions)
+                foreach (var ext in SupportedExtensions)
                 {
                     string potentialPath = Path.Combine(audioPath, JsonSetting.Settings.RankSettings.audioNames[i] + ext);
                     if (File.Exists(potentialPath))
@@ -141,17 +140,16 @@ namespace greycsont.GreyAnnouncer
                     CoroutineRunner.Instance.StartCoroutine(LoadAudioClip(filePath, i));
                 }
                 else {
-                    rankFailedLoading.Add(rankNames[i]);
-                    continue;
+                    RankFailedLoading.Add(RankNames[i]);
                 }
             }
         }
         private static void LoggingAudioFailedLoading()
         {
-            if (rankFailedLoading.Count == 0){
-                Plugin.Log.LogInfo("All audios succeesfully loaded");
+            if (RankFailedLoading.Count == 0){
+                Plugin.Log.LogInfo   ("All audios successfully loaded");
             }else{
-                Plugin.Log.LogWarning("Failed to load audio files: " + string.Join(", ", rankFailedLoading));
+                Plugin.Log.LogWarning("Failed to load audio files: " + string.Join(", ", RankFailedLoading));
             }
         }
 
@@ -160,7 +158,7 @@ namespace greycsont.GreyAnnouncer
             string url = new Uri(path).AbsoluteUri;
             //string url = "file://" + path;
             AudioType audioType = GetAudioTypeFromExtension(url);
-            Plugin.Log.LogInfo($"Loading audio : {JsonSetting.Settings.RankSettings.audioNames[key]} for Rank : {rankNames[key]} from {Uri.UnescapeDataString(url)}");
+            Plugin.Log.LogInfo($"Loading audio : {JsonSetting.Settings.RankSettings.audioNames[key]} for Rank : {RankNames[key]} from {Uri.UnescapeDataString(url)}");
             using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, audioType))
             {
                 yield return www.SendWebRequest();
@@ -168,7 +166,7 @@ namespace greycsont.GreyAnnouncer
                 if (www.result != UnityWebRequest.Result.Success) 
                     Plugin.Log.LogError($"Failed to Load audio : {key}, Error message : {www.error}");
                 else 
-                    audioClips[key] = DownloadHandlerAudioClip.GetContent(www);;
+                    audioClips[key] = DownloadHandlerAudioClip.GetContent(www);
             }
         }
 
@@ -188,12 +186,12 @@ namespace greycsont.GreyAnnouncer
         }
 
         
-        private static AudioClip CheckPlayValidation(int rank)
+        private static AudioClip TryToGetAudioClip(int rank)
         {
             ValidationState state = GetPlayValidationState(rank);
             if (state != ValidationState.Success)
             {
-                Plugin.Log.LogInfo($"Skip {JsonSetting.Settings.RankSettings.audioNames[rank]} of rank {rankNames[rank]} for {state}");
+                Plugin.Log.LogInfo($"Skip {JsonSetting.Settings.RankSettings.audioNames[rank]} of rank {RankNames[rank]} for {state}");
                 return null;
             }
 
@@ -220,8 +218,8 @@ namespace greycsont.GreyAnnouncer
                 yield break;
             }
 
-            float cooldown = initialCooldown;
-            float waitTime = cooldown * 3 / 4f;
+            float cooldown      = initialCooldown;
+            float waitTime      = cooldown * 3 / 4f;
             float deltaTimeTime = cooldown * 1 / 4f;
             setCooldown(cooldown);
 
@@ -231,7 +229,7 @@ namespace greycsont.GreyAnnouncer
             while (timePassed < deltaTimeTime)
             {
                 timePassed += Time.deltaTime;
-                cooldown -= Time.deltaTime;
+                cooldown   -= Time.deltaTime;
                 setCooldown(cooldown);
                 yield return null;
             }
@@ -241,19 +239,19 @@ namespace greycsont.GreyAnnouncer
 
         private static ValidationState GetPlayValidationState(int rank)
         {
-            if (rank < 0 || rank > rankNames.Length - 1)
+            if (rank < 0 || rank > RankNames.Length - 1)
                 return ValidationState.InvaildRankIndex;
 
             if (individualRankPlayCooldown[rank] > 0f) 
                 return ValidationState.IndividualCooldown;
 
-            if (rankFailedLoading.Contains(rankNames[rank])) 
+            if (RankFailedLoading.Contains(RankNames[rank])) 
                 return ValidationState.AudioFailedLoading;
 
             if (sharedRankPlayCooldown > 0f) 
                 return ValidationState.SharedCooldown;    
 
-            if (!InstanceConfig.RankToggleDict[rankNames[rank]].Value) 
+            if (!InstanceConfig.RankToggleDict[RankNames[rank]].Value) 
                 return ValidationState.DisabledByConfig;
 
             if (!audioClips.TryGetValue(rank, out _)) 
@@ -265,21 +263,21 @@ namespace greycsont.GreyAnnouncer
         [Obsolete("Debug uses only")]
         private static ValidationState GetPlayValidationState(int rank, int Debug)
         {
-            List<ValidationState> failedValiationStateList = new List<ValidationState>();
+            List<ValidationState> valiationStateList = new List<ValidationState>();
             try
             {
                 foreach (var rule in validationRules)
                 {
                     var result = rule(rank);
-                    if (result.HasValue) failedValiationStateList.Add(result.Value);
+                    if (result.HasValue) valiationStateList.Add(result.Value);
                 }
-                if (failedValiationStateList != null)
+                if (valiationStateList != null)
                 {
-                    foreach (var state in failedValiationStateList)
+                    foreach (var state in valiationStateList)
                     {
                         Plugin.Log.LogInfo($"failedValiationState: {state}");
                     }
-                    return failedValiationStateList[0];
+                    return valiationStateList[0];
                 }
                 return ValidationState.Success;
             }
@@ -291,11 +289,11 @@ namespace greycsont.GreyAnnouncer
 
         private static readonly List<Func<int, ValidationState?>> validationRules = new()
         {
-            rank => (rank < 0 || rank >= rankNames.Length) ? ValidationState.InvaildRankIndex : null,
-            rank => rankFailedLoading.Contains(rankNames[rank]) ? ValidationState.AudioFailedLoading : null,
+            rank => (rank < 0 || rank >= RankNames.Length) ? ValidationState.InvaildRankIndex : null,
+            rank => RankFailedLoading.Contains(RankNames[rank]) ? ValidationState.AudioFailedLoading : null,
             rank => sharedRankPlayCooldown > 0f ? ValidationState.SharedCooldown : null,
             rank => individualRankPlayCooldown[rank] > 0f ? ValidationState.IndividualCooldown : null,
-            rank => !InstanceConfig.RankToggleDict[rankNames[rank]].Value ? ValidationState.DisabledByConfig : null,
+            rank => !InstanceConfig.RankToggleDict[RankNames[rank]].Value ? ValidationState.DisabledByConfig : null,
             rank => !audioClips.ContainsKey(rank) ? ValidationState.ClipNotFound : null  
         };
 
