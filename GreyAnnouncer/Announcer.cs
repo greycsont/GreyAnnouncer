@@ -32,7 +32,6 @@ namespace greycsont.GreyAnnouncer
             FindAvailableAudio(PathManager.GetGamePath(Path.Combine("ULTRAKILL_DATA","Audio")));
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void PlaySound(int rank)
         {
             /* Parry balls of Maurice -> Hit Maurice -> AscendingRank() -> Postfix() -> PlaySound() -> CheckPlayValidation() */
@@ -40,6 +39,7 @@ namespace greycsont.GreyAnnouncer
             AudioClip clip = TryToGetAudioClip(rank);
             if (clip == null) return;
             if (localAudioSource == null) GetLocalAudioSource();
+            
             localAudioSource.clip   = clip;
             localAudioSource.volume = InstanceConfig.AudioSourceVolume.Value < 1f ? InstanceConfig.AudioSourceVolume.Value : 1f;
             localAudioSource.Play();
@@ -131,6 +131,7 @@ namespace greycsont.GreyAnnouncer
                 string filePath = null;
                 foreach (var ext in SupportedExtensions)
                 {
+
                     string potentialPath = Path.Combine(audioPath, JsonSetting.Settings.RankSettings.audioNames[i] + ext);
                     if (File.Exists(potentialPath))
                     {

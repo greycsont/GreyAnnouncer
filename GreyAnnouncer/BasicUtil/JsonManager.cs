@@ -32,14 +32,14 @@ namespace greycsont.GreyAnnouncer
             };
 
             var rootObject = new RootObject { RankSettings = rankSettings };
-            string json = JsonConvert.SerializeObject(rootObject, Formatting.Indented);
+            string json    = JsonConvert.SerializeObject(rootObject, Formatting.Indented);
             File.WriteAllText(JSON_FILE_PATH, json);
             Plugin.Log.LogInfo($"Initialized {JSON_NAME}");
         }
 
         public static void ReadJson()
         {
-            string loadedJson = File.ReadAllText(JSON_FILE_PATH);
+            string loadedJson    = File.ReadAllText(JSON_FILE_PATH);
             JsonSetting.Settings = JsonConvert.DeserializeObject<RootObject>(loadedJson);
         }
     }
