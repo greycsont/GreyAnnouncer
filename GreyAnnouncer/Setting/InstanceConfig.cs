@@ -5,7 +5,7 @@ namespace greycsont.GreyAnnouncer{
     
     public static class InstanceConfig
     {
-        public static Dictionary<string, ConfigEntry<bool>> RankToggleDict = new();
+        public static Dictionary<string, ConfigEntry<bool>> RankToggleDict             = new();
         public static ConfigEntry<float>                    SharedRankPlayCooldown;    // Range : 0f ~ 10f
         public static ConfigEntry<float>                    IndividualRankPlayCooldown;    // Range : 0f ~ 114514f
         public static ConfigEntry<float>                    AudioSourceVolume; // Range : 0f ~ 1f

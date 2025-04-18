@@ -34,7 +34,7 @@ namespace greycsont.GreyAnnouncer
         private static void MainPanel()
         {
             ConfigHeader mainHeader = new ConfigHeader(config.rootPanel, "Main Settings");
-            mainHeader.textColor = new UnityEngine.Color(0.85f, 0.85f, 0.85f, 1f);
+            mainHeader.textColor    = new UnityEngine.Color(0.85f, 0.85f, 0.85f, 1f);
             CreateCooldownControls();
             CreateAudioControls();
         }

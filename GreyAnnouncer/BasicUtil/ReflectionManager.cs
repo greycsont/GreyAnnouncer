@@ -6,7 +6,7 @@ namespace greycsont.GreyAnnouncer{
         public static void LoadByReflection(string assemblyName){
             try
             {
-                Assembly assembly = Assembly.GetExecutingAssembly();
+                Assembly assembly     = Assembly.GetExecutingAssembly();
                 Type configuratorType = assembly.GetType(assemblyName);
                 MethodInfo initialize = configuratorType.GetMethod("Initialize", BindingFlags.Public | BindingFlags.Static);
                 initialize?.Invoke(null, null);

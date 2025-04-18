@@ -16,7 +16,7 @@ namespace greycsont.GreyAnnouncer
                 if (_instance == null)
                 {
                     GameObject go = new GameObject("CoroutineRunner");
-                    _instance = go.AddComponent<CoroutineRunner>();
+                    _instance     = go.AddComponent<CoroutineRunner>();
                     DontDestroyOnLoad(go);
                 }
                 return _instance;

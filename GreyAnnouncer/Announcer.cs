@@ -125,6 +125,9 @@ namespace greycsont.GreyAnnouncer
 
             for (int i = 0; i < RankNames.Length; i++)
             {
+                if (JsonSetting.Settings.RankSettings.audioNames[i] == "")
+                    Plugin.Log.LogWarning ($"You forget to set the audio name of rank {RankNames[i]} ");
+
                 string filePath = null;
                 foreach (var ext in SupportedExtensions)
                 {
@@ -135,20 +138,26 @@ namespace greycsont.GreyAnnouncer
                         break;
                     }
                 }
-                if (File.Exists(filePath)){
+
+                if (File.Exists(filePath))
+                {
                     // Using a helper MonoBehaviour to start a coroutine to load audio
                     CoroutineRunner.Instance.StartCoroutine(LoadAudioClip(filePath, i));
                 }
-                else {
+                else 
+                {
                     RankFailedLoading.Add(RankNames[i]);
                 }
             }
         }
         private static void LoggingAudioFailedLoading()
         {
-            if (RankFailedLoading.Count == 0){
+            if (RankFailedLoading.Count == 0)
+            {
                 Plugin.Log.LogInfo   ("All audios successfully loaded");
-            }else{
+            }
+            else
+            {
                 Plugin.Log.LogWarning("Failed to load audio files: " + string.Join(", ", RankFailedLoading));
             }
         }
@@ -289,12 +298,12 @@ namespace greycsont.GreyAnnouncer
 
         private static readonly List<Func<int, ValidationState?>> validationRules = new()
         {
-            rank => (rank < 0 || rank >= RankNames.Length) ? ValidationState.InvaildRankIndex : null,
-            rank => RankFailedLoading.Contains(RankNames[rank]) ? ValidationState.AudioFailedLoading : null,
-            rank => sharedRankPlayCooldown > 0f ? ValidationState.SharedCooldown : null,
-            rank => individualRankPlayCooldown[rank] > 0f ? ValidationState.IndividualCooldown : null,
-            rank => !InstanceConfig.RankToggleDict[RankNames[rank]].Value ? ValidationState.DisabledByConfig : null,
-            rank => !audioClips.ContainsKey(rank) ? ValidationState.ClipNotFound : null  
+            rank => (rank < 0 || rank >= RankNames.Length) ?                ValidationState.InvaildRankIndex :   null,
+            rank => RankFailedLoading.Contains(RankNames[rank]) ?           ValidationState.AudioFailedLoading : null,
+            rank => sharedRankPlayCooldown > 0f ?                           ValidationState.SharedCooldown :     null,
+            rank => individualRankPlayCooldown[rank] > 0f ?                 ValidationState.IndividualCooldown : null,
+            rank => !InstanceConfig.RankToggleDict[RankNames[rank]].Value ? ValidationState.DisabledByConfig :   null,
+            rank => !audioClips.ContainsKey(rank) ?                         ValidationState.ClipNotFound :       null  
         };
 
         private enum ValidationState //Finite-state machine，启动！

@@ -12,8 +12,9 @@ namespace greycsont.GreyAnnouncer{
     [BepInProcess("ULTRAKILL.exe")]
     [BepInDependency(PluginDependencies.PLUGINCONFIGURATOR_GUID, BepInDependency.DependencyFlags.SoftDependency)]
     public class Plugin : BaseUnityPlugin{
-        private Harmony                 harmony;  // patch
         internal static ManualLogSource Log;
+        private Harmony                 harmony;  // patch
+
         private void Awake()
         {
             Log = base.Logger;
@@ -23,9 +24,9 @@ namespace greycsont.GreyAnnouncer{
             Log.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
         }
         private void LoadMainModule(){
-            JsonManager.Initialize();
+            JsonManager.   Initialize();
             InstanceConfig.Initialize(this);
-            Announcer.Initialize();
+            Announcer.     Initialize();
         }
         private void LoadOptionalModule(){
             CheckPluginLoaded(PluginDependencies.PLUGINCONFIGURATOR_GUID, "greycsont.GreyAnnouncer.IPluginConfigurator");
