@@ -2,11 +2,11 @@
 using BepInEx.Bootstrap;
 using BepInEx.Logging;
 using HarmonyLib;
-using Newtonsoft.Json;
 
 /* The StyleHUD.cs in the HarmonyPatches folder is the starting point of the whole sequence of announcer 
    But for the initialize of the program like loading audio or something, you should start from here */
-namespace greycsont.GreyAnnouncer{
+namespace greycsont.GreyAnnouncer
+{
 
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
     [BepInProcess("ULTRAKILL.exe")]

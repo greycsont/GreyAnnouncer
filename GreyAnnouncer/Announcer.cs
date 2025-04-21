@@ -4,7 +4,6 @@ using System.Collections.Generic; //audio clip
 using UnityEngine;
 using UnityEngine.Networking;
 using System;
-using System.Runtime.CompilerServices;
 
 /* Announcer.cs requires :
             PathManager.cs to find and fetch audio
@@ -14,22 +13,37 @@ using System.Runtime.CompilerServices;
             JsonSetting.cs for setting */
 namespace greycsont.GreyAnnouncer
 {
-    public class Announcer{       
+    public class Announcer
+    {       
         private static Dictionary<int, AudioClip> audioClips                 = new Dictionary<int, AudioClip>();
-        private static readonly HashSet<string>   RankFailedLoading          = new();
-        private static readonly string[]          SupportedExtensions        = new string[] { ".wav", ".mp3", ".ogg", ".aiff", ".aif" };
-        private static readonly string[]          RankNames                  = new string[] {"D", "C", "B", "A", "S", "SS", "SSS", "U"};
+        private static readonly HashSet<string>   rankFailedLoading          = new();
+        private static readonly string[]          searchDirectory            = new string[] 
+        {
+            PathManager.GetGamePath(Path.Combine("ULTRAKILL_DATA","Audio")), 
+            PathManager.GetCurrentPluginPath("Audio")
+        }; 
+        private static readonly string[]          supportedExtensions        = new string[] { ".wav", ".mp3", ".ogg", ".aiff", ".aif" };
+        private static readonly string[]          rankNames                  = new string[] {"D", "C", "B", "A", "S", "SS", "SSS", "U"};
         private static float[]                    individualRankPlayCooldown = {0f,0f,0f,0f,0f,0f,0f,0f};
         private static float                      sharedRankPlayCooldown     = 0f;  // Timer
         private static AudioSource                globalAudioSource;
         private static AudioSource                localAudioSource;
+
+        private static AudioSourcePool.AudioConfiguration audioSourceConfig = new AudioSourcePool.AudioConfiguration
+        {
+            SpatialBlend = 0f,
+            Priority = 0,
+            Volume = InstanceConfig.AudioSourceVolume.Value,
+            Pitch = 1f,
+        };
+        
 
         /// <summary>
         /// Initialize audio file
         /// </summary>
         public static void Initialize()
         {
-            FindAvailableAudio(PathManager.GetGamePath(Path.Combine("ULTRAKILL_DATA","Audio")));
+            FindAvailableAudio(searchDirectory[0]);
         }
 
         public static void PlaySound(int rank)
@@ -40,9 +54,10 @@ namespace greycsont.GreyAnnouncer
             if (clip == null) return;
             if (localAudioSource == null) GetLocalAudioSource();
             
-            localAudioSource.clip   = clip;
-            localAudioSource.volume = InstanceConfig.AudioSourceVolume.Value < 1f ? InstanceConfig.AudioSourceVolume.Value : 1f;
-            localAudioSource.Play();
+            AudioSourcePool.Instance.PlayOneShot(clip, audioSourceConfig);
+            //localAudioSource.clip   = clip;
+            //localAudioSource.volume = InstanceConfig.AudioSourceVolume.Value < 1f ? InstanceConfig.AudioSourceVolume.Value : 1f;
+            //localAudioSource.Play();
 
             CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => sharedRankPlayCooldown           = value, InstanceConfig.SharedRankPlayCooldown.Value));
             CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => individualRankPlayCooldown[rank] = value, InstanceConfig.IndividualRankPlayCooldown.Value));
@@ -51,10 +66,11 @@ namespace greycsont.GreyAnnouncer
 
         public static void ReloadAudio()
         {
+            Plugin.Log.LogInfo($"Clear audio clip cache...");
+            ClearAudioCache();
             Plugin.Log.LogInfo($"Reload audio...");
-            FindAvailableAudio(PathManager.GetGamePath(Path.Combine("ULTRAKILL_DATA","Audio")));
+            FindAvailableAudio(searchDirectory[0]);
         }
-
 
         public static void AddAudioLowPassFilter()
         {
@@ -85,26 +101,38 @@ namespace greycsont.GreyAnnouncer
             return globalAudioSource;
         }
 
+        private static void ClearAudioCache()
+        {
+            foreach (var clip in audioClips.Values)
+            {
+                if (clip != null)
+                    UnityEngine.Object.Destroy(clip);   //clear clip in the unity's assets
+            }
+            audioClips.Clear(); //clear dictionary
+        }
+
         private static int findAvailableAudioRecursive = 0;
         private static void FindAvailableAudio(string audioPath)
         {
             if (findAvailableAudioRecursive >= 2 )
             {
                 findAvailableAudioRecursive = 0;
-                Plugin.Log.LogError($"Failed to find audio from \n New directory : {PathManager.GetGamePath(Path.Combine("ULTRAKILL_DATA","Audio"))}\n Legacy directory : {PathManager.GetCurrentPluginPath("audio")}");
+                Plugin.Log.LogError($"Failed to search all directory.");
                 return;
             }
-            findAvailableAudioRecursive++;
 
-            RankFailedLoading.Clear();
+
+            rankFailedLoading.Clear();
             TryToFindDirectoryOfAudioFolder(audioPath);
             TryToFetchAudios(audioPath);
-            LoggingAudioFailedLoading();
+            LoggingAudioLodingResults();
+
+            findAvailableAudioRecursive++;
             
-            if (RankFailedLoading.SetEquals(RankNames))
+            if (rankFailedLoading.SetEquals(rankNames))
             {  // array compare to hashset
                 Plugin.Log.LogWarning($"No audio files found in the directory : {audioPath}.");
-                FindAvailableAudio(PathManager.GetCurrentPluginPath("audio"));
+                FindAvailableAudio(searchDirectory[1]);
             }
             else
             {
@@ -123,13 +151,13 @@ namespace greycsont.GreyAnnouncer
         private static void TryToFetchAudios(string audioPath)
         {
 
-            for (int i = 0; i < RankNames.Length; i++)
+            for (int i = 0; i < rankNames.Length; i++)
             {
                 if (JsonSetting.Settings.RankSettings.audioNames[i] == "")
-                    Plugin.Log.LogWarning ($"You forget to set the audio name of rank {RankNames[i]} ");
+                    Plugin.Log.LogWarning ($"You forget to set the audio name of rank {rankNames[i]} ");
 
                 string filePath = null;
-                foreach (var ext in SupportedExtensions)
+                foreach (var ext in supportedExtensions)
                 {
 
                     string potentialPath = Path.Combine(audioPath, JsonSetting.Settings.RankSettings.audioNames[i] + ext);
@@ -147,19 +175,19 @@ namespace greycsont.GreyAnnouncer
                 }
                 else 
                 {
-                    RankFailedLoading.Add(RankNames[i]);
+                    rankFailedLoading.Add(rankNames[i]);
                 }
             }
         }
-        private static void LoggingAudioFailedLoading()
+        private static void LoggingAudioLodingResults()
         {
-            if (RankFailedLoading.Count == 0)
+            if (rankFailedLoading.Count == 0)
             {
                 Plugin.Log.LogInfo   ("All audios successfully loaded");
             }
             else
             {
-                Plugin.Log.LogWarning("Failed to load audio files: " + string.Join(", ", RankFailedLoading));
+                Plugin.Log.LogWarning("Failed to load audio files: " + string.Join(", ", rankFailedLoading));
             }
         }
 
@@ -168,7 +196,7 @@ namespace greycsont.GreyAnnouncer
             string url = new Uri(path).AbsoluteUri;
             //string url = "file://" + path;
             AudioType audioType = GetAudioTypeFromExtension(url);
-            Plugin.Log.LogInfo($"Loading audio : {JsonSetting.Settings.RankSettings.audioNames[key]} for Rank : {RankNames[key]} from {Uri.UnescapeDataString(url)}");
+            Plugin.Log.LogInfo($"Loading audio : {JsonSetting.Settings.RankSettings.audioNames[key]} for Rank : {rankNames[key]} from {Uri.UnescapeDataString(url)}");
             using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, audioType))
             {
                 yield return www.SendWebRequest();
@@ -201,7 +229,7 @@ namespace greycsont.GreyAnnouncer
             ValidationState state = GetPlayValidationState(rank);
             if (state != ValidationState.Success)
             {
-                Plugin.Log.LogInfo($"Skip {JsonSetting.Settings.RankSettings.audioNames[rank]} of rank {RankNames[rank]} for {state}");
+                Plugin.Log.LogInfo($"Skip {JsonSetting.Settings.RankSettings.audioNames[rank]} of rank {rankNames[rank]} for {state}");
                 return null;
             }
 
@@ -249,19 +277,16 @@ namespace greycsont.GreyAnnouncer
 
         private static ValidationState GetPlayValidationState(int rank)
         {
-            if (rank < 0 || rank > RankNames.Length - 1)
-                return ValidationState.InvaildRankIndex;
-
             if (individualRankPlayCooldown[rank] > 0f) 
                 return ValidationState.IndividualCooldown;
 
-            if (RankFailedLoading.Contains(RankNames[rank])) 
+            if (rankFailedLoading.Contains(rankNames[rank])) 
                 return ValidationState.AudioFailedLoading;
 
             if (sharedRankPlayCooldown > 0f) 
                 return ValidationState.SharedCooldown;    
 
-            if (!InstanceConfig.RankToggleDict[RankNames[rank]].Value) 
+            if (!InstanceConfig.RankToggleDict[rankNames[rank]].Value) 
                 return ValidationState.DisabledByConfig;
 
             if (!audioClips.TryGetValue(rank, out _)) 
@@ -299,11 +324,10 @@ namespace greycsont.GreyAnnouncer
 
         private static readonly List<Func<int, ValidationState?>> validationRules = new()
         {
-            rank => (rank < 0 || rank >= RankNames.Length) ?                ValidationState.InvaildRankIndex :   null,
-            rank => RankFailedLoading.Contains(RankNames[rank]) ?           ValidationState.AudioFailedLoading : null,
+            rank => rankFailedLoading.Contains(rankNames[rank]) ?           ValidationState.AudioFailedLoading : null,
             rank => sharedRankPlayCooldown > 0f ?                           ValidationState.SharedCooldown :     null,
             rank => individualRankPlayCooldown[rank] > 0f ?                 ValidationState.IndividualCooldown : null,
-            rank => !InstanceConfig.RankToggleDict[RankNames[rank]].Value ? ValidationState.DisabledByConfig :   null,
+            rank => !InstanceConfig.RankToggleDict[rankNames[rank]].Value ? ValidationState.DisabledByConfig :   null,
             rank => !audioClips.ContainsKey(rank) ?                         ValidationState.ClipNotFound :       null  
         };
 
@@ -315,7 +339,6 @@ namespace greycsont.GreyAnnouncer
             IndividualCooldown,         
             DisabledByConfig,          
             ClipNotFound,
-            InvaildRankIndex,
             ValidationError               
         }
 

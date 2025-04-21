@@ -6,11 +6,17 @@ using HarmonyLib;
     More information in the Announcer.cs 
     StyleHUD.cs -> Announcer.cs */
     
-namespace greycsont.GreyAnnouncer{
+namespace greycsont.GreyAnnouncer
+{
+    
     [HarmonyPatch(typeof(StyleHUD), "AscendRank")]  // For non-D ranks
     public static class StyleHUDAscendRank_Patch{
         static void Postfix(StyleHUD __instance){  
-            Announcer.PlaySound(__instance.rankIndex);
+            var rank = __instance.rankIndex;
+            if (rank >= 0 && rank <= 7)
+            {
+                Announcer.PlaySound(rank);
+            }
         }
     }
 

@@ -115,7 +115,10 @@ namespace greycsont.GreyAnnouncer
             };
 
             ButtonField button = new ButtonField(config.rootPanel, "Reload Audio", "reload_audio");
-            button.onClick += new ButtonField.OnClick(Announcer.ReloadAudio);
+           button.onClick += () =>
+            {
+                Announcer.ReloadAudio();
+            };
         }
 
 

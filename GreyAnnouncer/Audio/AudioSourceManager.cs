@@ -13,8 +13,8 @@ namespace greycsont.GreyAnnouncer
             if (audioSource == null) return null;
             AudioLowPassFilter lowPassFilter = audioSource.gameObject.GetComponent<AudioLowPassFilter>()
                                                ?? audioSource.gameObject.AddComponent<AudioLowPassFilter>();
-            lowPassFilter.cutoffFrequency   = 1000f;
-            lowPassFilter.lowpassResonanceQ = 1f;
+            lowPassFilter.cutoffFrequency    = 1000f;
+            lowPassFilter.lowpassResonanceQ  = 1f;
             return audioSource;
         }
 

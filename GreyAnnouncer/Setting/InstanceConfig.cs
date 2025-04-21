@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using BepInEx.Configuration;
 
-namespace greycsont.GreyAnnouncer{
+namespace greycsont.GreyAnnouncer
+{
     
     public static class InstanceConfig
     {

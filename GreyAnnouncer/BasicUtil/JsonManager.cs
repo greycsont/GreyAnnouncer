@@ -5,7 +5,7 @@ namespace greycsont.GreyAnnouncer
 {
     public class JsonManager
     {
-        private const string  JSON_NAME      = "JsonSettings.json";
+        private const string  JSON_NAME      = "greyannouncer.json";
         private static string JSON_FILE_PATH = PathManager.GetCurrentPluginPath(JSON_NAME);
 
         public static void Initialize()
