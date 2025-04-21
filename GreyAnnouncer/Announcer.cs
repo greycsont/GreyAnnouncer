@@ -295,6 +295,39 @@ namespace greycsont.GreyAnnouncer
             return ValidationState.Success;
         }
 
+        private enum ValidationState //Finite-state machine，启动！
+        {
+            Success,                   
+            AudioFailedLoading,             
+            SharedCooldown,           
+            IndividualCooldown,         
+            DisabledByConfig,          
+            ClipNotFound,
+            ValidationError               
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         [Obsolete("Debug uses only")]
         private static ValidationState GetPlayValidationState(int rank, int Debug)
         {
@@ -330,17 +363,5 @@ namespace greycsont.GreyAnnouncer
             rank => !InstanceConfig.RankToggleDict[rankNames[rank]].Value ? ValidationState.DisabledByConfig :   null,
             rank => !audioClips.ContainsKey(rank) ?                         ValidationState.ClipNotFound :       null  
         };
-
-        private enum ValidationState //Finite-state machine，启动！
-        {
-            Success,                   
-            AudioFailedLoading,             
-            SharedCooldown,           
-            IndividualCooldown,         
-            DisabledByConfig,          
-            ClipNotFound,
-            ValidationError               
-        }
-
     }
 }
