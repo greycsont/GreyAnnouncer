@@ -23,21 +23,27 @@ namespace greycsont.GreyAnnouncer
             PatchHarmony();
             Log.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
         }
-        private void LoadMainModule(){
+
+        private void LoadMainModule()
+        {
             JsonManager.   Initialize();
             InstanceConfig.Initialize(this);
             Announcer.     Initialize();
         }
-        private void LoadOptionalModule(){
+        
+        private void LoadOptionalModule()
+        {
             CheckPluginLoaded(PluginDependencies.PLUGINCONFIGURATOR_GUID, "greycsont.GreyAnnouncer.IPluginConfigurator");
         }
 
-        private void PatchHarmony(){
+        private void PatchHarmony()
+        {
             harmony = new Harmony(PluginInfo.PLUGIN_GUID+".harmony");
             harmony.PatchAll();
         }
 
-        public void CheckPluginLoaded(string GUID, string assemblyName){
+        public void CheckPluginLoaded(string GUID, string assemblyName)
+        {
             if (!Chainloader.PluginInfos.ContainsKey(GUID)){
                 Plugin.Log.LogWarning($"Plugin {GUID} not loaded, stopping loading {assemblyName}"); 
                 return;

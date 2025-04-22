@@ -1,17 +1,12 @@
-using System;
 using System.Collections.Generic;
-using BepInEx.Configuration;
 using PluginConfig.API;
 using PluginConfig.API.Fields;
-using PluginConfig.API.Decorators;  // for ConfigHeader
-using PluginConfig.API.Functionals;
 using System.ComponentModel; // for ButtonField only
 
 namespace greycsont.GreyAnnouncer
 {
-
     [Description("This object is loaded via reflection from Plugin.cs")]
-    public class IPluginConfigurator
+    public class PluginConfiguratorEntry
     {
 
         private static Dictionary<string, BoolField> rankToggleFieldDict = new Dictionary<string, BoolField>();
@@ -20,21 +15,20 @@ namespace greycsont.GreyAnnouncer
         public static void Initialize()
         {
             CreatePluginPages();
-            MainPanel();
-            RankTogglePanel();
-            AdvancedOptionPanel();
+            
+            MainPanelBuilder.      Build(config);
+            RankTogglePanelBuilder.Build(config, rankToggleFieldDict);
         }
 
         private static void CreatePluginPages()
         {
             config = PluginConfigurator.Create(PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_GUID);
             config.SetIconWithURL(PathManager.GetCurrentPluginPath("icon.png"));
-        }
+        }                          
 
-        private static void MainPanel()
+        /*private static void MainPanel()
         {
             ConfigHeader mainHeader = new ConfigHeader(config.rootPanel, "Main Settings");
-            mainHeader.textColor    = new UnityEngine.Color(0.85f, 0.85f, 0.85f, 1f);
             CreateCooldownControls();
             CreateAudioControls();
         }
@@ -139,6 +133,6 @@ namespace greycsont.GreyAnnouncer
             };
             boolField.defaultValue = defaultValue;
             return boolField;
-        }
+        }*/
     }
 }

@@ -8,10 +8,12 @@ using HarmonyLib;
     
 namespace greycsont.GreyAnnouncer
 {
-    
+
     [HarmonyPatch(typeof(StyleHUD), "AscendRank")]  // For non-D ranks
-    public static class StyleHUDAscendRank_Patch{
-        static void Postfix(StyleHUD __instance){  
+    public static class StyleHUDAscendRank_Patch
+    {
+        static void Postfix(StyleHUD __instance)
+        {  
             var rank = __instance.rankIndex;
             if (rank >= 0 && rank <= 7)
             {

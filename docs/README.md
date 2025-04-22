@@ -1,10 +1,9 @@
-<img alt="Static Badge" src="https://img.shields.io/badge/Grey-Announcer-00FFFF" width="150">
 
-It will play a **audio** when you reach to a higher style rank!
+#### Mod description
+It will plays a **audio** when you reach to a higher style rank!
 
-You can add the sound by replace the .wav file in the **Audio** folder near the plugin!
 
-## How to install it
+#### How to install it
 1. [r2modman](https://thunderstore.io/c/ultrakill/p/ebkr/r2modman/)
 
 2. [BepInEx](https://thunderstore.io/c/ultrakill/p/BepInEx/BepInExPack/) (Manual Installation)
@@ -12,10 +11,9 @@ You can add the sound by replace the .wav file in the **Audio** folder near the 
    1. Install **BepInEx**.
    2. Download the mod.
    3. Extract all contents from the `.zip` file into the **ULTRAKILL\BepInEx\plugin** folder.
-      - **Highly recommended**: Create and name a separate folder inside the `plugins` directory to keep mods organized.
 
 
-### How to add the rank sound
+#### How to add the rank sound
 1. Find the directory path of the audio
    - audio folder inside ULTRAKILL_DATA
       1. Right click your ULTRAKILL on steam
@@ -33,15 +31,13 @@ You can add the sound by replace the .wav file in the **Audio** folder near the 
 
 2. Open the **Audio** folder.
 
-3. Add the sound you wanted to the folder ( The file format is recommanded to using **.mp3** and **.wav** format, Not support **.flac** and **.acc** )
+3. The rank sound file's name should rename to the specific format, include: **D C B A S SS SSS U**  
 
-4. The rank sound file's name should rename to the specific format, include: **D C B A S SS SSS U**   
+#### Rank Sound File Naming
 
-#### Rank Sound File Naming Convention
+You can customize the audio name in the **greyannouncer.json** which is **near the plugin**. the default audio name given in the below:
 
-The rank sound files should be named in the following specific format:
-
-<img align="right" width="300" src="https://github.com/user-attachments/assets/242cedd7-3cdb-4171-8c5b-aad112ed623a">
+<img align="right" width="180" src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/customAudioName.png">
 
 - `D.wav`
 - `C.wav`
@@ -52,20 +48,32 @@ The rank sound files should be named in the following specific format:
 - `SSS.wav`
 - `U.wav`
 
+
+
 Ensure that all rank sound files follow this naming convention for proper recognition.
 
 If a required sound file is missing, the system will:
 - **Skip playback** for that rank.
 - **Not affect other rank sounds** that are correctly configured.
 
-### How to customize the setting
-There's two ways to customize the setting
 
-1. Download and Using [PluginConfigurator](https://thunderstore.io/c/ultrakill/p/EternalsTeam/PluginConfigurator/) to edit in-game.
+#### Supported and Unsupported Audio Formats
 
-2. Find the **greycsont.ultrakill.GreyAnnouncer.cfg** file in the **ULTRAKILL/Beplnex/config** folder, then open and edit it manually.
+| Format      | Supported |                 
+|-------------|-----------|
+| `.mp3`      | ✅        |       
+| `.wav`      | ✅        |        
+| `.flac`     | ❌        |             
+| `.aac`      | ❌        |           
+| `.ogg`      | ?        |                  
+| `.aiff/.aif`| ?        |                 
 
-### Bugs & Suggestions
+#### How to customize the setting
+
+
+- Download and Using [PluginConfigurator](https://thunderstore.io/c/ultrakill/p/EternalsTeam/PluginConfigurator/) to edit in-game.
+
+#### Bugs & Suggestions
 if you encountered any bug, complains and suggestions, please upload it on [GreyAnnouncer issue](https://github.com/greycsont/GreyAnnouncer/issues).
 
 #### Credit
@@ -73,7 +81,7 @@ Thanks:
 - [Announcer Mod](https://www.nexusmods.com/ultrakill/mods/54)
 - [PluginConfigurator doc](https://github.com/eternalUnion/UKPluginConfigurator/wiki)
 - [Maxwell's puzzling demon](https://store.steampowered.com/app/2770160/)
-- [Everything](https://www.voidtools.com/) Saved my mod's thumbnail and manifest by VSCODE's github extention's auto correction.
+- [Everything](https://www.voidtools.com/) Saved my mod's thumbnail and manifest ****** up by vscode's github extention's auto correction.
 
 #### License
 - This project is not open-sourced under the MIT License.
@@ -82,8 +90,7 @@ Thanks:
 - The icons and assets are provided only for use within this project. **Unauthorized commercial use is prohibited**.
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
-###### Future
-- json to allow custom audio name instead naming stuff, but idk how do i shown it in the pluginConfigurator
+
 ###### Easter egg
 The ULTRA_REVAMP update DESTROYed my favorite mod, So ......
 (But the mod updated to the ULTRA_REVAMP, please check **Announcer** in the Thanks)

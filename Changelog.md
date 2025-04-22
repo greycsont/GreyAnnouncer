@@ -1,23 +1,26 @@
 ### v1.0.2
-- changed the mod's icon (because the old icon directly uses the Arknights's asset)
+- changed the mod's icon (because the old icon directly uses the Arknights's asset).
+- some changes of license (seen in README.md).
+- Added audioSourcePool for parallel audio playing.
+- Added greyannouncer.json in plugin folder for customize audio name.
+- Moved rank check in ValidationState in StyleHUD.cs (harmony patch).
 - using dictionary to decoupe code like PluginConfigurator field's etc.
-- some changes of license (seen in README.md)
 
 ### v1.0.1
-- Added LowPassFilter(Muffle) when under water (Thanks Clover for DM in discord)
-- Added more option (Volume of all rank etc.)
+- Added LowPassFilter(Muffle) when under water (Thanks Clover for DM in discord).
+- Added more option (Volume of all rank etc.).
 - Added support to .mp3, .ogg, .aiff/.aif
-- Moved audio folder to ULTRAKILL\ULTRAKILL_DATA audio, But it still will seach the legacy folder (Thanks mightbeusual for [Github_issue](https://github.com/greycsont/GreyAnnouncer/issues/1)) 
-- Altered some validation
-- Encapsulated and Decoupled some code
-- Reversed the structure of Changelog.md
+- Moved audio folder to ULTRAKILL\ULTRAKILL_DATA audio, But it still will seach the legacy folder (Thanks mightbeusual for [Github_issue](https://github.com/greycsont/GreyAnnouncer/issues/1)).
+- Altered some validation.
+- Encapsulated and Decoupled some code.
+- Reversed the structure of Changelog.md.
 
 ### v1.0.0
-- supports PluginConfigurator 
-- seperate the shared rank cooldown and individual rank cooldown
-- using InstanceConfig to store configEntry
-- using delegate to set cooldowncorotine
-- sets of decouping code
+- supports PluginConfigurator.
+- seperate the shared rank cooldown and individual rank cooldown.
+- using InstanceConfig to store configEntry.
+- using delegate to set cooldowncorotine.
+- sets of decouping code.
 - if you want to add collab to other mods and wants to make sure mod is running normally when other mods are not loaded, using reflection to load collab module!
 
 ### v0.1.6

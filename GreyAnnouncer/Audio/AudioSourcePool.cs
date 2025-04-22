@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic; //audio clip
 using greycsont.GreyAnnouncer;
@@ -6,7 +5,7 @@ using UnityEngine;
 
 public class AudioSourcePool : MonoBehaviour
 {
-
+    private AudioSource                                          soloAudioSource;
     private Queue<AudioSource>                                   pool               = new Queue<AudioSource>();
     private readonly HashSet<AudioSource>                        activeAudioSources = new HashSet<AudioSource>();
     private LinkedList<AudioSource>                              playingList        = new LinkedList<AudioSource>();
@@ -57,6 +56,23 @@ public class AudioSourcePool : MonoBehaviour
         source.Play();
 
         StartCoroutine(RecycleAfterPlay(source));
+    }
+
+    public void PlayOverridable(AudioClip clip, AudioSourcePool.AudioConfiguration config)
+    {
+        if (soloAudioSource == null)
+        {
+            var go = new GameObject("SoloAudioSource");
+            DontDestroyOnLoad(go);
+            soloAudioSource = go.AddComponent<AudioSource>();
+        }
+
+        soloAudioSource = ConfigureAudioSource(soloAudioSource, config);
+
+        // 停止之前的音频（可选，保险）
+
+        soloAudioSource.clip = clip;
+        soloAudioSource.Play();
     }
 
     public void UpdateAllActiveSourcesVolume(float volume, float duration = 0.35f)
