@@ -1,7 +1,6 @@
-namespace greycsont.GreyAnnouncer
+namespace greycsont.GreyAnnouncer;
+
+internal static class PluginDependencies
 {
-    internal static class PluginDependencies
-    {
-        public const string PLUGINCONFIGURATOR_GUID = "com.eternalUnion.pluginConfigurator";
-    }
+    public const string PLUGINCONFIGURATOR_GUID = "com.eternalUnion.pluginConfigurator";
 }

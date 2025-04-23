@@ -2,10 +2,11 @@ using PluginConfig.API;
 using PluginConfig.API.Fields;
 using PluginConfig.API.Decorators;
 using PluginConfig.API.Functionals;
-using greycsont.GreyAnnouncer;
 using UnityEngine;
 using System;
 
+
+namespace greycsont.GreyAnnouncer;
 
 public static class MainPanelBuilder
 {
@@ -20,6 +21,7 @@ public static class MainPanelBuilder
 
         CreateCooldownControls();
         CreateAudioControls();
+        CreateAdvancedOptionPanel();
     }
 
     private static void CreateCooldownControls()
@@ -65,7 +67,8 @@ public static class MainPanelBuilder
         volumeSlider.onValueChange += e =>
         {
             InstanceConfig.AudioSourceVolume.Value = e.newValue;
-            Announcer.UpdateAudioSourceVolume(e.newValue);
+            AudioSourcePool.Instance.UpdateAllActiveSourcesVolume(e.newValue);
+            SoloAudioSource.Instance.UpdateSoloAudioSourceVolume(e.newValue);
         };
 
         var reloadButton = new ButtonField(_config.rootPanel, "Reload Audio", "reload_audio");
@@ -73,7 +76,33 @@ public static class MainPanelBuilder
         {
             Announcer.ReloadAudio();
         };
+
+        
     }
+
+    private static void CreateAdvancedOptionPanel()
+    {
+        ConfigPanel advancedPanel = new ConfigPanel(_config.rootPanel, "Advanced Option", "Advanced_Option");
+
+        ConfigHeader header       = new ConfigHeader(advancedPanel, "Audio Frequency Filter");
+        header.textColor          = new UnityEngine.Color(0.85f, 0.85f, 0.85f, 1f);
+
+        BoolField lowpassToggle   = new BoolField(
+            advancedPanel,
+            "Filtering when under water",
+            "LowPassFilter_Enabled",
+            InstanceConfig.LowPassFilter_Enabled.Value
+        );
+        lowpassToggle.defaultValue   = true;
+        lowpassToggle.onValueChange += (e) =>
+        {
+            InstanceConfig.LowPassFilter_Enabled.Value = e.value;
+            Water.CheckIsInWater();
+        };
+    }
+
+
 
     private static readonly Color HeaderColor = new Color(0.85f, 0.85f, 0.85f, 1f);
 }
+

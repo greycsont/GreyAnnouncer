@@ -1,18 +1,17 @@
+using greycsont.GreyAnnouncer;
 using System.Collections;
 using System.Collections.Generic; //audio clip
-using greycsont.GreyAnnouncer;
 using UnityEngine;
 
 public class AudioSourcePool : MonoBehaviour
 {
-    private AudioSource                                          soloAudioSource;
-    private Queue<AudioSource>                                   pool               = new Queue<AudioSource>();
-    private readonly HashSet<AudioSource>                        activeAudioSources = new HashSet<AudioSource>();
-    private LinkedList<AudioSource>                              playingList        = new LinkedList<AudioSource>();
-    private Dictionary<AudioSource, LinkedListNode<AudioSource>> playingMap         = new Dictionary<AudioSource, LinkedListNode<AudioSource>>();
-    private static AudioSourcePool                               instance;
-    public  int                                                  initialSize        = 3;
-    public  int                                                  maxSize            = 5;
+    private                 Queue<AudioSource>                                   pool               = new Queue<AudioSource>();
+    private        readonly HashSet<AudioSource>                                 activeAudioSources = new HashSet<AudioSource>();
+    private                 LinkedList<AudioSource>                              playingList        = new LinkedList<AudioSource>();
+    private                 Dictionary<AudioSource, LinkedListNode<AudioSource>> playingMap         = new Dictionary<AudioSource, LinkedListNode<AudioSource>>();
+    private static          AudioSourcePool                                      instance;
+    public                  int                                                  initialSize        = 3;
+    public                  int                                                  maxSize            = 5;
 
     public static AudioSourcePool Instance
     {
@@ -33,8 +32,8 @@ public class AudioSourcePool : MonoBehaviour
     {
         for (int i = 0; i < initialSize; i++)
         {
-            var source = CreateNewAudioSource();
-            pool.Enqueue(source);
+            var audioSource = CreateNewAudioSource();
+            pool.Enqueue(audioSource);
         }
     }
 
@@ -43,45 +42,52 @@ public class AudioSourcePool : MonoBehaviour
         Plugin.Log.LogInfo("Create a new Audio Source");
         var go = new GameObject("PooledAudioSource");
         go.transform.SetParent(transform);
-        var source = go.AddComponent<AudioSource>();
+        var audioSource = go.AddComponent<AudioSource>();
         go.SetActive(false);
-        return source;
+        return audioSource;
     }
 
-    public void PlayOneShot(AudioClip clip, AudioConfiguration config)
+    public void PlayOneShot(AudioClip clip, AudioSourceConfiguration config)
     {
-        var source  = Get();
-        source      = ConfigureAudioSource(source, config);
-        source.clip = clip;
-        source.Play();
+        var audioSource  = Get();
+        audioSource      = AudioSourceManager.ConfigureAudioSource(audioSource, config);
+        audioSource.clip = clip;
+        audioSource.Play();
 
-        StartCoroutine(RecycleAfterPlay(source));
+        StartCoroutine(RecycleAfterPlay(audioSource));
     }
 
-    public void PlayOverridable(AudioClip clip, AudioSourcePool.AudioConfiguration config)
+    public void AddAudioLowPassFilterToActiveAudioSource()
     {
-        if (soloAudioSource == null)
+        foreach (AudioSource audioSource in activeAudioSources)
         {
-            var go = new GameObject("SoloAudioSource");
-            DontDestroyOnLoad(go);
-            soloAudioSource = go.AddComponent<AudioSource>();
+            if (audioSource != null && audioSource.gameObject.activeInHierarchy)
+            {
+                AudioSourceManager.AddLowPassFilter(audioSource);
+            }
         }
 
-        soloAudioSource = ConfigureAudioSource(soloAudioSource, config);
-
-        // 停止之前的音频（可选，保险）
-
-        soloAudioSource.clip = clip;
-        soloAudioSource.Play();
     }
 
-    public void UpdateAllActiveSourcesVolume(float volume, float duration = 0.35f)
+    public void RemoveAudioLowPassFilterFromActiveAudioSource()
     {
-        foreach(var source in activeAudioSources)
+        foreach (AudioSource audioSource in activeAudioSources)
         {
-            if(source != null && source.gameObject.activeInHierarchy && source.isPlaying)
+            if (audioSource != null && audioSource.gameObject.activeInHierarchy)
             {
-                StartCoroutine(greycsont.GreyAnnouncer.AudioSourceManager.FadeVolume(source, volume, duration));
+                AudioSourceManager.RemoveLowPassFilter(audioSource);
+            }
+        }
+
+    }
+
+    public void UpdateAllActiveSourcesVolume(float targetVolume, float duration = 0.35f)
+    {
+        foreach(var audioSource in activeAudioSources)
+        {
+            if(audioSource != null && audioSource.gameObject.activeInHierarchy && audioSource.isPlaying)
+            {
+                StartCoroutine(AudioSourceManager.FadeVolume(audioSource, targetVolume, duration));
             }
         }
     }
@@ -101,81 +107,50 @@ public class AudioSourcePool : MonoBehaviour
             }
         }
 
-        AudioSource source = (pool.Count > 0) ? pool.Dequeue() : CreateNewAudioSource();
-        source.gameObject.SetActive(true);
-        activeAudioSources.Add(source);
+        AudioSource audioSource = (pool.Count > 0) ? pool.Dequeue() : CreateNewAudioSource();
+        audioSource.gameObject.SetActive(true);
+        activeAudioSources.Add(audioSource);
 
-        var node           = playingList.AddLast(source);
-        playingMap[source] = node;
+        var node                = playingList.AddLast(audioSource);
+        playingMap[audioSource] = node;
 
-        return source;
+        return audioSource;
     }
 
-    private IEnumerator RecycleAfterPlay(AudioSource source)
+    private IEnumerator RecycleAfterPlay(AudioSource audioSource)
     {
-        yield return new WaitForSeconds(source.clip.length);
+        yield return new WaitForSeconds(audioSource.clip.length);
 
-        if (playingMap.TryGetValue(source, out var node))
+        if (playingMap.TryGetValue(audioSource, out var node))
         {
             playingList.Remove(node);
-            playingMap.Remove(source);
+            playingMap.Remove(audioSource);
         }
 
-        Return(source);
+        Return(audioSource);
     }
 
-    private void ForceRecycle(AudioSource source)
+    private void ForceRecycle(AudioSource audioSource)
     {
-        if (source == null) return;
-        source.Stop();
-        source.clip = null;
-        source.gameObject.SetActive(false);
-        activeAudioSources.Remove(source);
-        pool.Enqueue(source);
+        if (audioSource == null) return;
+        audioSource.Stop();
+        audioSource.clip = null;
+        audioSource.gameObject.SetActive(false);
+        activeAudioSources.Remove(audioSource);
+        pool.Enqueue(audioSource);
     }
 
-    private void Return(AudioSource source)
+    private void Return(AudioSource audioSource)
     {
-        source.Stop();
-        source.clip = null;
-        source.gameObject.SetActive(false);
-        activeAudioSources.Remove(source);
-        pool.Enqueue(source);
+        audioSource.Stop();
+        audioSource.clip = null;
+        audioSource.gameObject.SetActive(false);
+        activeAudioSources.Remove(audioSource);
+        pool.Enqueue(audioSource);
     }
 
-    private AudioSource ConfigureAudioSource(AudioSource source, AudioConfiguration config)
-    {
-        source.spatialBlend = config.SpatialBlend;
-        source.priority     = config.Priority;
-        source.volume       = config.Volume;
-        source.pitch        = config.Pitch;
 
-        if (InstanceConfig.LowPassFilter_Enabled.Value)
-        {
-            greycsont.GreyAnnouncer.AudioSourceManager.AddLowPassFilter(source);
-        }
-        else
-        {
-            greycsont.GreyAnnouncer.AudioSourceManager.RemoveLowPassFilter(source);
-        }
 
-        return source;
-    }
-
-    public struct AudioConfiguration
-    {
-        public float SpatialBlend { get; set; }
-        public int   Priority     { get; set; }
-        public float Volume       { get; set; }
-        public float Pitch        { get; set; }
-
-        public static AudioConfiguration Default => new()
-        {
-            SpatialBlend = 0f,
-            Priority     = 0,
-            Volume       = 1f,
-            Pitch        = 1f,
-        };
-    }
+    
 }
 
