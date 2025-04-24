@@ -16,6 +16,7 @@ namespace greycsont.GreyAnnouncer;
 public class Announcer
 {       
     private static          Dictionary<int, AudioClip> audioClips                 = new Dictionary<int, AudioClip>();
+
     private static readonly HashSet<string>            rankFailedLoading          = new();
     private static readonly string[]                   supportedExtensions        = new string[] { ".wav", ".mp3", ".ogg", ".aiff", ".aif" };
     private static readonly string[]                   rankNames                  = new string[] {"D", "C", "B", "A", "S", "SS", "SSS", "U"};
@@ -29,10 +30,12 @@ public class Announcer
     private static          AudioSourceConfiguration   audioSourceConfig          = new AudioSourceConfiguration
     {
         SpatialBlend = 0f,
-        Priority = 0,
-        Volume = InstanceConfig.AudioSourceVolume.Value,
-        Pitch = 1f,
+        Priority     = 0,
+        Volume       = InstanceConfig.AudioSourceVolume.Value,
+        Pitch        = 1f,
     };
+    private static          AudioLoader                _audioLoader;
+    
     
 
     /// <summary>
@@ -40,23 +43,36 @@ public class Announcer
     /// </summary>
     public static void Initialize()
     {
-        FindAvailableAudio(searchDirectory[0]);
+        _audioLoader = new AudioLoader
+        (
+            InstanceConfig.AudioFolderPath.Value,
+
+            new string[] 
+            { 
+                "D", "C", "B", "A", "S", "SS", "SSS", "U" 
+            }
+        );
+        _audioLoader.FindAvailableAudio();
+        //FindAvailableAudio(searchDirectory[0]);
     }
 
     public static void PlaySound(int rank)
     {
         /* Parry balls of Maurice -> Hit Maurice -> AscendingRank() -> Postfix() -> PlaySound() -> CheckPlayValidation() */
         /* This bug will skip all the function before CheckPlayValidation(),  The try-catch has implemented in the fucntion*/
-        AudioClip clip = TryToGetAudioClip(rank);
+
+        //AudioClip clip = TryToGetAudioClip(rank);
+        var ValidationState = GetPlayValidationState(rank);
+        if (ValidationState != ValidationState.Success) 
+        {
+            Plugin.Log.LogInfo($"PlayValidationState: {_audioLoader.audioCategories[rank]}, {ValidationState}");
+            return;
+        }
+
+        AudioClip clip = _audioLoader.TryToGetAudioClip(rank);
         if (clip == null) return;
 
-
-        
         SoloAudioSource.Instance.PlayOverridable(clip, audioSourceConfig);
-        //if (localAudioSource == null) GetLocalAudioSource();
-        //localAudioSource.clip   = clip;
-        //localAudioSource.volume = InstanceConfig.AudioSourceVolume.Value < 1f ? InstanceConfig.AudioSourceVolume.Value : 1f;
-        //localAudioSource.Play();
 
         StartRankCooldownCoroutine(rank);
     }
@@ -74,10 +90,11 @@ public class Announcer
 
     public static void ReloadAudio()
     {
-        Plugin.Log.LogInfo($"Clear audio clip cache...");
+        _audioLoader.ReloadAudio();
+        /*Plugin.Log.LogInfo($"Clear audio clip cache...");
         ClearAudioCache();
         Plugin.Log.LogInfo($"Reload audio...");
-        FindAvailableAudio(searchDirectory[0]);
+        FindAvailableAudio(searchDirectory[0]);*/
     }
             
 
@@ -101,8 +118,6 @@ public class Announcer
             return;
         }
 
-
-        rankFailedLoading.Clear();
         TryToFindDirectoryOfAudioFolder(audioPath);
         TryToFetchAudios(audioPath);
         LoggingAudioLodingResults();
@@ -110,7 +125,7 @@ public class Announcer
         findAvailableAudioRecursive++;
         
         if (rankFailedLoading.SetEquals(rankNames))
-        {  // array compare to hashset
+        {
             Plugin.Log.LogWarning($"No audio files found in the directory : {audioPath}.");
             FindAvailableAudio(searchDirectory[1]);
         }
@@ -130,7 +145,7 @@ public class Announcer
     }
     private static void TryToFetchAudios(string audioPath)
     {
-
+        rankFailedLoading.Clear();
         for (int i = 0; i < rankNames.Length; i++)
         {
             if (JsonSetting.Settings.RankSettings.audioNames[i] == "")
@@ -176,20 +191,20 @@ public class Announcer
         }
     }
 
-    private static IEnumerator LoadAudioClip(string path, int key)
+    private static IEnumerator LoadAudioClip(string path, int index)
     {
         string url = new Uri(path).AbsoluteUri;
         //string url = "file://" + path;
         AudioType audioType = GetAudioTypeFromExtension(url);
-        Plugin.Log.LogInfo($"Loading audio : {JsonSetting.Settings.RankSettings.audioNames[key]} for Rank : {rankNames[key]} from {Uri.UnescapeDataString(url)}");
+        Plugin.Log.LogInfo($"Loading audio : {JsonSetting.Settings.RankSettings.audioNames[index]} for Rank : {rankNames[index]} from {Uri.UnescapeDataString(url)}");
         using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, audioType))
         {
             yield return www.SendWebRequest();
 
             if (www.result != UnityWebRequest.Result.Success) 
-                Plugin.Log.LogError($"Failed to Load audio : {key}, Error message : {www.error}");
+                Plugin.Log.LogError($"Failed to Load audio : {index}, Error message : {www.error}");
             else 
-                audioClips[key] = DownloadHandlerAudioClip.GetContent(www);
+                audioClips[index] = DownloadHandlerAudioClip.GetContent(www);
         }
     }
 
@@ -259,7 +274,8 @@ public class Announcer
         if (individualRankPlayCooldown[rank] > 0f) 
             return ValidationState.IndividualCooldown;
 
-        if (rankFailedLoading.Contains(rankNames[rank])) 
+        //if (rankFailedLoading.Contains(rankNames[rank])) 
+        if (_audioLoader.categoreFailedLoading.Contains(rankNames[rank]))
             return ValidationState.AudioFailedLoading;
 
         if (sharedRankPlayCooldown > 0f) 
@@ -268,7 +284,8 @@ public class Announcer
         if (!InstanceConfig.RankToggleDict[rankNames[rank]].Value) 
             return ValidationState.DisabledByConfig;
 
-        if (!audioClips.TryGetValue(rank, out _)) 
+        //if (!audioClips.TryGetValue(rank, out _)) 
+        if (_audioLoader.TryToGetAudioClip(rank) == null)
             return ValidationState.ClipNotFound;
 
         return ValidationState.Success;

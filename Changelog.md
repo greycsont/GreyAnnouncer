@@ -1,3 +1,7 @@
+### Known issue
+- When you exit the mission when underwater, the lowpassfilter still exists
+
+
 ### v1.0.2
 - changed the mod's icon (because the old icon directly uses the Arknights's asset).
 - some changes of license (seen in README.md).

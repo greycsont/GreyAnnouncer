@@ -76,7 +76,7 @@ public static class MainPanelBuilder
         {
             Announcer.ReloadAudio();
         };
-
+        
         
     }
 
@@ -85,7 +85,7 @@ public static class MainPanelBuilder
         ConfigPanel advancedPanel = new ConfigPanel(_config.rootPanel, "Advanced Option", "Advanced_Option");
 
         ConfigHeader header       = new ConfigHeader(advancedPanel, "Audio Frequency Filter");
-        header.textColor          = new UnityEngine.Color(0.85f, 0.85f, 0.85f, 1f);
+        header.textColor          = HeaderColor;
 
         BoolField lowpassToggle   = new BoolField(
             advancedPanel,
