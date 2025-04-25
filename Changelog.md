@@ -1,14 +1,15 @@
-### Known issue
-- When you exit the mission when underwater, the lowpassfilter still exists
+### Known issue/TODO
 
 
 ### v1.0.2
-- changed the mod's icon (because the old icon directly uses the Arknights's asset).
+- Fixed when you qui the mission in the water, the muffle effect still exists when playing audio.
+- changed the mod's icon, the old icon directly uses the Arknights's greythroat asset.
 - some changes of license (seen in README.md).
 - Added audioSourcePool for parallel audio playing.
 - Added greyannouncer.json in plugin folder for customize audio name.
+- switch to using BepInex's config to customize audio loading path (Default path is the legacy method, you can edit it easily via PluginConfigurator).
 - Moved rank check in ValidationState in StyleHUD.cs (harmony patch).
-- using dictionary to decoupe code like PluginConfigurator field's etc.
+- Decoupe code.
 
 ### v1.0.1
 - Added LowPassFilter(Muffle) when under water (Thanks Clover for DM in discord).

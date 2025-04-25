@@ -1,14 +1,14 @@
 
 namespace greycsont.GreyAnnouncer;
 
-public struct AudioSourceConfiguration
+public struct AudioSourceSetting
 {
     public float SpatialBlend { get; set; }
     public int   Priority     { get; set; }
     public float Volume       { get; set; }
     public float Pitch        { get; set; }
 
-    public static AudioSourceConfiguration Default => new()
+    public static AudioSourceSetting Default => new()
     {
         SpatialBlend = 0f,
         Priority     = 0,

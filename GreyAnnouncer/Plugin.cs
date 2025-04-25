@@ -11,7 +11,8 @@ namespace greycsont.GreyAnnouncer;
 [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
 [BepInProcess("ULTRAKILL.exe")]
 [BepInDependency(PluginDependencies.PLUGINCONFIGURATOR_GUID, BepInDependency.DependencyFlags.SoftDependency)]
-public class Plugin : BaseUnityPlugin{
+public class Plugin : BaseUnityPlugin
+{
     internal static ManualLogSource Log;
     private         Harmony         harmony;  // patch
 
@@ -28,7 +29,7 @@ public class Plugin : BaseUnityPlugin{
     {
         JsonManager.   Initialize();
         InstanceConfig.Initialize(this);
-        Announcer.     Initialize();
+        RankAnnouncer. Initialize();
     }
 
     private void LoadOptionalModule()

@@ -17,7 +17,7 @@ public static class StyleHUDAscendRank_Patch
         var rank = __instance.rankIndex;
         if (rank >= 0 && rank <= 7)
         {
-            Announcer.PlaySound(rank);
+            RankAnnouncer.PlaySound(rank);
         }
     }
 }
@@ -34,7 +34,7 @@ public static class StyleHUDUpdateMeter_Patch
 
         if (previousWasZero && currentIsNonZero)
         {
-            Announcer.PlaySound(0);
+            RankAnnouncer.PlaySound(0);
         }
 
         previousWasZero = __instance.rankIndex == 0 && currentMeter <= 0;

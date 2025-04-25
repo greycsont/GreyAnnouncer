@@ -6,21 +6,12 @@ namespace greycsont.GreyAnnouncer;
 
 public class AudioSourceManager
 {
-    public static AudioSource ConfigureAudioSource(AudioSource audioSource, AudioSourceConfiguration config)
+    public static AudioSource ConfigureAudioSource(AudioSource audioSource, AudioSourceSetting config)
     {
         audioSource.spatialBlend = config.SpatialBlend;
         audioSource.priority     = config.Priority;
         audioSource.volume       = config.Volume < 1f ? config.Volume : 1f;
         audioSource.pitch        = config.Pitch;
-
-        if (Water.isInWater)
-        {
-            AudioSourceManager.AddLowPassFilter(audioSource);
-        }
-        else
-        {
-            AudioSourceManager.RemoveLowPassFilter(audioSource);
-        }
 
         return audioSource;
     }

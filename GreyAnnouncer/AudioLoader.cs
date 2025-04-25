@@ -4,15 +4,17 @@ using System.Collections.Generic; //audio clip
 using UnityEngine;
 using UnityEngine.Networking;
 using System;
+using System.ComponentModel;
 
 namespace greycsont.GreyAnnouncer;
 
+[Description("The AudioLoader should and only be a audioClips entity, " +
+             "I tried to add cooldown counter in here but I just realize it's only a audio loader")]
 public class AudioLoader
 {
     public           Dictionary<int, AudioClip> audioClips                  = new Dictionary<int, AudioClip>();
     private readonly string[]                   supportedExtensions         = new string[] { ".wav", ".mp3", ".ogg", ".aiff", ".aif" };
     public           HashSet<string>            categoreFailedLoading       = new HashSet<string>();
-
     public  readonly string[]                   audioCategories;
     private          string                     audioPath;
 
@@ -32,7 +34,6 @@ public class AudioLoader
 
         Plugin.Log.LogInfo($"Updating audio paths and reloading audio...");
         this.audioPath = newAudioPaths;
-        FindAvailableAudio();
     }
 
     public void FindAvailableAudio()
@@ -164,5 +165,4 @@ public class AudioLoader
             Plugin.Log.LogWarning("Failed to load audio files: " + string.Join(", ", categoreFailedLoading));
         }
     }
-
 }

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using BepInEx.Configuration;
-using System.IO;
 
 namespace greycsont.GreyAnnouncer;
 

@@ -1,9 +1,11 @@
 
-#### Mod description
+### Mod description
 It will plays a **audio** when you reach to a higher style rank!
-
-
-#### How to install it
+- [Installation](###How-to-install-it)
+- [Add sound](###How-to-add-the-rank-sound)
+- [File naming](###Rank-Sound-File-Naming)
+- [Customize](###How-to-customize-the-setting)
+### How to install it
 1. [r2modman](https://thunderstore.io/c/ultrakill/p/ebkr/r2modman/)
 
 2. [BepInEx](https://thunderstore.io/c/ultrakill/p/BepInEx/BepInExPack/) (Manual Installation)
@@ -13,7 +15,7 @@ It will plays a **audio** when you reach to a higher style rank!
    3. Extract all contents from the `.zip` file into the **ULTRAKILL\BepInEx\plugin** folder.
 
 
-#### How to add the rank sound
+### How to add the rank sound
 1. Find the directory path of the audio
    - audio folder inside ULTRAKILL_DATA
       1. Right click your ULTRAKILL on steam
@@ -33,7 +35,7 @@ It will plays a **audio** when you reach to a higher style rank!
 
 3. The rank sound file's name should rename to the specific format, include: **D C B A S SS SSS U**  
 
-#### Rank Sound File Naming
+### Rank Sound File Naming
 
 You can customize the audio name in the **greyannouncer.json** which is **near the plugin**. the default audio name given in the below:
 
@@ -57,7 +59,7 @@ If a required sound file is missing, the system will:
 - **Not affect other rank sounds** that are correctly configured.
 
 
-#### Supported and Unsupported Audio Formats
+### Supported and Unsupported Audio Formats
 
 | Format      | Supported |                 
 |-------------|-----------|
@@ -68,26 +70,21 @@ If a required sound file is missing, the system will:
 | `.ogg`      | ?        |                  
 | `.aiff/.aif`| ?        |                 
 
-#### How to customize the setting
-
-
+### How to customize the setting
 - Download and Using [PluginConfigurator](https://thunderstore.io/c/ultrakill/p/EternalsTeam/PluginConfigurator/) to edit in-game.
 
-#### Bugs & Suggestions
+### Bugs & Suggestions
 if you encountered any bug, complains and suggestions, please upload it on [GreyAnnouncer issue](https://github.com/greycsont/GreyAnnouncer/issues).
 
-#### Credit
+### Credit
 Thanks:
 - [Announcer Mod](https://www.nexusmods.com/ultrakill/mods/54)
 - [PluginConfigurator doc](https://github.com/eternalUnion/UKPluginConfigurator/wiki)
 - [Maxwell's puzzling demon](https://store.steampowered.com/app/2770160/)
 - [Everything](https://www.voidtools.com/) Saved my mod's thumbnail and manifest ****** up by vscode's github extention's auto correction.
 
-#### License
-- This project is not open-sourced under the MIT License.
-- The code/software is licensed under the MIT License.
-- The icons and assets are not covered by the MIT License and are subject to separate licensing terms.
-- The icons and assets are provided only for use within this project. **Unauthorized commercial use is prohibited**.
+### License
+- The file(s) in the **Lib/** folder are third-party and not authored by me. They are not covered by the MIT License of this project. Please refer to the respective license(s) of those files.
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 

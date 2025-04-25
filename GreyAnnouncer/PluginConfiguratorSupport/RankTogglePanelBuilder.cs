@@ -28,17 +28,18 @@ public static class RankTogglePanelBuilder
             if (!entry.Value.section.Equals("Enabled Style")) continue;
 
             var field = CreateBoolField(
-                panel, 
-                entry.Value.name, 
-                entry.Key, 
-                InstanceConfig.RankToggleDict[entry.Key]
+                panel,
+                entry.Value.name,
+                entry.Key,
+                InstanceConfig.RankToggleDict[entry.Key],
+                InstanceConfig.DEFAULT_RANK_TOGGLED
             );
             
             _rankToggleDict.Add(entry.Key, field);
         }
     }
 
-    private static BoolField CreateBoolField(ConfigPanel panel, string label, string guid, ConfigEntry<bool> entry, bool defaultValue = true, Action<BoolField.BoolValueChangeEvent>[] callbacks = null)
+    private static BoolField CreateBoolField(ConfigPanel panel, string label, string guid, ConfigEntry<bool> entry, bool defaultValue, Action<BoolField.BoolValueChangeEvent>[] callbacks = null)
     {
         var fullGuid         = GuidPrefixAdder.AddPrefixToGUID(guid);
         var field            = new BoolField(panel, label, fullGuid, entry.Value);

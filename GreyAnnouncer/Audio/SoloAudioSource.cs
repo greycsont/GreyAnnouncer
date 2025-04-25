@@ -21,7 +21,7 @@ public class SoloAudioSource : MonoBehaviour
         }
     }
 
-    public void PlayOverridable(AudioClip clip, AudioSourceConfiguration config)
+    public void PlayOverridable(AudioClip clip, AudioSourceSetting config)
     {
         if (audioSource == null)
         {
@@ -30,6 +30,7 @@ public class SoloAudioSource : MonoBehaviour
         }
 
         audioSource.clip = clip;
+        UnderwaterController_inWater_Instance.CheckIsInWater();
         audioSource.Play();
     }
 

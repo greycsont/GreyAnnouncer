@@ -47,11 +47,12 @@ public class AudioSourcePool : MonoBehaviour
         return audioSource;
     }
 
-    public void PlayOneShot(AudioClip clip, AudioSourceConfiguration config)
+    public void PlayOneShot(AudioClip clip, AudioSourceSetting config)
     {
         var audioSource  = Get();
         audioSource      = AudioSourceManager.ConfigureAudioSource(audioSource, config);
         audioSource.clip = clip;
+        UnderwaterController_inWater_Instance.CheckIsInWater();
         audioSource.Play();
 
         StartCoroutine(RecycleAfterPlay(audioSource));
