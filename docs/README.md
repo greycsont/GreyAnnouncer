@@ -1,39 +1,19 @@
 
 ### Mod description
 It will plays a **audio** when you reach to a higher style rank!
-- [Installation](###How-to-install-it)
-- [Add sound](###How-to-add-the-rank-sound)
-- [File naming](###Rank-Sound-File-Naming)
-- [Customize](###How-to-customize-the-setting)
+- [Installation](###how-to-install-it)
+- [Add sound](###how-to-add-the-rank-sound)
+- [File naming](###rank-Sound-file-naming)
+- [Customize setting](###how-to-customize-the-setting)
+
 ### How to install it
 1. [r2modman](https://thunderstore.io/c/ultrakill/p/ebkr/r2modman/)
 
 2. [BepInEx](https://thunderstore.io/c/ultrakill/p/BepInEx/BepInExPack/) (Manual Installation)
-
-   1. Install **BepInEx**.
-   2. Download the mod.
-   3. Extract all contents from the `.zip` file into the **ULTRAKILL\BepInEx\plugin** folder.
+   - Extract all contents from the `.zip` file into the **ULTRAKILL\BepInEx\plugin** folder.
 
 
-### How to add the rank sound
-1. Find the directory path of the audio
-   - audio folder inside ULTRAKILL_DATA
-      1. Right click your ULTRAKILL on steam
-
-      2. **Manage** --> **Browse Local Files**
-
-      3. Go to the **ULTRAKILL_DATA** folder
-
-      4. Go to a **Audio** Folder ( if not, create a new one )
-
-   - Legacy method ( Put the audio near the plugin, it still work )
-      1. Find directory path of the plugin/.dll
-
-      2. Find the **Audio** folder near the plugin/.dll.
-
-2. Open the **Audio** folder.
-
-3. The rank sound file's name should rename to the specific format, include: **D C B A S SS SSS U**  
+### How to add the audio
 
 ### Rank Sound File Naming
 
@@ -74,7 +54,11 @@ If a required sound file is missing, the system will:
 - Download and Using [PluginConfigurator](https://thunderstore.io/c/ultrakill/p/EternalsTeam/PluginConfigurator/) to edit in-game.
 
 ### Bugs & Suggestions
-if you encountered any bug, complains and suggestions, please upload it on [GreyAnnouncer issue](https://github.com/greycsont/GreyAnnouncer/issues).
+if you have any throuble with the mod, feel free to ask in 
+- [Github discussions](https://github.com/greycsont/GreyAnnouncer/discussions)
+- [Github issue](https://github.com/greycsont/GreyAnnouncer/issues)
+- Email : 1106230622@qq.com
+
 
 ### Credit
 Thanks:

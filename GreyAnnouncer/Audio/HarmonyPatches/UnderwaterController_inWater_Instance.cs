@@ -35,7 +35,7 @@ public class UnderwaterController_inWater_Instance
 
 
 [Description("Q : Why? A : Prevent when audio is playing and enter/out of the water")]
-[HarmonyPatch(typeof(global::UnderwaterController), "EnterWater")]
+[HarmonyPatch(typeof(UnderwaterController), "EnterWater")]
 public static class EnterWater_Patch
 {
     public static void Postfix()
@@ -43,7 +43,7 @@ public static class EnterWater_Patch
         UnderwaterController_inWater_Instance.CheckIsInWater();
     }
 }
-[HarmonyPatch(typeof(global::UnderwaterController), "OutWater")]
+[HarmonyPatch(typeof(UnderwaterController), "OutWater")]
 public static class OutWater_Patch
 {
     public static void Postfix()

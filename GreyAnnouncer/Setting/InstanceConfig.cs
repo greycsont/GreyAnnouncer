@@ -11,7 +11,8 @@ public static class InstanceConfig
     public static          ConfigEntry<float>                    AudioSourceVolume; // Range : 0f ~ 1f
     public static          ConfigEntry<bool>                     LowPassFilter_Enabled;
     public static          ConfigEntry<string>                   AudioFolderPath;
-    
+    public static          ConfigEntry<int>                      AudioPlayOptions;
+
     public static readonly Dictionary<string, (string section, string name, object defaultValue, string description)> ConfigEntries = new()
     {
         // "Cooldown" section
@@ -31,7 +32,8 @@ public static class InstanceConfig
         // "Audio" section
         { "AudioSourceVolume",      ("Audio",         "Audio_source_volume",                 DEFAULT_AUDIO_SOURCE_VOLUME,      "Volume of the Announcer ( Range : 0f ~ 1f )") },
         { "LowPassFilter",          ("Audio",         "Under_water_low_pass_filter_Enabled", DEFAULT_LOW_PASS_FILTER_ENABLED,  "Set to true to enable muffle effect when under water") },
-        { "AudioFolderPath",        ("Audio",         "Audio_folder_path",                   DEFAULT_AUDIO_FOLDER_PATH,        "Path to the audio folder") } 
+        { "AudioFolderPath",        ("Audio",         "Audio_folder_path",                   DEFAULT_AUDIO_FOLDER_PATH,        "Path to the audio folder") },
+        { "AudioPlayOptions",       ("Audio",         "Audio_Play_Option",                   DEFAULT_AUDIO_PLAY_OPTIONS,       "0 : new audio will override the old one, 1 : audio will not effect each other") }
     };
     
     public static void Initialize(Plugin plugin)
@@ -93,6 +95,16 @@ public static class InstanceConfig
 
             if (name == "Audio_folder_path") AudioFolderPath = configEntry;
         }
+        else if (defaultValue is int)
+        {
+            var configEntry = plugin.Config.Bind(
+                section,
+                name,
+                (int)defaultValue,
+                description
+            );
+            if (name == "Audio_Play_Option") AudioPlayOptions = configEntry;
+        }
         else
         {
             Plugin.Log.LogError($"Unsupported type for config entry: {key}, Type: {defaultValue?.GetType()?.FullName ?? "null"}");
@@ -139,6 +151,13 @@ public static class InstanceConfig
     {
         get => _audioFolderPath ?? PathManager.GetCurrentPluginPath("Audio");
         private set => _audioFolderPath = value;
+    }
+
+    private static int _defaultAudioPlayOptions = 0;
+    public static int DEFAULT_AUDIO_PLAY_OPTIONS
+    {
+        get => _defaultAudioPlayOptions < 2 ? _defaultAudioPlayOptions : 0;
+        private set => _defaultAudioPlayOptions = value;
     }
 }
 

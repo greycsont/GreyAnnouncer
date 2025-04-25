@@ -4,8 +4,6 @@ using PluginConfig.API.Decorators;
 using PluginConfig.API.Functionals;
 using UnityEngine;
 using System;
-using System.IO;
-using System.Runtime.InteropServices;
 
 
 namespace greycsont.GreyAnnouncer;
@@ -73,39 +71,54 @@ public static class MainPanelBuilder
             SoloAudioSource.Instance.UpdateSoloAudioSourceVolume(e.newValue);
         };
 
+// It worked, but not working great as there's ton of audio when from low rank directly to the high rank
+// May be add a short cooldown as limitation
+//
+//
+//
+//
+//
+        var playOption = new EnumField<PlayOptions>(
+            _config.rootPanel,
+            "Audio Play Option",
+            "Audio_Play_Option",
+            (PlayOptions)InstanceConfig.AudioPlayOptions.Value
+        );
+        playOption.defaultValue = (PlayOptions)InstanceConfig.DEFAULT_AUDIO_PLAY_OPTIONS;
+        playOption.onValueChange += e =>
+        {
+            InstanceConfig.AudioPlayOptions.Value = (int)e.value;
+        };
+
         var audioFolderPath = new StringField(
             _config.rootPanel,
             "Audio Folder Path",
             "Audio_Folder_Path",
             InstanceConfig.AudioFolderPath.Value
         );
-        audioFolderPath.defaultValue = InstanceConfig.DEFAULT_AUDIO_FOLDER_PATH;
+        audioFolderPath.defaultValue   = InstanceConfig.DEFAULT_AUDIO_FOLDER_PATH;
         audioFolderPath.onValueChange += e =>
         {
             InstanceConfig.AudioFolderPath.Value = e.value;
             RankAnnouncer.UpdateAudioFolderPath(e.value);
         };
 
-        var openAudioFolder = new ButtonField(
+        var audioButtonArray = new ButtonArrayField(
             _config.rootPanel,
-            "Open audio folder",
-            "open_audio_folder");
-        openAudioFolder.onClick += () =>
+            "audio_button_array",
+            2,
+            new float[] { 0.5f, 0.5f },
+            new string[] { "Open audio folder", "Reload Audio" }
+        );
+        audioButtonArray.OnClickEventHandler(0).onClick += () =>
         {
             PathManager.OpenDirectory(InstanceConfig.AudioFolderPath.Value);
         };
-
-
-        var reloadButton = new ButtonField(
-            _config.rootPanel, 
-            "Reload Audio", 
-            "reload_audio");
-        reloadButton.onClick += () =>
+        audioButtonArray.OnClickEventHandler(1).onClick += () =>
         {
             RankAnnouncer.ReloadAudio();
         };
-        
-        
+
     }
 
     private static void CreateAdvancedOptionPanel()
@@ -129,5 +142,10 @@ public static class MainPanelBuilder
         };
     }
     private static readonly Color HeaderColor = new Color(0.85f, 0.85f, 0.85f, 1f);
+    private enum PlayOptions
+    {
+        Override = 0,
+        Parallel = 1
+    }
 }
 

@@ -8,7 +8,7 @@ using System.ComponentModel;
 
 namespace greycsont.GreyAnnouncer;
 
-[Description("The AudioLoader should and only be a audioClips entity, " +
+[Description("The AudioLoader should and only be used as a audioClips entity, " +
              "I tried to add cooldown counter in here but I just realize it's only a audio loader")]
 public class AudioLoader
 {
@@ -17,11 +17,13 @@ public class AudioLoader
     public           HashSet<string>            categoreFailedLoading       = new HashSet<string>();
     public  readonly string[]                   audioCategories;
     private          string                     audioPath;
+    private          string[]                   audioFileNames;
 
-    public AudioLoader(string audioPath, string[] audioCategories)
+    public AudioLoader(string audioPath, string[] audioCategories, string[] audioFileNames)
     {
         this.audioPath       = audioPath;
         this.audioCategories = audioCategories;
+        this.audioFileNames  = audioFileNames;
     }
 
     public void UpdateAudioPaths(string newAudioPaths)
@@ -66,7 +68,7 @@ public class AudioLoader
 
         for (int i = 0; i < audioCategories.Length; i++)
         {
-            if (JsonSetting.Settings.RankSettings.audioNames[i] == "")
+            if (audioFileNames[i] == "")
                 Plugin.Log.LogWarning($"You forget to set the audio name of {audioCategories[i]} ");
 
             var filePath = CheckAudioWithExtension(audioPath, i);
@@ -88,7 +90,7 @@ public class AudioLoader
         string filePath = null;
         foreach (var ext in supportedExtensions)
         {
-            string potentialPath = Path.Combine(audioPath, JsonSetting.Settings.RankSettings.audioNames[index] + ext);
+            string potentialPath = Path.Combine(audioPath, audioFileNames[index] + ext);
             if (File.Exists(potentialPath))
             {
                 filePath = potentialPath;
@@ -119,7 +121,7 @@ public class AudioLoader
         string url = new Uri(path).AbsoluteUri;
 
         AudioType audioType = GetAudioTypeFromExtension(url);
-        Plugin.Log.LogInfo($"Loading audio : {JsonSetting.Settings.RankSettings.audioNames[key]} for {audioCategories[key]} from {Uri.UnescapeDataString(url)}");
+        Plugin.Log.LogInfo($"Loading audio : {audioFileNames[key]} for {audioCategories[key]} from {Uri.UnescapeDataString(url)}");
         using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, audioType))
         {
             yield return www.SendWebRequest();
@@ -146,6 +148,7 @@ public class AudioLoader
         }
         audioClips.Clear(); //clear dictionary
     }
+    
     public void ReloadAudio()
     {
         Plugin.Log.LogInfo($"Clear audio clip cache...");

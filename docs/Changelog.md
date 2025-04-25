@@ -1,15 +1,14 @@
 ### Known issue/TODO
-
+- option to switch parallel audio playing on/off.
 
 ### v1.0.2
 - Fixed when you qui the mission in the water, the muffle effect still exists when playing audio.
-- changed the mod's icon, the old icon directly uses the Arknights's greythroat asset.
-- some changes of license (seen in README.md).
-- Added audioSourcePool for parallel audio playing.
+- changed the mod's icon, the old icon directly uses the Arknights's mini greythroat asset.
+- some changes of license (fixed/added the Lib\ folder that does not include in License, This folder includes assembly-sharp of ULTRAKILL, PluginConfigurator and some unity assets).
+- Added parallel audio playing option.
 - Added greyannouncer.json in plugin folder for customize audio name.
 - switch to using BepInex's config to customize audio loading path (Default path is the legacy method, you can edit it easily via PluginConfigurator).
-- Moved rank check in ValidationState in StyleHUD.cs (harmony patch).
-- Decoupe code.
+- RECONSTRUCT the code architecture.
 
 ### v1.0.1
 - Added LowPassFilter(Muffle) when under water (Thanks Clover for DM in discord).
