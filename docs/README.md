@@ -30,15 +30,6 @@ You can customize the audio name in the **greyannouncer.json** which is **near t
 - `SSS.wav`
 - `U.wav`
 
-
-
-Ensure that all rank sound files follow this naming convention for proper recognition.
-
-If a required sound file is missing, the system will:
-- **Skip playback** for that rank.
-- **Not affect other rank sounds** that are correctly configured.
-
-
 ### Supported and Unsupported Audio Formats
 
 | Format      | Supported |                 
@@ -47,8 +38,8 @@ If a required sound file is missing, the system will:
 | `.wav`      | ✅        |        
 | `.flac`     | ❌        |             
 | `.aac`      | ❌        |           
-| `.ogg`      | ?        |                  
-| `.aiff/.aif`| ?        |                 
+| `.ogg`      | not tested|                  
+| `.aiff/.aif`| not tested|                 
 
 ### How to customize the setting
 - Download and Using [PluginConfigurator](https://thunderstore.io/c/ultrakill/p/EternalsTeam/PluginConfigurator/) to edit in-game.
@@ -60,8 +51,9 @@ if you have any throuble with the mod, feel free to ask in
 - Email : 1106230622@qq.com
 
 ### Resources
-[1] CopperPlateCC by Owen Earl, used under SIL Open Font License (OFL) Version 1.1.0
-[2] D-DIN by datto, used under SIL Open Font License (OFL) Version 1.1.0
+[1] Krita, used under GNU General Public License (GPL) Version 3.0
+[2] CopperPlateCC by Owen Earl, used under SIL Open Font License (OFL) Version 1.1.0
+[3] D-DIN by datto, used under SIL Open Font License (OFL) Version 1.1.0
 ### Credit
 Thanks:
 - [Announcer Mod](https://www.nexusmods.com/ultrakill/mods/54)
