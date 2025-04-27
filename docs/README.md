@@ -1,39 +1,21 @@
 
-#### Mod description
+### Mod description
 It will plays a **audio** when you reach to a higher style rank!
+- [Installation](###how-to-install-it)
+- [Add sound](###how-to-add-the-rank-sound)
+- [File naming](###rank-Sound-file-naming)
+- [Customize setting](###how-to-customize-the-setting)
 
-
-#### How to install it
+### How to install it
 1. [r2modman](https://thunderstore.io/c/ultrakill/p/ebkr/r2modman/)
 
 2. [BepInEx](https://thunderstore.io/c/ultrakill/p/BepInEx/BepInExPack/) (Manual Installation)
-
-   1. Install **BepInEx**.
-   2. Download the mod.
-   3. Extract all contents from the `.zip` file into the **ULTRAKILL\BepInEx\plugin** folder.
+   - Extract all contents from the `.zip` file into the **ULTRAKILL\BepInEx\plugin** folder.
 
 
-#### How to add the rank sound
-1. Find the directory path of the audio
-   - audio folder inside ULTRAKILL_DATA
-      1. Right click your ULTRAKILL on steam
+### How to add the audio
 
-      2. **Manage** --> **Browse Local Files**
-
-      3. Go to the **ULTRAKILL_DATA** folder
-
-      4. Go to a **Audio** Folder ( if not, create a new one )
-
-   - Legacy method ( Put the audio near the plugin, it still work )
-      1. Find directory path of the plugin/.dll
-
-      2. Find the **Audio** folder near the plugin/.dll.
-
-2. Open the **Audio** folder.
-
-3. The rank sound file's name should rename to the specific format, include: **D C B A S SS SSS U**  
-
-#### Rank Sound File Naming
+### Rank Sound File Naming
 
 You can customize the audio name in the **greyannouncer.json** which is **near the plugin**. the default audio name given in the below:
 
@@ -48,16 +30,7 @@ You can customize the audio name in the **greyannouncer.json** which is **near t
 - `SSS.wav`
 - `U.wav`
 
-
-
-Ensure that all rank sound files follow this naming convention for proper recognition.
-
-If a required sound file is missing, the system will:
-- **Skip playback** for that rank.
-- **Not affect other rank sounds** that are correctly configured.
-
-
-#### Supported and Unsupported Audio Formats
+### Supported and Unsupported Audio Formats
 
 | Format      | Supported |                 
 |-------------|-----------|
@@ -65,29 +38,31 @@ If a required sound file is missing, the system will:
 | `.wav`      | ✅        |        
 | `.flac`     | ❌        |             
 | `.aac`      | ❌        |           
-| `.ogg`      | ?        |                  
-| `.aiff/.aif`| ?        |                 
+| `.ogg`      | not tested|                  
+| `.aiff/.aif`| not tested|                 
 
-#### How to customize the setting
-
-
+### How to customize the setting
 - Download and Using [PluginConfigurator](https://thunderstore.io/c/ultrakill/p/EternalsTeam/PluginConfigurator/) to edit in-game.
 
-#### Bugs & Suggestions
-if you encountered any bug, complains and suggestions, please upload it on [GreyAnnouncer issue](https://github.com/greycsont/GreyAnnouncer/issues).
+### Bugs & Suggestions
+if you have any throuble with the mod, feel free to ask in 
+- [Github discussions](https://github.com/greycsont/GreyAnnouncer/discussions)
+- [Github issue](https://github.com/greycsont/GreyAnnouncer/issues)
+- Email : 1106230622@qq.com
 
-#### Credit
+### Resources
+[1] Krita, used under GNU General Public License (GPL) Version 3.0
+[2] CopperPlateCC by Owen Earl, used under SIL Open Font License (OFL) Version 1.1.0
+[3] D-DIN by datto, used under SIL Open Font License (OFL) Version 1.1.0
+### Credit
 Thanks:
 - [Announcer Mod](https://www.nexusmods.com/ultrakill/mods/54)
 - [PluginConfigurator doc](https://github.com/eternalUnion/UKPluginConfigurator/wiki)
 - [Maxwell's puzzling demon](https://store.steampowered.com/app/2770160/)
 - [Everything](https://www.voidtools.com/) Saved my mod's thumbnail and manifest ****** up by vscode's github extention's auto correction.
 
-#### License
-- This project is not open-sourced under the MIT License.
-- The code/software is licensed under the MIT License.
-- The icons and assets are not covered by the MIT License and are subject to separate licensing terms.
-- The icons and assets are provided only for use within this project. **Unauthorized commercial use is prohibited**.
+### License
+- The file(s) in the **Lib/** folder are third-party and not authored by me. They are not covered by the MIT License of this project. Please refer to the respective license(s) of those files.
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 

@@ -19,4 +19,6 @@ H:\C#Project\GreyAnnouncer\obj\Debug\net472\GreyAnnouncer.pdb
 H:\C#Project\GreyAnnouncer\BuildOutput\net472\GreyAnnouncer.dll
 H:\C#Project\GreyAnnouncer\BuildOutput\net472\GreyAnnouncer.pdb
 H:\C#Project\GreyAnnouncer\BuildOutput\net472\Newtonsoft.Json.dll
-H:\C#Project\GreyAnnouncer\obj\Debug\net472\GreyAnnouncer.csproj.CopyComplete
+E:\SteamLibrary\steamapps\common\ULTRAKILL\BepInEx\plugins\GreyAnnouncer\net472\GreyAnnouncer.dll
+E:\SteamLibrary\steamapps\common\ULTRAKILL\BepInEx\plugins\GreyAnnouncer\net472\GreyAnnouncer.pdb
+H:\C#Project\GreyAnnouncer\obj\Debug\net472\GreyAnno.938D7CA8.Up2Date
