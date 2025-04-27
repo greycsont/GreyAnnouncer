@@ -25,9 +25,19 @@ public class PathManager
     {
         if (string.IsNullOrEmpty(path)) return path;
 
-        return path.TrimStart('\u202A');
+        string originalPath = path;
+        char[] directionalChars = { '\u202A', '\u202B', '\u202C', '\u202D', '\u202E' };
+        string cleanedPath = path.TrimStart(directionalChars);
+
+        if (!originalPath.Equals(cleanedPath))
+        {
+            Plugin.Log.LogInfo($"Path cleaned: Original='{originalPath}', Cleaned='{cleanedPath}'");
+        }
+
+        return cleanedPath;
         /* 我恨你， 当我用GPT-SOTIVS都是因为这个破东西导致一直说没找到路径,摸摸灰喉（ */
     }
+
 
     [Description("Reference : (C# 判断操作系统是 Windows 还是 Linux - 青叶煮酒 - 博客园, 11/1/2022) https://www.cnblogs.com/dhqy/p/15787463.html (Accessed in 25/4/2025)")]
     public static void OpenDirectory(string path)

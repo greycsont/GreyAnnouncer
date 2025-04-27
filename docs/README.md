@@ -59,7 +59,9 @@ if you have any throuble with the mod, feel free to ask in
 - [Github issue](https://github.com/greycsont/GreyAnnouncer/issues)
 - Email : 1106230622@qq.com
 
-
+### Resources
+[1] CopperPlateCC by Owen Earl, used under SIL Open Font License (OFL) Version 1.1.0
+[2] D-DIN by datto, used under SIL Open Font License (OFL) Version 1.1.0
 ### Credit
 Thanks:
 - [Announcer Mod](https://www.nexusmods.com/ultrakill/mods/54)

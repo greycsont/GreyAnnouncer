@@ -1,5 +1,4 @@
 ### Known issue/TODO
-- option to switch parallel audio playing on/off.
 
 ### v1.0.2
 - Fixed when you qui the mission in the water, the muffle effect still exists when playing audio.
@@ -9,6 +8,7 @@
 - Added greyannouncer.json in plugin folder for customize audio name.
 - switch to using BepInex's config to customize audio loading path (Default path is the legacy method, you can edit it easily via PluginConfigurator).
 - RECONSTRUCT the code architecture.
+- removed patch to update() in StyleHUD.cs
 
 ### v1.0.1
 - Added LowPassFilter(Muffle) when under water (Thanks Clover for DM in discord).
