@@ -17,7 +17,7 @@ public class RankAnnouncer
     private static readonly string[]                   rankNames                  = new string[] {"D", "C", "B", "A", "S", "SS", "SSS", "U"};
     private static          float[]                    individualRankPlayCooldown = new float[rankNames.Length];
     private static          float                      sharedRankPlayCooldown     = 0f;
-    private static          AudioLoader                _audioLoader;
+    private static          AudioLoader               _audioLoader;
     private static          AudioSourceSetting         audioSourceConfig          = new AudioSourceSetting
     {
         SpatialBlend = 0f,
@@ -33,7 +33,7 @@ public class RankAnnouncer
         (
             InstanceConfig.AudioFolderPath.Value,
             rankNames,
-            JsonSetting.Settings.RankSettings.audioNames
+            JsonSetting.Settings.AudioNames
         );
 
         _audioLoader.FindAvailableAudio();
@@ -91,7 +91,8 @@ public class RankAnnouncer
 
     public static void ReloadAudio()
     {
-        _audioLoader.ReloadAudio();
+        Plugin.Log.LogInfo("Reloading audio...");
+        _audioLoader.FindAvailableAudio();
     }
 
     public static void UpdateAudioFolderPath(string newPath)
