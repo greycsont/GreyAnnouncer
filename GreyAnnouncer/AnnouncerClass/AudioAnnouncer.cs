@@ -6,18 +6,18 @@ namespace greycsont.GreyAnnouncer;
 
 public class AudioAnnouncer
 {
-    private JsonSetting_v2 jsonSetting;
-    private AudioLoader _audioLoader;
-    private CooldownManager _cooldownManager;
+    private JsonSetting_v2     jsonSetting;
+    private AudioLoader        _audioLoader;
+    private CooldownManager    _cooldownManager;
     private AudioSourceSetting _audioSourceConfig;
 
-    private string[] audioFileNames;
-    private string jsonName;
-    private string audioPath;
+    private string[]           audioFileNames;
+    private string             jsonName;
+    private string             audioPath;
 
 
 
-    #region Methods
+    #region Public Methods
     public void Initialize(string[] audioFileNames, string jsonName, string audioPath)
     {
         VariableInitialization(audioFileNames, jsonName, audioPath);
@@ -28,34 +28,14 @@ public class AudioAnnouncer
     {
         try
         {
-            var ValidationState = GetPlayValidationState(key);
-            if (ValidationState != ValidationState.Success)
-            {
-                Plugin.Log.LogInfo($"PlayValidationState: {_audioLoader.audioCategories[key]}, {ValidationState}");
-                return;
-            }
-
-            var clip = _audioLoader.TryToGetAudioClip(key);
-            if (clip == null) return;
-
-            if (InstanceConfig.AudioPlayOptions.Value == 0)  SoloAudioSource.Instance.PlayOverridable(clip, _audioSourceConfig);
-
-            else if (InstanceConfig.AudioPlayOptions.Value == 1) AudioSourcePool.Instance.PlayOneShot(clip, _audioSourceConfig);
-
-            else
-            {
-                Plugin.Log.LogWarning("Invalid play audio options, using the default one");
-                SoloAudioSource.Instance.PlayOverridable(clip, _audioSourceConfig);
-            }
-
+            if (!ValidateAndLogPlayback(key)) return;
+            PlayAudioClip(key);
             SetCooldown(key, InstanceConfig.IndividualRankPlayCooldown.Value);
         }
         catch(Exception ex)
         {
-            Plugin.Log.LogError($"An error occurred while playing sound: {ex.Message}");
-            Plugin.Log.LogError(ex.StackTrace);
+            LogPlaybackError(ex);
         }
-
     }
 
     public void ReloadAudio()
@@ -102,7 +82,7 @@ public class AudioAnnouncer
 
     private void JsonInitialization()
     {
-        if (CheckDoesJsonExists() != false) CreateJson();
+        if (CheckDoesJsonExists() == false) CreateJson();
         jsonSetting = JsonManager.ReadJson<JsonSetting_v2>(jsonName);
     }
 
@@ -129,6 +109,7 @@ public class AudioAnnouncer
     }
     #endregion
 
+
     #region Cooldown related
     public void SetCooldown(int key, float cooldown)
     {
@@ -137,9 +118,60 @@ public class AudioAnnouncer
     }
     #endregion
 
+
+    #region Play Audio related
+    private bool ValidateAndLogPlayback(int key)
+    {
+        var validationState = GetPlayValidationState(key);
+        if (validationState != ValidationState.Success)
+        {
+            Plugin.Log.LogInfo($"PlayValidationState: {_audioLoader.audioCategories[key]}, {validationState}");
+            return false;
+        }
+        return true;
+    }
+    
+    private void PlayAudioClip(int key)
+    {
+        var clip = _audioLoader.TryToGetAudioClip(key);
+        if (clip == null) return;
+
+        switch (InstanceConfig.AudioPlayOptions.Value)
+        {
+            case 0:
+                SoloAudioSource.Instance.PlayOverridable(clip, _audioSourceConfig);
+                break;
+            case 1:
+                AudioSourcePool.Instance.PlayOneShot(clip, _audioSourceConfig);
+                break;
+            default:
+                Plugin.Log.LogWarning("Invalid play audio options, using the default one");
+                SoloAudioSource.Instance.PlayOverridable(clip, _audioSourceConfig);
+                break;
+        }
+    }
+
+    private void LogPlaybackError(Exception ex)
+    {
+        Plugin.Log.LogError($"An error occurred while playing sound: {ex.Message}");
+        Plugin.Log.LogError(ex.StackTrace);
+    }
+    #endregion
+
+
     #region Validation related
     private ValidationState GetPlayValidationState(int key)
     {
+        // 检查组件是否为空
+        if (_cooldownManager == null || _audioLoader == null)
+            return ValidationState.ComponentsNotInitialized;
+
+        // 检查数组越界
+        if (_audioLoader.audioCategories == null || 
+            key < 0 || 
+            key >= _audioLoader.audioCategories.Length)
+            return ValidationState.InvalidKey;
+
         if (_cooldownManager.IsIndividualCooldownActive(key))
             return ValidationState.IndividualCooldown;
 
@@ -166,7 +198,9 @@ public class AudioAnnouncer
         IndividualCooldown,
         DisabledByConfig,
         ClipNotFound,
-        ValidationError
+        ValidationError,
+        ComponentsNotInitialized,
+        InvalidKey
     }
     #endregion
 }

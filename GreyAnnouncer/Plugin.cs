@@ -30,6 +30,7 @@ public class Plugin : BaseUnityPlugin
         JsonManager.   Initialize();
         InstanceConfig.Initialize(this);
         RankAnnouncer. Initialize();
+        RankAnnouncerV2.Initialize();
     }
 
     private void LoadOptionalModule()
