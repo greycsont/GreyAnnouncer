@@ -15,7 +15,7 @@ public class AudioLoader
     public           Dictionary<int, AudioClip> audioClips                  = new Dictionary<int, AudioClip>();
     private readonly string[]                   supportedExtensions         = new string[] { ".wav", ".mp3", ".ogg", ".aiff", ".aif" };
     public           HashSet<string>            categoreFailedLoading       = new HashSet<string>();
-    public  readonly string[]                   audioCategories;
+    public           string[]                   audioCategories;
     private          string                     audioPath;
     private          string[]                   audioFileNames;
 
@@ -26,6 +26,7 @@ public class AudioLoader
         this.audioFileNames  = audioFileNames;
     }
 
+    #region Methods
     public void UpdateAudioPaths(string newAudioPaths)
     {
         if (newAudioPaths == null || newAudioPaths.Length == 0)
@@ -40,8 +41,7 @@ public class AudioLoader
 
     public void FindAvailableAudio()
     {
-        ClearAudioClipCache();
-        categoreFailedLoading.Clear();
+        ClearCache();
 
         TryToFindDirectoryOfAudioFolder(audioPath);
         TryToFetchAudios(audioPath);
@@ -53,6 +53,19 @@ public class AudioLoader
         }
     }
 
+    public AudioClip TryToGetAudioClip(int key)
+    {
+        return audioClips.TryGetValue(key, out AudioClip clip) ? clip : null;
+    }
+    #endregion
+
+
+    #region Find Available Audio related
+    private void ClearCache()
+    {
+        ClearAudioClipCache();
+        categoreFailedLoading.Clear();
+    }
     public void TryToFindDirectoryOfAudioFolder(string audioPath)
     {
         if (!Directory.Exists(audioPath))
@@ -134,29 +147,6 @@ public class AudioLoader
 
     }
 
-    public AudioClip TryToGetAudioClip(int key)
-    {
-        return audioClips.TryGetValue(key, out AudioClip clip) ? clip : null; 
-    }
-
-    public void ClearAudioClipCache()
-    {
-        foreach (var clip in audioClips.Values)
-        {
-            if (clip != null)
-                UnityEngine.Object.Destroy(clip);   //clear clip in the unity's assets
-        }
-        audioClips.Clear(); //clear dictionary
-    }
-    
-    public void ReloadAudio()
-    {
-        Plugin.Log.LogInfo($"Clear audio clip cache...");
-        ClearAudioClipCache();
-        Plugin.Log.LogInfo($"Reload audio...");
-        FindAvailableAudio();
-    }
-
     private void LoggingAudioLodingResults()
     {
         if (categoreFailedLoading.Count == 0)
@@ -168,4 +158,19 @@ public class AudioLoader
             Plugin.Log.LogWarning("Failed to load audio files: " + string.Join(", ", categoreFailedLoading));
         }
     }
+
+    private void ClearAudioClipCache()
+    {
+        foreach (var clip in audioClips.Values)
+        {
+            if (clip != null)
+                UnityEngine.Object.Destroy(clip);   //clear clip in the unity's assets
+        }
+        audioClips.Clear(); //clear dictionary
+    }
+    #endregion
+
+
+
+
 }
