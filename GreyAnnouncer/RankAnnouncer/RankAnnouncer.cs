@@ -10,14 +10,16 @@ using System.ComponentModel;
             AudioLoader.cs for loading/caching/storing/fetching audio
             InstanceConfig.cs for setting
             JsonSetting.cs for setting */
+           
 namespace greycsont.GreyAnnouncer;
 
+[Obsolete("Removeable because the RankAnnouncerV2", true)]
 public class RankAnnouncer
 {       
     private static readonly string[]                   rankNames                  = new string[] {"D", "C", "B", "A", "S", "SS", "SSS", "U"};
     private static          float[]                    individualRankPlayCooldown = new float[rankNames.Length];
     private static          float                      sharedRankPlayCooldown     = 0f;
-    private static          AudioLoader               _audioLoader;
+    private static          AudioLoader                _audioLoader;
     private static          AudioSourceSetting         audioSourceConfig          = new AudioSourceSetting
     {
         SpatialBlend = 0f,

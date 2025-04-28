@@ -6,6 +6,7 @@ namespace greycsont.GreyAnnouncer;
 
 public class JsonManager
 {
+    #region Obslete
     private const string  JSON_NAME      = "greyannouncer.json";
     private static string JSON_FILE_PATH = PathManager.GetCurrentPluginPath(JSON_NAME);
 
@@ -40,6 +41,7 @@ public class JsonManager
         string loadedJson    = File.ReadAllText(JSON_FILE_PATH);
         JsonSetting.Settings = JsonConvert.DeserializeObject<RootObject>(loadedJson);
     }
+    #endregion
 
     public static T ReadJson<T>(string jsonName) where T : class
     {

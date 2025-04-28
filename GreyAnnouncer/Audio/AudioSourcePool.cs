@@ -13,6 +13,7 @@ public class AudioSourcePool : MonoBehaviour
     public                  int                                                  initialSize        = 3;
     public                  int                                                  maxSize            = 5;
 
+    #region Public Methods
     public static AudioSourcePool Instance
     {
         get
@@ -37,15 +38,6 @@ public class AudioSourcePool : MonoBehaviour
         }
     }
 
-    private AudioSource CreateNewAudioSource()
-    {
-        Plugin.Log.LogInfo("Create a new Audio Source");
-        var go = new GameObject("PooledAudioSource");
-        go.transform.SetParent(transform);
-        var audioSource = go.AddComponent<AudioSource>();
-        go.SetActive(false);
-        return audioSource;
-    }
 
     public void PlayOneShot(AudioClip clip, AudioSourceSetting config)
     {
@@ -92,6 +84,10 @@ public class AudioSourcePool : MonoBehaviour
             }
         }
     }
+    #endregion
+
+
+    #region Private Methods
 
     private AudioSource Get()
     {
@@ -117,6 +113,17 @@ public class AudioSourcePool : MonoBehaviour
 
         return audioSource;
     }
+
+    private AudioSource CreateNewAudioSource()
+    {
+        Plugin.Log.LogInfo("Create a new Audio Source");
+        var go = new GameObject("PooledAudioSource");
+        go.transform.SetParent(transform);
+        var audioSource = go.AddComponent<AudioSource>();
+        go.SetActive(false);
+        return audioSource;
+    }
+
 
     private IEnumerator RecycleAfterPlay(AudioSource audioSource)
     {
@@ -149,7 +156,7 @@ public class AudioSourcePool : MonoBehaviour
         activeAudioSources.Remove(audioSource);
         pool.Enqueue(audioSource);
     }
-
+    #endregion
 
 
     

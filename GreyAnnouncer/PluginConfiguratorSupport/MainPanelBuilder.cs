@@ -16,6 +16,8 @@ public static class MainPanelBuilder
     {
         _config = config;
 
+        new ConfigSpace(_config.rootPanel, 15f);
+
         ConfigHeader mainHeader = new ConfigHeader(_config.rootPanel, "Main Settings");
         mainHeader.textColor    = HeaderColor;
 
@@ -36,7 +38,7 @@ public static class MainPanelBuilder
         sharedCooldown.onValueChange += e =>
         {
             InstanceConfig.SharedRankPlayCooldown.Value = e.value;
-            RankAnnouncer.ResetTimerToZero();
+            RankAnnouncerV2.ResetCooldowns();
         };
 
         var individualCooldown = new FloatField(
@@ -49,7 +51,7 @@ public static class MainPanelBuilder
         individualCooldown.onValueChange += e =>
         {
             InstanceConfig.IndividualRankPlayCooldown.Value = e.value;
-            RankAnnouncer.ResetTimerToZero();
+            RankAnnouncerV2.ResetCooldowns();
         };
     }
 
@@ -100,7 +102,7 @@ public static class MainPanelBuilder
         audioFolderPath.onValueChange += e =>
         {
             InstanceConfig.AudioFolderPath.Value = e.value;
-            RankAnnouncer.UpdateAudioFolderPath(e.value);
+            RankAnnouncerV2.UpdateRankAudioPath(e.value);
         };
 
         var audioButtonArray = new ButtonArrayField(
@@ -116,7 +118,7 @@ public static class MainPanelBuilder
         };
         audioButtonArray.OnClickEventHandler(1).onClick += () =>
         {
-            RankAnnouncer.ReloadAudio();
+            RankAnnouncerV2.ReloadRankSounds();
         };
 
     }

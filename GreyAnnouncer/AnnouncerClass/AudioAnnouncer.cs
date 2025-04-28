@@ -41,7 +41,7 @@ public class AudioAnnouncer
     public void ReloadAudio()
     {
         JsonInitialization();
-        _audioLoader.audioCategories = jsonSetting.AudioNames;
+        _audioLoader.audioFileNames = jsonSetting.AudioNames;
         _audioLoader.FindAvailableAudio();
     }
 

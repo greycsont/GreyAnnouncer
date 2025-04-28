@@ -73,5 +73,15 @@
     <!--<OutputPath>$(SolutionDir)BuildOutput\</OutputPath>-->
     <OutputPath>E:\SteamLibrary\steamapps\common\ULTRAKILL\BepInEx\plugins\GreyAnnouncer</OutputPath>
   </PropertyGroup>
+	
+  <PropertyGroup>
+    <StartAction>Program</StartAction>
+    <StartProgram>E:\SteamLibrary\steamapps\common\ULTRAKILL\ULTRAKILL.exe</StartProgram>
+    <StartWorkingDirectory>E:\SteamLibrary\steamapps\common\ULTRAKILL</StartWorkingDirectory>
+  </PropertyGroup>
+	
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <Optimize>True</Optimize>
+  </PropertyGroup>
 
 </Project>

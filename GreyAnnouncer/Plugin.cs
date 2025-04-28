@@ -27,9 +27,9 @@ public class Plugin : BaseUnityPlugin
 
     private void LoadMainModule()
     {
-        JsonManager.   Initialize();
+        //JsonManager.   Initialize();
         InstanceConfig.Initialize(this);
-        RankAnnouncer. Initialize();
+        //RankAnnouncer. Initialize();
         RankAnnouncerV2.Initialize();
     }
 
@@ -44,7 +44,7 @@ public class Plugin : BaseUnityPlugin
         harmony.PatchAll();
     }
 
-    public void CheckPluginLoaded(string GUID, string assemblyName)
+    private void CheckPluginLoaded(string GUID, string assemblyName)
     {
         if (!Chainloader.PluginInfos.ContainsKey(GUID))
         {

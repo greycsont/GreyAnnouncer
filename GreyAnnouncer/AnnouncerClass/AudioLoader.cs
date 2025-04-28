@@ -16,8 +16,9 @@ public class AudioLoader
     private readonly string[]                   supportedExtensions         = new string[] { ".wav", ".mp3", ".ogg", ".aiff", ".aif" };
     public           HashSet<string>            categoreFailedLoading       = new HashSet<string>();
     public           string[]                   audioCategories;
+    public           string[]                   audioFileNames;
     private          string                     audioPath;
-    private          string[]                   audioFileNames;
+
 
     public AudioLoader(string audioPath, string[] audioCategories, string[] audioFileNames)
     {
@@ -66,6 +67,7 @@ public class AudioLoader
         ClearAudioClipCache();
         categoreFailedLoading.Clear();
     }
+
     public void TryToFindDirectoryOfAudioFolder(string audioPath)
     {
         if (!Directory.Exists(audioPath))
@@ -76,6 +78,7 @@ public class AudioLoader
         }
 
     }
+    
     private void TryToFetchAudios(string audioPath)
     {
 

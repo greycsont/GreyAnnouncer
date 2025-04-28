@@ -6,6 +6,11 @@ It will plays a **audio** when you reach to a higher style rank!
 - [File naming](###rank-Sound-file-naming)
 - [Customize setting](###how-to-customize-the-setting)
 
+### Include
+This mod pack include:
+- Grey Announcer Framework!
+- rank announcer (?)
+
 ### How to install it
 1. [r2modman](https://thunderstore.io/c/ultrakill/p/ebkr/r2modman/)
 
@@ -51,19 +56,30 @@ if you have any throuble with the mod, feel free to ask in
 - Email : 1106230622@qq.com
 
 ### Resources
-[1] Krita, used under GNU General Public License (GPL) Version 3.0
-[2] CopperPlateCC by Owen Earl, used under SIL Open Font License (OFL) Version 1.1.0
-[3] D-DIN by datto, used under SIL Open Font License (OFL) Version 1.1.0
+- [1] Krita, used under GNU General Public License (GPL) Version 3.0
+- [2] CopperPlateCC by Owen Earl, used under SIL Open Font License (OFL) Version 1.1.0
+- [3] D-DIN by datto, used under SIL Open Font License (OFL) Version 1.1.0
+- [4] BepInEX, used under GUN Lesser General Public License (LGPL) Version 2.1
+- [5] PluginConfigurator by eternalUnion, used under MIT License
 ### Credit
 Thanks:
+- [Artless Games](https://space.bilibili.com/1237125233)
 - [Announcer Mod](https://www.nexusmods.com/ultrakill/mods/54)
 - [PluginConfigurator doc](https://github.com/eternalUnion/UKPluginConfigurator/wiki)
 - [Maxwell's puzzling demon](https://store.steampowered.com/app/2770160/)
 - [Everything](https://www.voidtools.com/) Saved my mod's thumbnail and manifest ****** up by vscode's github extention's auto correction.
 
+
+### Website
+- [GreyAnnouncerFramework]
+- [GreyRankAnnouncer]
+The thunderstore's page only allowed one website link, and if you have any mistake in the .zip (includes README.md, icon etc.)
+
+YOU HAVE TO RE-ZIP ONE AND UPLOAD IT!
+ALSO YOU MUST CHANGE THE VERSION NUMBER!
 ### License
 - The file(s) in the **Lib/** folder are third-party and not authored by me. They are not covered by the MIT License of this project. Please refer to the respective license(s) of those files.
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 
 ###### Easter egg

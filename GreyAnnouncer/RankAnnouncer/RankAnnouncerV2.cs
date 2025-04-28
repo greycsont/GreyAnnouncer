@@ -1,4 +1,4 @@
-namespace greycsont.GreyAnnouncer;
+using greycsont.GreyAnnouncer;
 
 public static class RankAnnouncerV2
 {
