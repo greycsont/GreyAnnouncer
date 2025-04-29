@@ -78,7 +78,8 @@ The thunderstore's page only allowed one website link, and if you have any mista
 YOU HAVE TO RE-ZIP ONE AND UPLOAD IT!
 ALSO YOU MUST CHANGE THE VERSION NUMBER!
 ### License
-- The file(s) in the **Lib/** folder are third-party and not authored by me. They are not covered by the MIT License of this project. Please refer to the respective license(s) of those files.
+- The file(s) in the **Lib/** folder are third-party and not authored by me. They are not covered by the License of this project. Please refer to the respective license(s) of those files.
+
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 

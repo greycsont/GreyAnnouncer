@@ -27,9 +27,7 @@ public class Plugin : BaseUnityPlugin
 
     private void LoadMainModule()
     {
-        //JsonManager.   Initialize();
         InstanceConfig.Initialize(this);
-        //RankAnnouncer. Initialize();
         RankAnnouncerV2.Initialize();
     }
 
@@ -54,3 +52,14 @@ public class Plugin : BaseUnityPlugin
         ReflectionManager.LoadByReflection(assemblyName, "Initialize");
     }   
 }
+
+
+
+
+/* RankAnnouncer.cs requires :
+            PathManager.cs to find and fetch audio
+            AudioSourceManager.cs to add LowPassFilter
+            CoroutineRunner.cs for set timer
+            AudioLoader.cs for loading/caching/storing/fetching audio
+            InstanceConfig.cs for setting
+            JsonSetting.cs for setting */

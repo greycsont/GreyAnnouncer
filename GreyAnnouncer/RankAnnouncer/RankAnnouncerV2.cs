@@ -1,3 +1,6 @@
+using System.ComponentModel;
+
+
 using greycsont.GreyAnnouncer;
 
 public static class RankAnnouncerV2
@@ -14,6 +17,8 @@ public static class RankAnnouncerV2
         );
     }
 
+    [Description("Parry balls of Maurice -> Hit Maurice -> AscendingRank() -> Postfix() -> PlaySound() -> CheckPlayValidation(), " +
+                 "This bug will skip all the function before CheckPlayValidation(),  The try-catch has implemented in the fucntion")]
     public static void PlayRankSound(int rank)
     {
         if (rank < 0 || rank >= RANK_NAMES.Length)
