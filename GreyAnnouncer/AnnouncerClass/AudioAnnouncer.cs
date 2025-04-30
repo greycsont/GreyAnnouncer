@@ -11,17 +11,19 @@ public class AudioAnnouncer
     private CooldownManager    _cooldownManager;
     private AudioSourceSetting _audioSourceConfig;
 
-    private string[]           audioFileNames;
+    private string             announcerName;
+    private string[]           audioCategories;
     private string             jsonName;
     private string             audioPath;
 
 
 
     #region Public Methods
-    public void Initialize(string[] audioFileNames, string jsonName, string audioPath)
+    public void Initialize(string announcerName, string[] audioFileNames, string jsonName, string audioPath)
     {
-        VariableInitialization(audioFileNames, jsonName, audioPath);
+        VariableInitialization(announcerName, audioFileNames, jsonName, audioPath);
         ComponentInitialization();
+        RegisterAnnouncer();
     }
 
     public void PlayAudio(int key)
@@ -41,16 +43,16 @@ public class AudioAnnouncer
     public void ReloadAudio()
     {
         JsonInitialization();
-        _audioLoader.audioFileNames = jsonSetting.AudioNames;
+        _audioLoader.UpdateAudioFileNames(jsonSetting.AudioNames);
         _audioLoader.FindAvailableAudio();
     }
 
-    public void UpdateAudioPaths(string newAudioPaths)
+    public void UpdateAudioPath(string newAudioPaths)
     {
-        _audioLoader.UpdateAudioPaths(newAudioPaths);
+        _audioLoader.UpdateAudioPath(newAudioPaths);
     }
 
-    public void ResetTimerToZero()
+    public void ResetCooldown()
     {
         _cooldownManager.ResetCooldowns();
     }
@@ -58,11 +60,12 @@ public class AudioAnnouncer
 
 
     #region Initialize related
-    private void VariableInitialization(string[] audioFileNames, string jsonName, string audioPath)
+    private void VariableInitialization(string announcerName, string[] audioCategories, string jsonName, string audioPath)
     {
-        this.jsonName = jsonName;
-        this.audioPath = audioPath;
-        this.audioFileNames = audioFileNames;
+        this.announcerName   = announcerName;
+        this.jsonName        = jsonName;
+        this.audioPath       = audioPath;
+        this.audioCategories = audioCategories;
 
         _audioSourceConfig = new AudioSourceSetting
         {
@@ -93,19 +96,24 @@ public class AudioAnnouncer
 
     private void CreateJson()
     {
-        var jsonSetting = new JsonSetting_v2 { AudioNames = audioFileNames };
+        var jsonSetting = new JsonSetting_v2 { AudioNames = audioCategories };
         JsonManager.CreateJson(jsonName, jsonSetting);
     }
 
     private void AudioLoaderInitialization()
     {
-        _audioLoader = new AudioLoader(audioPath, audioFileNames, jsonSetting.AudioNames);
+        _audioLoader = new AudioLoader(audioPath, audioCategories, jsonSetting.AudioNames);
         _audioLoader.FindAvailableAudio();
     }
 
     private void CooldownManagerInitialization()
     {
         _cooldownManager = new CooldownManager(jsonSetting.AudioNames.Length);
+    }
+
+    private void RegisterAnnouncer()
+    {
+        AnnouncerManager.RegisterAnnouncer(announcerName, this);
     }
     #endregion
 

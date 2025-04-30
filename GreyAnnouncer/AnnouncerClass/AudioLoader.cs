@@ -28,16 +28,16 @@ public class AudioLoader
     }
 
     #region Methods
-    public void UpdateAudioPaths(string newAudioPaths)
+    public void UpdateAudioPath(string newAudioPath)
     {
-        if (newAudioPaths == null || newAudioPaths.Length == 0)
+        if (newAudioPath == null || newAudioPath.Length == 0)
         {
             Plugin.Log.LogError("Cannot update with empty or null paths");
             return;
         }
 
         Plugin.Log.LogInfo($"Updating audio paths and reloading audio...");
-        this.audioPath = newAudioPaths;
+        this.audioPath = newAudioPath;
     }
 
     public void FindAvailableAudio()
@@ -57,6 +57,11 @@ public class AudioLoader
     public AudioClip TryToGetAudioClip(int key)
     {
         return audioClips.TryGetValue(key, out AudioClip clip) ? clip : null;
+    }
+
+    public void UpdateAudioFileNames(string[] newAudioFileNames)
+    {
+        this.audioFileNames = newAudioFileNames;
     }
     #endregion
 

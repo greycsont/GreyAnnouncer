@@ -102,7 +102,7 @@ public static class MainPanelBuilder
         audioFolderPath.onValueChange += e =>
         {
             InstanceConfig.AudioFolderPath.Value = e.value;
-            RankAnnouncerV2.UpdateRankAudioPath(e.value);
+            AnnouncerManager.UpdateAllAnnouncerPaths(e.value);
         };
 
         var audioButtonArray = new ButtonArrayField(
@@ -118,7 +118,7 @@ public static class MainPanelBuilder
         };
         audioButtonArray.OnClickEventHandler(1).onClick += () =>
         {
-            RankAnnouncerV2.ReloadRankSounds();
+            AnnouncerManager.ReloadAllAnnouncers();
         };
 
     }

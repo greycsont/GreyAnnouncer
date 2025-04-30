@@ -11,6 +11,7 @@ public static class RankAnnouncerV2
     public static void Initialize()
     {
         _announcer.Initialize(
+            "RankAnnouncer",
             RANK_NAMES,
             "rankSettings.json",
             InstanceConfig.AudioFolderPath.Value
@@ -36,11 +37,11 @@ public static class RankAnnouncerV2
 
     public static void UpdateRankAudioPath(string newPath)
     {
-        _announcer.UpdateAudioPaths(newPath);
+        _announcer.UpdateAudioPath(newPath);
     }
 
     public static void ResetCooldowns()
     {
-        _announcer.ResetTimerToZero();
+        _announcer.ResetCooldown();
     }
 }
