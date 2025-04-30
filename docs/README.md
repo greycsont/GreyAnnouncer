@@ -1,5 +1,5 @@
 <div align=center>
-<img src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/GreyAnnouncer_Icon.png" width="150" height="150">
+<img src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/GreyAnnouncer_Icon.png" width="200" height="200">
 
 <h1>Grey Announcer</h1>
 </div>
