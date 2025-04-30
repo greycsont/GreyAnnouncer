@@ -1,3 +1,8 @@
+<div align=center>
+<img src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/GreyAnnouncer_Icon.png" width="200" height="200">
+
+<h1>Grey Announcer</h1>
+</div>
 
 ### Mod description
 It will plays a **audio** when you reach to a higher style rank!
