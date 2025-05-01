@@ -7,6 +7,7 @@ public class SoloAudioSource : MonoBehaviour
     private        AudioSource     audioSource;
     private static SoloAudioSource instance;
 
+    #region Constructor
     public static SoloAudioSource Instance
     {
         get
@@ -20,7 +21,10 @@ public class SoloAudioSource : MonoBehaviour
             return instance;
         }
     }
+    #endregion
 
+
+    #region Public API
     public void PlayOverridable(AudioClip clip, AudioSourceSetting config)
     {
         if (audioSource == null)
@@ -51,4 +55,5 @@ public class SoloAudioSource : MonoBehaviour
             StartCoroutine(AudioSourceManager.FadeVolume(audioSource, targetVolume, duration));
         }
     }
+    #endregion
 }        

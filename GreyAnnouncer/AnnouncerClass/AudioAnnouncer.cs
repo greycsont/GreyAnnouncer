@@ -6,7 +6,8 @@ namespace greycsont.GreyAnnouncer;
 
 public class AudioAnnouncer : IAnnouncer
 {
-    private JsonSetting        m_jsonSetting;
+    #region Private Fields
+    private AudioJsonSetting        m_jsonSetting;
     private AudioLoader        _audioLoader;
     private CooldownManager    _cooldownManager;
     private AudioSourceSetting _audioSourceConfig;
@@ -15,10 +16,10 @@ public class AudioAnnouncer : IAnnouncer
     private string[]           m_audioCategories;
     private string             m_jsonName;
     private string             m_audioPath;
+    #endregion
 
 
-
-    #region Public Methods
+    #region Public API
     public void Initialize(string announcerName, string[] audioFileNames, string jsonName, string audioPath)
     {
         VariableInitialization(announcerName, audioFileNames, jsonName, audioPath);
@@ -43,7 +44,7 @@ public class AudioAnnouncer : IAnnouncer
     public void ReloadAudio()
     {
         JsonInitialization();
-        _audioLoader.UpdateAudioFileNames(m_jsonSetting.AudioNames);
+        _audioLoader.UpdateAudioFileNames(m_jsonSetting.CategoryAudioMap);
         _audioLoader.FindAvailableAudio();
     }
 
@@ -86,7 +87,7 @@ public class AudioAnnouncer : IAnnouncer
     private void JsonInitialization()
     {
         if (CheckDoesJsonExists() == false) CreateJson();
-        m_jsonSetting = JsonManager.ReadJson<JsonSetting>(m_jsonName);
+        m_jsonSetting = JsonManager.ReadJson<AudioJsonSetting>(m_jsonName);
     }
 
     private bool CheckDoesJsonExists()
@@ -100,19 +101,19 @@ public class AudioAnnouncer : IAnnouncer
             cat => cat,
             cat => new[] { cat }
         );
-        m_jsonSetting = new JsonSetting { AudioNames = audioDict };
+        m_jsonSetting = new AudioJsonSetting { CategoryAudioMap = audioDict };
         JsonManager.CreateJson(m_jsonName, m_jsonSetting);
     }
 
     private void AudioLoaderInitialization()
     {
-        _audioLoader = new AudioLoader(m_audioPath, m_audioCategories, m_jsonSetting.AudioNames);
+        _audioLoader = new AudioLoader(m_audioPath, m_audioCategories, m_jsonSetting.CategoryAudioMap);
         _audioLoader.FindAvailableAudio();
     }
 
     private void CooldownManagerInitialization()
     {
-        _cooldownManager = new CooldownManager(m_jsonSetting.AudioNames.Count);
+        _cooldownManager = new CooldownManager(m_jsonSetting.CategoryAudioMap.Count);
     }
 
     private void RegisterAnnouncer()

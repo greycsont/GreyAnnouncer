@@ -5,15 +5,21 @@ using UnityEngine;
 
 public class AudioSourcePool : MonoBehaviour
 {
-    private                 Queue<AudioSource>                                   pool               = new Queue<AudioSource>();
-    private        readonly HashSet<AudioSource>                                 activeAudioSources = new HashSet<AudioSource>();
-    private                 LinkedList<AudioSource>                              playingList        = new LinkedList<AudioSource>();
-    private                 Dictionary<AudioSource, LinkedListNode<AudioSource>> playingMap         = new Dictionary<AudioSource, LinkedListNode<AudioSource>>();
+    #region Private Fields
+    private                 Queue<AudioSource>                                   m_pool               = new Queue<AudioSource>();
+    private        readonly HashSet<AudioSource>                                 m_activeAudioSources = new HashSet<AudioSource>();
+    private                 LinkedList<AudioSource>                              m_playingList        = new LinkedList<AudioSource>();
+    private                 Dictionary<AudioSource, LinkedListNode<AudioSource>> m_playingMap         = new Dictionary<AudioSource, LinkedListNode<AudioSource>>();
     private static          AudioSourcePool                                      instance;
-    public                  int                                                  initialSize        = 3;
-    public                  int                                                  maxSize            = 5;
+    #endregion
 
-    #region Public Methods
+    #region Public Fields
+    public                  int                                                  initialSize          = 3;
+    public                  int                                                  maxSize              = 5;
+    #endregion
+
+
+    #region Constructor
     public static AudioSourcePool Instance
     {
         get
@@ -28,13 +34,16 @@ public class AudioSourcePool : MonoBehaviour
             return instance;
         }
     }
+    #endregion
 
+
+    #region Public API
     private void Initialize()
     {
         for (int i = 0; i < initialSize; i++)
         {
             var audioSource = CreateNewAudioSource();
-            pool.Enqueue(audioSource);
+            m_pool.Enqueue(audioSource);
         }
     }
 
@@ -52,7 +61,7 @@ public class AudioSourcePool : MonoBehaviour
 
     public void AddAudioLowPassFilterToActiveAudioSource()
     {
-        foreach (AudioSource audioSource in activeAudioSources)
+        foreach (AudioSource audioSource in m_activeAudioSources)
         {
             if (audioSource != null && audioSource.gameObject.activeInHierarchy)
             {
@@ -64,7 +73,7 @@ public class AudioSourcePool : MonoBehaviour
 
     public void RemoveAudioLowPassFilterFromActiveAudioSource()
     {
-        foreach (AudioSource audioSource in activeAudioSources)
+        foreach (AudioSource audioSource in m_activeAudioSources)
         {
             if (audioSource != null && audioSource.gameObject.activeInHierarchy)
             {
@@ -76,7 +85,7 @@ public class AudioSourcePool : MonoBehaviour
 
     public void UpdateAllActiveSourcesVolume(float targetVolume, float duration = 0.35f)
     {
-        foreach(var audioSource in activeAudioSources)
+        foreach(var audioSource in m_activeAudioSources)
         {
             if(audioSource != null && audioSource.gameObject.activeInHierarchy && audioSource.isPlaying)
             {
@@ -87,29 +96,28 @@ public class AudioSourcePool : MonoBehaviour
     #endregion
 
 
-    #region Private Methods
-
+    #region Pool Management
     private AudioSource Get()
     {
-        if (activeAudioSources.Count >= maxSize)
+        if (m_activeAudioSources.Count >= maxSize)
         {
-            if (playingList.Count > 0)
+            if (m_playingList.Count > 0)
             {
-                var oldestNode = playingList.First;
-                playingList.RemoveFirst();
-                playingMap.Remove(oldestNode.Value);
+                var oldestNode = m_playingList.First;
+                m_playingList.RemoveFirst();
+                m_playingMap.Remove(oldestNode.Value);
 
                 Plugin.Log.LogWarning("Max audio sources reached, forcibly recycling the oldest source.");
                 ForceRecycle(oldestNode.Value);
             }
         }
 
-        AudioSource audioSource = (pool.Count > 0) ? pool.Dequeue() : CreateNewAudioSource();
+        AudioSource audioSource = (m_pool.Count > 0) ? m_pool.Dequeue() : CreateNewAudioSource();
         audioSource.gameObject.SetActive(true);
-        activeAudioSources.Add(audioSource);
+        m_activeAudioSources.Add(audioSource);
 
-        var node                = playingList.AddLast(audioSource);
-        playingMap[audioSource] = node;
+        var node                = m_playingList.AddLast(audioSource);
+        m_playingMap[audioSource] = node;
 
         return audioSource;
     }
@@ -129,10 +137,10 @@ public class AudioSourcePool : MonoBehaviour
     {
         yield return new WaitForSeconds(audioSource.clip.length);
 
-        if (playingMap.TryGetValue(audioSource, out var node))
+        if (m_playingMap.TryGetValue(audioSource, out var node))
         {
-            playingList.Remove(node);
-            playingMap.Remove(audioSource);
+            m_playingList.Remove(node);
+            m_playingMap.Remove(audioSource);
         }
 
         Return(audioSource);
@@ -144,8 +152,8 @@ public class AudioSourcePool : MonoBehaviour
         audioSource.Stop();
         audioSource.clip = null;
         audioSource.gameObject.SetActive(false);
-        activeAudioSources.Remove(audioSource);
-        pool.Enqueue(audioSource);
+        m_activeAudioSources.Remove(audioSource);
+        m_pool.Enqueue(audioSource);
     }
 
     private void Return(AudioSource audioSource)
@@ -153,8 +161,8 @@ public class AudioSourcePool : MonoBehaviour
         audioSource.Stop();
         audioSource.clip = null;
         audioSource.gameObject.SetActive(false);
-        activeAudioSources.Remove(audioSource);
-        pool.Enqueue(audioSource);
+        m_activeAudioSources.Remove(audioSource);
+        m_pool.Enqueue(audioSource);
     }
     #endregion
 

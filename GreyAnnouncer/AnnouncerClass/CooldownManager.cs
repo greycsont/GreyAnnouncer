@@ -8,6 +8,7 @@ public class CooldownManager
 {
     private float[] m_individualCooldowns;
 
+    #region Public API
     public CooldownManager(int individualCount)
     {
         m_individualCooldowns = new float[individualCount];
@@ -37,7 +38,9 @@ public class CooldownManager
     {
         Array.Clear(m_individualCooldowns, 0, m_individualCooldowns.Length);
     }
+    #endregion
 
+    
     private IEnumerator CooldownCoroutine(Action<float> setCooldown, float initialCooldown)
     {
         if (initialCooldown <= 0)

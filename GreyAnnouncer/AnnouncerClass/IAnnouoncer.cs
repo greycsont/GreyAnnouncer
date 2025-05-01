@@ -1,4 +1,3 @@
-
 namespace greycsont.GreyAnnouncer;
 
 public interface IAnnouncer

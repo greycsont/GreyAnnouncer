@@ -1,5 +1,5 @@
 <div align=center>
-<img src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/GreyAnnouncer_Icon.png" width="200" height="200">
+<img src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/GreyAnnouncer_Icon.png" width="300" height="300">
 </div>
 
 ## Mod description
