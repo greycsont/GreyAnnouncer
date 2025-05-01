@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace greycsont.GreyAnnouncer;
 
 public class RootObject
@@ -5,7 +7,7 @@ public class RootObject
     public string[] AudioNames { get; set; }
 }
 
-public class JsonSetting_v2
+public class JsonSetting
 {
-    public string[] AudioNames { get; set; }
+    public Dictionary<string, string[]> AudioNames { get; set; }
 }

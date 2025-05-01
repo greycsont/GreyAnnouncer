@@ -1,20 +1,20 @@
 ﻿using System;
 using System.IO;
-
+using System.Linq;
 
 namespace greycsont.GreyAnnouncer;
 
-public class AudioAnnouncer
+public class AudioAnnouncer : IAnnouncer
 {
-    private JsonSetting_v2     jsonSetting;
+    private JsonSetting        m_jsonSetting;
     private AudioLoader        _audioLoader;
     private CooldownManager    _cooldownManager;
     private AudioSourceSetting _audioSourceConfig;
 
-    private string             announcerName;
-    private string[]           audioCategories;
-    private string             jsonName;
-    private string             audioPath;
+    private string             m_announcerName;
+    private string[]           m_audioCategories;
+    private string             m_jsonName;
+    private string             m_audioPath;
 
 
 
@@ -43,7 +43,7 @@ public class AudioAnnouncer
     public void ReloadAudio()
     {
         JsonInitialization();
-        _audioLoader.UpdateAudioFileNames(jsonSetting.AudioNames);
+        _audioLoader.UpdateAudioFileNames(m_jsonSetting.AudioNames);
         _audioLoader.FindAvailableAudio();
     }
 
@@ -62,10 +62,10 @@ public class AudioAnnouncer
     #region Initialize related
     private void VariableInitialization(string announcerName, string[] audioCategories, string jsonName, string audioPath)
     {
-        this.announcerName   = announcerName;
-        this.jsonName        = jsonName;
-        this.audioPath       = audioPath;
-        this.audioCategories = audioCategories;
+        this.m_announcerName   = announcerName;
+        this.m_jsonName        = jsonName;
+        this.m_audioPath       = audioPath;
+        this.m_audioCategories = audioCategories;
 
         _audioSourceConfig = new AudioSourceSetting
         {
@@ -86,34 +86,38 @@ public class AudioAnnouncer
     private void JsonInitialization()
     {
         if (CheckDoesJsonExists() == false) CreateJson();
-        jsonSetting = JsonManager.ReadJson<JsonSetting_v2>(jsonName);
+        m_jsonSetting = JsonManager.ReadJson<JsonSetting>(m_jsonName);
     }
 
     private bool CheckDoesJsonExists()
     {
-        return File.Exists(PathManager.GetCurrentPluginPath(jsonName));
+        return File.Exists(PathManager.GetCurrentPluginPath(m_jsonName));
     }
 
     private void CreateJson()
     {
-        var jsonSetting = new JsonSetting_v2 { AudioNames = audioCategories };
-        JsonManager.CreateJson(jsonName, jsonSetting);
+        var audioDict = m_audioCategories.ToDictionary(
+            cat => cat,
+            cat => new[] { cat }
+        );
+        m_jsonSetting = new JsonSetting { AudioNames = audioDict };
+        JsonManager.CreateJson(m_jsonName, m_jsonSetting);
     }
 
     private void AudioLoaderInitialization()
     {
-        _audioLoader = new AudioLoader(audioPath, audioCategories, jsonSetting.AudioNames);
+        _audioLoader = new AudioLoader(m_audioPath, m_audioCategories, m_jsonSetting.AudioNames);
         _audioLoader.FindAvailableAudio();
     }
 
     private void CooldownManagerInitialization()
     {
-        _cooldownManager = new CooldownManager(jsonSetting.AudioNames.Length);
+        _cooldownManager = new CooldownManager(m_jsonSetting.AudioNames.Count);
     }
 
     private void RegisterAnnouncer()
     {
-        AnnouncerManager.RegisterAnnouncer(announcerName, this);
+        AnnouncerManager.RegisterAnnouncer(m_announcerName, this);
     }
     #endregion
 
@@ -183,7 +187,7 @@ public class AudioAnnouncer
         if (_cooldownManager.IsIndividualCooldownActive(key))
             return ValidationState.IndividualCooldown;
 
-        if (_audioLoader.categoreFailedLoading.Contains(_audioLoader.audioCategories[key]))
+        if (_audioLoader.categoryFailedLoading.Contains(_audioLoader.audioCategories[key]))
             return ValidationState.AudioFailedLoading;
 
         if (_cooldownManager.IsSharedCooldownActive())

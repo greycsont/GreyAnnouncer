@@ -3,16 +3,19 @@ using System.ComponentModel;
 
 using greycsont.GreyAnnouncer;
 
+
+namespace rankAnnouncerV2;
+
 public static class RankAnnouncerV2
 {
-    private static readonly string[] RANK_NAMES = { "D", "C", "B", "A", "S", "SS", "SSS", "U" };
+    private static readonly string[] m_RANK_NAMES = { "D", "C", "B", "A", "S", "SS", "SSS", "U" };
     private static readonly AudioAnnouncer _announcer = new AudioAnnouncer();
 
     public static void Initialize()
     {
         _announcer.Initialize(
             "RankAnnouncer",
-            RANK_NAMES,
+            m_RANK_NAMES,
             "rankSettings.json",
             InstanceConfig.AudioFolderPath.Value
         );
@@ -22,7 +25,7 @@ public static class RankAnnouncerV2
                  "This bug will skip all the function before CheckPlayValidation(),  The try-catch has implemented in the fucntion")]
     public static void PlayRankSound(int rank)
     {
-        if (rank < 0 || rank >= RANK_NAMES.Length)
+        if (rank < 0 || rank >= m_RANK_NAMES.Length)
         {
             Plugin.Log.LogError($"Invalid rank index: {rank}");
             return;

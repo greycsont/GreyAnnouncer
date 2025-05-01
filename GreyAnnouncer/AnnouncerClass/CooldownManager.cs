@@ -6,16 +6,16 @@ namespace greycsont.GreyAnnouncer;
 
 public class CooldownManager
 {
-    private float[] individualCooldowns;
+    private float[] m_individualCooldowns;
 
     public CooldownManager(int individualCount)
     {
-        individualCooldowns = new float[individualCount];
+        m_individualCooldowns = new float[individualCount];
     }
 
     public bool IsIndividualCooldownActive(int index)
     {
-        return individualCooldowns[index] > 0f;
+        return m_individualCooldowns[index] > 0f;
     }
 
     public bool IsSharedCooldownActive()
@@ -25,7 +25,7 @@ public class CooldownManager
 
     public void StartIndividualCooldown(int index, float duration)
     {
-        CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => individualCooldowns[index] = value, duration));
+        CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => m_individualCooldowns[index] = value, duration));
     }
 
     public void StartSharedCooldown(float duration)
@@ -35,7 +35,7 @@ public class CooldownManager
 
     public void ResetCooldowns()
     {
-        Array.Clear(individualCooldowns, 0, individualCooldowns.Length);
+        Array.Clear(m_individualCooldowns, 0, m_individualCooldowns.Length);
     }
 
     private IEnumerator CooldownCoroutine(Action<float> setCooldown, float initialCooldown)

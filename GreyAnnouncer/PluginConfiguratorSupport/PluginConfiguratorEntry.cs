@@ -11,7 +11,7 @@ namespace greycsont.GreyAnnouncer;
 public class PluginConfiguratorEntry
 {
 
-    private static Dictionary<string, BoolField> rankToggleFieldDict = new Dictionary<string, BoolField>();
+    private static Dictionary<string, BoolField> m_rankToggleFieldDict = new Dictionary<string, BoolField>();
     private static PluginConfigurator            config;
 
     public static void Initialize()
@@ -19,7 +19,7 @@ public class PluginConfiguratorEntry
         CreatePluginPages();
         
         MainPanelBuilder.      Build(config);
-        RankTogglePanelBuilder.Build(config, rankToggleFieldDict);
+        RankTogglePanelBuilder.Build(config, m_rankToggleFieldDict);
     }
 
     private static void CreatePluginPages()

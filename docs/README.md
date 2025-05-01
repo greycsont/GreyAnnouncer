@@ -6,10 +6,13 @@
 
 ## Mod description
 It will plays a **audio** when you reach to a higher style rank!
-- [Installation](###how-to-install-it)
-- [Add sound](###how-to-add-the-rank-sound)
-- [File naming](###rank-Sound-file-naming)
-- [Customize setting](###how-to-customize-the-setting)
+( The mod itself doesn't include any audio )
+- [Installation](#how-to-install-it)
+- [Add audio](#how-to-add-the-audio)
+- [Audio File naming](#audio-file-naming)
+- [Supported audio format](#supported-and-unsupported-audio-formats)
+- [Customize setting](#how-to-customize-the-setting)
+- [License](#license)
 
 ## Include
 This mod pack include:
@@ -25,7 +28,7 @@ This mod pack include:
 
 ## How to add the audio
 
-## Rank Sound File Naming
+## Audio File Naming
 
 You can customize the audio name in the **greyannouncer.json** which is **near the plugin**. the default audio name given in the below:
 

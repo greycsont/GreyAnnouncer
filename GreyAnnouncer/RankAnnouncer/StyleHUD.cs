@@ -2,7 +2,7 @@ using HarmonyLib;
 
 
     
-namespace greycsont.GreyAnnouncer;
+namespace rankAnnouncerV2;
 
 /* This patch is used to determine the changes of rankIndex
     The rankIndex is basically the pointer to another arrays, list sth.

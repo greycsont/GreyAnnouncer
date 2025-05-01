@@ -6,10 +6,10 @@ namespace greycsont.GreyAnnouncer;
 public class AnnouncerManager
 {           
     public  static float                              sharedCooldown = 0f;
-    private static Dictionary<string, AudioAnnouncer> _announcers    = new Dictionary<string, AudioAnnouncer>();
+    private static Dictionary<string, IAnnouncer> _announcers    = new Dictionary<string, IAnnouncer>();
 
     #region Public Methods
-    public static void RegisterAnnouncer(string name, AudioAnnouncer announcer)
+    public static void RegisterAnnouncer(string name, IAnnouncer announcer)
     {
         if (_announcers.ContainsKey(name))
         {
@@ -38,15 +38,24 @@ public class AnnouncerManager
         }
     }
 
-    public static AudioAnnouncer GetAnnouncer(string name)
+    public static IAnnouncer GetAnnouncer(string name)
     {
         return _announcers.TryGetValue(name, out var announcer) ? announcer : null;
+    }
+
+    public static void ResetCooldown()
+    {
+        foreach (var announcer in _announcers.Values)
+        {
+            announcer.ResetCooldown();
+        }
+        sharedCooldown = 0f;
     }
     #endregion
 
 
     #region Private Methods
-    private static void TryReloadAnnouncerAudios(AudioAnnouncer announcer)
+    private static void TryReloadAnnouncerAudios(IAnnouncer announcer)
     {
         try 
         {
@@ -59,7 +68,7 @@ public class AnnouncerManager
         }
     }
 
-    private static void TryUpdateAnnouncerAudioPath(AudioAnnouncer announcer, string newPath)
+    private static void TryUpdateAnnouncerAudioPath(IAnnouncer announcer, string newPath)
     {
         try 
         {

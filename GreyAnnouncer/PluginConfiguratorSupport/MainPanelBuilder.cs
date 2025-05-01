@@ -38,7 +38,7 @@ public static class MainPanelBuilder
         sharedCooldown.onValueChange += e =>
         {
             InstanceConfig.SharedRankPlayCooldown.Value = e.value;
-            RankAnnouncerV2.ResetCooldowns();
+            AnnouncerManager.ResetCooldown();
         };
 
         var individualCooldown = new FloatField(
@@ -51,7 +51,7 @@ public static class MainPanelBuilder
         individualCooldown.onValueChange += e =>
         {
             InstanceConfig.IndividualRankPlayCooldown.Value = e.value;
-            RankAnnouncerV2.ResetCooldowns();
+            AnnouncerManager.ResetCooldown();
         };
     }
 
