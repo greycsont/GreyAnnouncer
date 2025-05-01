@@ -1,18 +1,17 @@
 <div align=center>
 <img src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/GreyAnnouncer_Icon.png" width="200" height="200">
-
-<h1>Grey Announcer</h1>
 </div>
 
 ## Mod description
 It will plays a **audio** when you reach to a higher style rank!
 ( The mod itself doesn't include any audio )
-- [Installation](#how-to-install-it)
-- [Add audio](#how-to-add-the-audio)
-- [Audio File naming](#audio-file-naming)
-- [Supported audio format](#supported-and-unsupported-audio-formats)
-- [Customize setting](#how-to-customize-the-setting)
-- [License](#license)
+1. [Installation](#how-to-install-it)
+2. [Add audio](#how-to-add-the-audio)
+3. [Audio File naming](#audio-file-naming)
+4. [Supported audio format](#supported-and-unsupported-audio-formats)
+5. [Customize setting](#how-to-customize-the-setting)
+6. [Bug & Suggestions](#bugs--suggestions)
+7. [License](#license)
 
 ## Include
 This mod pack include:
@@ -77,19 +76,10 @@ Thanks:
 - [Maxwell's puzzling demon](https://store.steampowered.com/app/2770160/)
 - [Everything](https://www.voidtools.com/) Saved my mod's thumbnail and manifest ****** up by vscode's github extention's auto correction.
 
-
-## Website
-- [GreyAnnouncerFramework]
-- [GreyRankAnnouncer]
-The thunderstore's page only allowed one website link, and if you have any mistake in the .zip (includes README.md, icon etc.)
-
-YOU HAVE TO RE-ZIP ONE AND UPLOAD IT!
-ALSO YOU MUST CHANGE THE VERSION NUMBER!
 ## License
 - The file(s) in the **Lib/** folder are third-party and not authored by me. They are not covered by the License of this project. Please refer to the respective license(s) of those files.
 
 ## License Change
-
 Starting from version 1.0.2, this project is licensed under the GNU Affero General Public License v3.0 (AGPLv3).
 
 Previous versions were licensed under the MIT License.

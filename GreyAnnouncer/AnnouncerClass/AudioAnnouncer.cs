@@ -174,11 +174,9 @@ public class AudioAnnouncer : IAnnouncer
     #region Validation related
     private ValidationState GetPlayValidationState(int key)
     {
-        // 检查组件是否为空
         if (_cooldownManager == null || _audioLoader == null)
             return ValidationState.ComponentsNotInitialized;
 
-        // 检查数组越界
         if (_audioLoader.audioCategories == null || 
             key < 0 || 
             key >= _audioLoader.audioCategories.Length)

@@ -10,15 +10,15 @@ namespace greycsont.GreyAnnouncer;
 
 public static class MainPanelBuilder
 {
-    private static PluginConfigurator _config;
+    private static PluginConfigurator m_pluginConfigurator;
 
     public static void Build(PluginConfigurator config)
     {
-        _config = config;
+        m_pluginConfigurator = config;
 
-        new ConfigSpace(_config.rootPanel, 15f);
+        new ConfigSpace(m_pluginConfigurator.rootPanel, 15f);
 
-        ConfigHeader mainHeader = new ConfigHeader(_config.rootPanel, "Main Settings");
+        ConfigHeader mainHeader = new ConfigHeader(m_pluginConfigurator.rootPanel, "Main Settings");
         mainHeader.textColor    = HeaderColor;
 
         CreateCooldownControls();
@@ -29,7 +29,7 @@ public static class MainPanelBuilder
     private static void CreateCooldownControls()
     {
         var sharedCooldown = new FloatField(
-            _config.rootPanel,
+            m_pluginConfigurator.rootPanel,
             "Shared rank cooldown",
             "sharedRankPlayCooldown",
             InstanceConfig.SharedRankPlayCooldown.Value, 0f, 114514f
@@ -42,7 +42,7 @@ public static class MainPanelBuilder
         };
 
         var individualCooldown = new FloatField(
-            _config.rootPanel,
+            m_pluginConfigurator.rootPanel,
             "Individual rank cooldown",
             "individualRankPlaycooldown",
             InstanceConfig.IndividualRankPlayCooldown.Value, 0f, 1113f
@@ -58,7 +58,7 @@ public static class MainPanelBuilder
     private static void CreateAudioControls()
     {
         var volumeSlider = new FloatSliderField(
-            _config.rootPanel,
+            m_pluginConfigurator.rootPanel,
             "Audio Volume",
             "Audio_Volume",
             Tuple.Create(0f, 1f),
@@ -81,7 +81,7 @@ public static class MainPanelBuilder
 //
 //
         var playOption = new EnumField<PlayOptions>(
-            _config.rootPanel,
+            m_pluginConfigurator.rootPanel,
             "Audio Play Option",
             "Audio_Play_Option",
             (PlayOptions)InstanceConfig.AudioPlayOptions.Value
@@ -93,7 +93,7 @@ public static class MainPanelBuilder
         };
 
         var audioFolderPath = new StringField(
-            _config.rootPanel,
+            m_pluginConfigurator.rootPanel,
             "Audio Folder Path",
             "Audio_Folder_Path",
             InstanceConfig.AudioFolderPath.Value
@@ -106,7 +106,7 @@ public static class MainPanelBuilder
         };
 
         var audioButtonArray = new ButtonArrayField(
-            _config.rootPanel,
+            m_pluginConfigurator.rootPanel,
             "audio_button_array",
             2,
             new float[] { 0.5f, 0.5f },
@@ -125,7 +125,7 @@ public static class MainPanelBuilder
 
     private static void CreateAdvancedOptionPanel()
     {
-        ConfigPanel advancedPanel = new ConfigPanel(_config.rootPanel, "Advanced Option", "Advanced_Option");
+        ConfigPanel advancedPanel = new ConfigPanel(m_pluginConfigurator.rootPanel, "Advanced Option", "Advanced_Option");
 
         ConfigHeader header       = new ConfigHeader(advancedPanel, "Audio Frequency Filter");
         header.textColor          = HeaderColor;

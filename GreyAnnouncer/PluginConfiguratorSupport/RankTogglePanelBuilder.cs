@@ -11,17 +11,17 @@ namespace greycsont.GreyAnnouncer;
 
 public static class RankTogglePanelBuilder
 {
-    private static PluginConfigurator            _config;
-    private static Dictionary<string, BoolField> _rankToggleDict;
+    private static PluginConfigurator            m_pluginConfigurator;
+    private static Dictionary<string, BoolField> m_rankToggleDict;
 
     public static void Build(PluginConfigurator config, Dictionary<string, BoolField> dict)
     {
-        _config             = config;
-        _rankToggleDict     = dict;
+        m_pluginConfigurator = config;
+        m_rankToggleDict     = dict;
 
-        ConfigPanel panel   = new ConfigPanel (_config.rootPanel, "Rank Activation", "Rank_Activation");
-        ConfigHeader header = new ConfigHeader(panel,             "Rank Activation"                   );
-        header.textColor    = HeaderColor;
+        ConfigPanel panel    = new ConfigPanel (m_pluginConfigurator.rootPanel, "Rank Activation", "Rank_Activation");
+        ConfigHeader header  = new ConfigHeader(panel,             "Rank Activation"                   );
+        header.textColor     = HeaderColor;
 
         foreach (var entry in InstanceConfig.ConfigEntries)
         {
@@ -35,7 +35,7 @@ public static class RankTogglePanelBuilder
                 InstanceConfig.DEFAULT_RANK_TOGGLED
             );
             
-            _rankToggleDict.Add(entry.Key, field);
+            m_rankToggleDict.Add(entry.Key, field);
         }
     }
 

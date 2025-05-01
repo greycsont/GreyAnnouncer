@@ -12,19 +12,19 @@ public class PluginConfiguratorEntry
 {
 
     private static Dictionary<string, BoolField> m_rankToggleFieldDict = new Dictionary<string, BoolField>();
-    private static PluginConfigurator            config;
+    private static PluginConfigurator            m_pluginConfigurator;
 
     public static void Initialize()
     {
         CreatePluginPages();
         
-        MainPanelBuilder.      Build(config);
-        RankTogglePanelBuilder.Build(config, m_rankToggleFieldDict);
+        MainPanelBuilder.      Build(m_pluginConfigurator);
+        RankTogglePanelBuilder.Build(m_pluginConfigurator, m_rankToggleFieldDict);
     }
 
     private static void CreatePluginPages()
     {
-        config = PluginConfigurator.Create(PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_GUID);
-        config.SetIconWithURL(PathManager.GetCurrentPluginPath("icon.png"));
+        m_pluginConfigurator = PluginConfigurator.Create(PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_GUID);
+        m_pluginConfigurator.SetIconWithURL(PathManager.GetCurrentPluginPath("icon.png"));
     }                          
 }
