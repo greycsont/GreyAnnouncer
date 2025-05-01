@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic; //audio clip
 using UnityEngine;
 using UnityEngine.Networking;
+using CSCore.Codecs;
 using System;
 using System.ComponentModel;
 
@@ -22,7 +23,7 @@ public class AudioLoader
 
     #region Private Fields
     private readonly string[]                      m_supportedExtensions = new string[] { ".wav", ".mp3", ".ogg", ".aiff", ".aif" };
-    private           Dictionary<string, string[]> m_audioFileNames;
+    private          Dictionary<string, string[]>  m_audioFileNames;
     private          string                        m_audioPath;
     #endregion
 
@@ -142,13 +143,13 @@ public class AudioLoader
             return false;
         }
 
-        var coroutine = LoadAudioClip(filePath, categoryIndex, status);
+        var coroutine = TryLoadWithUnityRequest(filePath, categoryIndex, status);
         CoroutineRunner.Instance.StartCoroutine(coroutine);
         Plugin.Log.LogInfo($"Started loading audio: {filePath}");
         return true;
     }
 
-    private IEnumerator LoadAudioClip(string path, int categoryIndex, LoadingStatus status)
+    private IEnumerator TryLoadWithUnityRequest(string path, int categoryIndex, LoadingStatus status)
     {
         string url = new Uri(path).AbsoluteUri;
         AudioType audioType = GetAudioTypeFromExtension(url);
@@ -174,6 +175,56 @@ public class AudioLoader
                 }
                 Plugin.Log.LogInfo($"Loaded audio: {Path.GetFileName(path)} ({status.LoadedFiles}/{status.ExpectedFiles} for {status.Category})");
             }
+        }
+    }
+
+    private bool TryLoadWithCSCore(string path, int categoryIndex, LoadingStatus status, out AudioClip clip)
+    {
+        try
+        {
+            using (var soundSource = CodecFactory.Instance.GetCodec(path))
+            {
+                // Create a byte buffer to read the data
+                var byteBuffer = new byte[soundSource.Length];
+                soundSource.Read(byteBuffer, 0, byteBuffer.Length);
+
+                // Convert byte data to float data
+                var sampleBuffer = new float[byteBuffer.Length / 2]; // Assuming 16-bit samples, adjust if needed
+                for (int i = 0; i < sampleBuffer.Length; i++)
+                {
+                    // Convert the byte data (e.g., 16-bit PCM) to float (-1.0f to 1.0f range)
+                    sampleBuffer[i] = BitConverter.ToInt16(byteBuffer, i * 2) / 32768f;
+                }
+
+                // Create AudioClip
+                clip = AudioClip.Create(
+                    Path.GetFileNameWithoutExtension(path),
+                    sampleBuffer.Length,
+                    soundSource.WaveFormat.Channels,
+                    soundSource.WaveFormat.SampleRate,
+                    false
+                );
+
+                // Set audio data directly as float array
+                clip.SetData(sampleBuffer, 0);
+
+                status.LoadedClips.Add(clip);
+                status.LoadedFiles++;
+
+                if (!audioClips.ContainsKey(categoryIndex))
+                {
+                    audioClips[categoryIndex] = status.LoadedClips;
+                }
+
+                Plugin.Log.LogInfo($"Loaded audio with CSCore: {Path.GetFileName(path)}");
+                return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            Plugin.Log.LogError($"CSCore loading failed: {ex.Message}");
+            clip = null;
+            return false;
         }
     }
 

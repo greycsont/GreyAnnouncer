@@ -8,7 +8,7 @@ namespace rankAnnouncerV2;
 
 public static class RankAnnouncerV2
 {
-    private static readonly string[] m_RANK_NAMES = { "D", "C", "B", "A", "S", "SS", "SSS", "U" };
+    private static readonly string[]       m_RANK_NAMES = { "D", "C", "B", "A", "S", "SS", "SSS", "U" };
     private static readonly AudioAnnouncer _announcer = new AudioAnnouncer();
 
     public static void Initialize()

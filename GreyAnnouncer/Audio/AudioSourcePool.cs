@@ -10,7 +10,7 @@ public class AudioSourcePool : MonoBehaviour
     private        readonly HashSet<AudioSource>                                 m_activeAudioSources = new HashSet<AudioSource>();
     private                 LinkedList<AudioSource>                              m_playingList        = new LinkedList<AudioSource>();
     private                 Dictionary<AudioSource, LinkedListNode<AudioSource>> m_playingMap         = new Dictionary<AudioSource, LinkedListNode<AudioSource>>();
-    private static          AudioSourcePool                                      instance;
+    private static          AudioSourcePool                                      _instance;
     #endregion
 
     #region Public Fields
@@ -24,14 +24,14 @@ public class AudioSourcePool : MonoBehaviour
     {
         get
         {
-            if (instance == null)
+            if (_instance == null)
             {
                 var obj = new GameObject("AudioSourcePool");
                 DontDestroyOnLoad(obj);
-                instance = obj.AddComponent<AudioSourcePool>();
-                instance.Initialize();
+                _instance = obj.AddComponent<AudioSourcePool>();
+                _instance.Initialize();
             }
-            return instance;
+            return _instance;
         }
     }
     #endregion

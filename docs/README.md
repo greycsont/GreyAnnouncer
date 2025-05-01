@@ -2,6 +2,19 @@
 <img src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/GreyAnnouncer_Icon.png" width="300" height="300">
 </div>
 
+## Grey Announcer
+
+##### Supported and Unsupported Audio Formats
+
+| Format      | Supported |                 
+|-------------|-----------|
+| `.mp3`      | ✅        |       
+| `.wav`      | ✅        |        
+| `.flac`     | ❌        |             
+| `.aac`      | ❌        |           
+| `.ogg`      | not tested|                  
+| `.aiff/.aif`| not tested|
+
 ## Mod description
 It will plays a **audio** when you reach to a higher style rank!
 ( The mod itself doesn't include any audio )
@@ -40,18 +53,7 @@ You can customize the audio name in the **greyannouncer.json** which is **near t
 - `S.wav`
 - `SS.wav`
 - `SSS.wav`
-- `U.wav`
-
-## Supported and Unsupported Audio Formats
-
-| Format      | Supported |                 
-|-------------|-----------|
-| `.mp3`      | ✅        |       
-| `.wav`      | ✅        |        
-| `.flac`     | ❌        |             
-| `.aac`      | ❌        |           
-| `.ogg`      | not tested|                  
-| `.aiff/.aif`| not tested|                 
+- `U.wav`             
 
 ## How to customize the setting
 - Download and Using [PluginConfigurator](https://thunderstore.io/c/ultrakill/p/EternalsTeam/PluginConfigurator/) to edit in-game.

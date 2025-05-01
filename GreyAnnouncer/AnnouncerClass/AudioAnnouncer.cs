@@ -7,7 +7,7 @@ namespace greycsont.GreyAnnouncer;
 public class AudioAnnouncer : IAnnouncer
 {
     #region Private Fields
-    private AudioJsonSetting        m_jsonSetting;
+    private AudioJsonSetting   m_jsonSetting;
     private AudioLoader        _audioLoader;
     private CooldownManager    _cooldownManager;
     private AudioSourceSetting _audioSourceConfig;
@@ -19,7 +19,7 @@ public class AudioAnnouncer : IAnnouncer
     #endregion
 
 
-    #region Public API
+    #region Publi
     public void Initialize(string announcerName, string[] audioFileNames, string jsonName, string audioPath)
     {
         VariableInitialization(announcerName, audioFileNames, jsonName, audioPath);
