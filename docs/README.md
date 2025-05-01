@@ -1,9 +1,9 @@
 <div align=center>
 <img src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/GreyAnnouncer_Icon.png" width="300" height="300">
 </div>
+<br>
 
-## Grey Announcer
-
+![License](https://img.shields.io/badge/License-AGPL--3.0-blue.svg) ![License](https://img.shields.io/badge/License-PostgreSQL-blue.svg)
 ##### Supported and Unsupported Audio Formats
 
 | Format      | Supported |                 
@@ -82,7 +82,7 @@ Thanks:
 - The file(s) in the **Lib/** folder are third-party and not authored by me. They are not covered by the License of this project. Please refer to the respective license(s) of those files.
 
 ## License Change
-Starting from version 1.0.2, this project is licensed under the GNU Affero General Public License v3.0 (AGPLv3).
+Starting from version 1.0.2, this project is licensed under other license, see [COPYING](https://github.com/greycsont/GreyAnnouncer/raw/main/COPYING) to view the changes
 
 Previous versions were licensed under the MIT License.
 

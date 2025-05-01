@@ -8,8 +8,9 @@ with the following exception:
 
         Code that interacts solely through the officially documented public APIs (e.g.,
         via GreyAnnouncer.AnnouncerClass), whether via static linking or dynamic plugins,
-        is *not considered a derivative work* and may be used under the terms of the
-        PostgreSQL License.
+        is *not considered a derivative work* and may be used under:
+        
+                SPDX-License-Identifier: PostgreSQL
 
 However, any deployment of this software as a networked service (such as SaaS or
 remote interaction) *must comply with AGPL Section 13*, requiring the complete
