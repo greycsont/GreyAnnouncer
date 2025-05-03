@@ -7,7 +7,7 @@ using UnityEngine;
 using BepInEx.Configuration;
 
 
-namespace greycsont.GreyAnnouncer;
+namespace greycsont.GreyAnnouncer;                                              
 
 public static class RankTogglePanelBuilder
 {
@@ -20,7 +20,7 @@ public static class RankTogglePanelBuilder
         m_rankToggleDict     = dict;
 
         ConfigPanel panel    = new ConfigPanel (m_pluginConfigurator.rootPanel, "Rank Activation", "Rank_Activation");
-        ConfigHeader header  = new ConfigHeader(panel,             "Rank Activation"                   );
+        ConfigHeader header  = new ConfigHeader(panel,                          "Rank Activation"                   );
         header.textColor     = HeaderColor;
 
         foreach (var entry in InstanceConfig.ConfigEntries)

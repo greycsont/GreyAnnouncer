@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.ComponentModel;
 using System.Collections.Generic;
+
 
 namespace greycsont.GreyAnnouncer;
 
@@ -28,6 +30,8 @@ public class AudioAnnouncer : IAnnouncer
         RegisterAnnouncer();
     }
 
+    [Description("Parry balls of Maurice -> Hit Maurice -> AscendingRank() -> Postfix() -> PlaySound() -> CheckPlayValidation(), " +
+                 "This error will skip all the function before CheckPlayValidation(), That's why try-catch has implemented in the fucntion")]
     public void PlayAudio(int key)
     {
         try

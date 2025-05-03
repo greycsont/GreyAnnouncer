@@ -13,14 +13,18 @@ public static class RegisterAnnouncerPage
 {
     private static PluginConfigurator            m_pluginConfigurator;
     private static Dictionary<string, BoolField> m_rankToggleDict;
+    private static string                        m_announcerName;
+    private static AnnouncerJsonSetting          m_announcerJsonSetting;
 
-    public static void Build(PluginConfigurator config, Dictionary<string, BoolField> dict)
+    public static void Build(Dictionary<string, BoolField> dict, string announcerName, AnnouncerJsonSetting announcerJsonSetting)
     {
-        m_pluginConfigurator = config;
-        m_rankToggleDict     = dict;
+        m_pluginConfigurator   = PluginConfiguratorEntry.greyAnnouncerConfig_PluginConfigurator;
+        m_rankToggleDict       = dict;
+        m_announcerName        = announcerName;
+        m_announcerJsonSetting = announcerJsonSetting;
 
-        ConfigPanel panel    = new ConfigPanel (m_pluginConfigurator.rootPanel, "Rank Activation", "Rank_Activation");
-        ConfigHeader header  = new ConfigHeader(panel,             "Rank Activation"                   );
+        ConfigPanel panel    = new ConfigPanel (m_pluginConfigurator.rootPanel, m_announcerName, m_announcerName);
+        ConfigHeader header  = new ConfigHeader(panel, m_announcerName);
         header.textColor     = HeaderColor;
 
         foreach (var entry in InstanceConfig.ConfigEntries)

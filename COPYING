@@ -7,14 +7,18 @@ This project is licensed under the GNU Affero General Public License v3.0 or lat
 with the following exception:
 
         Code that interacts solely through the officially documented public APIs (e.g.,
-        via GreyAnnouncer.AnnouncerClass), whether via static linking or dynamic plugins,
+        via GreyAnnouncer.AnnouncerClass), whether through static linking or dynamic plugins,
         is *not considered a derivative work* and may be used under:
-        
+
                 SPDX-License-Identifier: PostgreSQL
+
+        The term "Public API" refers specifically to the interfaces, classes, variables, functions, etc.,
+        that are publicly documented and explicitly exposed for direct interaction. 
+        This excludes any access via reflection, introspection, or other non-direct mechanisms.
 
 However, any deployment of this software as a networked service (such as SaaS or
 remote interaction) *must comply with AGPL Section 13*, requiring the complete
-Corresponding Source be made available to all users of the service.
+Corresponding Source to be made available to all users of the service.
 
 Modifications to the core framework, including internal components not accessed through
-public APIs, are fully subject to the AGPL-3.0-or-later license.
+the defined Public APIs, are fully subject to the AGPL-3.0-or-later license.
