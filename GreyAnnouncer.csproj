@@ -67,6 +67,7 @@
     <PackageReference Include="CSCore" Version="1.2.1.2" />
     <PackageReference Include="HarmonyX" Version="2.10.2" />
     <PackageReference Include="BepInEx.Analyzers" Version="1.0.8" PrivateAssets="all" />
+    <PackageReference Include="LibFlacSharp" Version="1.0.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 

@@ -1,6 +1,7 @@
 ### Known issue/TODO
 - Using translation from pointer to audiocategory to get clips
 - Added errortext in PluginConfigurator using ConfigHeader and attribute Archor:UpperLeft
+- Remove CScore for MS-PL
 
 ### v1.0.2
 - Fixed when you quit the mission in the water, the muffle effect still exists when playing audio.

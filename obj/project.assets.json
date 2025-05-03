@@ -59,6 +59,15 @@
           }
         }
       },
+      "LibFlacSharp/1.0.4": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/LibFlacSharp.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/LibFlacSharp.dll": {}
+        }
+      },
       "Mono.Cecil/0.11.4": {
         "type": "package",
         "compile": {
@@ -221,6 +230,18 @@
         "logo_mini.png"
       ]
     },
+    "LibFlacSharp/1.0.4": {
+      "sha512": "+Rl/XF97BtJcy88WAvK7rdzqDhxRUajF2R/k2/CjSfx07SOEMmz4+uKM6jmWnGBAyFZHAZ/hCQDbl4df+K7exQ==",
+      "type": "package",
+      "path": "libflacsharp/1.0.4",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/LibFlacSharp.dll",
+        "libflacsharp.1.0.4.nupkg.sha512",
+        "libflacsharp.nuspec"
+      ]
+    },
     "Mono.Cecil/0.11.4": {
       "sha512": "IC1h5g0NeJGHIUgzM1P82ld57knhP0IcQfrYITDPXlNpMYGUrsG5TxuaWTjaeqDNQMBDNZkB8L0rBnwsY6JHuQ==",
       "type": "package",
@@ -323,6 +344,7 @@
       "BepInEx.Core >= 5.4.21",
       "CSCore >= 1.2.1.2",
       "HarmonyX >= 2.10.2",
+      "LibFlacSharp >= 1.0.4",
       "Newtonsoft.Json >= 13.0.3"
     ]
   },
@@ -388,6 +410,10 @@
           "HarmonyX": {
             "target": "Package",
             "version": "[2.10.2, )"
+          },
+          "LibFlacSharp": {
+            "target": "Package",
+            "version": "[1.0.4, )"
           },
           "Newtonsoft.Json": {
             "target": "Package",
