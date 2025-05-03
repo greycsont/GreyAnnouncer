@@ -41,6 +41,8 @@ public static class InstanceConfig
         DEFAULT_AUDIO_FOLDER_PATH = PathManager.GetCurrentPluginPath("Audio");
         BindConfigEntryValues(plugin);
     }
+
+    
     private static void BindConfigEntryValues(Plugin plugin)
     {
         foreach (var entry in ConfigEntries)

@@ -22,17 +22,16 @@ public class AudioLoader
 
 
     #region Private Fields
-    private readonly string[]                      m_supportedExtensions = new string[] { ".wav", ".mp3", ".ogg", ".aiff", ".aif" };
-    private          Dictionary<string, string[]>  m_audioFileNames;
+    private          Dictionary<string, List<string>>  m_audioFileNames;
     private          string                        m_audioPath;
     #endregion
 
     #region Constructor
-    public AudioLoader(string audioPath, string[] audioCategories, Dictionary<string, string[]> audioFileNames)
+    public AudioLoader(string audioPath, string[] audioCategories, AnnouncerJsonSetting jsonSetting)
     {
         this.m_audioPath      = audioPath;
         this.audioCategories  = audioCategories;
-        this.m_audioFileNames = audioFileNames;
+        this.m_audioFileNames = GetAudioFileNames(jsonSetting);
     }
     #endregion
 
@@ -71,9 +70,9 @@ public class AudioLoader
         return clips[randomIndex];
     }
 
-    public void UpdateAudioFileNames(Dictionary<string, string[]> newAudioFileNames)
+    public void UpdateAudioFileNames(AnnouncerJsonSetting jsonSetting)
     {
-        this.m_audioFileNames = newAudioFileNames;
+        this.m_audioFileNames = GetAudioFileNames(jsonSetting);
     }
     #endregion
 
@@ -91,13 +90,15 @@ public class AudioLoader
     private void StartLoading()
     {
         m_LoadingStatus.Clear();
+
+        CoroutineRunner.Instance.StartCoroutine(MonitorLoadingProgress());
         
         for (int i = 0; i < audioCategories.Length; i++)
         {
             LoadCategory(i, audioCategories[i]);
         }
 
-        CoroutineRunner.Instance.StartCoroutine(MonitorLoadingProgress());
+
     }
     
 
@@ -260,8 +261,32 @@ public class AudioLoader
     {
         string searchPattern = audioName + ".*";
         string[] files = Directory.GetFiles(audioPath, searchPattern);
+
+        HashSet<string> blacklist = new HashSet<string>();
         
-        return files.FirstOrDefault();
+        foreach (string file in files)
+        {
+            string extension = Path.GetExtension(file).ToLower();
+            
+            bool isSupported = GetUnityAudioType(extension).HasValue || CanLoadWithCSCore(extension);
+            
+            if (isSupported)
+            {
+                return file;
+            }
+            else
+            {
+                blacklist.Add(extension);
+                Plugin.Log.LogWarning($"Unsupported audio format found: {extension} for file: {Path.GetFileName(file)}");
+            }
+        }
+        
+        if (blacklist.Count > 0)
+        {
+            Plugin.Log.LogWarning($"No supported audio format found for {audioName}. Unsupported formats: {string.Join(", ", blacklist)}");
+        }
+        
+        return null;
     }
 
     private AudioType? GetUnityAudioType(string extension)
@@ -355,12 +380,28 @@ public class AudioLoader
 
     private IEnumerator MonitorLoadingProgress()
     {
-        while (m_LoadingStatus.Values.Any(s => s.LoadedFiles < s.ExpectedFiles && !s.HasError))
+        while (m_LoadingStatus.Count == 0)
         {
             yield return new WaitForEndOfFrame();
         }
 
+        while (m_LoadingStatus.Values.Any(s => s.LoadedFiles < s.ExpectedFiles && !s.HasError))
+        {
+            Plugin.Log.LogInfo("Loading audio files...");
+            yield return new WaitForEndOfFrame();
+        }
+
         FinalizeLoading();
+    }
+    #endregion
+
+    #region Shitpost
+    private Dictionary<string, List<string>> GetAudioFileNames(AnnouncerJsonSetting jsonSetting)
+    {
+        return jsonSetting.CategoryAudioMap.ToDictionary(
+            kvp => kvp.Key,
+            kvp => kvp.Value.AudioFiles
+        );
     }
     #endregion
 

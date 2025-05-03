@@ -60,7 +60,6 @@ public class AnnouncerManager
         try 
         {
             announcer.ReloadAudio();
-            Plugin.Log.LogInfo("Successfully reloaded announcer");
         }
         catch (Exception ex)
         {

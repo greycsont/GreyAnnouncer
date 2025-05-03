@@ -1,25 +1,26 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace greycsont.GreyAnnouncer;
 
 public class AudioAnnouncer : IAnnouncer
 {
     #region Private Fields
-    private AudioJsonSetting   m_jsonSetting;
-    private AudioLoader        _audioLoader;
-    private CooldownManager    _cooldownManager;
-    private AudioSourceSetting _audioSourceConfig;
+    private AnnouncerJsonSetting m_jsonSetting;
+    private AudioLoader          _audioLoader;
+    private CooldownManager      _cooldownManager;
+    private AudioSourceSetting   _audioSourceConfig;
 
-    private string             m_announcerName;
-    private string[]           m_audioCategories;
-    private string             m_jsonName;
-    private string             m_audioPath;
+    private string               m_announcerName;
+    private string[]             m_audioCategories;
+    private string               m_jsonName;
+    private string               m_audioPath;
     #endregion
 
 
-    #region Publi
+    #region Public API
     public void Initialize(string announcerName, string[] audioFileNames, string jsonName, string audioPath)
     {
         VariableInitialization(announcerName, audioFileNames, jsonName, audioPath);
@@ -44,7 +45,7 @@ public class AudioAnnouncer : IAnnouncer
     public void ReloadAudio()
     {
         JsonInitialization();
-        _audioLoader.UpdateAudioFileNames(m_jsonSetting.CategoryAudioMap);
+        _audioLoader.UpdateAudioFileNames(m_jsonSetting);
         _audioLoader.FindAvailableAudio();
     }
 
@@ -87,7 +88,7 @@ public class AudioAnnouncer : IAnnouncer
     private void JsonInitialization()
     {
         if (CheckDoesJsonExists() == false) CreateJson();
-        m_jsonSetting = JsonManager.ReadJson<AudioJsonSetting>(m_jsonName);
+        m_jsonSetting = JsonManager.ReadJson<AnnouncerJsonSetting>(m_jsonName);
     }
 
     private bool CheckDoesJsonExists()
@@ -99,15 +100,19 @@ public class AudioAnnouncer : IAnnouncer
     {
         var audioDict = m_audioCategories.ToDictionary(
             cat => cat,
-            cat => new[] { cat }
+            cat => new CategoryAudioSetting 
+            { 
+                Enabled = true,
+                AudioFiles = new List<string> { cat }
+            }
         );
-        m_jsonSetting = new AudioJsonSetting { CategoryAudioMap = audioDict };
+        m_jsonSetting = new AnnouncerJsonSetting { CategoryAudioMap = audioDict };
         JsonManager.CreateJson(m_jsonName, m_jsonSetting);
     }
 
     private void AudioLoaderInitialization()
     {
-        _audioLoader = new AudioLoader(m_audioPath, m_audioCategories, m_jsonSetting.CategoryAudioMap);
+        _audioLoader = new AudioLoader(m_audioPath, m_audioCategories, m_jsonSetting);
         _audioLoader.FindAvailableAudio();
     }
 

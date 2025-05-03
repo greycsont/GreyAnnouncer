@@ -20,7 +20,7 @@ public class PathManager
         return CleanPath(Path.Combine(gameRoot, filePath));
     }
 
-    [Description("Reference : (因win程序员想偷懒！竟在剪切板插入隐藏字符) https://www.bilibili.com/video/BV1ebLczjEWZ (Accessed in 24/4/2025)")]
+    [Description("Reference : (因win程序员想偷懒! 竟在剪切板插入隐藏字符) https://www.bilibili.com/video/BV1ebLczjEWZ (Accessed in 24/4/2025)")]
     public static string CleanPath(string path)
     {
         if (string.IsNullOrEmpty(path)) return path;

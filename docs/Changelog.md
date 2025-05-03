@@ -1,7 +1,9 @@
 ### Known issue/TODO
+- Using translation from pointer to audiocategory to get clips
+- Added errortext in PluginConfigurator using ConfigHeader and attribute Archor:UpperLeft
 
 ### v1.0.2
-- Fixed when you qui the mission in the water, the muffle effect still exists when playing audio.
+- Fixed when you quit the mission in the water, the muffle effect still exists when playing audio.
 - Changed the mod's icon, the old icon directly uses the Arknights's mini greythroat asset.
 - Abstract the audioLoader as a individual class, makes the Grey Announcer become as a framework.
 - Some changes of license (fixed/added the Lib\ folder that does not include in License, This folder includes assembly-sharp of ULTRAKILL, PluginConfigurator and some unity assets).

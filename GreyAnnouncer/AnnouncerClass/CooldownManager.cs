@@ -40,7 +40,8 @@ public class CooldownManager
     }
     #endregion
 
-    
+
+    #region Private Methods
     private IEnumerator CooldownCoroutine(Action<float> setCooldown, float initialCooldown)
     {
         if (initialCooldown <= 0)
@@ -67,4 +68,5 @@ public class CooldownManager
 
         setCooldown(0);
     }
+    #endregion
 }
