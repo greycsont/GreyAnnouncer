@@ -8,7 +8,17 @@ namespace rankAnnouncerV2;
 
 public static class RankAnnouncerV2
 {
-    private static readonly string[]       m_rankCategory = { "D", "C", "B", "A", "S", "SS", "SSS", "U" };
+    private static readonly string[]       m_rankCategory = {
+        "Destruction",
+        "Chaotic", 
+        "Brutal", 
+        "Anarchic", 
+        "Supreme", 
+        "SSadistic", 
+        "SSShitstorm", 
+        "ULTRAKILL" 
+    };
+
     private static readonly AudioAnnouncer _announcer     = new AudioAnnouncer();
 
     public static void Initialize()
