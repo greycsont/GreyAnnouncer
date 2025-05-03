@@ -2,9 +2,7 @@ using PluginConfig.API;
 using PluginConfig.API.Fields;
 using PluginConfig.API.Decorators;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
-using BepInEx.Configuration;
 
 
 namespace greycsont.GreyAnnouncer;
@@ -12,45 +10,48 @@ namespace greycsont.GreyAnnouncer;
 public static class RegisterAnnouncerPage
 {
     private static PluginConfigurator            m_pluginConfigurator;
-    private static Dictionary<string, BoolField> m_rankToggleDict;
     private static string                        m_announcerName;
-    private static AnnouncerJsonSetting          m_announcerJsonSetting;
-
-    public static void Build(Dictionary<string, BoolField> dict, string announcerName, AnnouncerJsonSetting announcerJsonSetting)
+    private static AudioAnnouncer                _audioAnnouncer;
+    public static void Build(string announcerName, AnnouncerJsonSetting announcerJsonSetting, AudioAnnouncer audioAnnouncer)
     {
         m_pluginConfigurator   = PluginConfiguratorEntry.greyAnnouncerConfig_PluginConfigurator;
-        m_rankToggleDict       = dict;
         m_announcerName        = announcerName;
-        m_announcerJsonSetting = announcerJsonSetting;
+        _audioAnnouncer        = audioAnnouncer;
+        
 
         ConfigPanel panel    = new ConfigPanel (m_pluginConfigurator.rootPanel, m_announcerName, m_announcerName);
         ConfigHeader header  = new ConfigHeader(panel, m_announcerName);
         header.textColor     = HeaderColor;
 
-        foreach (var entry in InstanceConfig.ConfigEntries)
+        foreach (var category in announcerJsonSetting.CategoryAudioMap)
         {
-            if (!entry.Value.section.Equals("Enabled Style")) continue;
-
             var field = CreateBoolField(
                 panel,
-                entry.Value.name,
-                entry.Key,
-                InstanceConfig.RankToggleDict[entry.Key],
-                InstanceConfig.DEFAULT_RANK_TOGGLED
+                category.Key,
+                category.Key,
+                announcerJsonSetting,
+                true,
+                new Action<BoolField.BoolValueChangeEvent>[] {
+                    e => {
+                        _audioAnnouncer.UpdateJson(announcerJsonSetting);
+                        Plugin.Log.LogInfo($"Updated json setting for {m_announcerName}");
+                    }
+                }
             );
-            
-            m_rankToggleDict.Add(entry.Key, field);
         }
     }
 
-    private static BoolField CreateBoolField(ConfigPanel panel, string label, string guid, ConfigEntry<bool> entry, bool defaultValue, Action<BoolField.BoolValueChangeEvent>[] callbacks = null)
+    private static BoolField CreateBoolField(ConfigPanel panel, string label, string guid, AnnouncerJsonSetting jsonSetting, bool defaultValue, Action<BoolField.BoolValueChangeEvent>[] callbacks = null)
     {
         var fullGuid         = GuidPrefixAdder.AddPrefixToGUID(guid);
-        var field            = new BoolField(panel, label, fullGuid, entry.Value);
+        var field            = new BoolField(panel, label, fullGuid, jsonSetting.CategoryAudioMap[guid].Enabled);
         field.defaultValue   = defaultValue;
         field.onValueChange += e =>
         {
-            entry.Value = e.value;
+            if (jsonSetting.CategoryAudioMap.ContainsKey(guid))
+            {
+                jsonSetting.CategoryAudioMap[guid].Enabled = e.value;
+            }
             if (callbacks != null)
             {
                 foreach (var callback in callbacks)

@@ -15,15 +15,13 @@ public class PluginConfiguratorEntry
         get => _config;
         private set => _config = value;
     }
-    private static Dictionary<string, BoolField> m_rankToggleFieldDict = new Dictionary<string, BoolField>();
-    private static PluginConfigurator             _config;
+    private static PluginConfigurator _config;
 
     public static void Initialize()
     {
         CreatePluginPages();
         
-        MainPanelBuilder.      Build(_config);
-        RankTogglePanelBuilder.Build(_config, m_rankToggleFieldDict);
+        MainPanelBuilder.Build(_config);
     }
 
     private static void CreatePluginPages()

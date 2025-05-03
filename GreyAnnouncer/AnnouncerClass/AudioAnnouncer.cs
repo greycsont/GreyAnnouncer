@@ -62,6 +62,12 @@ public class AudioAnnouncer : IAnnouncer
     {
         _cooldownManager.ResetCooldowns();
     }
+
+    public void UpdateJson(AnnouncerJsonSetting jsonSetting)
+    {
+        m_jsonSetting = jsonSetting;
+        JsonManager.WriteJson(m_jsonName, m_jsonSetting);
+    }
     #endregion
 
 
@@ -87,6 +93,7 @@ public class AudioAnnouncer : IAnnouncer
         JsonInitialization();
         AudioLoaderInitialization();
         CooldownManagerInitialization();
+        PluginConfigPanelInitialization();
     }
 
     private void JsonInitialization()
@@ -95,6 +102,29 @@ public class AudioAnnouncer : IAnnouncer
         m_jsonSetting = JsonManager.ReadJson<AnnouncerJsonSetting>(m_jsonName);
     }
 
+    private void AudioLoaderInitialization()
+    {
+        _audioLoader = new AudioLoader(m_audioPath, m_audioCategories, m_jsonSetting);
+        _audioLoader.FindAvailableAudio();
+    }
+
+    private void CooldownManagerInitialization()
+    {
+        _cooldownManager = new CooldownManager(m_jsonSetting.CategoryAudioMap.Count);
+    }
+
+    private void PluginConfigPanelInitialization()
+    {
+        RegisterAnnouncerPage.Build(m_announcerName, m_jsonSetting, this);
+    }
+
+    private void RegisterAnnouncer()
+    {
+        AnnouncerManager.RegisterAnnouncer(m_announcerName, this);
+    }
+    #endregion
+
+    #region Json related
     private bool CheckDoesJsonExists()
     {
         return File.Exists(PathManager.GetCurrentPluginPath(m_jsonName));
@@ -112,22 +142,6 @@ public class AudioAnnouncer : IAnnouncer
         );
         m_jsonSetting = new AnnouncerJsonSetting { CategoryAudioMap = audioDict };
         JsonManager.CreateJson(m_jsonName, m_jsonSetting);
-    }
-
-    private void AudioLoaderInitialization()
-    {
-        _audioLoader = new AudioLoader(m_audioPath, m_audioCategories, m_jsonSetting);
-        _audioLoader.FindAvailableAudio();
-    }
-
-    private void CooldownManagerInitialization()
-    {
-        _cooldownManager = new CooldownManager(m_jsonSetting.CategoryAudioMap.Count);
-    }
-
-    private void RegisterAnnouncer()
-    {
-        AnnouncerManager.RegisterAnnouncer(m_announcerName, this);
     }
     #endregion
 
@@ -201,7 +215,8 @@ public class AudioAnnouncer : IAnnouncer
         if (_cooldownManager.IsSharedCooldownActive())
             return ValidationState.SharedCooldown;
 
-        if (!InstanceConfig.RankToggleDict[_audioLoader.audioCategories[key]].Value)
+        //edited
+        if (!m_jsonSetting.CategoryAudioMap[m_audioCategories[key]].Enabled)
             return ValidationState.DisabledByConfig;
 
         if (_audioLoader.TryToGetAudioClip(key) == null)

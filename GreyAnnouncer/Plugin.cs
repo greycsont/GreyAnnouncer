@@ -30,12 +30,12 @@ public class Plugin : BaseUnityPlugin
     private void LoadMainModule()
     {
         InstanceConfig.Initialize(this);
-        RankAnnouncerV2.Initialize();
     }
 
     private void LoadOptionalModule()
     {
         CheckPluginLoaded(PluginDependencies.PLUGINCONFIGURATOR_GUID, "greycsont.GreyAnnouncer.PluginConfiguratorEntry");
+        RankAnnouncerV2.Initialize();
     }
 
     private void PatchHarmony()
