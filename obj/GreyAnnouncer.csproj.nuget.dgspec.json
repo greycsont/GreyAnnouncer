@@ -55,17 +55,9 @@
               "target": "Package",
               "version": "[5.4.21, )"
             },
-            "CSCore": {
-              "target": "Package",
-              "version": "[1.2.1.2, )"
-            },
             "HarmonyX": {
               "target": "Package",
               "version": "[2.10.2, )"
-            },
-            "LibFlacSharp": {
-              "target": "Package",
-              "version": "[1.0.4, )"
             },
             "Newtonsoft.Json": {
               "target": "Package",

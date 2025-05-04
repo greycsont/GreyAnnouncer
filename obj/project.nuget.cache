@@ -1,15 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "Wtd5FO7Ljf47PlxfAyrX9RMG8iepvYtqIJyqD6xy8BV+uW7GHvU8KsN/XuitkCu9bupjCFGv7vYgRm6i+lDJKg==",
+  "dgSpecHash": "1H61IEK407Tq4351lE8K3crM8juXHSh/p6qT/0H8WIzHPItyq/ExVTCRfsFKBiA23/tMT6veWA7bf3X+eggZ7w==",
   "success": true,
   "projectFilePath": "H:\\C#Project\\GreyAnnouncer\\GreyAnnouncer.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\asd\\.nuget\\packages\\bepinex.analyzers\\1.0.8\\bepinex.analyzers.1.0.8.nupkg.sha512",
     "C:\\Users\\asd\\.nuget\\packages\\bepinex.baselib\\5.4.20\\bepinex.baselib.5.4.20.nupkg.sha512",
     "C:\\Users\\asd\\.nuget\\packages\\bepinex.core\\5.4.21\\bepinex.core.5.4.21.nupkg.sha512",
-    "C:\\Users\\asd\\.nuget\\packages\\cscore\\1.2.1.2\\cscore.1.2.1.2.nupkg.sha512",
     "C:\\Users\\asd\\.nuget\\packages\\harmonyx\\2.10.2\\harmonyx.2.10.2.nupkg.sha512",
-    "C:\\Users\\asd\\.nuget\\packages\\libflacsharp\\1.0.4\\libflacsharp.1.0.4.nupkg.sha512",
     "C:\\Users\\asd\\.nuget\\packages\\mono.cecil\\0.11.4\\mono.cecil.0.11.4.nupkg.sha512",
     "C:\\Users\\asd\\.nuget\\packages\\monomod.runtimedetour\\22.3.23.4\\monomod.runtimedetour.22.3.23.4.nupkg.sha512",
     "C:\\Users\\asd\\.nuget\\packages\\monomod.utils\\22.3.23.4\\monomod.utils.22.3.23.4.nupkg.sha512",

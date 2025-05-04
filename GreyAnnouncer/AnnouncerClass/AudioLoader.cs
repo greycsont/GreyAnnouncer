@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic; //audio clip
 using UnityEngine;
 using UnityEngine.Networking;
-using CSCore.Codecs;
 using System;
 using System.ComponentModel;
 
@@ -160,12 +159,12 @@ public class AudioLoader
         {
             yield return LoadWithUnity(path, categoryIndex, status, unityAudioType.Value);
         }
-        else if (CanLoadWithCSCore(extension))
+        else if (extension == ".flac")
         {
-            if (!TryLoadWithCSCore(path, categoryIndex, status))
+            if (!TryLoadWithLibFlac(path, categoryIndex, status))
             {
                 status.HasError = true;
-                Plugin.Log.LogError($"CSCore failed to load: {path}");
+                Plugin.Log.LogError($"LibFlac failed to load: {path}");
             }
         }
         else
@@ -205,53 +204,24 @@ public class AudioLoader
         }
     }
 
-    private bool TryLoadWithCSCore(string path, int categoryIndex, LoadingStatus status)
+    private bool TryLoadWithLibFlac(string path, int categoryIndex, LoadingStatus status)
     {
-        try
+        var clip = FLACDecoder.LoadFLACAsAudioClip(path);
+        if (clip != null)
         {
-            using (var soundSource = CodecFactory.Instance.GetCodec(path))
+            status.LoadedClips.Add(clip);
+            status.LoadedFiles++;
+
+            if (!audioClips.ContainsKey(categoryIndex))
             {
-                // Create a byte buffer to read the data
-                var byteBuffer = new byte[soundSource.Length];
-                soundSource.Read(byteBuffer, 0, byteBuffer.Length);
-
-                // Convert byte data to float data
-                var sampleBuffer = new float[byteBuffer.Length / 2]; // Assuming 16-bit samples, adjust if needed
-                for (int i = 0; i < sampleBuffer.Length; i++)
-                {
-                    // Convert the byte data (e.g., 16-bit PCM) to float (-1.0f to 1.0f range)
-                    sampleBuffer[i] = BitConverter.ToInt16(byteBuffer, i * 2) / 32768f;
-                }
-
-                // Create AudioClip
-                var clip = AudioClip.Create(
-                    Path.GetFileNameWithoutExtension(path),
-                    sampleBuffer.Length,
-                    soundSource.WaveFormat.Channels,
-                    soundSource.WaveFormat.SampleRate,
-                    false
-                );
-
-                // Set audio data directly as float array
-                clip.SetData(sampleBuffer, 0);
-
-                status.LoadedClips.Add(clip);
-                status.LoadedFiles++;
-
-                if (!audioClips.ContainsKey(categoryIndex))
-                {
-                    audioClips[categoryIndex] = status.LoadedClips;
-                }
-
-                Plugin.Log.LogInfo($"Loaded audio: {Path.GetFileName(path)} ({status.LoadedFiles}/{status.ExpectedFiles} for {status.Category})");
-                return true;
+                audioClips[categoryIndex] = status.LoadedClips;
             }
+
+            Plugin.Log.LogInfo($"Loaded audio: {Path.GetFileName(path)} ({status.LoadedFiles}/{status.ExpectedFiles} for {status.Category})");
+            return true;
         }
-        catch (Exception ex)
-        {
-            Plugin.Log.LogError($"CSCore loading failed: {ex.Message}");
-            return false;
-        }
+        Plugin.Log.LogError($"FLAC loading not implemented yet: {path}");
+        return false;
     }
     #endregion
 
@@ -268,7 +238,7 @@ public class AudioLoader
         {
             string extension = Path.GetExtension(file).ToLower();
             
-            bool isSupported = GetUnityAudioType(extension).HasValue || CanLoadWithCSCore(extension);
+            bool isSupported = GetUnityAudioType(extension).HasValue;
             
             if (isSupported)
             {
@@ -300,25 +270,6 @@ public class AudioLoader
             ".aif"  => AudioType.AIFF,
             ".acc"  => AudioType.ACC,
             _       => null
-        };
-    }
-
-    private bool CanLoadWithCSCore(string extension)
-    {
-        return extension switch
-        {
-            // Full supported formats
-            ".wav"  => true,
-            ".mp3"  => true,
-            ".ogg"  => true,
-            ".flac" => true,
-
-            // Maybe require extra decoding/OS support
-            ".wma"  => true,
-            ".aiff" => true,
-            ".m4a"  => true,
-            ".ac3"  => true,
-            _       => false
         };
     }
     #endregion
@@ -416,6 +367,8 @@ public class AudioLoader
     }
 
     private Dictionary<string, LoadingStatus> m_LoadingStatus = new Dictionary<string, LoadingStatus>();
+
+    
 
 }
 
