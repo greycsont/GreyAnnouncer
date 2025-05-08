@@ -66,6 +66,7 @@ public class AudioLoader
     {
         ClearAudioClipCache();
         categoryFailedLoading.Clear();
+        MainPanelBuilder.logHeader.text = string.Empty;
     }
     #endregion
 
@@ -242,14 +243,19 @@ public class AudioLoader
 
     private void LogLoadingResults()
     {
+        string logMessage = null;
         if (categoryFailedLoading.Count == 0)
         {
-            Plugin.log.LogInfo("All audio categories successfully loaded");
+            logMessage = "All audio categories successfully loaded";
+            Plugin.log.LogInfo(logMessage);
         }
         else
         {
-            Plugin.log.LogWarning("Failed to load audio categories: " + string.Join(", ", categoryFailedLoading));
+
+            logMessage = "Failed to load audio categories: " + string.Join(", ", categoryFailedLoading);
+            Plugin.log.LogWarning(logMessage);
         }
+        MainPanelBuilder.logHeader.text = logMessage + "\n";
     }
     #endregion
 

@@ -11,6 +11,7 @@ namespace greycsont.GreyAnnouncer;
 public static class MainPanelBuilder
 {
     private static PluginConfigurator m_pluginConfigurator;
+    public  static ConfigHeader        logHeader;
 
     public static void Build(PluginConfigurator config)
     {
@@ -28,6 +29,10 @@ public static class MainPanelBuilder
 
     private static void CreateCooldownControls()
     {
+        logHeader = new ConfigHeader(m_pluginConfigurator.rootPanel, "");
+        logHeader.tmpAnchor = TMPro.TextAlignmentOptions.TopLeft;
+        logHeader.textSize  = 12;
+
         var sharedCooldown = new FloatField(
             m_pluginConfigurator.rootPanel,
             "Shared rank cooldown",

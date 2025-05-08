@@ -16,11 +16,11 @@ public static class RankAnnouncerV2
         "U" 
     };
 
-    private static readonly AudioAnnouncer _announcer     = new AudioAnnouncer();
+    private static readonly AudioAnnouncer m_announcer    = new AudioAnnouncer();
 
     public static void Initialize()
     {
-        _announcer.Initialize(
+        m_announcer.Initialize(
             "RankAnnouncer",
             m_rankCategory,
             "rankSettings.json",
@@ -35,21 +35,21 @@ public static class RankAnnouncerV2
             Plugin.log.LogError($"Invalid rank index: {rank}");
             return;
         }
-        _announcer.PlayAudio(rank);
+        m_announcer.PlayAudio(rank);
     }
 
     public static void ReloadRankSounds()
     {
-        _announcer.ReloadAudio();
+        m_announcer.ReloadAudio();
     }
 
     public static void UpdateRankAudioPath(string newPath)
     {
-        _announcer.UpdateAudioPath(newPath);
+        m_announcer.UpdateAudioPath(newPath);
     }
 
     public static void ResetCooldowns()
     {
-        _announcer.ResetCooldown();
+        m_announcer.ResetCooldown();
     }
 }
