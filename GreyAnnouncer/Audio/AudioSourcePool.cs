@@ -108,7 +108,7 @@ public class AudioSourcePool : MonoBehaviour
                 m_playingMap.Remove(oldestNode.Value);
 
                 Plugin.Log.LogWarning("Max audio sources reached, forcibly recycling the oldest source.");
-                ForceRecycle(oldestNode.Value);
+                Recycle(oldestNode.Value);
             }
         }
 
@@ -143,21 +143,12 @@ public class AudioSourcePool : MonoBehaviour
             m_playingMap.Remove(audioSource);
         }
 
-        Return(audioSource);
+        Recycle(audioSource);
     }
 
-    private void ForceRecycle(AudioSource audioSource)
+    private void Recycle(AudioSource audioSource)
     {
         if (audioSource == null) return;
-        audioSource.Stop();
-        audioSource.clip = null;
-        audioSource.gameObject.SetActive(false);
-        m_activeAudioSources.Remove(audioSource);
-        m_pool.Enqueue(audioSource);
-    }
-
-    private void Return(AudioSource audioSource)
-    {
         audioSource.Stop();
         audioSource.clip = null;
         audioSource.gameObject.SetActive(false);

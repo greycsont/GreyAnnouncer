@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.ComponentModel;
 using System.Collections.Generic;
+using UnityEngine;
 
 
 namespace greycsont.GreyAnnouncer;
@@ -23,9 +24,9 @@ public class AudioAnnouncer : IAnnouncer
 
 
     #region Public API
-    public void Initialize(string announcerName, string[] audioFileNames, string jsonName, string audioPath)
+    public void Initialize(string announcerName, string[] audioCategories, string jsonName, string audioPath)
     {
-        VariableInitialization(announcerName, audioFileNames, jsonName, audioPath);
+        VariableInitialization(announcerName, audioCategories, jsonName, audioPath);
         ComponentInitialization();
         RegisterAnnouncer();
     }
@@ -172,6 +173,11 @@ public class AudioAnnouncer : IAnnouncer
         var clip = _audioLoader.TryToGetAudioClip(key);
         if (clip == null) return;
 
+        SendClipToAudioSource(clip);
+    }
+
+    private void SendClipToAudioSource(AudioClip clip)
+    {
         switch (InstanceConfig.AudioPlayOptions.Value)
         {
             case 0:
@@ -214,11 +220,10 @@ public class AudioAnnouncer : IAnnouncer
 
         if (_cooldownManager.IsSharedCooldownActive())
             return ValidationState.SharedCooldown;
-
         //edited
         if (!m_jsonSetting.CategoryAudioMap[m_audioCategories[key]].Enabled)
             return ValidationState.DisabledByConfig;
-
+        
         if (_audioLoader.TryToGetAudioClip(key) == null)
             return ValidationState.ClipNotFound;
 

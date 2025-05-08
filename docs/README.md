@@ -9,8 +9,7 @@
 | Format      | Supported |                 
 |-------------|-----------|
 | `.mp3`      | ✅        |       
-| `.wav`      | ✅        |        
-| `.flac`     | ✅        |             
+| `.wav`      | ✅        |               
 | `.aac`      | not tested|           
 | `.ogg`      | not tested|                  
 | `.aiff/.aif`| not tested|

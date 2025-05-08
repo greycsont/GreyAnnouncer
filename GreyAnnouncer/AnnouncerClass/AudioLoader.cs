@@ -7,22 +7,21 @@ using UnityEngine.Networking;
 using System;
 using System.ComponentModel;
 
+
 namespace greycsont.GreyAnnouncer;
 
 [Description("The AudioLoader should and only be used as a audioClips entity, " +
              "I tried to add cooldown counter in here but I just realize it's only a audio loader")]
 public class AudioLoader                                          
 {
-    #region Public Properties
+    #region Properties
     public string[]                         audioCategories       { get; private set; }
     public HashSet<string>                  categoryFailedLoading { get; private set; } = new HashSet<string>();
     public Dictionary<int, List<AudioClip>> audioClips            { get; private set; } = new Dictionary<int, List<AudioClip>>();
-    #endregion
 
-
-    #region Private Fields
-    private          Dictionary<string, List<string>>  m_audioFileNames;
-    private          string                        m_audioPath;
+    private Dictionary<string, List<string>>  m_audioFileNames;
+    private string                            m_audioPath;
+    private Dictionary<string, LoadingStatus> m_LoadingStatus = new Dictionary<string, LoadingStatus>();
     #endregion
 
     #region Constructor
@@ -51,22 +50,12 @@ public class AudioLoader
     {
         ClearCache();
         ValidateAndPrepareDirectory();
-        StartLoading();
+        StartLoadingAllCategories();
     }
 
     public AudioClip TryToGetAudioClip(int key)
     {
-        if (key < 0 || key >= audioCategories.Length)
-        {
-            Plugin.Log.LogWarning($"Invalid audio key: {key}");
-            return null;
-        }
-
-        if (!audioClips.TryGetValue(key, out var clips) || clips.Count == 0)
-            return null;
-            
-        int randomIndex = UnityEngine.Random.Range(0, clips.Count);
-        return clips[randomIndex];
+        return GetClipFromAudioClips(key);
     }
 
     public void UpdateAudioFileNames(AnnouncerJsonSetting jsonSetting)
@@ -86,7 +75,7 @@ public class AudioLoader
         }
     }
 
-    private void StartLoading()
+    private void StartLoadingAllCategories()
     {
         m_LoadingStatus.Clear();
 
@@ -94,15 +83,13 @@ public class AudioLoader
         
         for (int i = 0; i < audioCategories.Length; i++)
         {
-            LoadCategory(i, audioCategories[i]);
+            LoadCategory(i);
         }
-
-
     }
     
-
-    private void LoadCategory(int index, string category)
+    private void LoadCategory(int index)
     {
+        var category = audioCategories[index];
         if (!m_audioFileNames.TryGetValue(category, out var fileNames))
         {
             LogCategoryFailure(category, "No file names configured");
@@ -114,7 +101,7 @@ public class AudioLoader
 
         foreach (var fileName in fileNames)
         {
-            var filePath = GetAudioWithExtension(m_audioPath, fileName);
+            var filePath = PathManager.GetFileWithExtension(m_audioPath, fileName);
             if (File.Exists(filePath))
             {
                 status.ExpectedFiles++;
@@ -136,7 +123,7 @@ public class AudioLoader
 
     private void TryStartLoadingFile(string fileName, int categoryIndex, LoadingStatus status)
     {
-        var filePath = GetAudioWithExtension(m_audioPath, fileName);
+        var filePath = PathManager.GetFileWithExtension(m_audioPath, fileName);
         if (!File.Exists(filePath))
         {
             Plugin.Log.LogWarning($"Audio file not found: {filePath}");
@@ -158,14 +145,6 @@ public class AudioLoader
         if (unityAudioType.HasValue)
         {
             yield return LoadWithUnity(path, categoryIndex, status, unityAudioType.Value);
-        }
-        else if (extension == ".flac")
-        {
-            if (!TryLoadWithLibFlac(path, categoryIndex, status))
-            {
-                status.HasError = true;
-                Plugin.Log.LogError($"LibFlac failed to load: {path}");
-            }
         }
         else
         {
@@ -203,62 +182,9 @@ public class AudioLoader
             }
         }
     }
-
-    private bool TryLoadWithLibFlac(string path, int categoryIndex, LoadingStatus status)
-    {
-        var clip = FLACDecoder.LoadFLACAsAudioClip(path);
-        if (clip != null)
-        {
-            status.LoadedClips.Add(clip);
-            status.LoadedFiles++;
-
-            if (!audioClips.ContainsKey(categoryIndex))
-            {
-                audioClips[categoryIndex] = status.LoadedClips;
-            }
-
-            Plugin.Log.LogInfo($"Loaded audio: {Path.GetFileName(path)} ({status.LoadedFiles}/{status.ExpectedFiles} for {status.Category})");
-            return true;
-        }
-        Plugin.Log.LogError($"FLAC loading not implemented yet: {path}");
-        return false;
-    }
     #endregion
 
-
     #region Utility Methods
-    private string GetAudioWithExtension(string audioPath, string audioName)
-    {
-        string searchPattern = audioName + ".*";
-        string[] files = Directory.GetFiles(audioPath, searchPattern);
-
-        HashSet<string> blacklist = new HashSet<string>();
-        
-        foreach (string file in files)
-        {
-            string extension = Path.GetExtension(file).ToLower();
-            
-            bool isSupported = GetUnityAudioType(extension).HasValue;
-            
-            if (isSupported)
-            {
-                return file;
-            }
-            else
-            {
-                blacklist.Add(extension);
-                Plugin.Log.LogWarning($"Unsupported audio format found: {extension} for file: {Path.GetFileName(file)}");
-            }
-        }
-        
-        if (blacklist.Count > 0)
-        {
-            Plugin.Log.LogWarning($"No supported audio format found for {audioName}. Unsupported formats: {string.Join(", ", blacklist)}");
-        }
-        
-        return null;
-    }
-
     private AudioType? GetUnityAudioType(string extension)
     {
         return extension switch
@@ -279,6 +205,7 @@ public class AudioLoader
     {
         ClearAudioClipCache();
         categoryFailedLoading.Clear();
+        m_LoadingStatus.Clear();
     }
 
     private void ClearAudioClipCache()
@@ -356,20 +283,28 @@ public class AudioLoader
     }
     #endregion
 
-
-    private class LoadingStatus
+    #region Get Audio Clip
+    private AudioClip GetClipFromAudioClips(int key)
     {
-        public string          Category      { get; set;         }
-        public int             ExpectedFiles { get; set;         }
-        public int             LoadedFiles   { get; set;         }
-        public bool            HasError      { get; set;         }
-        public List<AudioClip> LoadedClips   { get; private set; } = new List<AudioClip>();
-    }
+        if (key < 0 || key >= audioCategories.Length)
+        {
+            Plugin.Log.LogWarning($"Invalid audio key: {key}");
+            return null;
+        }
 
-    private Dictionary<string, LoadingStatus> m_LoadingStatus = new Dictionary<string, LoadingStatus>();
+        if (!audioClips.TryGetValue(key, out var clips) || clips.Count == 0)
+            return null;
+            
+        int randomIndex = UnityEngine.Random.Range(0, clips.Count);
+        return clips[randomIndex];
+    }
+    #endregion
+
+
+
+   
 
     
 
 }
-
 

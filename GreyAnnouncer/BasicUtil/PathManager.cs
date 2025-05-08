@@ -66,4 +66,20 @@ public class PathManager
             Plugin.Log.LogWarning("The path is not valid or the directory does not exist.");
         }
     }
+
+    
+    public static string GetFileWithExtension(string filePath, string fileName)
+    {
+        string searchPattern = fileName + ".*";
+        string[] files = Directory.GetFiles(filePath, searchPattern);
+
+        
+        if (files.Length > 0)
+        {
+            return files[0];
+        }
+
+
+        return null;
+    }
 }
