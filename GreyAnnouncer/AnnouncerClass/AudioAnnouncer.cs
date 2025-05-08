@@ -4,6 +4,7 @@ using System.Linq;
 using System.ComponentModel;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading.Tasks;
 
 
 namespace greycsont.GreyAnnouncer;
@@ -38,7 +39,7 @@ public class AudioAnnouncer : IAnnouncer
         try
         {
             if (!ValidateAndLogPlayback(key)) return;
-            PlayAudioClip(key);
+            _ = LoadAndPlayAudioClip(key);
             SetCooldown(key, InstanceConfig.IndividualRankPlayCooldown.Value);
         }
         catch(Exception ex)
@@ -51,7 +52,7 @@ public class AudioAnnouncer : IAnnouncer
     {
         JsonInitialization();
         _audioLoader.UpdateAudioFileNames(m_jsonSetting);
-        _audioLoader.FindAvailableAudio();
+        _ = _audioLoader.FindAvailableAudioAsync();
     }
 
     public void UpdateAudioPath(string newAudioPaths)
@@ -106,7 +107,7 @@ public class AudioAnnouncer : IAnnouncer
     private void AudioLoaderInitialization()
     {
         _audioLoader = new AudioLoader(m_audioPath, m_audioCategories, m_jsonSetting);
-        _audioLoader.FindAvailableAudio();
+        _ = _audioLoader.FindAvailableAudioAsync();
     }
 
     private void CooldownManagerInitialization()
@@ -176,6 +177,13 @@ public class AudioAnnouncer : IAnnouncer
         SendClipToAudioSource(clip);
     }
 
+    private async Task LoadAndPlayAudioClip(int key)
+    {
+        var clip = await _audioLoader.LoadAudioClipAsync(key);
+        if (clip == null) return;
+        SendClipToAudioSource(clip);
+    }
+
     private void SendClipToAudioSource(AudioClip clip)
     {
         switch (InstanceConfig.AudioPlayOptions.Value)
@@ -224,8 +232,8 @@ public class AudioAnnouncer : IAnnouncer
         if (!m_jsonSetting.CategoryAudioMap[m_audioCategories[key]].Enabled)
             return ValidationState.DisabledByConfig;
         
-        if (_audioLoader.TryToGetAudioClip(key) == null)
-            return ValidationState.ClipNotFound;
+        /*if (_audioLoader.TryToGetAudioClip(key) == null)
+            return ValidationState.ClipNotFound;*/
 
         return ValidationState.Success;
     }
