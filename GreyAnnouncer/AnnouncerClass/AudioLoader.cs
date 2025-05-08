@@ -36,11 +36,11 @@ public class AudioLoader
     {
         if (string.IsNullOrEmpty(newAudioPath))
         {
-            Plugin.Log.LogError("Cannot update with empty or null paths");
+            Plugin.log.LogError("Cannot update with empty or null paths");
             return;
         }
 
-        Plugin.Log.LogInfo($"Updating audio paths and reloading audio...");
+        Plugin.log.LogInfo($"Updating audio paths and reloading audio...");
         this.m_audioPath = newAudioPath;
     }
 
@@ -61,6 +61,12 @@ public class AudioLoader
     {
         this.m_audioFileNames = GetAudioFileNames(jsonSetting);
     }
+
+    public void ClearCache()
+    {
+        ClearAudioClipCache();
+        categoryFailedLoading.Clear();
+    }
     #endregion
 
     #region Loading Logic
@@ -68,7 +74,7 @@ public class AudioLoader
     {
         if (!Directory.Exists(m_audioPath))
         {
-            Plugin.Log.LogWarning($"Audio directory not found: {m_audioPath}");
+            Plugin.log.LogWarning($"Audio directory not found: {m_audioPath}");
             Directory.CreateDirectory(m_audioPath);
         }
     }
@@ -115,7 +121,7 @@ public class AudioLoader
             return null;
         }
 
-        Plugin.Log.LogInfo($"Loading category {category} with {validFiles.Count} files");
+        Plugin.log.LogInfo($"Loading category {category} with {validFiles.Count} files");
         
         var clipLoadingTasks = validFiles.Select(path => LoadAudioClipAsync(path));
         var loadedClips = new List<AudioClip>();
@@ -129,7 +135,7 @@ public class AudioLoader
             
             if (loadedClips.Count > 0)
             {
-                Plugin.Log.LogInfo($"Successfully loaded {loadedClips.Count}/{validFiles.Count} clips for {category}");
+                Plugin.log.LogInfo($"Successfully loaded {loadedClips.Count}/{validFiles.Count} clips for {category}");
                 return loadedClips;
             }
             else
@@ -152,18 +158,18 @@ public class AudioLoader
 
         if (!unityAudioType.HasValue)
         {
-            Plugin.Log.LogError($"Unsupported audio format: {extension} for {path}");
+            Plugin.log.LogError($"Unsupported audio format: 「{extension}」 for {path}");
             return null;
         }
 
         try
         {
-            Plugin.Log.LogInfo($"Started loading audio: {path}");
+            Plugin.log.LogInfo($"Started loading audio: {path}");
             return await LoadWithUnityAsync(path, unityAudioType.Value);
         }
         catch (Exception ex)
         {
-            Plugin.Log.LogError($"Error loading {path}: {ex.Message}");
+            Plugin.log.LogError($"Error loading {path}: {ex.Message}");
             return null;
         }
     }
@@ -185,12 +191,12 @@ public class AudioLoader
 
             if (www.result != UnityWebRequest.Result.Success)
             {
-                Plugin.Log.LogError($"UnityRequest Failed to load audio: {www.error}");
+                Plugin.log.LogError($"UnityRequest Failed to load audio: {www.error}");
                 return null;
             }
             
             var clip = DownloadHandlerAudioClip.GetContent(www);
-            Plugin.Log.LogInfo($"Loaded audio: {Path.GetFileName(path)}");
+            Plugin.log.LogInfo($"Loaded audio: {Path.GetFileName(path)}");
             return clip;
         }
     }
@@ -213,12 +219,6 @@ public class AudioLoader
     #endregion
 
     #region Cache Management
-    private void ClearCache()
-    {
-        ClearAudioClipCache();
-        categoryFailedLoading.Clear();
-    }
-
     private void ClearAudioClipCache()
     {
         foreach (var clipList in audioClips.Values)
@@ -237,18 +237,18 @@ public class AudioLoader
     private void LogCategoryFailure(string category, string reason)
     {
         categoryFailedLoading.Add(category);
-        Plugin.Log.LogWarning($"Failed to load category {category}: {reason}");
+        Plugin.log.LogWarning($"Failed to load category 「{category}」: {reason}");
     }
 
     private void LogLoadingResults()
     {
         if (categoryFailedLoading.Count == 0)
         {
-            Plugin.Log.LogInfo("All audio categories successfully loaded");
+            Plugin.log.LogInfo("All audio categories successfully loaded");
         }
         else
         {
-            Plugin.Log.LogWarning("Failed to load audio categories: " + string.Join(", ", categoryFailedLoading));
+            Plugin.log.LogWarning("Failed to load audio categories: " + string.Join(", ", categoryFailedLoading));
         }
     }
     #endregion
@@ -268,7 +268,7 @@ public class AudioLoader
     {
         if (key < 0 || key >= audioCategories.Length)
         {
-            Plugin.Log.LogWarning($"Invalid audio key: {key}");
+            Plugin.log.LogWarning($"Invalid audio key: {key}");
             return null;
         }
 
@@ -281,11 +281,10 @@ public class AudioLoader
 
     public async Task<AudioClip> LoadAudioClipAsync(int key)
     {
-        ClearAudioClipCache();
         var clips = await LoadCategoryAsync(key);
         if (clips == null || clips.Count == 0)
         {
-            Plugin.Log.LogError($"Failed to load audio clip for key: {key}");
+            Plugin.log.LogError($"Failed to load audio clip for key: {key}");
             return null;
         }
 

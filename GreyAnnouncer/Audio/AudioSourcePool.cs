@@ -10,7 +10,7 @@ public class AudioSourcePool : MonoBehaviour
     private        readonly HashSet<AudioSource>                                 m_activeAudioSources = new HashSet<AudioSource>();
     private                 LinkedList<AudioSource>                              m_playingList        = new LinkedList<AudioSource>();
     private                 Dictionary<AudioSource, LinkedListNode<AudioSource>> m_playingMap         = new Dictionary<AudioSource, LinkedListNode<AudioSource>>();
-    private static          AudioSourcePool                                      _instance;
+    private static          AudioSourcePool                                      m_instance;
     #endregion
 
     #region Public Fields
@@ -24,14 +24,14 @@ public class AudioSourcePool : MonoBehaviour
     {
         get
         {
-            if (_instance == null)
+            if (m_instance == null)
             {
                 var obj = new GameObject("AudioSourcePool");
                 DontDestroyOnLoad(obj);
-                _instance = obj.AddComponent<AudioSourcePool>();
-                _instance.Initialize();
+                m_instance = obj.AddComponent<AudioSourcePool>();
+                m_instance.Initialize();
             }
-            return _instance;
+            return m_instance;
         }
     }
     #endregion
@@ -107,7 +107,7 @@ public class AudioSourcePool : MonoBehaviour
                 m_playingList.RemoveFirst();
                 m_playingMap.Remove(oldestNode.Value);
 
-                Plugin.Log.LogWarning("Max audio sources reached, forcibly recycling the oldest source.");
+                Plugin.log.LogWarning("Max audio sources reached, forcibly recycling the oldest source.");
                 Recycle(oldestNode.Value);
             }
         }
@@ -124,7 +124,7 @@ public class AudioSourcePool : MonoBehaviour
 
     private AudioSource CreateNewAudioSource()
     {
-        Plugin.Log.LogInfo("Create a new Audio Source");
+        Plugin.log.LogInfo("Create a new Audio Source");
         var go = new GameObject("PooledAudioSource");
         go.transform.SetParent(transform);
         var audioSource = go.AddComponent<AudioSource>();

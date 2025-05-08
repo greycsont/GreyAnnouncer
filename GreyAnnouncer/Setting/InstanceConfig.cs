@@ -5,12 +5,13 @@ namespace greycsont.GreyAnnouncer;
 
 public static class InstanceConfig
 {
-    public static          ConfigEntry<float>                    SharedRankPlayCooldown;    // Range : 0f ~ 10f
-    public static          ConfigEntry<float>                    IndividualRankPlayCooldown;    // Range : 0f ~ 114514f
-    public static          ConfigEntry<float>                    AudioSourceVolume; // Range : 0f ~ 1f
-    public static          ConfigEntry<bool>                     LowPassFilter_Enabled;
-    public static          ConfigEntry<string>                   AudioFolderPath;
-    public static          ConfigEntry<int>                      AudioPlayOptions;
+    public static          ConfigEntry<float>                    sharedRankPlayCooldown;    // Range : 0f ~ 10f
+    public static          ConfigEntry<float>                    individualRankPlayCooldown;    // Range : 0f ~ 114514f
+    public static          ConfigEntry<float>                    audioSourceVolume; // Range : 0f ~ 1f
+    public static          ConfigEntry<bool>                     isLowPassFilterEnabled;
+    public static          ConfigEntry<string>                   audioFolderPath;
+    public static          ConfigEntry<int>                      audioPlayOptions;
+    public static          ConfigEntry<int>                      audioLoadingOptions;
 
     public static readonly Dictionary<string, (string section, string name, object defaultValue, string description)> ConfigEntries = new()
     {
@@ -22,7 +23,8 @@ public static class InstanceConfig
         { "AudioSourceVolume",      ("Audio",         "Audio_source_volume",                 DEFAULT_AUDIO_SOURCE_VOLUME,      "Volume of the Announcer ( Range : 0f ~ 1f )") },
         { "LowPassFilter",          ("Audio",         "Under_water_low_pass_filter_Enabled", DEFAULT_LOW_PASS_FILTER_ENABLED,  "Set to true to enable muffle effect when under water") },
         { "AudioFolderPath",        ("Audio",         "Audio_folder_path",                   DEFAULT_AUDIO_FOLDER_PATH,        "Path to the audio folder") },
-        { "AudioPlayOptions",       ("Audio",         "Audio_Play_Option",                   DEFAULT_AUDIO_PLAY_OPTIONS,       "0 : new audio will override the old one, 1 : audio will not effect each other") }
+        { "AudioPlayOptions",       ("Audio",         "Audio_Play_Option",                   DEFAULT_AUDIO_PLAY_OPTIONS,       "0 : new audio will override the old one, 1 : audio will not effect each other") },
+        { "AudioLoadingOption",     ("Audio",         "Audio_Loading_Option",                DEFAULT_AUDIO_LOADING_OPTIONS,     "0 : load clip from file (less RAM more latency), 1 : preload clip to games (less latency more RAM)") }
     };
     
     public static void Initialize(Plugin plugin)
@@ -57,7 +59,7 @@ public static class InstanceConfig
                 (bool)defaultValue,
                 description
             );
-            if (name == "Under_water_low_pass_filter_Enabled") LowPassFilter_Enabled = configEntry;
+            if (name == "Under_water_low_pass_filter_Enabled") isLowPassFilterEnabled = configEntry;
         }
         else if (defaultValue is float)
         {
@@ -68,9 +70,9 @@ public static class InstanceConfig
                 description
             );
 
-            if      (name == "Shared_rank_play_cooldown")     SharedRankPlayCooldown     = configEntry;
-            else if (name == "Individual_rank_play_cooldown") IndividualRankPlayCooldown = configEntry;
-            else if (name == "Audio_source_volume")           AudioSourceVolume          = configEntry;
+            if      (name == "Shared_rank_play_cooldown")     sharedRankPlayCooldown     = configEntry;
+            else if (name == "Individual_rank_play_cooldown") individualRankPlayCooldown = configEntry;
+            else if (name == "Audio_source_volume")           audioSourceVolume          = configEntry;
             
         }
         else if (defaultValue is string)
@@ -82,7 +84,7 @@ public static class InstanceConfig
                 description
             );
 
-            if (name == "Audio_folder_path") AudioFolderPath = configEntry;
+            if (name == "Audio_folder_path") audioFolderPath = configEntry;
         }
         else if (defaultValue is int)
         {
@@ -92,61 +94,69 @@ public static class InstanceConfig
                 (int)defaultValue,
                 description
             );
-            if (name == "Audio_Play_Option") AudioPlayOptions = configEntry;
+            if (name == "Audio_Play_Option") audioPlayOptions = configEntry;
+            else if (name == "Audio_Loading_Option") audioLoadingOptions = configEntry;
         }
         else
         {
-            Plugin.Log.LogError($"Unsupported type for config entry: {key}, Type: {defaultValue?.GetType()?.FullName ?? "null"}");
+            Plugin.log.LogError($"Unsupported type for config entry: {key}, Type: {defaultValue?.GetType()?.FullName ?? "null"}");
         }
     }
                            
-    private static float _defaultSharedRankCooldown = 0f;
+    private static float m_defaultSharedRankCooldown = 0f;
     public static float DEFAULT_SHARED_RANK_COOLDOWN 
     {
-        get => _defaultSharedRankCooldown;
-        private set => _defaultSharedRankCooldown = value;
+        get => m_defaultSharedRankCooldown;
+        private set => m_defaultSharedRankCooldown = value;
     }
 
-    private static float _defaultIndividualRankCooldown = 3f;
+    private static float m_defaultIndividualRankCooldown = 3f;
     public static float DEFAULT_INDIVIDUAL_RANK_COOLDOWN 
     {
-        get => _defaultIndividualRankCooldown;
-        private set => _defaultIndividualRankCooldown = value;
+        get => m_defaultIndividualRankCooldown;
+        private set => m_defaultIndividualRankCooldown = value;
     }
 
-    private static bool _defaultRankToggled = true;
+    private static bool m_defaultRankToggled = true;
     public static bool DEFAULT_RANK_TOGGLED 
     {
-        get => _defaultRankToggled;
-        private set => _defaultRankToggled = value;
+        get => m_defaultRankToggled;
+        private set => m_defaultRankToggled = value;
     }
 
-    private static float _defaultAudioSourceVolume = 1f;
+    private static float m_defaultAudioSourceVolume = 1f;
     public static float DEFAULT_AUDIO_SOURCE_VOLUME 
     {
-        get => _defaultAudioSourceVolume;
-        private set => _defaultAudioSourceVolume = value;
+        get => m_defaultAudioSourceVolume;
+        private set => m_defaultAudioSourceVolume = value;
     }
 
-    private static bool _defaultLowPassFilterEnabled = true;
+    private static bool m_defaultLowPassFilterEnabled = true;
     public static bool DEFAULT_LOW_PASS_FILTER_ENABLED 
     {
-        get => _defaultLowPassFilterEnabled;
-        private set => _defaultLowPassFilterEnabled = value;
+        get => m_defaultLowPassFilterEnabled;
+        private set => m_defaultLowPassFilterEnabled = value;
     }
 
-    private static string _audioFolderPath;
+    private static string m_audioFolderPath;
     public static string DEFAULT_AUDIO_FOLDER_PATH
     {
-        get => _audioFolderPath ?? PathManager.GetCurrentPluginPath("Audio");
-        private set => _audioFolderPath = value;
+        get => m_audioFolderPath ?? PathManager.GetCurrentPluginPath("Audio");
+        private set => m_audioFolderPath = value;
     }
 
-    private static int _defaultAudioPlayOptions = 0;
+    private static int m_defaultAudioPlayOptions = 0;
     public static int DEFAULT_AUDIO_PLAY_OPTIONS
     {
-        get => _defaultAudioPlayOptions < 2 ? _defaultAudioPlayOptions : 0;
-        private set => _defaultAudioPlayOptions = value;
+        get => m_defaultAudioPlayOptions < 2 ? m_defaultAudioPlayOptions : 0;
+        private set => m_defaultAudioPlayOptions = value;
+    }
+
+    private static int m_defaultAudioLoadingOptions = 0;
+    public static int DEFAULT_AUDIO_LOADING_OPTIONS
+    {
+        get => m_defaultAudioLoadingOptions < 2 ? m_defaultAudioLoadingOptions : 0;
+        private set => m_defaultAudioLoadingOptions = value;
     }
 }
 

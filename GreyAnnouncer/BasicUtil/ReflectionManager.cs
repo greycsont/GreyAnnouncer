@@ -16,7 +16,7 @@ public class ReflectionManager
         }
         catch (Exception ex)
         {
-            Plugin.Log.LogError($"Failed to load optional module by : {ex}");
+            Plugin.log.LogError($"Failed to load optional module by : {ex}");
         }
     }
 }

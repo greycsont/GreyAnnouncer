@@ -11,12 +11,12 @@ public static class RegisterAnnouncerPage
 {
     private static PluginConfigurator            m_pluginConfigurator;
     private static string                        m_announcerName;
-    private static AudioAnnouncer                _audioAnnouncer;
+    private static AudioAnnouncer                m_audioAnnouncer;
     public static void Build(string announcerName, AnnouncerJsonSetting announcerJsonSetting, AudioAnnouncer audioAnnouncer)
     {
         m_pluginConfigurator   = PluginConfiguratorEntry.greyAnnouncerConfig_PluginConfigurator;
         m_announcerName        = announcerName;
-        _audioAnnouncer        = audioAnnouncer;
+        m_audioAnnouncer       = audioAnnouncer;
         
 
         ConfigPanel panel    = new ConfigPanel (m_pluginConfigurator.rootPanel, m_announcerName, m_announcerName);
@@ -33,8 +33,8 @@ public static class RegisterAnnouncerPage
                 true,
                 new Action<BoolField.BoolValueChangeEvent>[] {
                     e => {
-                        _audioAnnouncer.UpdateJson(announcerJsonSetting);
-                        Plugin.Log.LogInfo($"Updated json setting for {m_announcerName}");
+                        m_audioAnnouncer.UpdateJson(announcerJsonSetting);
+                        Plugin.log.LogInfo($"Updated json setting for {m_announcerName}");
                     }
                 }
             );

@@ -32,12 +32,12 @@ public static class MainPanelBuilder
             m_pluginConfigurator.rootPanel,
             "Shared rank cooldown",
             "sharedRankPlayCooldown",
-            InstanceConfig.SharedRankPlayCooldown.Value, 0f, 114514f
+            InstanceConfig.sharedRankPlayCooldown.Value, 0f, 114514f
         );
         sharedCooldown.defaultValue   = InstanceConfig.DEFAULT_SHARED_RANK_COOLDOWN;
         sharedCooldown.onValueChange += e =>
         {
-            InstanceConfig.SharedRankPlayCooldown.Value = e.value;
+            InstanceConfig.sharedRankPlayCooldown.Value = e.value;
             AnnouncerManager.ResetCooldown();
         };
 
@@ -45,12 +45,12 @@ public static class MainPanelBuilder
             m_pluginConfigurator.rootPanel,
             "Individual rank cooldown",
             "individualRankPlaycooldown",
-            InstanceConfig.IndividualRankPlayCooldown.Value, 0f, 1113f
+            InstanceConfig.individualRankPlayCooldown.Value, 0f, 1113f
         );
         individualCooldown.defaultValue   = InstanceConfig.DEFAULT_INDIVIDUAL_RANK_COOLDOWN;
         individualCooldown.onValueChange += e =>
         {
-            InstanceConfig.IndividualRankPlayCooldown.Value = e.value;
+            InstanceConfig.individualRankPlayCooldown.Value = e.value;
             AnnouncerManager.ResetCooldown();
         };
     }
@@ -62,13 +62,13 @@ public static class MainPanelBuilder
             "Audio Volume",
             "Audio_Volume",
             Tuple.Create(0f, 1f),
-            InstanceConfig.AudioSourceVolume.Value,
+            InstanceConfig.audioSourceVolume.Value,
             2
         );
         volumeSlider.defaultValue   = InstanceConfig.DEFAULT_AUDIO_SOURCE_VOLUME;
         volumeSlider.onValueChange += e =>
         {
-            InstanceConfig.AudioSourceVolume.Value = e.newValue;
+            InstanceConfig.audioSourceVolume.Value = e.newValue;
             AudioSourcePool.Instance.UpdateAllActiveSourcesVolume(e.newValue);
             SoloAudioSource.Instance.UpdateSoloAudioSourceVolume(e.newValue);
         };
@@ -84,24 +84,44 @@ public static class MainPanelBuilder
             m_pluginConfigurator.rootPanel,
             "Audio Play Option",
             "Audio_Play_Option",
-            (PlayOptions)InstanceConfig.AudioPlayOptions.Value
+            (PlayOptions)InstanceConfig.audioPlayOptions.Value
         );
         playOption.defaultValue = (PlayOptions)InstanceConfig.DEFAULT_AUDIO_PLAY_OPTIONS;
         playOption.onValueChange += e =>
         {
-            InstanceConfig.AudioPlayOptions.Value = (int)e.value;
+            InstanceConfig.audioPlayOptions.Value = (int)e.value;
+        };
+
+        var loadingOption = new EnumField<audioLoadingOptions>(
+            m_pluginConfigurator.rootPanel,
+            "Audio Loading Option",
+            "Audio_Loading_Option",
+            (audioLoadingOptions)InstanceConfig.audioLoadingOptions.Value
+        );
+        loadingOption.defaultValue = (audioLoadingOptions)InstanceConfig.DEFAULT_AUDIO_LOADING_OPTIONS;
+        loadingOption.onValueChange += e =>
+        {
+            if (e.value == audioLoadingOptions.Load_and_Play)
+            {
+                AnnouncerManager.ClearAudioClipsCache();
+            }
+            if (e.value == audioLoadingOptions.Preload_and_Play)
+            {
+                AnnouncerManager.ReloadAllAnnouncers();
+            }
+            InstanceConfig.audioLoadingOptions.Value = (int)e.value;
         };
 
         var audioFolderPath = new StringField(
             m_pluginConfigurator.rootPanel,
             "Audio Folder Path",
             "Audio_Folder_Path",
-            InstanceConfig.AudioFolderPath.Value
+            InstanceConfig.audioFolderPath.Value
         );
         audioFolderPath.defaultValue   = InstanceConfig.DEFAULT_AUDIO_FOLDER_PATH;
         audioFolderPath.onValueChange += e =>
         {
-            InstanceConfig.AudioFolderPath.Value = e.value;
+            InstanceConfig.audioFolderPath.Value = e.value;
             AnnouncerManager.UpdateAllAnnouncerPaths(e.value);
         };
 
@@ -114,7 +134,7 @@ public static class MainPanelBuilder
         );
         audioButtonArray.OnClickEventHandler(0).onClick += () =>
         {
-            PathManager.OpenDirectory(InstanceConfig.AudioFolderPath.Value);
+            PathManager.OpenDirectory(InstanceConfig.audioFolderPath.Value);
         };
         audioButtonArray.OnClickEventHandler(1).onClick += () =>
         {
@@ -134,12 +154,12 @@ public static class MainPanelBuilder
             advancedPanel,
             "Filtering when under water",
             "LowPassFilter_Enabled",
-            InstanceConfig.LowPassFilter_Enabled.Value
+            InstanceConfig.isLowPassFilterEnabled.Value
         );
         lowpassToggle.defaultValue   = true;
         lowpassToggle.onValueChange += (e) =>
         {
-            InstanceConfig.LowPassFilter_Enabled.Value = e.value;
+            InstanceConfig.isLowPassFilterEnabled.Value = e.value;
             UnderwaterController_inWater_Instance.CheckIsInWater();
         };
     }
@@ -148,6 +168,12 @@ public static class MainPanelBuilder
     {
         Override = 0,
         Parallel = 1
+    }
+
+    private enum audioLoadingOptions
+    {
+        Load_and_Play = 0,
+        Preload_and_Play = 1
     }
 }
 

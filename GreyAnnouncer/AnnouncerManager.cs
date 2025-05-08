@@ -13,7 +13,7 @@ public class AnnouncerManager
     {
         if (_announcers.ContainsKey(name))
         {
-            Plugin.Log.LogWarning($"Overwriting existing announcer: {name}");
+            Plugin.log.LogWarning($"Overwriting existing announcer: {name}");
         }
         _announcers[name] = announcer;
     }
@@ -38,11 +38,6 @@ public class AnnouncerManager
         }
     }
 
-    public static IAnnouncer GetAnnouncer(string name)
-    {
-        return _announcers.TryGetValue(name, out var announcer) ? announcer : null;
-    }
-
     public static void ResetCooldown()
     {
         foreach (var announcer in _announcers.Values)
@@ -50,6 +45,19 @@ public class AnnouncerManager
             announcer.ResetCooldown();
         }
         sharedCooldown = 0f;
+    }
+
+    public static void ClearAudioClipsCache()
+    {
+        foreach (var announcer in _announcers.Values)
+        {
+            announcer.ClearAudioClipsCache();
+        }
+    }
+
+    public static IAnnouncer GetAnnouncer(string name)
+    {
+        return _announcers.TryGetValue(name, out var announcer) ? announcer : null;
     }
     #endregion
 
@@ -63,7 +71,7 @@ public class AnnouncerManager
         }
         catch (Exception ex)
         {
-            Plugin.Log.LogError($"Failed to reload announcer: {ex.Message}");
+            Plugin.log.LogError($"Failed to reload announcer: {ex.Message}");
         }
     }
 
@@ -72,11 +80,11 @@ public class AnnouncerManager
         try 
         {
             announcer.UpdateAudioPath(newPath);
-            Plugin.Log.LogInfo("Successfully updated announcer audio path");
+            Plugin.log.LogInfo("Successfully updated announcer audio path");
         }
         catch (Exception ex)
         {
-            Plugin.Log.LogError($"Failed to update announcer audio path: {ex.Message}");
+            Plugin.log.LogError($"Failed to update announcer audio path: {ex.Message}");
         }
     }
     #endregion

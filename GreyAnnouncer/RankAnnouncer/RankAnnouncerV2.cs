@@ -24,7 +24,7 @@ public static class RankAnnouncerV2
             "RankAnnouncer",
             m_rankCategory,
             "rankSettings.json",
-            InstanceConfig.AudioFolderPath.Value
+            InstanceConfig.audioFolderPath.Value
         );
     }
     
@@ -32,7 +32,7 @@ public static class RankAnnouncerV2
     {
         if (rank < 0 || rank >= m_rankCategory.Length)
         {
-            Plugin.Log.LogError($"Invalid rank index: {rank}");
+            Plugin.log.LogError($"Invalid rank index: {rank}");
             return;
         }
         _announcer.PlayAudio(rank);

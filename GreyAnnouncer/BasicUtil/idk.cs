@@ -6,7 +6,7 @@ using UnityEngine;
 
 using greycsont.GreyAnnouncer;  // Assuming you're using Unity's AudioClip
 
-[Obsolete("A ")]
+[Obsolete("RIP FLACDecoder")]
 public class FLACDecoder
 {
     public static AudioClip LoadFLACAsAudioClip(string path)
@@ -39,7 +39,7 @@ public class FLACDecoder
         }
         catch (Exception ex)
         {
-            Plugin.Log.LogError($"FLAC loading failed: {ex.Message}");
+            Plugin.log.LogError($"FLAC loading failed: {ex.Message}");
             return null;  // 出错时返回 null
         }
     }
@@ -50,7 +50,7 @@ public class FLACDecoder
 
         if (!File.Exists(pluginDir))
         {
-            Plugin.Log.LogError($"flac.exe not found : {pluginDir}");
+            Plugin.log.LogError($"flac.exe not found : {pluginDir}");
             return null;
         }
 
@@ -87,14 +87,14 @@ public class FLACDecoder
             }
             catch (Exception delEx)
             {
-                Plugin.Log.LogWarning($"delete temp.wav file failed: {delEx.Message}");
+                Plugin.log.LogWarning($"delete temp.wav file failed: {delEx.Message}");
             }
 
             return data;
         }
         catch (Exception ex)
         {
-            Plugin.Log.LogError($"解码 FLAC 文件时出错: {ex.Message}");
+            Plugin.log.LogError($"解码 FLAC 文件时出错: {ex.Message}");
             return null;  // 出错时返回 null
         }
     }

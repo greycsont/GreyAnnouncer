@@ -20,7 +20,7 @@ public class UnderwaterController_inWater_Instance
 
     public static void CheckIsInWater()
     {
-        if (isInWater == false || InstanceConfig.LowPassFilter_Enabled.Value == false)
+        if (isInWater == false || InstanceConfig.isLowPassFilterEnabled.Value == false)
         {
             AudioSourcePool.Instance.RemoveAudioLowPassFilterFromActiveAudioSource();
             SoloAudioSource.Instance.RemoveAudioLowPassFilter();
