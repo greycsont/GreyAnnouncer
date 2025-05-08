@@ -134,7 +134,6 @@ public class AudioLoader
         CoroutineRunner.Instance.StartCoroutine(coroutine);
  
     }
-
     private IEnumerator LoadAudioClip(string path, int categoryIndex, LoadingStatus status)
     {
         
@@ -298,6 +297,7 @@ public class AudioLoader
         int randomIndex = UnityEngine.Random.Range(0, clips.Count);
         return clips[randomIndex];
     }
+
     #endregion
 
 
