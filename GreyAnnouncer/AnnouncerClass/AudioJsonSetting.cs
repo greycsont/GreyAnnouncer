@@ -9,6 +9,6 @@ public class AnnouncerJsonSetting
 
 public class CategoryAudioSetting
 {
-    public bool Enabled { get; set; } = true; // 默认启用
+    public bool         Enabled    { get; set; } = true;
     public List<string> AudioFiles { get; set; } = new List<string>();
 }

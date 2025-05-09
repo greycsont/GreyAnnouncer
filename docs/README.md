@@ -69,8 +69,7 @@ if you have any throuble with the mod, feel free to ask in
 - [3] D-DIN by datto, used under SIL Open Font License (OFL) Version 1.1.0
 - [4] BepInEX, used under GUN Lesser General Public License (LGPL) Version 2.1
 - [5] PluginConfigurator by eternalUnion, used under MIT License
-- [6] CScore by filoe, used under Microsoft Public License (Ms-PL)
-- [7] Newtonsoft.json by JamesNK, used under MIT License
+- [6] Newtonsoft.json by JamesNK, used under MIT License
 
 ## Credit
 Thanks:

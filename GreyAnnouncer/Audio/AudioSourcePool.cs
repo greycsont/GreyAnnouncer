@@ -48,7 +48,7 @@ public class AudioSourcePool : MonoBehaviour
     }
 
 
-    public void PlayOneShot(AudioClip clip, AudioSourceSetting config)
+    public void Play(AudioClip clip, AudioSourceSetting config)
     {
         var audioSource  = Get();
         audioSource      = AudioSourceManager.ConfigureAudioSource(audioSource, config);
@@ -87,7 +87,11 @@ public class AudioSourcePool : MonoBehaviour
     {
         foreach(var audioSource in m_activeAudioSources)
         {
-            if(audioSource != null && audioSource.gameObject.activeInHierarchy && audioSource.isPlaying)
+            if(
+                audioSource != null 
+                && audioSource.gameObject.activeInHierarchy 
+                && audioSource.isPlaying
+            )
             {
                 StartCoroutine(AudioSourceManager.FadeVolume(audioSource, targetVolume, duration));
             }
@@ -116,7 +120,7 @@ public class AudioSourcePool : MonoBehaviour
         audioSource.gameObject.SetActive(true);
         m_activeAudioSources.Add(audioSource);
 
-        var node                = m_playingList.AddLast(audioSource);
+        var node                  = m_playingList.AddLast(audioSource);
         m_playingMap[audioSource] = node;
 
         return audioSource;

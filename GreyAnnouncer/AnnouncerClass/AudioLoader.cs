@@ -3,14 +3,12 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using System.ComponentModel;
 using System.Threading.Tasks;
 using UnityEngine.Networking;
 
 namespace greycsont.GreyAnnouncer;
 
-[Description("The AudioLoader should and only be used as a audioClips entity, " +
-             "I tried to add cooldown counter in here but I just realize it's only a audio loader")]
+
 public class AudioLoader                                          
 {
     #region Properties
@@ -18,8 +16,8 @@ public class AudioLoader
     public HashSet<string>                     categoryFailedLoading { get; private set; } = new HashSet<string>();
     public Dictionary<string, List<AudioClip>> audioClips            { get; private set; } = new Dictionary<string, List<AudioClip>>();
 
-    private Dictionary<string, List<string>> m_audioFileNames;
-    private string                           m_audioPath;
+    private Dictionary<string, List<string>>   m_audioFileNames;
+    private string                             m_audioPath;
     #endregion
 
     #region Constructor
@@ -46,15 +44,37 @@ public class AudioLoader
 
     public async Task FindAvailableAudioAsync()
     {
+        if (InstanceConfig.audioLoadingOptions.Value == 0) return;
         ClearCache();
         ValidateAndPrepareDirectory();
         await LoadAllCategoriesAsync();
         LogLoadingResults();
     }
 
-    public AudioClip TryToGetAudioClip(string category)
+    public AudioClip GetClipFromAudioClips(string category)
     {
-        return GetClipFromAudioClips(category);
+        if (audioCategories.Contains(category) == false)
+        {
+            Plugin.log.LogWarning($"Invalid audio category: {category}");
+            return null;
+        }
+
+        if (!audioClips.TryGetValue(category, out var clips) || clips.Count == 0)
+            return null;
+            
+        return SelectAudioClipRandomly(clips);
+    }
+
+    public async Task<AudioClip> LoadSingleAudioClipAsync(string category)
+    {
+        var clips = await LoadCategoryAsync(category);
+        if (clips == null || clips.Count == 0)
+        {
+            Plugin.log.LogError($"Failed to load audio clip for key: {category}");
+            return null;
+        }
+
+        return SelectAudioClipRandomly(clips);
     }
 
     public void UpdateAudioFileNames(AnnouncerJsonSetting jsonSetting)
@@ -66,7 +86,6 @@ public class AudioLoader
     {
         ClearAudioClipCache();
         categoryFailedLoading.Clear();
-        MainPanelBuilder.logHeader.text = string.Empty;
     }
     #endregion
 
@@ -122,7 +141,9 @@ public class AudioLoader
 
         Plugin.log.LogInfo($"Loading category {category} with {validFiles.Count} files");
         
-        var clipLoadingTasks = validFiles.Select(path => LoadAudioClipAsync(path));
+        var clipLoadingTasks = validFiles
+            .Select(path => LoadAudioClipAsync(path));
+
         var loadedClips = new List<AudioClip>();
         
         try
@@ -130,7 +151,8 @@ public class AudioLoader
             var results = await Task.WhenAll(clipLoadingTasks);
             
             // Filter out any null results (loading failures)
-            loadedClips = results.Where(c => c != null).ToList();
+            loadedClips = results
+                .Where(c => c != null).ToList();
             
             if (loadedClips.Count > 0)
             {
@@ -198,22 +220,6 @@ public class AudioLoader
             Plugin.log.LogInfo($"Loaded audio: {Path.GetFileName(path)}");
             return clip;
         }
-    }
-    #endregion
-
-    #region Utility Methods
-    private AudioType? GetUnityAudioType(string extension)
-    {
-        return extension switch
-        {
-            ".wav"  => AudioType.WAV,
-            ".mp3"  => AudioType.MPEG,
-            ".ogg"  => AudioType.OGGVORBIS,
-            ".aiff" => AudioType.AIFF,
-            ".aif"  => AudioType.AIFF,
-            ".acc"  => AudioType.ACC,
-            _       => null
-        };
     }
     #endregion
 
@@ -285,33 +291,26 @@ public class AudioLoader
     }
     #endregion
 
-    #region Get Audio Clip
-    private AudioClip GetClipFromAudioClips(string category)
+    
+    #region Utility Methods
+    private AudioType? GetUnityAudioType(string extension)
     {
-        if (audioCategories.Contains(category) == false)
+        return extension switch
         {
-            Plugin.log.LogWarning($"Invalid audio category: {category}");
-            return null;
-        }
-
-        if (!audioClips.TryGetValue(category, out var clips) || clips.Count == 0)
-            return null;
-            
-        int randomIndex = UnityEngine.Random.Range(0, clips.Count);
-        return clips[randomIndex];
+            ".wav"  => AudioType.WAV,
+            ".mp3"  => AudioType.MPEG,
+            ".ogg"  => AudioType.OGGVORBIS,
+            ".aiff" => AudioType.AIFF,
+            ".aif"  => AudioType.AIFF,
+            ".acc"  => AudioType.ACC,
+            _       => null
+        };
     }
 
-    public async Task<AudioClip> LoadSingleAudioClipAsync(string category)
+    private AudioClip SelectAudioClipRandomly(List<AudioClip> audioClips)
     {
-        var clips = await LoadCategoryAsync(category);
-        if (clips == null || clips.Count == 0)
-        {
-            Plugin.log.LogError($"Failed to load audio clip for key: {category}");
-            return null;
-        }
-
-        int randomIndex = UnityEngine.Random.Range(0, clips.Count);
-        return clips[randomIndex];
+        int randomIndex = UnityEngine.Random.Range(0, audioClips.Count);
+        return audioClips[randomIndex];
     }
     #endregion
 }

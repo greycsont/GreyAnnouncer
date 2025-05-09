@@ -25,7 +25,7 @@ public class SoloAudioSource : MonoBehaviour
 
 
     #region Public API
-    public void PlayOverridable(AudioClip clip, AudioSourceSetting config)
+    public void Play(AudioClip clip, AudioSourceSetting config)
     {
         if (m_audioSource == null)
         {

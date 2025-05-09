@@ -4,6 +4,7 @@ using PluginConfig.API.Decorators;
 using PluginConfig.API.Functionals;
 using UnityEngine;
 using System;
+using System.Drawing.Imaging;
 
 
 namespace greycsont.GreyAnnouncer;
@@ -107,15 +108,17 @@ public static class MainPanelBuilder
         loadingOption.defaultValue = (audioLoadingOptions)InstanceConfig.DEFAULT_AUDIO_LOADING_OPTIONS;
         loadingOption.onValueChange += e =>
         {
-            if (e.value == audioLoadingOptions.Load_and_Play)
-            {
-                AnnouncerManager.ClearAudioClipsCache();
-            }
-            if (e.value == audioLoadingOptions.Preload_and_Play)
-            {
-                AnnouncerManager.ReloadAllAnnouncers();
-            }
             InstanceConfig.audioLoadingOptions.Value = (int)e.value;
+            if (e.value.Equals((audioLoadingOptions.Load_and_Play)))
+            {
+                Plugin.log.LogInfo("Clear audio clip cache");
+                ClearAudioClipsCache();
+            }
+            if (e.value.Equals(audioLoadingOptions.Preload_and_Play))
+            {
+                Plugin.log.LogInfo("Reloading all announcer audio");
+                ReloadAllAnnouncers();
+            }
         };
 
         var audioFolderPath = new StringField(
@@ -144,7 +147,7 @@ public static class MainPanelBuilder
         };
         audioButtonArray.OnClickEventHandler(1).onClick += () =>
         {
-            AnnouncerManager.ReloadAllAnnouncers();
+            ReloadAllAnnouncers();
         };
 
     }
@@ -180,6 +183,18 @@ public static class MainPanelBuilder
     {
         Load_and_Play = 0,
         Preload_and_Play = 1
+    }
+
+    private static void ReloadAllAnnouncers()
+    {
+        logHeader.text = string.Empty;
+        AnnouncerManager.ReloadAllAnnouncers();
+    }
+
+    private static void ClearAudioClipsCache()
+    {
+        logHeader.text = string.Empty;
+        AnnouncerManager.ClearAudioClipsCache();
     }
 }
 

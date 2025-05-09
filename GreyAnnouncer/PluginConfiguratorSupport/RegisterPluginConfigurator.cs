@@ -14,14 +14,14 @@ public static class RegisterAnnouncerPage
     private static AudioAnnouncer                m_audioAnnouncer;
     public static void Build(string announcerName, AnnouncerJsonSetting announcerJsonSetting, AudioAnnouncer audioAnnouncer)
     {
-        m_pluginConfigurator   = PluginConfiguratorEntry.greyAnnouncerConfig_PluginConfigurator;
-        m_announcerName        = announcerName;
-        m_audioAnnouncer       = audioAnnouncer;
+        m_pluginConfigurator = PluginConfiguratorEntry.config;
+        m_announcerName      = announcerName;
+        m_audioAnnouncer     = audioAnnouncer;
 
 
-        ConfigPanel panel    = new ConfigPanel (m_pluginConfigurator.rootPanel, m_announcerName, m_announcerName);
-        ConfigHeader header  = new ConfigHeader(panel, m_announcerName);
-        header.textColor     = HeaderColor;
+        ConfigPanel panel   = new ConfigPanel (m_pluginConfigurator.rootPanel, m_announcerName, m_announcerName);
+        ConfigHeader header = new ConfigHeader(panel, m_announcerName);
+        header.textColor    = HeaderColor;
 
         foreach (var category in announcerJsonSetting.CategoryAudioMap)
         {

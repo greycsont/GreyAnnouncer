@@ -5,7 +5,7 @@ namespace rankAnnouncerV2;
 
 public static class RankAnnouncerV2
 {
-    private static readonly string[]       m_rankCategory = {
+    public static readonly string[]       rankCategory = {
         "D",
         "C", 
         "B", 
@@ -22,7 +22,7 @@ public static class RankAnnouncerV2
     {
         m_announcer.Initialize(
             "RankAnnouncer",
-            m_rankCategory,
+            rankCategory,
             "rankSettings.json",
             InstanceConfig.audioFolderPath.Value
         );
@@ -30,7 +30,7 @@ public static class RankAnnouncerV2
     
     public static void PlayRankSound(int rank)
     {
-        if (rank < 0 || rank >= m_rankCategory.Length)
+        if (rank < 0 || rank >= rankCategory.Length)
         {
             Plugin.log.LogError($"Invalid rank index: {rank}");
             return;

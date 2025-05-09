@@ -10,23 +10,23 @@ namespace greycsont.GreyAnnouncer;
 [Description("This object is loaded via reflection from Plugin.cs")]
 public class PluginConfiguratorEntry
 {
-    public static PluginConfigurator greyAnnouncerConfig_PluginConfigurator
+    public static PluginConfigurator config
     {
-        get => _config;
-        private set => _config = value;
+        get => m_config;
+        private set => m_config = value;
     }
-    private static PluginConfigurator _config;
+    private static PluginConfigurator m_config;
 
     public static void Initialize()
     {
         CreatePluginPages();
-        
-        MainPanelBuilder.Build(_config);
+
+        MainPanelBuilder.Build(m_config);
     }
 
     private static void CreatePluginPages()
     {
-        _config = PluginConfigurator.Create(PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_GUID);
-        _config.SetIconWithURL(PathManager.GetCurrentPluginPath("icon.png"));
+        m_config = PluginConfigurator.Create(PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_GUID);
+        m_config.SetIconWithURL(PathManager.GetCurrentPluginPath("icon.png"));
     }                          
 }

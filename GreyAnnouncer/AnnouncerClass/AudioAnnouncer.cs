@@ -127,11 +127,11 @@ public class AudioAnnouncer : IAnnouncer
 
     private void PluginConfigPanelInitialization()
     {
-        // load via reflection
         ReflectionManager.LoadByReflection(
             "greycsont.GreyAnnouncer.RegisterAnnouncerPage", 
             "Build", 
-            new object[]{m_announcerName, m_jsonSetting, this});
+            new object[]{m_announcerName, m_jsonSetting, this}
+        );
     }
 
     private void RegisterAnnouncer()
@@ -185,7 +185,7 @@ public class AudioAnnouncer : IAnnouncer
 
     private void PlayAudioClip(string category)
     {
-        switch (InstanceConfig.audioPlayOptions.Value)
+        switch (InstanceConfig.audioLoadingOptions.Value)
         {
             case 0:
                 _ = LoadAndPlayAudioClip(category);
@@ -202,7 +202,7 @@ public class AudioAnnouncer : IAnnouncer
     
     private void PlayAudioClipFromAudioClips(string category)
     {
-        var clip = m_audioLoader.TryToGetAudioClip(category);
+        var clip = m_audioLoader.GetClipFromAudioClips(category);
         if (clip == null) return;
 
         SendClipToAudioSource(clip);
@@ -215,7 +215,10 @@ public class AudioAnnouncer : IAnnouncer
         var clip = await m_audioLoader.LoadSingleAudioClipAsync(category);
         if (clip == null) return;
 
-        if (currentRequestId != AnnouncerManager.playRequestId && InstanceConfig.audioPlayOptions.Value == 0)
+        if (
+            currentRequestId != AnnouncerManager.playRequestId 
+            && InstanceConfig.audioPlayOptions.Value == 0
+        )
         {
             Plugin.log.LogInfo($"Aborted outdated audio request for: {category}");
             return;
@@ -229,14 +232,14 @@ public class AudioAnnouncer : IAnnouncer
         switch (InstanceConfig.audioPlayOptions.Value)
         {
             case 0:
-                SoloAudioSource.Instance.PlayOverridable(clip, m_audioSourceConfig);
+                SoloAudioSource.Instance.Play(clip, m_audioSourceConfig);
                 break;
             case 1:
-                AudioSourcePool.Instance.PlayOneShot(clip, m_audioSourceConfig);
+                AudioSourcePool.Instance.Play(clip, m_audioSourceConfig);
                 break;
             default:
                 Plugin.log.LogWarning("Invalid play audio options, using the default one");
-                SoloAudioSource.Instance.PlayOverridable(clip, m_audioSourceConfig);
+                SoloAudioSource.Instance.Play(clip, m_audioSourceConfig);
                 break;
         }
     }
@@ -255,7 +258,7 @@ public class AudioAnnouncer : IAnnouncer
         if (m_cooldownManager == null || m_audioLoader == null)
             return ValidationState.ComponentsNotInitialized;
 
-        if (m_audioLoader.audioCategories == null || m_audioLoader.audioCategories.Contains(category))
+        if (m_audioLoader.audioCategories == null || !m_audioLoader.audioCategories.Contains(category))
             return ValidationState.InvalidKey;
 
         if (m_cooldownManager.IsIndividualCooldownActive(category))
@@ -266,12 +269,9 @@ public class AudioAnnouncer : IAnnouncer
 
         if (m_cooldownManager.IsSharedCooldownActive())
             return ValidationState.SharedCooldown;
-        //edited
+
         if (!m_jsonSetting.CategoryAudioMap[category].Enabled)
             return ValidationState.DisabledByConfig;
-        
-        /*if (_audioLoader.TryToGetAudioClip(key) == null)
-            return ValidationState.ClipNotFound;*/
 
         return ValidationState.Success;
     }

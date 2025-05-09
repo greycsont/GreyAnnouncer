@@ -16,7 +16,7 @@ public class CoroutineRunner : MonoBehaviour
             if (m_instance == null)
             {
                 GameObject go = new GameObject("CoroutineRunner");
-                m_instance     = go.AddComponent<CoroutineRunner>();
+                m_instance    = go.AddComponent<CoroutineRunner>();
                 DontDestroyOnLoad(go);
             }
             return m_instance;

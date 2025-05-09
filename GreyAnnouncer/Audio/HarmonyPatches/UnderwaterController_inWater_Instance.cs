@@ -22,14 +22,24 @@ public class UnderwaterController_inWater_Instance
     {
         if (isInWater == false || InstanceConfig.isLowPassFilterEnabled.Value == false)
         {
-            AudioSourcePool.Instance.RemoveAudioLowPassFilterFromActiveAudioSource();
-            SoloAudioSource.Instance.RemoveAudioLowPassFilter();
+            RemoveAudioLowPassFilterFromAllAudioSource();
         }
         else if (isInWater == true)
         {
-            AudioSourcePool.Instance.AddAudioLowPassFilterToActiveAudioSource();
-            SoloAudioSource.Instance.AddAudioLowPassFilter();
+            AddAudioLowPassFilterToAllAudioSource();
         }
+    }
+
+    private static void RemoveAudioLowPassFilterFromAllAudioSource()
+    {
+        AudioSourcePool.Instance.RemoveAudioLowPassFilterFromActiveAudioSource();
+        SoloAudioSource.Instance.RemoveAudioLowPassFilter();
+    }
+
+    private static void AddAudioLowPassFilterToAllAudioSource()
+    {
+        AudioSourcePool.Instance.AddAudioLowPassFilterToActiveAudioSource();
+        SoloAudioSource.Instance.AddAudioLowPassFilter();
     }
 }
 
