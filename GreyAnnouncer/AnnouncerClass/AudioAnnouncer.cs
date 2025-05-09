@@ -34,18 +34,23 @@ public class AudioAnnouncer : IAnnouncer
 
     [Description("Parry balls of Maurice -> Hit Maurice -> AscendingRank() -> Postfix() -> PlaySound() -> CheckPlayValidation(), " +
                  "This error will skip all the function before CheckPlayValidation(), That's why try-catch has implemented in the fucntion")]
-    public void PlayAudio(int key)
+    public void PlayAudioViaCategory(string category)
     {
         try
         {
-            if (!ValidateAndLogPlayback(key)) return;
-            PlayAudioClip(key);
-            SetCooldown(key, InstanceConfig.individualRankPlayCooldown.Value);
+            if (!ValidateAndLogPlayback(category)) return;
+            PlayAudioClip(category);
+            SetCooldown(category, InstanceConfig.individualRankPlayCooldown.Value);
         }
         catch(Exception ex)
         {
             LogPlaybackError(ex);
         }
+    }
+
+    public void PlayAudioViaIndex(int index)
+    {
+        PlayAudioViaCategory(m_audioCategories[index]);
     }
 
     public void ReloadAudio()
@@ -117,7 +122,7 @@ public class AudioAnnouncer : IAnnouncer
 
     private void CooldownManagerInitialization()
     {
-        m_cooldownManager = new CooldownManager(m_jsonSetting.CategoryAudioMap.Count);
+        m_cooldownManager = new CooldownManager(m_audioCategories);
     }
 
     private void PluginConfigPanelInitialization()
@@ -158,61 +163,61 @@ public class AudioAnnouncer : IAnnouncer
 
 
     #region Cooldown related
-    public void SetCooldown(int key, float cooldown)
+    public void SetCooldown(string category, float cooldown)
     {
         m_cooldownManager.StartSharedCooldown(InstanceConfig.sharedRankPlayCooldown.Value);
-        m_cooldownManager.StartIndividualCooldown(key, cooldown);
+        m_cooldownManager.StartIndividualCooldown(category, cooldown);
     }
     #endregion
 
 
     #region Play Audio related
-    private bool ValidateAndLogPlayback(int key)
+    private bool ValidateAndLogPlayback(string category)
     {
-        var validationState = GetPlayValidationState(key);
+        var validationState = GetPlayValidationState(category);
         if (validationState != ValidationState.Success)
         {
-            Plugin.log.LogInfo($"PlayValidationState: {m_audioLoader.audioCategories[key]}, {validationState}");
+            Plugin.log.LogInfo($"PlayValidationState: {category}, {validationState}");
             return false;
         }
         return true;
     }
 
-    private void PlayAudioClip(int key)
+    private void PlayAudioClip(string category)
     {
         switch (InstanceConfig.audioPlayOptions.Value)
         {
             case 0:
-                _ = LoadAndPlayAudioClip(key);
+                _ = LoadAndPlayAudioClip(category);
                 break;
             case 1:
-                PlayAudioClipFromAudioClips(key);
+                PlayAudioClipFromAudioClips(category);
                 break;
             default:
                 Plugin.log.LogWarning("Invalid play audio options, using the default one");
-                _ = LoadAndPlayAudioClip(key);
+                _ = LoadAndPlayAudioClip(category);
                 break;
         }
     }
     
-    private void PlayAudioClipFromAudioClips(int key)
+    private void PlayAudioClipFromAudioClips(string category)
     {
-        var clip = m_audioLoader.TryToGetAudioClip(m_audioCategories[key]);
+        var clip = m_audioLoader.TryToGetAudioClip(category);
         if (clip == null) return;
 
         SendClipToAudioSource(clip);
     }
 
-    private async Task LoadAndPlayAudioClip(int key)
+    private async Task LoadAndPlayAudioClip(string category)
     {
         var currentRequestId = ++AnnouncerManager.playRequestId;
 
-        var clip = await m_audioLoader.LoadSingleAudioClipAsync(m_audioCategories[key]);
+        var clip = await m_audioLoader.LoadSingleAudioClipAsync(category);
         if (clip == null) return;
 
         if (currentRequestId != AnnouncerManager.playRequestId && InstanceConfig.audioPlayOptions.Value == 0)
         {
-            Plugin.log.LogInfo($"Aborted outdated audio request for: {m_audioCategories[key]}");
+            Plugin.log.LogInfo($"Aborted outdated audio request for: {category}");
             return;
         }
 
@@ -245,26 +250,24 @@ public class AudioAnnouncer : IAnnouncer
 
 
     #region Validation related
-    private ValidationState GetPlayValidationState(int key)
+    private ValidationState GetPlayValidationState(string category)
     {
         if (m_cooldownManager == null || m_audioLoader == null)
             return ValidationState.ComponentsNotInitialized;
 
-        if (m_audioLoader.audioCategories == null || 
-            key < 0 || 
-            key >= m_audioLoader.audioCategories.Length)
+        if (m_audioLoader.audioCategories == null || m_audioLoader.audioCategories.Contains(category))
             return ValidationState.InvalidKey;
 
-        if (m_cooldownManager.IsIndividualCooldownActive(key))
+        if (m_cooldownManager.IsIndividualCooldownActive(category))
             return ValidationState.IndividualCooldown;
 
-        if (m_audioLoader.categoryFailedLoading.Contains(m_audioLoader.audioCategories[key]))
+        if (m_audioLoader.categoryFailedLoading.Contains(category))
             return ValidationState.AudioFailedLoading;
 
         if (m_cooldownManager.IsSharedCooldownActive())
             return ValidationState.SharedCooldown;
         //edited
-        if (!m_jsonSetting.CategoryAudioMap[m_audioCategories[key]].Enabled)
+        if (!m_jsonSetting.CategoryAudioMap[category].Enabled)
             return ValidationState.DisabledByConfig;
         
         /*if (_audioLoader.TryToGetAudioClip(key) == null)

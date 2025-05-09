@@ -35,7 +35,7 @@ public static class RankAnnouncerV2
             Plugin.log.LogError($"Invalid rank index: {rank}");
             return;
         }
-        m_announcer.PlayAudio(rank);
+        m_announcer.PlayAudioViaIndex(rank);
     }
 
     public static void ReloadRankSounds()
