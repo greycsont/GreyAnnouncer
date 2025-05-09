@@ -11,7 +11,7 @@ namespace greycsont.GreyAnnouncer;
 public static class MainPanelBuilder
 {
     private static PluginConfigurator m_pluginConfigurator;
-    public  static ConfigHeader        logHeader;
+    public  static ConfigHeader       logHeader;
 
     public static void Build(PluginConfigurator config)
     {
@@ -32,6 +32,7 @@ public static class MainPanelBuilder
         logHeader = new ConfigHeader(m_pluginConfigurator.rootPanel, "");
         logHeader.tmpAnchor = TMPro.TextAlignmentOptions.TopLeft;
         logHeader.textSize  = 12;
+        logHeader.textColor = new Color (0f, 1f, 1f);
 
         var sharedCooldown = new FloatField(
             m_pluginConfigurator.rootPanel,

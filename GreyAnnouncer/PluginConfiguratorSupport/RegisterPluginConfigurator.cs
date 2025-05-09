@@ -17,7 +17,7 @@ public static class RegisterAnnouncerPage
         m_pluginConfigurator   = PluginConfiguratorEntry.greyAnnouncerConfig_PluginConfigurator;
         m_announcerName        = announcerName;
         m_audioAnnouncer       = audioAnnouncer;
-        
+
 
         ConfigPanel panel    = new ConfigPanel (m_pluginConfigurator.rootPanel, m_announcerName, m_announcerName);
         ConfigHeader header  = new ConfigHeader(panel, m_announcerName);

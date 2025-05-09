@@ -14,9 +14,9 @@ namespace greycsont.GreyAnnouncer;
 public class AudioLoader                                          
 {
     #region Properties
-    public string[]                         audioCategories       { get; private set; }
-    public HashSet<string>                  categoryFailedLoading { get; private set; } = new HashSet<string>();
-    public Dictionary<int, List<AudioClip>> audioClips            { get; private set; } = new Dictionary<int, List<AudioClip>>();
+    public string[]                            audioCategories       { get; private set; }
+    public HashSet<string>                     categoryFailedLoading { get; private set; } = new HashSet<string>();
+    public Dictionary<string, List<AudioClip>> audioClips            { get; private set; } = new Dictionary<string, List<AudioClip>>();
 
     private Dictionary<string, List<string>> m_audioFileNames;
     private string                           m_audioPath;
@@ -52,9 +52,9 @@ public class AudioLoader
         LogLoadingResults();
     }
 
-    public AudioClip TryToGetAudioClip(int key)
+    public AudioClip TryToGetAudioClip(string category)
     {
-        return GetClipFromAudioClips(key);
+        return GetClipFromAudioClips(category);
     }
 
     public void UpdateAudioFileNames(AnnouncerJsonSetting jsonSetting)
@@ -82,29 +82,27 @@ public class AudioLoader
 
     private async Task LoadAllCategoriesAsync()
     {
-        var loadingTasks = new List<Task<(int index, List<AudioClip> clips)>>();
+        var loadingTasks = new List<Task<(string category, List<AudioClip> clips)>>();
         
-        for (int i = 0; i < audioCategories.Length; i++)
+        foreach ( var category in audioCategories )
         {
-            int categoryIndex = i; // Capture for closure
-            loadingTasks.Add(LoadCategoryAsync(categoryIndex).ContinueWith(task => (categoryIndex, task.Result)));
+            loadingTasks.Add(LoadCategoryAsync(category).ContinueWith(task => (category, task.Result)));
         }
         
         var results = await Task.WhenAll(loadingTasks);
         
         // Add all loaded clips to the audioClips dictionary
-        foreach (var (index, clips) in results)
+        foreach (var (category, clips) in results)
         {
             if (clips != null && clips.Count > 0)
             {
-                audioClips[index] = clips;
+                audioClips[category] = clips;
             }
         }
     }
     
-    private async Task<List<AudioClip>> LoadCategoryAsync(int index)
+    private async Task<List<AudioClip>> LoadCategoryAsync(string category)
     {
-        var category = audioCategories[index];
         if (!m_audioFileNames.TryGetValue(category, out var fileNames))
         {
             LogCategoryFailure(category, "No file names configured");
@@ -243,6 +241,8 @@ public class AudioLoader
 
     private void LogLoadingResults()
     {
+        LogForPluginConfigurator();
+        
         string logMessage = null;
         if (categoryFailedLoading.Count == 0)
         {
@@ -251,10 +251,26 @@ public class AudioLoader
         }
         else
         {
-
             logMessage = "Failed to load audio categories: " + string.Join(", ", categoryFailedLoading);
             Plugin.log.LogWarning(logMessage);
         }
+  
+    }
+
+    private void LogForPluginConfigurator()
+    {   
+        // Warning : PluginConfigurator
+        var builder = new System.Text.StringBuilder();
+
+        foreach (var category in audioCategories)
+        {
+            int loaded = audioClips.TryGetValue(category, out var clips) ? clips.Count : 0;
+            int total = m_audioFileNames.TryGetValue(category, out var files) ? files.Count : 0;
+            builder.AppendLine($"{category} ({loaded}/{total})");
+        }
+
+        //Reflection maybe
+        string logMessage = builder.ToString();
         MainPanelBuilder.logHeader.text = logMessage + "\n";
     }
     #endregion
@@ -270,27 +286,27 @@ public class AudioLoader
     #endregion
 
     #region Get Audio Clip
-    private AudioClip GetClipFromAudioClips(int key)
+    private AudioClip GetClipFromAudioClips(string category)
     {
-        if (key < 0 || key >= audioCategories.Length)
+        if (audioCategories.Contains(category) == false)
         {
-            Plugin.log.LogWarning($"Invalid audio key: {key}");
+            Plugin.log.LogWarning($"Invalid audio category: {category}");
             return null;
         }
 
-        if (!audioClips.TryGetValue(key, out var clips) || clips.Count == 0)
+        if (!audioClips.TryGetValue(category, out var clips) || clips.Count == 0)
             return null;
             
         int randomIndex = UnityEngine.Random.Range(0, clips.Count);
         return clips[randomIndex];
     }
 
-    public async Task<AudioClip> LoadAudioClipAsync(int key)
+    public async Task<AudioClip> LoadSingleAudioClipAsync(string category)
     {
-        var clips = await LoadCategoryAsync(key);
+        var clips = await LoadCategoryAsync(category);
         if (clips == null || clips.Count == 0)
         {
-            Plugin.log.LogError($"Failed to load audio clip for key: {key}");
+            Plugin.log.LogError($"Failed to load audio clip for key: {category}");
             return null;
         }
 

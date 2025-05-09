@@ -122,7 +122,11 @@ public class AudioAnnouncer : IAnnouncer
 
     private void PluginConfigPanelInitialization()
     {
-        RegisterAnnouncerPage.Build(m_announcerName, m_jsonSetting, this);
+        // load via reflection
+        ReflectionManager.LoadByReflection(
+            "greycsont.GreyAnnouncer.RegisterAnnouncerPage", 
+            "Build", 
+            new object[]{m_announcerName, m_jsonSetting, this});
     }
 
     private void RegisterAnnouncer()
@@ -193,7 +197,7 @@ public class AudioAnnouncer : IAnnouncer
     
     private void PlayAudioClipFromAudioClips(int key)
     {
-        var clip = m_audioLoader.TryToGetAudioClip(key);
+        var clip = m_audioLoader.TryToGetAudioClip(m_audioCategories[key]);
         if (clip == null) return;
 
         SendClipToAudioSource(clip);
@@ -201,8 +205,17 @@ public class AudioAnnouncer : IAnnouncer
 
     private async Task LoadAndPlayAudioClip(int key)
     {
-        var clip = await m_audioLoader.LoadAudioClipAsync(key);
+        var currentRequestId = ++AnnouncerManager.playRequestId;
+
+        var clip = await m_audioLoader.LoadSingleAudioClipAsync(m_audioCategories[key]);
         if (clip == null) return;
+
+        if (currentRequestId != AnnouncerManager.playRequestId && InstanceConfig.audioPlayOptions.Value == 0)
+        {
+            Plugin.log.LogInfo($"Aborted outdated audio request for: {m_audioCategories[key]}");
+            return;
+        }
+
         SendClipToAudioSource(clip);
     }
 
