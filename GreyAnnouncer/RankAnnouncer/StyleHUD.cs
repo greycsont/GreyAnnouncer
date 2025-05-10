@@ -2,7 +2,7 @@ using HarmonyLib;
 
 
     
-namespace rankAnnouncerV2;
+namespace greycsont.GreyAnnouncer;
 
 /* This patch is used to determine the changes of rankIndex
     The rankIndex is basically the pointer to another arrays, list sth.
@@ -16,7 +16,7 @@ public static class StyleHUDAscendRank_Patch
     {  
         var rank = __instance.rankIndex;
         if (rank >= 0 && rank <= 7)
-        {;
+        {
             RankAnnouncerV2.PlayRankSound(rank);
         }
     }

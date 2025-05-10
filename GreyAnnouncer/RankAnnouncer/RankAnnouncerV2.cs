@@ -1,11 +1,11 @@
 using greycsont.GreyAnnouncer;
 
 
-namespace rankAnnouncerV2;
+namespace greycsont.GreyAnnouncer;
 
 public static class RankAnnouncerV2
 {
-    private static readonly string[]       m_rankCategory = {
+    public static readonly string[]       rankCategory = {
         "D",
         "C", 
         "B", 
@@ -16,40 +16,40 @@ public static class RankAnnouncerV2
         "U" 
     };
 
-    private static readonly AudioAnnouncer _announcer     = new AudioAnnouncer();
+    private static readonly AudioAnnouncer m_announcer    = new AudioAnnouncer();
 
     public static void Initialize()
     {
-        _announcer.Initialize(
+        m_announcer.Initialize(
             "RankAnnouncer",
-            m_rankCategory,
+            rankCategory,
             "rankSettings.json",
-            InstanceConfig.AudioFolderPath.Value
+            InstanceConfig.audioFolderPath.Value
         );
     }
     
     public static void PlayRankSound(int rank)
     {
-        if (rank < 0 || rank >= m_rankCategory.Length)
+        if (rank < 0 || rank >= rankCategory.Length)
         {
-            Plugin.Log.LogError($"Invalid rank index: {rank}");
+            Plugin.log.LogError($"Invalid rank index: {rank}");
             return;
         }
-        _announcer.PlayAudio(rank);
+        m_announcer.PlayAudioViaIndex(rank);
     }
 
     public static void ReloadRankSounds()
     {
-        _announcer.ReloadAudio();
+        m_announcer.ReloadAudio();
     }
 
     public static void UpdateRankAudioPath(string newPath)
     {
-        _announcer.UpdateAudioPath(newPath);
+        m_announcer.UpdateAudioPath(newPath);
     }
 
     public static void ResetCooldowns()
     {
-        _announcer.ResetCooldown();
+        m_announcer.ResetCooldown();
     }
 }

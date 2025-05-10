@@ -3,7 +3,6 @@ using BepInEx.Bootstrap;
 using BepInEx.Logging;
 using HarmonyLib;
 
-using rankAnnouncerV2;
 
 /* The StyleHUD.cs in the HarmonyPatches folder is the starting point of the whole sequence of announcer 
    But for the initialize of the program like loading audio or something, you should start from here */
@@ -15,16 +14,16 @@ namespace greycsont.GreyAnnouncer;
 [BepInDependency(PluginDependencies.PLUGINCONFIGURATOR_GUID, BepInDependency.DependencyFlags.SoftDependency)]
 public class Plugin : BaseUnityPlugin
 {
-    internal static ManualLogSource Log;
+    internal static ManualLogSource log;
     private         Harmony         m_harmony;  // patch
 
     private void Awake()
     {
-        Log = base.Logger;
+        log = base.Logger;
         LoadMainModule();
         LoadOptionalModule();
         PatchHarmony();
-        Log.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
+        log.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
     }
 
     private void LoadMainModule()
@@ -48,7 +47,7 @@ public class Plugin : BaseUnityPlugin
     {
         if (!Chainloader.PluginInfos.ContainsKey(GUID))
         {
-            Plugin.Log.LogWarning($"Plugin {GUID} not loaded, stopping loading {assemblyName}"); 
+            Plugin.log.LogWarning($"Plugin {GUID} not loaded, stopping loading {assemblyName}"); 
             return;
         }
         ReflectionManager.LoadByReflection(assemblyName, "Initialize");

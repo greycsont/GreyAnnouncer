@@ -4,6 +4,7 @@ using System.Linq;
 using System.ComponentModel;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading.Tasks;
 
 
 namespace greycsont.GreyAnnouncer;
@@ -12,9 +13,9 @@ public class AudioAnnouncer : IAnnouncer
 {
     #region Private Fields
     private AnnouncerJsonSetting m_jsonSetting;
-    private AudioLoader          _audioLoader;
-    private CooldownManager      _cooldownManager;
-    private AudioSourceSetting   _audioSourceConfig;
+    private AudioLoader          m_audioLoader;
+    private CooldownManager      m_cooldownManager;
+    private AudioSourceSetting   m_audioSourceConfig;
 
     private string               m_announcerName;
     private string[]             m_audioCategories;
@@ -33,13 +34,13 @@ public class AudioAnnouncer : IAnnouncer
 
     [Description("Parry balls of Maurice -> Hit Maurice -> AscendingRank() -> Postfix() -> PlaySound() -> CheckPlayValidation(), " +
                  "This error will skip all the function before CheckPlayValidation(), That's why try-catch has implemented in the fucntion")]
-    public void PlayAudio(int key)
+    public void PlayAudioViaCategory(string category)
     {
         try
         {
-            if (!ValidateAndLogPlayback(key)) return;
-            PlayAudioClip(key);
-            SetCooldown(key, InstanceConfig.IndividualRankPlayCooldown.Value);
+            if (!ValidateAndLogPlayback(category)) return;
+            PlayAudioClip(category);
+            SetCooldown(category, InstanceConfig.individualRankPlayCooldown.Value);
         }
         catch(Exception ex)
         {
@@ -47,27 +48,37 @@ public class AudioAnnouncer : IAnnouncer
         }
     }
 
+    public void PlayAudioViaIndex(int index)
+    {
+        PlayAudioViaCategory(m_audioCategories[index]);
+    }
+
     public void ReloadAudio()
     {
         JsonInitialization();
-        _audioLoader.UpdateAudioFileNames(m_jsonSetting);
-        _audioLoader.FindAvailableAudio();
+        m_audioLoader.UpdateAudioFileNames(m_jsonSetting);
+        _ = m_audioLoader.FindAvailableAudioAsync();
     }
 
     public void UpdateAudioPath(string newAudioPaths)
     {
-        _audioLoader.UpdateAudioPath(newAudioPaths);
+        m_audioLoader.UpdateAudioPath(newAudioPaths);
     }
 
     public void ResetCooldown()
     {
-        _cooldownManager.ResetCooldowns();
+        m_cooldownManager.ResetCooldowns();
     }
 
     public void UpdateJson(AnnouncerJsonSetting jsonSetting)
     {
         m_jsonSetting = jsonSetting;
         JsonManager.WriteJson(m_jsonName, m_jsonSetting);
+    }
+
+    public void ClearAudioClipsCache()
+    {
+        m_audioLoader.ClearCache();
     }
     #endregion
 
@@ -80,11 +91,11 @@ public class AudioAnnouncer : IAnnouncer
         this.m_audioPath       = audioPath;
         this.m_audioCategories = audioCategories;
 
-        _audioSourceConfig = new AudioSourceSetting
+        m_audioSourceConfig = new AudioSourceSetting
         {
             SpatialBlend = 0f,
             Priority     = 0,
-            Volume       = InstanceConfig.AudioSourceVolume.Value,
+            Volume       = InstanceConfig.audioSourceVolume.Value,
             Pitch        = 1f,
         };
     }
@@ -105,18 +116,22 @@ public class AudioAnnouncer : IAnnouncer
 
     private void AudioLoaderInitialization()
     {
-        _audioLoader = new AudioLoader(m_audioPath, m_audioCategories, m_jsonSetting);
-        _audioLoader.FindAvailableAudio();
+        m_audioLoader = new AudioLoader(m_audioPath, m_audioCategories, m_jsonSetting);
+        _ = m_audioLoader.FindAvailableAudioAsync();
     }
 
     private void CooldownManagerInitialization()
     {
-        _cooldownManager = new CooldownManager(m_jsonSetting.CategoryAudioMap.Count);
+        m_cooldownManager = new CooldownManager(m_audioCategories);
     }
 
     private void PluginConfigPanelInitialization()
     {
-        RegisterAnnouncerPage.Build(m_announcerName, m_jsonSetting, this);
+        ReflectionManager.LoadByReflection(
+            "greycsont.GreyAnnouncer.RegisterAnnouncerPage", 
+            "Build", 
+            new object[]{m_announcerName, m_jsonSetting, this}
+        );
     }
 
     private void RegisterAnnouncer()
@@ -148,99 +163,119 @@ public class AudioAnnouncer : IAnnouncer
 
 
     #region Cooldown related
-    public void SetCooldown(int key, float cooldown)
+    public void SetCooldown(string category, float cooldown)
     {
-        _cooldownManager.StartSharedCooldown(InstanceConfig.SharedRankPlayCooldown.Value);
-        _cooldownManager.StartIndividualCooldown(key, cooldown);
+        m_cooldownManager.StartSharedCooldown(InstanceConfig.sharedRankPlayCooldown.Value);
+        m_cooldownManager.StartIndividualCooldown(category, cooldown);
     }
     #endregion
 
 
     #region Play Audio related
-    private bool ValidateAndLogPlayback(int key)
+    private bool ValidateAndLogPlayback(string category)
     {
-        var validationState = GetPlayValidationState(key);
+        var validationState = GetPlayValidationState(category);
         if (validationState != ValidationState.Success)
         {
-            Plugin.Log.LogInfo($"PlayValidationState: {_audioLoader.audioCategories[key]}, {validationState}");
+            Plugin.log.LogInfo($"PlayValidationState: {category}, {validationState}");
             return false;
         }
         return true;
     }
-    
-    private void PlayAudioClip(int key)
+
+    private void PlayAudioClip(string category)
     {
-        var clip = _audioLoader.TryToGetAudioClip(key);
+        switch (InstanceConfig.audioLoadingOptions.Value)
+        {
+            case 0:
+                _ = LoadAndPlayAudioClip(category);
+                break;
+            case 1:
+                PlayAudioClipFromAudioClips(category);
+                break;
+            default:
+                Plugin.log.LogWarning("Invalid play audio options, using the default one");
+                _ = LoadAndPlayAudioClip(category);
+                break;
+        }
+    }
+    
+    private void PlayAudioClipFromAudioClips(string category)
+    {
+        var clip = m_audioLoader.GetClipFromAudioClips(category);
         if (clip == null) return;
+
+        SendClipToAudioSource(clip);
+    }
+
+    private async Task LoadAndPlayAudioClip(string category)
+    {
+        var currentRequestId = ++AnnouncerManager.playRequestId;
+
+        var clip = await m_audioLoader.LoadSingleAudioClipAsync(category);
+        if (clip == null) return;
+
+        if (
+            currentRequestId != AnnouncerManager.playRequestId 
+            && InstanceConfig.audioPlayOptions.Value == 0
+        )
+        {
+            Plugin.log.LogInfo($"Aborted outdated audio request for: {category}");
+            return;
+        }
 
         SendClipToAudioSource(clip);
     }
 
     private void SendClipToAudioSource(AudioClip clip)
     {
-        switch (InstanceConfig.AudioPlayOptions.Value)
+        switch (InstanceConfig.audioPlayOptions.Value)
         {
             case 0:
-                SoloAudioSource.Instance.PlayOverridable(clip, _audioSourceConfig);
+                SoloAudioSource.Instance.Play(clip, m_audioSourceConfig);
                 break;
             case 1:
-                AudioSourcePool.Instance.PlayOneShot(clip, _audioSourceConfig);
+                AudioSourcePool.Instance.Play(clip, m_audioSourceConfig);
                 break;
             default:
-                Plugin.Log.LogWarning("Invalid play audio options, using the default one");
-                SoloAudioSource.Instance.PlayOverridable(clip, _audioSourceConfig);
+                Plugin.log.LogWarning("Invalid play audio options, using the default one");
+                SoloAudioSource.Instance.Play(clip, m_audioSourceConfig);
                 break;
         }
     }
 
     private void LogPlaybackError(Exception ex)
     {
-        Plugin.Log.LogError($"An error occurred while playing sound: {ex.Message}");
-        Plugin.Log.LogError(ex.StackTrace);
+        Plugin.log.LogError($"An error occurred while playing sound: {ex.Message}");
+        Plugin.log.LogError(ex.StackTrace);
     }
     #endregion
 
 
     #region Validation related
-    private ValidationState GetPlayValidationState(int key)
+    private ValidationState GetPlayValidationState(string category)
     {
-        if (_cooldownManager == null || _audioLoader == null)
+        if (m_cooldownManager == null || m_audioLoader == null)
             return ValidationState.ComponentsNotInitialized;
 
-        if (_audioLoader.audioCategories == null || 
-            key < 0 || 
-            key >= _audioLoader.audioCategories.Length)
+        if (m_audioLoader.audioCategories == null || !m_audioLoader.audioCategories.Contains(category))
             return ValidationState.InvalidKey;
 
-        if (_cooldownManager.IsIndividualCooldownActive(key))
+        if (m_cooldownManager.IsIndividualCooldownActive(category))
             return ValidationState.IndividualCooldown;
 
-        if (_audioLoader.categoryFailedLoading.Contains(_audioLoader.audioCategories[key]))
+        if (m_audioLoader.categoryFailedLoading.Contains(category))
             return ValidationState.AudioFailedLoading;
 
-        if (_cooldownManager.IsSharedCooldownActive())
+        if (m_cooldownManager.IsSharedCooldownActive())
             return ValidationState.SharedCooldown;
-        //edited
-        if (!m_jsonSetting.CategoryAudioMap[m_audioCategories[key]].Enabled)
+
+        if (!m_jsonSetting.CategoryAudioMap[category].Enabled)
             return ValidationState.DisabledByConfig;
-        
-        if (_audioLoader.TryToGetAudioClip(key) == null)
-            return ValidationState.ClipNotFound;
 
         return ValidationState.Success;
     }
 
-    private enum ValidationState
-    {
-        Success,
-        AudioFailedLoading,
-        SharedCooldown,
-        IndividualCooldown,
-        DisabledByConfig,
-        ClipNotFound,
-        ValidationError,
-        ComponentsNotInitialized,
-        InvalidKey
-    }
+    
     #endregion
 }

@@ -31,7 +31,7 @@ public class PathManager
 
         if (!originalPath.Equals(cleanedPath))
         {
-            Plugin.Log.LogInfo($"Path cleaned: Original='{originalPath}', Cleaned='{cleanedPath}'");
+            Plugin.log.LogInfo($"Path cleaned: Original='{originalPath}', Cleaned='{cleanedPath}'");
         }
 
         return cleanedPath;
@@ -58,12 +58,12 @@ public class PathManager
             }
             else
             {
-                Plugin.Log.LogWarning("Unsupported OS platform.");
+                Plugin.log.LogWarning("Unsupported OS platform.");
             }
         }
         else
         {
-            Plugin.Log.LogWarning("The path is not valid or the directory does not exist.");
+            Plugin.log.LogWarning("The path is not valid or the directory does not exist.");
         }
     }
 

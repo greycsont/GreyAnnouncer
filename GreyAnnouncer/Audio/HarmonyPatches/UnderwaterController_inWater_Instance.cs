@@ -20,16 +20,26 @@ public class UnderwaterController_inWater_Instance
 
     public static void CheckIsInWater()
     {
-        if (isInWater == false || InstanceConfig.LowPassFilter_Enabled.Value == false)
+        if (isInWater == false || InstanceConfig.isLowPassFilterEnabled.Value == false)
         {
-            AudioSourcePool.Instance.RemoveAudioLowPassFilterFromActiveAudioSource();
-            SoloAudioSource.Instance.RemoveAudioLowPassFilter();
+            RemoveAudioLowPassFilterFromAllAudioSource();
         }
         else if (isInWater == true)
         {
-            AudioSourcePool.Instance.AddAudioLowPassFilterToActiveAudioSource();
-            SoloAudioSource.Instance.AddAudioLowPassFilter();
+            AddAudioLowPassFilterToAllAudioSource();
         }
+    }
+
+    private static void RemoveAudioLowPassFilterFromAllAudioSource()
+    {
+        AudioSourcePool.Instance.RemoveAudioLowPassFilterFromActiveAudioSource();
+        SoloAudioSource.Instance.RemoveAudioLowPassFilter();
+    }
+
+    private static void AddAudioLowPassFilterToAllAudioSource()
+    {
+        AudioSourcePool.Instance.AddAudioLowPassFilterToActiveAudioSource();
+        SoloAudioSource.Instance.AddAudioLowPassFilter();
     }
 }
 

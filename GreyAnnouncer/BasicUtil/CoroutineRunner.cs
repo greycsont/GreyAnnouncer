@@ -8,18 +8,18 @@ namespace greycsont.GreyAnnouncer;
 /// </summary>
 public class CoroutineRunner : MonoBehaviour
 {
-    private static CoroutineRunner _instance;
+    private static CoroutineRunner m_instance;
     public static CoroutineRunner  Instance
     {
         get
         {
-            if (_instance == null)
+            if (m_instance == null)
             {
                 GameObject go = new GameObject("CoroutineRunner");
-                _instance     = go.AddComponent<CoroutineRunner>();
+                m_instance    = go.AddComponent<CoroutineRunner>();
                 DontDestroyOnLoad(go);
             }
-            return _instance;
+            return m_instance;
         }
     }
 }

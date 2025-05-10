@@ -1,22 +1,26 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace greycsont.GreyAnnouncer;
 
 public class CooldownManager
 {
-    private float[] m_individualCooldowns;
+    private Dictionary<string, float> m_individualCooldowns = new Dictionary<string, float>();
 
     #region Public API
-    public CooldownManager(int individualCount)
+    public CooldownManager(string[] audioCategories)
     {
-        m_individualCooldowns = new float[individualCount];
+        foreach (var category in audioCategories)
+        {
+            m_individualCooldowns[category] = 0f;
+        }
     }
 
-    public bool IsIndividualCooldownActive(int index)
+    public bool IsIndividualCooldownActive(string category)
     {
-        return m_individualCooldowns[index] > 0f;
+        return m_individualCooldowns[category] > 0f;
     }
 
     public bool IsSharedCooldownActive()
@@ -24,9 +28,9 @@ public class CooldownManager
         return AnnouncerManager.sharedCooldown > 0f;
     }
 
-    public void StartIndividualCooldown(int index, float duration)
+    public void StartIndividualCooldown(string category, float duration)
     {
-        CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => m_individualCooldowns[index] = value, duration));
+        CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => m_individualCooldowns[category] = value, duration));
     }
 
     public void StartSharedCooldown(float duration)
@@ -36,7 +40,7 @@ public class CooldownManager
 
     public void ResetCooldowns()
     {
-        Array.Clear(m_individualCooldowns, 0, m_individualCooldowns.Length);
+        m_individualCooldowns.Clear();
     }
     #endregion
 

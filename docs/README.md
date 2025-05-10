@@ -1,5 +1,5 @@
 <div align=center>
-<img src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/GreyAnnouncer_Icon.png" width="300" height="300">
+<img src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/GreyAnnouncer_Icon_v3.png" width="300" height="300">
 </div>
 <br>
 
@@ -25,11 +25,6 @@ It will plays a **audio** when you reach to a higher style rank!
 6. [Bug & Suggestions](#bugs--suggestions)
 7. [License](#license)
 
-## Include
-This mod pack include:
-- Grey Announcer Framework!
-- rank announcer (?)
-
 ## How to install it
 1. [r2modman](https://thunderstore.io/c/ultrakill/p/ebkr/r2modman/)
 
@@ -41,36 +36,35 @@ This mod pack include:
 
 ## Audio File Naming
 
-You can customize the audio name in the **greyannouncer.json** which is **near the plugin**. the default audio name given in the below:
+You can customize the audio name in the **rankAnnouncer.json** which is **near the plugin**. the default audio name given in the below:
 
 <img align="right" width="180" src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/customAudioName.png">
 
-- `D.wav`
-- `C.wav`
-- `B.wav`
-- `A.wav`
-- `S.wav`
-- `SS.wav`
-- `SSS.wav`
-- `U.wav`             
+- `D`
+- `C`
+- `B`
+- `A`
+- `S`
+- `SS`
+- `SSS`
+- `U`             
 
 ## How to customize the setting
 - Download and Using [PluginConfigurator](https://thunderstore.io/c/ultrakill/p/EternalsTeam/PluginConfigurator/) to edit in-game.
 
 ## Bugs & Suggestions
 if you have any throuble with the mod, feel free to ask in 
-- [Github discussions](https://github.com/greycsont/GreyAnnouncer/discussions)
 - [Github issue](https://github.com/greycsont/GreyAnnouncer/issues)
 - Email : 1106230622@qq.com
+- Discrod : csont.0721
 
 ## Resources
 - [1] Krita, used under GNU General Public License (GPL) Version 3.0
-- [2] CopperPlateCC by Owen Earl, used under SIL Open Font License (OFL) Version 1.1.0
-- [3] D-DIN by datto, used under SIL Open Font License (OFL) Version 1.1.0
-- [4] BepInEX, used under GUN Lesser General Public License (LGPL) Version 2.1
-- [5] PluginConfigurator by eternalUnion, used under MIT License
-- [6] CScore by filoe, used under Microsoft Public License (Ms-PL)
-- [7] Newtonsoft.json by JamesNK, used under MIT License
+- [2] BepInEX, used under GUN Lesser General Public License (LGPL) Version 2.1
+- [3] PluginConfigurator by eternalUnion, used under MIT License
+- [4] Newtonsoft.json by JamesNK, used under MIT License
+- [5] harmonyX, used under MIT License
+- [6] Samigirian by Siphercase, used under SIL Open Font License (OFL) Version 1.1
 
 ## Credit
 Thanks:
@@ -78,7 +72,7 @@ Thanks:
 - [Announcer Mod](https://www.nexusmods.com/ultrakill/mods/54)
 - [PluginConfigurator doc](https://github.com/eternalUnion/UKPluginConfigurator/wiki)
 - [Maxwell's puzzling demon](https://store.steampowered.com/app/2770160/)
-- [Everything](https://www.voidtools.com/) Saved my mod's thumbnail and manifest ****** up by vscode's github extention's auto correction.
+- [Everything](https://www.voidtools.com/) Why vscode always auto pull and merge the source from the github.
 
 ## License
 - The file(s) in the **Lib/** folder are third-party and not authored by me. They are not covered by the License of this project. Please refer to the respective license(s) of those files.

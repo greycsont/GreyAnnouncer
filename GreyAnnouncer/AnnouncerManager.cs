@@ -1,28 +1,29 @@
 using System.Collections.Generic;
 using System;
+using System.Text;
 
 namespace greycsont.GreyAnnouncer;
                                                       
 public class AnnouncerManager
 {           
-    public  static float                              sharedCooldown = 0f;
-    private static Dictionary<string, IAnnouncer> _announcers    = new Dictionary<string, IAnnouncer>();
-
+    public  static float                          sharedCooldown = 0f;
+    private static Dictionary<string, IAnnouncer> m_announcers   = new Dictionary<string, IAnnouncer>();
+    public  static long                           playRequestId  = 0;
     #region Public Methods
     public static void RegisterAnnouncer(string name, IAnnouncer announcer)
     {
-        if (_announcers.ContainsKey(name))
+        if (m_announcers.ContainsKey(name))
         {
-            Plugin.Log.LogWarning($"Overwriting existing announcer: {name}");
+            Plugin.log.LogWarning($"Overwriting existing announcer: {name}");
         }
-        _announcers[name] = announcer;
+        m_announcers[name] = announcer;
     }
 
     public static void ReloadAllAnnouncers()
     {
-        if (_announcers.Count == 0) return;
+        if (m_announcers.Count == 0) return;
 
-        foreach (var announcer in _announcers.Values)
+        foreach (var announcer in m_announcers.Values)
         {
             TryReloadAnnouncerAudios(announcer);
         }
@@ -30,26 +31,34 @@ public class AnnouncerManager
 
     public static void UpdateAllAnnouncerPaths(string newPath)
     {
-        if (_announcers.Count == 0) return;
+        if (m_announcers.Count == 0) return;
 
-        foreach (var announcer in _announcers.Values)
+        foreach (var announcer in m_announcers.Values)
         {
             TryUpdateAnnouncerAudioPath(announcer, newPath);
         }
     }
 
-    public static IAnnouncer GetAnnouncer(string name)
-    {
-        return _announcers.TryGetValue(name, out var announcer) ? announcer : null;
-    }
-
     public static void ResetCooldown()
     {
-        foreach (var announcer in _announcers.Values)
+        foreach (var announcer in m_announcers.Values)
         {
             announcer.ResetCooldown();
         }
         sharedCooldown = 0f;
+    }
+
+    public static void ClearAudioClipsCache()
+    {
+        foreach (var announcer in m_announcers.Values)
+        {
+            announcer.ClearAudioClipsCache();
+        }
+    }
+
+    public static IAnnouncer GetAnnouncer(string name)
+    {
+        return m_announcers.TryGetValue(name, out var announcer) ? announcer : null;
     }
     #endregion
 
@@ -63,7 +72,7 @@ public class AnnouncerManager
         }
         catch (Exception ex)
         {
-            Plugin.Log.LogError($"Failed to reload announcer: {ex.Message}");
+            Plugin.log.LogError($"Failed to reload announcer: {ex.Message}");
         }
     }
 
@@ -72,11 +81,11 @@ public class AnnouncerManager
         try 
         {
             announcer.UpdateAudioPath(newPath);
-            Plugin.Log.LogInfo("Successfully updated announcer audio path");
+            Plugin.log.LogInfo("Successfully updated announcer audio path");
         }
         catch (Exception ex)
         {
-            Plugin.Log.LogError($"Failed to update announcer audio path: {ex.Message}");
+            Plugin.log.LogError($"Failed to update announcer audio path: {ex.Message}");
         }
     }
     #endregion

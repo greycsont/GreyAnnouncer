@@ -1,27 +1,23 @@
 ﻿using System.IO;
 using System.Linq;
-using System.Collections;
-using System.Collections.Generic; //audio clip
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
 using System;
-using System.ComponentModel;
-
+using System.Threading.Tasks;
+using UnityEngine.Networking;
 
 namespace greycsont.GreyAnnouncer;
 
-[Description("The AudioLoader should and only be used as a audioClips entity, " +
-             "I tried to add cooldown counter in here but I just realize it's only a audio loader")]
+
 public class AudioLoader                                          
 {
     #region Properties
-    public string[]                         audioCategories       { get; private set; }
-    public HashSet<string>                  categoryFailedLoading { get; private set; } = new HashSet<string>();
-    public Dictionary<int, List<AudioClip>> audioClips            { get; private set; } = new Dictionary<int, List<AudioClip>>();
+    public string[]                            audioCategories       { get; private set; }
+    public HashSet<string>                     categoryFailedLoading { get; private set; } = new HashSet<string>();
+    public Dictionary<string, List<AudioClip>> audioClips            { get; private set; } = new Dictionary<string, List<AudioClip>>();
 
-    private Dictionary<string, List<string>>  m_audioFileNames;
-    private string                            m_audioPath;
-    private Dictionary<string, LoadingStatus> m_LoadingStatus = new Dictionary<string, LoadingStatus>();
+    private Dictionary<string, List<string>>   m_audioFileNames;
+    private string                             m_audioPath;
     #endregion
 
     #region Constructor
@@ -36,177 +32,192 @@ public class AudioLoader
     #region Public API
     public void UpdateAudioPath(string newAudioPath)
     {
-        if (newAudioPath == null || newAudioPath.Length == 0)
+        if (string.IsNullOrEmpty(newAudioPath))
         {
-            Plugin.Log.LogError("Cannot update with empty or null paths");
+            Plugin.log.LogError("Cannot update with empty or null paths");
             return;
         }
 
-        Plugin.Log.LogInfo($"Updating audio paths and reloading audio...");
+        Plugin.log.LogInfo($"Updating audio paths and reloading audio...");
         this.m_audioPath = newAudioPath;
     }
 
-    public void FindAvailableAudio()
+    public async Task FindAvailableAudioAsync()
     {
+        if (InstanceConfig.audioLoadingOptions.Value == 0) return;
         ClearCache();
         ValidateAndPrepareDirectory();
-        StartLoadingAllCategories();
+        await LoadAllCategoriesAsync();
+        LogLoadingResults();
     }
 
-    public AudioClip TryToGetAudioClip(int key)
+    public AudioClip GetClipFromAudioClips(string category)
     {
-        return GetClipFromAudioClips(key);
+        if (audioCategories.Contains(category) == false)
+        {
+            Plugin.log.LogWarning($"Invalid audio category: {category}");
+            return null;
+        }
+
+        if (!audioClips.TryGetValue(category, out var clips) || clips.Count == 0)
+            return null;
+            
+        return SelectAudioClipRandomly(clips);
+    }
+
+    public async Task<AudioClip> LoadSingleAudioClipAsync(string category)
+    {
+        var clips = await LoadCategoryAsync(category);
+        if (clips == null || clips.Count == 0)
+        {
+            Plugin.log.LogError($"Failed to load audio clip for key: {category}");
+            return null;
+        }
+
+        return SelectAudioClipRandomly(clips);
     }
 
     public void UpdateAudioFileNames(AnnouncerJsonSetting jsonSetting)
     {
         this.m_audioFileNames = GetAudioFileNames(jsonSetting);
     }
+
+    public void ClearCache()
+    {
+        ClearAudioClipCache();
+        categoryFailedLoading.Clear();
+    }
     #endregion
 
-
     #region Loading Logic
-    private void ValidateAndPrepareDirectory()
+    private async Task LoadAllCategoriesAsync()
     {
-        if (!Directory.Exists(m_audioPath))
-        {
-            Plugin.Log.LogWarning($"Audio directory not found: {m_audioPath}");
-            Directory.CreateDirectory(m_audioPath);
-        }
-    }
-
-    private void StartLoadingAllCategories()
-    {
-        m_LoadingStatus.Clear();
-
-        CoroutineRunner.Instance.StartCoroutine(MonitorLoadingProgress());
+        var loadingTasks = new List<Task<(string category, List<AudioClip> clips)>>();
         
-        for (int i = 0; i < audioCategories.Length; i++)
+        foreach ( var category in audioCategories )
         {
-            LoadCategory(i);
+            loadingTasks.Add(LoadCategoryAsync(category).ContinueWith(task => (category, task.Result)));
+        }
+        
+        var results = await Task.WhenAll(loadingTasks);
+        
+        // Add all loaded clips to the audioClips dictionary
+        foreach (var (category, clips) in results)
+        {
+            if (clips != null && clips.Count > 0)
+            {
+                audioClips[category] = clips;
+            }
         }
     }
+
+
     
-    private void LoadCategory(int index)
+    private async Task<List<AudioClip>> LoadCategoryAsync(string category)
     {
-        var category = audioCategories[index];
         if (!m_audioFileNames.TryGetValue(category, out var fileNames))
         {
             LogCategoryFailure(category, "No file names configured");
-            return;
+            return null;
         }
 
-        var status = new LoadingStatus { Category = category };
-        m_LoadingStatus[category] = status;
+        var validFiles = fileNames
+            .Select(name => PathManager.GetFileWithExtension(m_audioPath, name))
+            .Where(File.Exists)
+            .ToList();
 
-        foreach (var fileName in fileNames)
-        {
-            var filePath = PathManager.GetFileWithExtension(m_audioPath, fileName);
-            if (File.Exists(filePath))
-            {
-                status.ExpectedFiles++;
-            }
-        }
-
-        if (status.ExpectedFiles == 0)
+        if (validFiles.Count == 0)
         {
             LogCategoryFailure(category, "No valid files found");
-            return;
+            return null;
         }
 
-        foreach (var fileName in fileNames)
-        {
-            TryStartLoadingFile(fileName, index, status);
-        }
-    }
-
-
-    private void TryStartLoadingFile(string fileName, int categoryIndex, LoadingStatus status)
-    {
-        var filePath = PathManager.GetFileWithExtension(m_audioPath, fileName);
-        if (!File.Exists(filePath))
-        {
-            Plugin.Log.LogWarning($"Audio file not found: {filePath}");
-        }
-
-        Plugin.Log.LogInfo($"Started loading audio: {filePath}");
-        var coroutine = LoadAudioClip(filePath, categoryIndex, status);
-        CoroutineRunner.Instance.StartCoroutine(coroutine);
- 
-    }
-    private IEnumerator LoadAudioClip(string path, int categoryIndex, LoadingStatus status)
-    {
+        Plugin.log.LogInfo($"Loading category {category} with {validFiles.Count} files");
         
+        var clipLoadingTasks = validFiles
+            .Select(path => LoadAudioClipAsync(path));
+        
+        var loadedClips = new List<AudioClip>();
+
+        try
+        {
+            var results = await Task.WhenAll(clipLoadingTasks);
+            
+            // Filter out any null results (loading failures)
+            loadedClips = results
+                .Where(c => c != null)
+                .ToList();
+            
+            if (loadedClips.Count > 0)
+            {
+                Plugin.log.LogInfo($"Successfully loaded {loadedClips.Count}/{validFiles.Count} clips for {category}");
+                return loadedClips;
+            }
+            else
+            {
+                LogCategoryFailure(category, "All audio files failed to load");
+                return null;
+            }
+        }
+        catch (Exception ex)
+        {
+            LogCategoryFailure(category, $"Exception during loading: {ex.Message}");
+            return null;
+        }
+    }
+
+    private async Task<AudioClip> LoadAudioClipAsync(string path)
+    {
         string extension = Path.GetExtension(path).ToLower();
         AudioType? unityAudioType = GetUnityAudioType(extension);
 
-
-        if (unityAudioType.HasValue)
+        if (!unityAudioType.HasValue)
         {
-            yield return LoadWithUnity(path, categoryIndex, status, unityAudioType.Value);
+            Plugin.log.LogError($"Unsupported audio format: 「{extension}」 for {path}");
+            return null;
         }
-        else
+
+        try
         {
-            status.HasError = true;
-            Plugin.Log.LogError($"Unsupported audio format: {extension}");
+            Plugin.log.LogInfo($"Started loading audio: {path}");
+            return await LoadWithUnityAsync(path, unityAudioType.Value);
+        }
+        catch (Exception ex)
+        {
+            Plugin.log.LogError($"Error loading {path}: {ex.Message}");
+            return null;
         }
     }
     #endregion
 
     #region Audio Loading Helpers
-    private IEnumerator LoadWithUnity(string path, int categoryIndex, LoadingStatus status, AudioType audioType)
+    private async Task<AudioClip> LoadWithUnityAsync(string path, AudioType audioType)
     {
         string url = new Uri(path).AbsoluteUri;
         
         using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, audioType))
         {
-            yield return www.SendWebRequest();
+            var operation = www.SendWebRequest();
+            
+            while (!operation.isDone)
+            {
+                await Task.Delay(10); // Small delay to not block the thread
+            }
 
             if (www.result != UnityWebRequest.Result.Success)
             {
-                status.HasError = true;
-                Plugin.Log.LogError($"UnityRequest Failed to load audio: {www.error}");
+                Plugin.log.LogError($"UnityRequest Failed to load audio: {www.error}");
+                return null;
             }
-            else
-            {
-                var clip = DownloadHandlerAudioClip.GetContent(www);
-                status.LoadedClips.Add(clip);
-                status.LoadedFiles++;
-                
-                if (!audioClips.ContainsKey(categoryIndex))
-                {
-                    audioClips[categoryIndex] = status.LoadedClips;
-                }
-                Plugin.Log.LogInfo($"Loaded audio: {Path.GetFileName(path)} ({status.LoadedFiles}/{status.ExpectedFiles} for {status.Category})");
-            }
+            
+            var clip = DownloadHandlerAudioClip.GetContent(www);
+            Plugin.log.LogInfo($"Loaded audio: {Path.GetFileName(path)}");
+            return clip;
         }
     }
     #endregion
 
-    #region Utility Methods
-    private AudioType? GetUnityAudioType(string extension)
-    {
-        return extension switch
-        {
-            ".wav"  => AudioType.WAV,
-            ".mp3"  => AudioType.MPEG,
-            ".ogg"  => AudioType.OGGVORBIS,
-            ".aiff" => AudioType.AIFF,
-            ".aif"  => AudioType.AIFF,
-            ".acc"  => AudioType.ACC,
-            _       => null
-        };
-    }
-    #endregion
-
     #region Cache Management
-    private void ClearCache()
-    {
-        ClearAudioClipCache();
-        categoryFailedLoading.Clear();
-        m_LoadingStatus.Clear();
-    }
-
     private void ClearAudioClipCache()
     {
         foreach (var clipList in audioClips.Values)
@@ -225,54 +236,46 @@ public class AudioLoader
     private void LogCategoryFailure(string category, string reason)
     {
         categoryFailedLoading.Add(category);
-        Plugin.Log.LogWarning($"Failed to load category {category}: {reason}");
+        Plugin.log.LogWarning($"Failed to load category 「{category}」: {reason}");
     }
 
     private void LogLoadingResults()
     {
+        LogForPluginConfigurator();
+        
+        string logMessage = null;
         if (categoryFailedLoading.Count == 0)
         {
-            Plugin.Log.LogInfo("All audios successfully loaded");
+            logMessage = "All audio categories successfully loaded";
+            Plugin.log.LogInfo(logMessage);
         }
         else
         {
-            Plugin.Log.LogWarning("Failed to load audio files: " + string.Join(", ", categoryFailedLoading));
+            logMessage = "Failed to load audio categories: " + string.Join(", ", categoryFailedLoading);
+            Plugin.log.LogWarning(logMessage);
         }
+  
+    }
+
+    private void LogForPluginConfigurator()
+    {   
+        // Warning : PluginConfigurator
+        var builder = new System.Text.StringBuilder();
+
+        foreach (var category in audioCategories)
+        {
+            int loaded = audioClips.TryGetValue(category, out var clips) ? clips.Count : 0;
+            int total = m_audioFileNames.TryGetValue(category, out var files) ? files.Count : 0;
+            builder.AppendLine($"{category} ({loaded}/{total})");
+        }
+
+        //Reflection maybe
+        string logMessage = builder.ToString();
+        MainPanelBuilder.logHeader.text = logMessage + "\n";
     }
     #endregion
 
-    #region Process Monitoring
-    private void FinalizeLoading()
-    {
-        foreach (var status in m_LoadingStatus.Values)
-        {
-            if (status.HasError || status.LoadedFiles == 0)
-            {
-                categoryFailedLoading.Add(status.Category);
-            }
-        }
-        
-        LogLoadingResults();
-    }
-
-    private IEnumerator MonitorLoadingProgress()
-    {
-        while (m_LoadingStatus.Count == 0)
-        {
-            yield return new WaitForEndOfFrame();
-        }
-
-        while (m_LoadingStatus.Values.Any(s => s.LoadedFiles < s.ExpectedFiles && !s.HasError))
-        {
-            Plugin.Log.LogInfo("Loading audio files...");
-            yield return new WaitForEndOfFrame();
-        }
-
-        FinalizeLoading();
-    }
-    #endregion
-
-    #region Shitpost
+    #region Dictionary Helper
     private Dictionary<string, List<string>> GetAudioFileNames(AnnouncerJsonSetting jsonSetting)
     {
         return jsonSetting.CategoryAudioMap.ToDictionary(
@@ -282,29 +285,35 @@ public class AudioLoader
     }
     #endregion
 
-    #region Get Audio Clip
-    private AudioClip GetClipFromAudioClips(int key)
+    
+    #region Utility Methods
+    private AudioType? GetUnityAudioType(string extension)
     {
-        if (key < 0 || key >= audioCategories.Length)
+        return extension switch
         {
-            Plugin.Log.LogWarning($"Invalid audio key: {key}");
-            return null;
-        }
-
-        if (!audioClips.TryGetValue(key, out var clips) || clips.Count == 0)
-            return null;
-            
-        int randomIndex = UnityEngine.Random.Range(0, clips.Count);
-        return clips[randomIndex];
+            ".wav"  => AudioType.WAV,
+            ".mp3"  => AudioType.MPEG,
+            ".ogg"  => AudioType.OGGVORBIS,
+            ".aiff" => AudioType.AIFF,
+            ".aif"  => AudioType.AIFF,
+            ".acc"  => AudioType.ACC,
+            _       => null
+        };
     }
 
+    private AudioClip SelectAudioClipRandomly(List<AudioClip> audioClips)
+    {
+        int randomIndex = UnityEngine.Random.Range(0, audioClips.Count);
+        return audioClips[randomIndex];
+    }
+
+    private void ValidateAndPrepareDirectory()
+    {
+        if (!Directory.Exists(m_audioPath))
+        {
+            Plugin.log.LogWarning($"Audio directory not found: {m_audioPath}");
+            Directory.CreateDirectory(m_audioPath);
+        }
+    }
     #endregion
-
-
-
-   
-
-    
-
 }
-
