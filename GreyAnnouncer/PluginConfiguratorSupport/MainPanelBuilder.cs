@@ -4,7 +4,6 @@ using PluginConfig.API.Decorators;
 using PluginConfig.API.Functionals;
 using UnityEngine;
 using System;
-using System.Drawing.Imaging;
 
 
 namespace greycsont.GreyAnnouncer;
@@ -64,13 +63,14 @@ public static class MainPanelBuilder
 
     private static void CreateAudioControls()
     {
+        
         var volumeSlider = new FloatSliderField(
             m_pluginConfigurator.rootPanel,
             "Audio Volume",
             "Audio_Volume",
             Tuple.Create(0f, 1f),
             InstanceConfig.audioSourceVolume.Value,
-            2
+            2   // 2nd decimal
         );
         volumeSlider.defaultValue   = InstanceConfig.DEFAULT_AUDIO_SOURCE_VOLUME;
         volumeSlider.onValueChange += e =>
@@ -82,11 +82,7 @@ public static class MainPanelBuilder
 
 // It worked, but not working great as there's ton of audio when from low rank directly to the high rank
 // May be add a short cooldown as limitation
-//
-//
-//
-//
-//
+
         var playOption = new EnumField<PlayOptions>(
             m_pluginConfigurator.rootPanel,
             "Audio Play Option",
@@ -140,6 +136,9 @@ public static class MainPanelBuilder
             2,
             new float[] { 0.5f, 0.5f },
             new string[] { "Open audio folder", "Reload Audio" }
+            // 2 button
+            // width of two buttons ( sum = 1f ) 
+            // Two button's text
         );
         audioButtonArray.OnClickEventHandler(0).onClick += () =>
         {

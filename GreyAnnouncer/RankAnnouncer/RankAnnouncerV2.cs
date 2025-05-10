@@ -1,7 +1,7 @@
 using greycsont.GreyAnnouncer;
 
 
-namespace rankAnnouncerV2;
+namespace greycsont.GreyAnnouncer;
 
 public static class RankAnnouncerV2
 {

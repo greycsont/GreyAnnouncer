@@ -1,15 +1,15 @@
 ### Known issue/TODO
-- In AudioAnnouncer, the longer audio loaded late and starting loading early may override the shorter one 
 - reflection access
 
 ### v1.0.2
 - Fixed when you quit the mission in the water, the muffle effect still exists when playing audio.
 - Changed the mod's icon, the old icon directly uses the Arknights's mini greythroat asset.
-- Abstract the audioLoader as a individual class, makes the Grey Announcer become as a framework.
 - Some changes of license (fixed/added the Lib\ folder that does not include in License, This folder includes assembly-sharp of ULTRAKILL, PluginConfigurator and some unity assets).
-- Added parallel audio playing option.
+- Added parallel audio playing option for future idea.
 - Added Load-and-Play loading options for RAM performance.
+- Added loading log in PluginConfigurator to see the loading status
 - switch to using BepInex's config to customize audio loading path (Default path is the legacy method, you can edit it easily via PluginConfigurator).
+- Added more audio loading in a single category
 - RECONSTRUCT the code architecture.
 - removed patch to update() in StyleHUD.cs
 

@@ -90,15 +90,6 @@ public class AudioLoader
     #endregion
 
     #region Loading Logic
-    private void ValidateAndPrepareDirectory()
-    {
-        if (!Directory.Exists(m_audioPath))
-        {
-            Plugin.log.LogWarning($"Audio directory not found: {m_audioPath}");
-            Directory.CreateDirectory(m_audioPath);
-        }
-    }
-
     private async Task LoadAllCategoriesAsync()
     {
         var loadingTasks = new List<Task<(string category, List<AudioClip> clips)>>();
@@ -119,6 +110,8 @@ public class AudioLoader
             }
         }
     }
+
+
     
     private async Task<List<AudioClip>> LoadCategoryAsync(string category)
     {
@@ -143,16 +136,17 @@ public class AudioLoader
         
         var clipLoadingTasks = validFiles
             .Select(path => LoadAudioClipAsync(path));
-
-        var loadedClips = new List<AudioClip>();
         
+        var loadedClips = new List<AudioClip>();
+
         try
         {
             var results = await Task.WhenAll(clipLoadingTasks);
             
             // Filter out any null results (loading failures)
             loadedClips = results
-                .Where(c => c != null).ToList();
+                .Where(c => c != null)
+                .ToList();
             
             if (loadedClips.Count > 0)
             {
@@ -311,6 +305,15 @@ public class AudioLoader
     {
         int randomIndex = UnityEngine.Random.Range(0, audioClips.Count);
         return audioClips[randomIndex];
+    }
+
+    private void ValidateAndPrepareDirectory()
+    {
+        if (!Directory.Exists(m_audioPath))
+        {
+            Plugin.log.LogWarning($"Audio directory not found: {m_audioPath}");
+            Directory.CreateDirectory(m_audioPath);
+        }
     }
     #endregion
 }
