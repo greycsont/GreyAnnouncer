@@ -10,53 +10,59 @@ namespace greycsont.GreyAnnouncer;
 
 public static class MainPanelBuilder
 {
-    private static PluginConfigurator m_pluginConfigurator;
-    public  static ConfigHeader       logHeader;
+    private static readonly Color              m_headerColor        = new Color(0.85f, 0.85f, 0.85f, 1f);
+    private static          PluginConfigurator m_pluginConfigurator;
+    public  static          ConfigHeader       logHeader;
 
     public static void Build(PluginConfigurator config)
     {
         m_pluginConfigurator = config;
 
-        new ConfigSpace(m_pluginConfigurator.rootPanel, 15f);
-
-        ConfigHeader mainHeader = new ConfigHeader(m_pluginConfigurator.rootPanel, "Main Settings");
-        mainHeader.textColor    = HeaderColor;
-
+        CreateMainSettingSectionTitle();
         CreateCooldownControls();
         CreateAudioControls();
         CreateAdvancedOptionPanel();
+        Test();
     }
 
-    private static void CreateCooldownControls()
+    private static void CreateMainSettingSectionTitle()
     {
+        new ConfigSpace(m_pluginConfigurator.rootPanel, 15f);
+
+        ConfigHeader mainHeader = new ConfigHeader(m_pluginConfigurator.rootPanel, "Main Settings");
+        mainHeader.textColor    = m_headerColor;
+
         logHeader = new ConfigHeader(m_pluginConfigurator.rootPanel, "");
         logHeader.tmpAnchor = TMPro.TextAlignmentOptions.TopLeft;
         logHeader.textSize  = 12;
         logHeader.textColor = new Color (0f, 1f, 1f);
+    }
 
+    private static void CreateCooldownControls()
+    {
         var sharedCooldown = new FloatField(
             m_pluginConfigurator.rootPanel,
-            "Shared rank cooldown",
-            "sharedRankPlayCooldown",
-            InstanceConfig.sharedRankPlayCooldown.Value, 0f, 114514f
+            "Shared cooldown",
+            "sharedPlayCooldown",
+            InstanceConfig.sharedPlayCooldown.Value, 0f, 114514f
         );
-        sharedCooldown.defaultValue   = InstanceConfig.DEFAULT_SHARED_RANK_COOLDOWN;
+        sharedCooldown.defaultValue   = InstanceConfig.DEFAULT_SHARED_PLAY_COOLDOWN;
         sharedCooldown.onValueChange += e =>
         {
-            InstanceConfig.sharedRankPlayCooldown.Value = e.value;
+            InstanceConfig.sharedPlayCooldown.Value = e.value;
             AnnouncerManager.ResetCooldown();
         };
 
         var individualCooldown = new FloatField(
             m_pluginConfigurator.rootPanel,
-            "Individual rank cooldown",
-            "individualRankPlaycooldown",
-            InstanceConfig.individualRankPlayCooldown.Value, 0f, 1113f
+            "Individual cooldown",
+            "individualPlaycooldown",
+            InstanceConfig.individualPlayCooldown.Value, 0f, 1113f
         );
-        individualCooldown.defaultValue   = InstanceConfig.DEFAULT_INDIVIDUAL_RANK_COOLDOWN;
+        individualCooldown.defaultValue   = InstanceConfig.DEFAULT_INDIVIDUAL_PLAY_COOLDOWN;
         individualCooldown.onValueChange += e =>
         {
-            InstanceConfig.individualRankPlayCooldown.Value = e.value;
+            InstanceConfig.individualPlayCooldown.Value = e.value;
             AnnouncerManager.ResetCooldown();
         };
     }
@@ -105,7 +111,7 @@ public static class MainPanelBuilder
         loadingOption.onValueChange += e =>
         {
             InstanceConfig.audioLoadingOptions.Value = (int)e.value;
-            if (e.value.Equals((audioLoadingOptions.Load_and_Play)))
+            if (e.value.Equals((audioLoadingOptions.Load_then_Play)))
             {
                 Plugin.log.LogInfo("Clear audio clip cache");
                 ClearAudioClipsCache();
@@ -127,7 +133,7 @@ public static class MainPanelBuilder
         audioFolderPath.onValueChange += e =>
         {
             InstanceConfig.audioFolderPath.Value = e.value;
-            AnnouncerManager.UpdateAllAnnouncerPaths(e.value);
+            AnnouncerManager.UpdateAllAnnouncerPaths();
         };
 
         var audioButtonArray = new ButtonArrayField(
@@ -154,9 +160,10 @@ public static class MainPanelBuilder
     private static void CreateAdvancedOptionPanel()
     {
         ConfigPanel advancedPanel = new ConfigPanel(m_pluginConfigurator.rootPanel, "Advanced Option", "Advanced_Option");
+        new ConfigSpace(advancedPanel, 15f);
 
         ConfigHeader header       = new ConfigHeader(advancedPanel, "Audio Frequency Filter");
-        header.textColor          = HeaderColor;
+        header.textColor          = m_headerColor;
 
         BoolField lowpassToggle   = new BoolField(
             advancedPanel,
@@ -171,7 +178,13 @@ public static class MainPanelBuilder
             UnderwaterController_inWater_Instance.CheckIsInWater();
         };
     }
-    private static readonly Color HeaderColor = new Color(0.85f, 0.85f, 0.85f, 1f);
+
+    private static void Test()
+    {
+
+    }
+
+    #region enum
     private enum PlayOptions
     {
         Override = 0,
@@ -180,14 +193,17 @@ public static class MainPanelBuilder
 
     private enum audioLoadingOptions
     {
-        Load_and_Play = 0,
+        Load_then_Play = 0,
         Preload_and_Play = 1
     }
+    #endregion
 
+
+    #region function
     private static void ReloadAllAnnouncers()
     {
         logHeader.text = string.Empty;
-        AnnouncerManager.ReloadAllAnnouncers();
+        AnnouncerManager.ReloadAllAnnouncer();
     }
 
     private static void ClearAudioClipsCache()
@@ -195,5 +211,6 @@ public static class MainPanelBuilder
         logHeader.text = string.Empty;
         AnnouncerManager.ClearAudioClipsCache();
     }
+    #endregion
 }
 

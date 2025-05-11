@@ -25,7 +25,7 @@ public class SoloAudioSource : MonoBehaviour
 
 
     #region Public API
-    public void Play(AudioClip clip, AudioSourceSetting config)
+    public void PlayOneShot(AudioClip clip, AudioSourceSetting config)
     {
         if (m_audioSource == null)
         {

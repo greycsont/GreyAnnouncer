@@ -5,8 +5,8 @@ namespace greycsont.GreyAnnouncer;
 
 public static class InstanceConfig
 {
-    public static          ConfigEntry<float>                    sharedRankPlayCooldown;    // Range : 0f ~ 10f
-    public static          ConfigEntry<float>                    individualRankPlayCooldown;    // Range : 0f ~ 114514f
+    public static          ConfigEntry<float>                    sharedPlayCooldown;    // Range : 0f ~ 10f
+    public static          ConfigEntry<float>                    individualPlayCooldown;    // Range : 0f ~ 114514f
     public static          ConfigEntry<float>                    audioSourceVolume; // Range : 0f ~ 1f
     public static          ConfigEntry<bool>                     isLowPassFilterEnabled;
     public static          ConfigEntry<string>                   audioFolderPath;
@@ -16,8 +16,8 @@ public static class InstanceConfig
     public static readonly Dictionary<string, (string section, string name, object defaultValue, string description)> ConfigEntries = new()
     {
         // "Cooldown" section
-        { "SharedRankCooldown",     ("Cooldown",      "Shared_rank_play_cooldown",           DEFAULT_SHARED_RANK_COOLDOWN,     "Shared rank play cooldown (in secs)") },
-        { "IndividualRankCooldown", ("Cooldown",      "Individual_rank_play_cooldown",       DEFAULT_INDIVIDUAL_RANK_COOLDOWN, "Individual rank play cooldown (in secs)") },
+        { "SharedRankCooldown",     ("Cooldown",      "Shared_rank_play_cooldown",           DEFAULT_SHARED_PLAY_COOLDOWN,     "Shared rank play cooldown (in secs)") },
+        { "IndividualRankCooldown", ("Cooldown",      "Individual_rank_play_cooldown",       DEFAULT_INDIVIDUAL_PLAY_COOLDOWN, "Individual rank play cooldown (in secs)") },
 
         // "Audio" section
         { "AudioSourceVolume",      ("Audio",         "Audio_source_volume",                 DEFAULT_AUDIO_SOURCE_VOLUME,      "Volume of the Announcer ( Range : 0f ~ 1f )") },
@@ -70,8 +70,8 @@ public static class InstanceConfig
                 description
             );
 
-            if      (name == "Shared_rank_play_cooldown")     sharedRankPlayCooldown     = configEntry;
-            else if (name == "Individual_rank_play_cooldown") individualRankPlayCooldown = configEntry;
+            if      (name == "Shared_rank_play_cooldown")     sharedPlayCooldown     = configEntry;
+            else if (name == "Individual_rank_play_cooldown") individualPlayCooldown = configEntry;
             else if (name == "Audio_source_volume")           audioSourceVolume          = configEntry;
             
         }
@@ -103,25 +103,18 @@ public static class InstanceConfig
         }
     }
                            
-    private static float m_defaultSharedRankCooldown = 0f;
-    public static float DEFAULT_SHARED_RANK_COOLDOWN 
+    private static float m_defaultSharedPlayCooldown = 0f;
+    public static float DEFAULT_SHARED_PLAY_COOLDOWN 
     {
-        get => m_defaultSharedRankCooldown;
-        private set => m_defaultSharedRankCooldown = value;
+        get => m_defaultSharedPlayCooldown;
+        private set => m_defaultSharedPlayCooldown = value;
     }
 
-    private static float m_defaultIndividualRankCooldown = 3f;
-    public static float DEFAULT_INDIVIDUAL_RANK_COOLDOWN 
+    private static float m_defaultIndividualPlayCooldown = 3f;
+    public static float DEFAULT_INDIVIDUAL_PLAY_COOLDOWN 
     {
-        get => m_defaultIndividualRankCooldown;
-        private set => m_defaultIndividualRankCooldown = value;
-    }
-
-    private static bool m_defaultRankToggled = true;
-    public static bool DEFAULT_RANK_TOGGLED 
-    {
-        get => m_defaultRankToggled;
-        private set => m_defaultRankToggled = value;
+        get => m_defaultIndividualPlayCooldown;
+        private set => m_defaultIndividualPlayCooldown = value;
     }
 
     private static float m_defaultAudioSourceVolume = 1f;

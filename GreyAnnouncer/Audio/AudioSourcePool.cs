@@ -48,7 +48,7 @@ public class AudioSourcePool : MonoBehaviour
     }
 
 
-    public void Play(AudioClip clip, AudioSourceSetting config)
+    public void PlayOneShot(AudioClip clip, AudioSourceSetting config)
     {
         var audioSource  = Get();
         audioSource      = AudioSourceManager.ConfigureAudioSource(audioSource, config);

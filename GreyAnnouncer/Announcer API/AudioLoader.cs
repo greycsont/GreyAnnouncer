@@ -5,6 +5,7 @@ using UnityEngine;
 using System;
 using System.Threading.Tasks;
 using UnityEngine.Networking;
+using System.ComponentModel;
 
 namespace greycsont.GreyAnnouncer;
 
@@ -14,13 +15,14 @@ public class AudioLoader
     #region Properties
     public string[]                            audioCategories       { get; private set; }
     public HashSet<string>                     categoryFailedLoading { get; private set; } = new HashSet<string>();
-    public Dictionary<string, List<AudioClip>> audioClips            { get; private set; } = new Dictionary<string, List<AudioClip>>();
-
-    private Dictionary<string, List<string>>   m_audioFileNames;
-    private string                             m_audioPath;
+    private Dictionary<string, List<AudioClip>> m_audioClips                               = new Dictionary<string, List<AudioClip>>();
+    private Dictionary<string, List<string>>    m_audioFileNames;
+    private string                              m_audioPath;
     #endregion
 
     #region Constructor
+    [Description("Q : Why do you using whole AnnouncerJsonSetting as input instead only CategoryAudioMap?" +
+                 "A : For future, what kinds of future? idk.")]
     public AudioLoader(string audioPath, string[] audioCategories, AnnouncerJsonSetting jsonSetting)
     {
         this.m_audioPath      = audioPath;
@@ -59,7 +61,7 @@ public class AudioLoader
             return null;
         }
 
-        if (!audioClips.TryGetValue(category, out var clips) || clips.Count == 0)
+        if (!m_audioClips.TryGetValue(category, out var clips) || clips.Count == 0)
             return null;
             
         return SelectAudioClipRandomly(clips);
@@ -106,7 +108,7 @@ public class AudioLoader
         {
             if (clips != null && clips.Count > 0)
             {
-                audioClips[category] = clips;
+                m_audioClips[category] = clips;
             }
         }
     }
@@ -220,7 +222,9 @@ public class AudioLoader
     #region Cache Management
     private void ClearAudioClipCache()
     {
-        foreach (var clipList in audioClips.Values)
+        if (m_audioClips.Count == 0) return;
+
+        foreach (var clipList in m_audioClips.Values)
         {
             foreach (var clip in clipList)
             {
@@ -228,7 +232,7 @@ public class AudioLoader
                     UnityEngine.Object.Destroy(clip);
             }
         }
-        audioClips.Clear();
+        m_audioClips.Clear();
     }
     #endregion
 
@@ -264,7 +268,7 @@ public class AudioLoader
 
         foreach (var category in audioCategories)
         {
-            int loaded = audioClips.TryGetValue(category, out var clips) ? clips.Count : 0;
+            int loaded = m_audioClips.TryGetValue(category, out var clips) ? clips.Count : 0;
             int total = m_audioFileNames.TryGetValue(category, out var files) ? files.Count : 0;
             builder.AppendLine($"{category} ({loaded}/{total})");
         }
@@ -296,7 +300,7 @@ public class AudioLoader
             ".ogg"  => AudioType.OGGVORBIS,
             ".aiff" => AudioType.AIFF,
             ".aif"  => AudioType.AIFF,
-            ".acc"  => AudioType.ACC,
+            ".acc"  => AudioType.ACC,   //fuck unity
             _       => null
         };
     }

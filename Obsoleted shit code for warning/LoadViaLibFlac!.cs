@@ -6,7 +6,9 @@ using UnityEngine;
 
 using greycsont.GreyAnnouncer;  // Assuming you're using Unity's AudioClip
 
-[Obsolete("RIP FLACDecoder")]
+[Obsolete("Why I choose this idiot idea with tech stack instead directly make a interface for ffmpeg?" + 
+          "Why I have any idea to encapsulate a 1mb lib for a mod that only have 50-60 kb space using?" + 
+          "(Except audio file size)")]
 public class FLACDecoder
 {
     public static AudioClip LoadFLACAsAudioClip(string path)

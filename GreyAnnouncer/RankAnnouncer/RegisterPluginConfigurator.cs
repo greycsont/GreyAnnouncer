@@ -7,20 +7,19 @@ using UnityEngine;
 
 namespace greycsont.GreyAnnouncer;
 
-public static class RegisterAnnouncerPage
+public static class RegisterRankAnnouncerPage
 {
     private static PluginConfigurator            m_pluginConfigurator;
-    private static string                        m_announcerName;
-    private static AudioAnnouncer                m_audioAnnouncer;
-    public static void Build(string announcerName, AnnouncerJsonSetting announcerJsonSetting, AudioAnnouncer audioAnnouncer)
+    private static string                        m_title;
+    public static void Build(string title, AnnouncerJsonSetting announcerJsonSetting)
     {
         m_pluginConfigurator = PluginConfiguratorEntry.config;
-        m_announcerName      = announcerName;
-        m_audioAnnouncer     = audioAnnouncer;
+        m_title              = title;
 
+        ConfigPanel panel   = new ConfigPanel (m_pluginConfigurator.rootPanel, m_title, m_title);
+        new ConfigSpace(panel, 15f);
 
-        ConfigPanel panel   = new ConfigPanel (m_pluginConfigurator.rootPanel, m_announcerName, m_announcerName);
-        ConfigHeader header = new ConfigHeader(panel, m_announcerName);
+        ConfigHeader header = new ConfigHeader(panel, m_title);
         header.textColor    = HeaderColor;
 
         foreach (var category in announcerJsonSetting.CategoryAudioMap)
@@ -32,9 +31,9 @@ public static class RegisterAnnouncerPage
                 announcerJsonSetting,
                 true,
                 new Action<BoolField.BoolValueChangeEvent>[] {
-                    e => {
-                        m_audioAnnouncer.UpdateJson(announcerJsonSetting);
-                        Plugin.log.LogInfo($"Updated json setting for {m_announcerName}");
+                    e => {;
+                        RankAnnouncerV2.UpdateJson(announcerJsonSetting);
+                        Plugin.log.LogInfo($"Updated json setting for {m_title}");
                     }
                 }
             );

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 namespace greycsont.GreyAnnouncer;
 
+// shitest name ever named
 public class AnnouncerJsonSetting
 {
     public Dictionary<string, CategoryAudioSetting> CategoryAudioMap { get; set; }

@@ -1,35 +1,30 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.ComponentModel;
-using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
 
 
 namespace greycsont.GreyAnnouncer;
 
-public class AudioAnnouncer : IAnnouncer
+public class AudioAnnouncer
 {
     #region Private Fields
     private AnnouncerJsonSetting m_jsonSetting;
     private AudioLoader          m_audioLoader;
     private CooldownManager      m_cooldownManager;
     private AudioSourceSetting   m_audioSourceConfig;
-
-    private string               m_announcerName;
+    
     private string[]             m_audioCategories;
-    private string               m_jsonName;
     private string               m_audioPath;
     #endregion
 
 
     #region Public API
-    public void Initialize(string announcerName, string[] audioCategories, string jsonName, string audioPath)
+    public void Initialize(string[] audioCategories, AnnouncerJsonSetting jsonSetting, string audioPath)
     {
-        VariableInitialization(announcerName, audioCategories, jsonName, audioPath);
+        VariableInitialization(audioCategories, jsonSetting, audioPath);
         ComponentInitialization();
-        RegisterAnnouncer();
     }
 
     [Description("Parry balls of Maurice -> Hit Maurice -> AscendingRank() -> Postfix() -> PlaySound() -> CheckPlayValidation(), " +
@@ -40,7 +35,7 @@ public class AudioAnnouncer : IAnnouncer
         {
             if (!ValidateAndLogPlayback(category)) return;
             PlayAudioClip(category);
-            SetCooldown(category, InstanceConfig.individualRankPlayCooldown.Value);
+            SetCooldown(category, InstanceConfig.individualPlayCooldown.Value);
         }
         catch(Exception ex)
         {
@@ -53,9 +48,9 @@ public class AudioAnnouncer : IAnnouncer
         PlayAudioViaCategory(m_audioCategories[index]);
     }
 
-    public void ReloadAudio()
+    public void ReloadAudio(AnnouncerJsonSetting jsonSetting)
     {
-        JsonInitialization();
+        this.m_jsonSetting = jsonSetting; 
         m_audioLoader.UpdateAudioFileNames(m_jsonSetting);
         _ = m_audioLoader.FindAvailableAudioAsync();
     }
@@ -70,24 +65,22 @@ public class AudioAnnouncer : IAnnouncer
         m_cooldownManager.ResetCooldowns();
     }
 
-    public void UpdateJson(AnnouncerJsonSetting jsonSetting)
-    {
-        m_jsonSetting = jsonSetting;
-        JsonManager.WriteJson(m_jsonName, m_jsonSetting);
-    }
-
     public void ClearAudioClipsCache()
     {
         m_audioLoader.ClearCache();
+    }
+
+    public void UpdateJsonSetting(AnnouncerJsonSetting jsonSetting)
+    {
+        this.m_jsonSetting = jsonSetting;
     }
     #endregion
 
 
     #region Initialize related
-    private void VariableInitialization(string announcerName, string[] audioCategories, string jsonName, string audioPath)
+    private void VariableInitialization(string[] audioCategories, AnnouncerJsonSetting jsonSetting, string audioPath)
     {
-        this.m_announcerName   = announcerName;
-        this.m_jsonName        = jsonName;
+        this.m_jsonSetting     = jsonSetting;
         this.m_audioPath       = audioPath;
         this.m_audioCategories = audioCategories;
 
@@ -102,17 +95,10 @@ public class AudioAnnouncer : IAnnouncer
 
     private void ComponentInitialization()
     {
-        JsonInitialization();
         AudioLoaderInitialization();
         CooldownManagerInitialization();
-        PluginConfigPanelInitialization();
     }
 
-    private void JsonInitialization()
-    {
-        if (CheckDoesJsonExists() == false) CreateJson();
-        m_jsonSetting = JsonManager.ReadJson<AnnouncerJsonSetting>(m_jsonName);
-    }
 
     private void AudioLoaderInitialization()
     {
@@ -124,48 +110,13 @@ public class AudioAnnouncer : IAnnouncer
     {
         m_cooldownManager = new CooldownManager(m_audioCategories);
     }
-
-    private void PluginConfigPanelInitialization()
-    {
-        ReflectionManager.LoadByReflection(
-            "greycsont.GreyAnnouncer.RegisterAnnouncerPage", 
-            "Build", 
-            new object[]{m_announcerName, m_jsonSetting, this}
-        );
-    }
-
-    private void RegisterAnnouncer()
-    {
-        AnnouncerManager.RegisterAnnouncer(m_announcerName, this);
-    }
-    #endregion
-
-    #region Json related
-    private bool CheckDoesJsonExists()
-    {
-        return File.Exists(PathManager.GetCurrentPluginPath(m_jsonName));
-    }
-
-    private void CreateJson()
-    {
-        var audioDict = m_audioCategories.ToDictionary(
-            cat => cat,
-            cat => new CategoryAudioSetting 
-            { 
-                Enabled = true,
-                AudioFiles = new List<string> { cat }
-            }
-        );
-        m_jsonSetting = new AnnouncerJsonSetting { CategoryAudioMap = audioDict };
-        JsonManager.CreateJson(m_jsonName, m_jsonSetting);
-    }
     #endregion
 
 
     #region Cooldown related
     public void SetCooldown(string category, float cooldown)
     {
-        m_cooldownManager.StartSharedCooldown(InstanceConfig.sharedRankPlayCooldown.Value);
+        m_cooldownManager.StartSharedCooldown(InstanceConfig.sharedPlayCooldown.Value);
         m_cooldownManager.StartIndividualCooldown(category, cooldown);
     }
     #endregion
@@ -225,6 +176,7 @@ public class AudioAnnouncer : IAnnouncer
         }
 
         SendClipToAudioSource(clip);
+        AnnouncerManager.ClearAudioClipsCache();
     }
 
     private void SendClipToAudioSource(AudioClip clip)
@@ -232,14 +184,14 @@ public class AudioAnnouncer : IAnnouncer
         switch (InstanceConfig.audioPlayOptions.Value)
         {
             case 0:
-                SoloAudioSource.Instance.Play(clip, m_audioSourceConfig);
+                SoloAudioSource.Instance.PlayOneShot(clip, m_audioSourceConfig);
                 break;
             case 1:
-                AudioSourcePool.Instance.Play(clip, m_audioSourceConfig);
+                AudioSourcePool.Instance.PlayOneShot(clip, m_audioSourceConfig);
                 break;
             default:
                 Plugin.log.LogWarning("Invalid play audio options, using the default one");
-                SoloAudioSource.Instance.Play(clip, m_audioSourceConfig);
+                SoloAudioSource.Instance.PlayOneShot(clip, m_audioSourceConfig);
                 break;
         }
     }
@@ -255,23 +207,34 @@ public class AudioAnnouncer : IAnnouncer
     #region Validation related
     private ValidationState GetPlayValidationState(string category)
     {
-        if (m_cooldownManager == null || m_audioLoader == null)
+        if (m_cooldownManager == null || m_audioLoader == null){
             return ValidationState.ComponentsNotInitialized;
+        }
 
-        if (m_audioLoader.audioCategories == null || !m_audioLoader.audioCategories.Contains(category))
+
+        if (m_audioLoader.audioCategories == null || !m_audioLoader.audioCategories.Contains(category)){
             return ValidationState.InvalidKey;
+        }
 
-        if (m_cooldownManager.IsIndividualCooldownActive(category))
+
+        if (m_cooldownManager.IsIndividualCooldownActive(category)){
             return ValidationState.IndividualCooldown;
+        }
+           
 
-        if (m_audioLoader.categoryFailedLoading.Contains(category))
+        if (m_audioLoader.categoryFailedLoading.Contains(category)){
             return ValidationState.AudioFailedLoading;
+        }
 
-        if (m_cooldownManager.IsSharedCooldownActive())
+
+        if (m_cooldownManager.IsSharedCooldownActive()){
             return ValidationState.SharedCooldown;
+        }
 
-        if (!m_jsonSetting.CategoryAudioMap[category].Enabled)
+
+        if (!m_jsonSetting.CategoryAudioMap[category].Enabled){
             return ValidationState.DisabledByConfig;
+        }
 
         return ValidationState.Success;
     }
