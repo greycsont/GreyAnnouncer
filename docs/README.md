@@ -78,12 +78,12 @@ Thanks:
 - The file(s) in the **Lib/** folder are third-party and not authored by me. They are not covered by the License of this project. Please refer to the respective license(s) of those files.
 
 ## License Change
-Starting from version 1.0.2, this project is licensed under different license. Please refer to the [COPYING file](https://github.com/greycsont/GreyAnnouncer/raw/main/COPYING) for the full details on the license change.
+Starting from version 1.0.2, this project is licensed under different license. Please refer to the [COPYING](https://github.com/greycsont/GreyAnnouncer/raw/main/COPYING) for the full details on the license change.
 
 Previous versions were licensed under the MIT License.
 
 ---
-Copyleft (c) 2025 greycsont (also known as csont / 灰喉攻略组)
+Copyleft (c) 2025 greycsont
 
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 

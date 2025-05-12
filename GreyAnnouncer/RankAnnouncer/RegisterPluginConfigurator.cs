@@ -3,6 +3,7 @@ using PluginConfig.API.Fields;
 using PluginConfig.API.Decorators;
 using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 
 namespace greycsont.GreyAnnouncer;
@@ -22,20 +23,23 @@ public static class RegisterRankAnnouncerPage
         ConfigHeader header = new ConfigHeader(panel, m_title);
         header.textColor    = HeaderColor;
 
+        var actionCollection = new Action<BoolField.BoolValueChangeEvent>[]{
+            e => {
+                RankAnnouncerV2.UpdateJson(announcerJsonSetting);
+                Plugin.log.LogInfo($"Updated json setting for {m_title}");
+            }
+        };
+
+
         foreach (var category in announcerJsonSetting.CategoryAudioMap)
         {
             var field = CreateBoolField(
                 panel,
-                category.Key,
+                category.Value.DisplayName,
                 category.Key,
                 announcerJsonSetting,
                 true,
-                new Action<BoolField.BoolValueChangeEvent>[] {
-                    e => {;
-                        RankAnnouncerV2.UpdateJson(announcerJsonSetting);
-                        Plugin.log.LogInfo($"Updated json setting for {m_title}");
-                    }
-                }
+                actionCollection
             );
         }
     }

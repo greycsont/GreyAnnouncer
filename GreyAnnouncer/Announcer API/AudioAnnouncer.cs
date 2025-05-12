@@ -73,6 +73,7 @@ public class AudioAnnouncer
     public void UpdateJsonSetting(AnnouncerJsonSetting jsonSetting)
     {
         this.m_jsonSetting = jsonSetting;
+        m_audioLoader.UpdateAudioFileNames(jsonSetting);
     }
     #endregion
 
@@ -128,7 +129,9 @@ public class AudioAnnouncer
         var validationState = GetPlayValidationState(category);
         if (validationState != ValidationState.Success)
         {
+            #if DEBUG
             Plugin.log.LogInfo($"PlayValidationState: {category}, {validationState}");
+            #endif
             return false;
         }
         return true;
@@ -239,6 +242,5 @@ public class AudioAnnouncer
         return ValidationState.Success;
     }
 
-    
     #endregion
 }

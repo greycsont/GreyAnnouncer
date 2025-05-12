@@ -17,10 +17,21 @@ public static class RankAnnouncerV2
         "U" 
     };
 
+    private static readonly Dictionary<string, string> m_displayNameMapping = new Dictionary<string, string>{   //used only for creating json
+        {"D", "Destruction"},
+        {"C", "Chaotic"},
+        {"B", "Brutal"},
+        {"A", "Anarchic"},
+        {"S", "Supreme"},
+        {"SS", "SSadistic"},
+        {"SSS", "SSShitstorm"},
+        {"U",   "ULTRAKILL"}
+    };
+
     private static readonly AudioAnnouncer       m_announcer     = new AudioAnnouncer();
     private static readonly string               m_jsonName      = "rankSettings.json";
-    private static readonly string               m_pageTitle     = "Style Announcer";
-    private static          AnnouncerJsonSetting m_jsonSetting;
+    private static readonly string               m_pageTitle     = "Rank Announcer";
+    internal static          AnnouncerJsonSetting m_jsonSetting;
 
     public static void Initialize()
     {
@@ -48,7 +59,7 @@ public static class RankAnnouncerV2
 
     private static void SubscribeAnnouncerManager()
     {
-        AnnouncerManager.reloadAnnouncer     += ReloadAudio;
+        AnnouncerManager.reloadAnnouncer     += ReloadAnnouncer;
         AnnouncerManager.resetCooldown       += ResetCooldowns;
         AnnouncerManager.clearAudioClipCache += ClearAudioClipCache;
         AnnouncerManager.updateAnnouncerPath += UpdateAudioPath;
@@ -56,8 +67,10 @@ public static class RankAnnouncerV2
 
 
     #region Subscription
-    private static void ReloadAudio()
+    private static void ReloadAnnouncer()
     {
+        JsonInitialization();
+        UpdateAnnouncerJson();
         m_announcer.ReloadAudio(m_jsonSetting);
     }
 
@@ -97,6 +110,7 @@ public static class RankAnnouncerV2
             cat => new CategoryAudioSetting 
             { 
                 Enabled = true,
+                DisplayName = m_displayNameMapping.TryGetValue(cat, out var name) ? name : cat,
                 AudioFiles = new List<string> { cat }
             }
         );
@@ -107,17 +121,22 @@ public static class RankAnnouncerV2
     public static void UpdateJson(AnnouncerJsonSetting jsonSetting)
     {
         m_jsonSetting = jsonSetting;
-        m_announcer.UpdateJsonSetting(m_jsonSetting);
-        JsonManager.WriteJson(m_jsonName, m_jsonSetting);
+        UpdateAnnouncerJson();
     }
     #endregion
 
     private static void PluginConfigPanelInitialization(string announcerName, AnnouncerJsonSetting jsonSetting)
     {
         ReflectionManager.LoadByReflection(
-            "greycsont.GreyAnnouncer.RegisterAnnouncerPage", 
+            "greycsont.GreyAnnouncer.RegisterRankAnnouncerPage", 
             "Build", 
             new object[]{announcerName, jsonSetting}
         );
+    }
+
+    private static void UpdateAnnouncerJson()
+    {
+        m_announcer.UpdateJsonSetting(m_jsonSetting);
+        JsonManager.WriteJson(m_jsonName, m_jsonSetting);
     }
 }

@@ -11,5 +11,7 @@ public class AnnouncerJsonSetting
 public class CategoryAudioSetting
 {
     public bool         Enabled    { get; set; } = true;
+    public string       DisplayName { get; set; }
     public List<string> AudioFiles { get; set; } = new List<string>();
+
 }

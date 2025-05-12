@@ -27,7 +27,10 @@ public class AudioLoader
     {
         this.m_audioPath      = audioPath;
         this.audioCategories  = audioCategories;
-        this.m_audioFileNames = GetAudioFileNames(jsonSetting);
+        this.m_audioFileNames = jsonSetting.CategoryAudioMap.ToDictionary(
+            kvp => kvp.Key,
+            kvp => kvp.Value.AudioFiles
+        );
     }
     #endregion
 
@@ -39,7 +42,6 @@ public class AudioLoader
             Plugin.log.LogError("Cannot update with empty or null paths");
             return;
         }
-
         Plugin.log.LogInfo($"Updating audio paths and reloading audio...");
         this.m_audioPath = newAudioPath;
     }
@@ -81,7 +83,10 @@ public class AudioLoader
 
     public void UpdateAudioFileNames(AnnouncerJsonSetting jsonSetting)
     {
-        this.m_audioFileNames = GetAudioFileNames(jsonSetting);
+        this.m_audioFileNames = jsonSetting.CategoryAudioMap.ToDictionary(
+            kvp => kvp.Key,
+            kvp => kvp.Value.AudioFiles
+        );;
     }
 
     public void ClearCache()
@@ -133,8 +138,11 @@ public class AudioLoader
             LogCategoryFailure(category, "No valid files found");
             return null;
         }
-
+        
+        #if DEBUG
         Plugin.log.LogInfo($"Loading category {category} with {validFiles.Count} files");
+        #endif
+        
         
         var clipLoadingTasks = validFiles
             .Select(path => LoadAudioClipAsync(path));
@@ -279,17 +287,6 @@ public class AudioLoader
     }
     #endregion
 
-    #region Dictionary Helper
-    private Dictionary<string, List<string>> GetAudioFileNames(AnnouncerJsonSetting jsonSetting)
-    {
-        return jsonSetting.CategoryAudioMap.ToDictionary(
-            kvp => kvp.Key,
-            kvp => kvp.Value.AudioFiles
-        );
-    }
-    #endregion
-
-    
     #region Utility Methods
     private AudioType? GetUnityAudioType(string extension)
     {

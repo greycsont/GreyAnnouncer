@@ -1,0 +1,11 @@
+E:\SteamLibrary\steamapps\common\ULTRAKILL\BepInEx\plugins\GreyAnnouncer\net472\publish\GreyAnnouncer.dll
+E:\SteamLibrary\steamapps\common\ULTRAKILL\BepInEx\plugins\GreyAnnouncer\net472\publish\GreyAnnouncer.pdb
+E:\SteamLibrary\steamapps\common\ULTRAKILL\BepInEx\plugins\GreyAnnouncer\net472\publish\BepInEx.dll
+E:\SteamLibrary\steamapps\common\ULTRAKILL\BepInEx\plugins\GreyAnnouncer\net472\publish\0Harmony.dll
+E:\SteamLibrary\steamapps\common\ULTRAKILL\BepInEx\plugins\GreyAnnouncer\net472\publish\Mono.Cecil.Mdb.dll
+E:\SteamLibrary\steamapps\common\ULTRAKILL\BepInEx\plugins\GreyAnnouncer\net472\publish\Mono.Cecil.Pdb.dll
+E:\SteamLibrary\steamapps\common\ULTRAKILL\BepInEx\plugins\GreyAnnouncer\net472\publish\Mono.Cecil.Rocks.dll
+E:\SteamLibrary\steamapps\common\ULTRAKILL\BepInEx\plugins\GreyAnnouncer\net472\publish\Mono.Cecil.dll
+E:\SteamLibrary\steamapps\common\ULTRAKILL\BepInEx\plugins\GreyAnnouncer\net472\publish\MonoMod.RuntimeDetour.dll
+E:\SteamLibrary\steamapps\common\ULTRAKILL\BepInEx\plugins\GreyAnnouncer\net472\publish\MonoMod.Utils.dll
+E:\SteamLibrary\steamapps\common\ULTRAKILL\BepInEx\plugins\GreyAnnouncer\net472\publish\Newtonsoft.Json.dll

@@ -22,6 +22,7 @@ public static class StyleHUDAscendRank_Patch
     }
 }
 
+
 [HarmonyPatch(typeof(StyleHUD), "ComboStart")]
 public class StyleHUDComboStart_Patch
 {

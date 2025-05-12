@@ -10,9 +10,13 @@ namespace greycsont.GreyAnnouncer;
 
 public static class MainPanelBuilder
 {
-    private static readonly Color              m_headerColor        = new Color(0.85f, 0.85f, 0.85f, 1f);
+    private static readonly Color              m_greyColour        = new Color(0.85f, 0.85f, 0.85f, 1f);
+    private static readonly Color              m_CyanColour        = new Color(0f, 1f, 1f, 1f);
+    private static readonly Color              m_OrangeColour      = new Color(1f, 0.6f, 0.2f, 1f);
     private static          PluginConfigurator m_pluginConfigurator;
     public  static          ConfigHeader       logHeader;
+
+    private static          ConfigPanel        advancedPanel;
 
     public static void Build(PluginConfigurator config)
     {
@@ -22,7 +26,7 @@ public static class MainPanelBuilder
         CreateCooldownControls();
         CreateAudioControls();
         CreateAdvancedOptionPanel();
-        Test();
+        CreateAnnouncerSection();
     }
 
     private static void CreateMainSettingSectionTitle()
@@ -30,19 +34,15 @@ public static class MainPanelBuilder
         new ConfigSpace(m_pluginConfigurator.rootPanel, 15f);
 
         ConfigHeader mainHeader = new ConfigHeader(m_pluginConfigurator.rootPanel, "Main Settings");
-        mainHeader.textColor    = m_headerColor;
+        mainHeader.textColor    = m_CyanColour;
 
-        logHeader = new ConfigHeader(m_pluginConfigurator.rootPanel, "");
-        logHeader.tmpAnchor = TMPro.TextAlignmentOptions.TopLeft;
-        logHeader.textSize  = 12;
-        logHeader.textColor = new Color (0f, 1f, 1f);
     }
 
     private static void CreateCooldownControls()
     {
         var sharedCooldown = new FloatField(
             m_pluginConfigurator.rootPanel,
-            "Shared cooldown",
+            "Shared Cooldown",
             "sharedPlayCooldown",
             InstanceConfig.sharedPlayCooldown.Value, 0f, 114514f
         );
@@ -55,7 +55,7 @@ public static class MainPanelBuilder
 
         var individualCooldown = new FloatField(
             m_pluginConfigurator.rootPanel,
-            "Individual cooldown",
+            "Individual Cooldown",
             "individualPlaycooldown",
             InstanceConfig.individualPlayCooldown.Value, 0f, 1113f
         );
@@ -123,25 +123,12 @@ public static class MainPanelBuilder
             }
         };
 
-        var audioFolderPath = new StringField(
-            m_pluginConfigurator.rootPanel,
-            "Audio Folder Path",
-            "Audio_Folder_Path",
-            InstanceConfig.audioFolderPath.Value
-        );
-        audioFolderPath.defaultValue   = InstanceConfig.DEFAULT_AUDIO_FOLDER_PATH;
-        audioFolderPath.onValueChange += e =>
-        {
-            InstanceConfig.audioFolderPath.Value = e.value;
-            AnnouncerManager.UpdateAllAnnouncerPaths();
-        };
-
         var audioButtonArray = new ButtonArrayField(
             m_pluginConfigurator.rootPanel,
             "audio_button_array",
-            2,
-            new float[] { 0.5f, 0.5f },
-            new string[] { "Open audio folder", "Reload Audio" }
+            3,
+            new float[] { 0.4f, 0.4f, 0.2f },
+            new string[] { "Open Audio Folder", "Reload Audio", "Advance" }
             // 2 button
             // width of two buttons ( sum = 1f ) 
             // Two button's text
@@ -154,20 +141,35 @@ public static class MainPanelBuilder
         {
             ReloadAllAnnouncers();
         };
+        audioButtonArray.OnClickEventHandler(2).onClick += () =>
+        {
+            advancedPanel.OpenPanel();
+        };
 
     }
 
     private static void CreateAdvancedOptionPanel()
     {
-        ConfigPanel advancedPanel = new ConfigPanel(m_pluginConfigurator.rootPanel, "Advanced Option", "Advanced_Option");
+        advancedPanel = new ConfigPanel(m_pluginConfigurator.rootPanel, "Advanced Option", "Advanced_Option");
+        advancedPanel.hidden = true;
         new ConfigSpace(advancedPanel, 15f);
 
-        ConfigHeader header       = new ConfigHeader(advancedPanel, "Audio Frequency Filter");
-        header.textColor          = m_headerColor;
+        var audioFolderPath = new StringField(
+            advancedPanel,
+            "Audio Folder Path",
+            "Audio_Folder_Path",
+            InstanceConfig.audioFolderPath.Value
+        );
+        audioFolderPath.defaultValue   = InstanceConfig.DEFAULT_AUDIO_FOLDER_PATH;
+        audioFolderPath.onValueChange += e =>
+        {
+            InstanceConfig.audioFolderPath.Value = e.value;
+            AnnouncerManager.UpdateAllAnnouncerPaths();
+        };
 
         BoolField lowpassToggle   = new BoolField(
             advancedPanel,
-            "Filtering when under water",
+            "Muffle When Under Water",
             "LowPassFilter_Enabled",
             InstanceConfig.isLowPassFilterEnabled.Value
         );
@@ -179,9 +181,16 @@ public static class MainPanelBuilder
         };
     }
 
-    private static void Test()
+    private static void CreateAnnouncerSection()
     {
+        new ConfigSpace(m_pluginConfigurator.rootPanel, 15f);
+        var announcerHeader = new ConfigHeader(m_pluginConfigurator.rootPanel, "Announcer Section");
+        announcerHeader.textColor = m_OrangeColour;
 
+        logHeader = new ConfigHeader(m_pluginConfigurator.rootPanel, "");
+        logHeader.tmpAnchor = TMPro.TextAlignmentOptions.TopLeft;
+        logHeader.textSize  = 12;
+        logHeader.textColor = m_CyanColour;
     }
 
     #region enum
