@@ -14,8 +14,8 @@ public class AudioSourcePool : MonoBehaviour
     #endregion
 
     #region Public Fields
-    public                  int                                                  initialSize          = 3;
-    public                  int                                                  maxSize              = 5;
+    public                  int                                                  initialSize          = 2;
+    public                  int                                                  maxSize              = 7;
     #endregion
 
 

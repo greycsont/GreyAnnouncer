@@ -13,10 +13,10 @@ namespace greycsont.GreyAnnouncer;
 public class AudioLoader                                          
 {
     #region Properties
-    public string[]                            audioCategories       { get; private set; }
-    public HashSet<string>                     categoryFailedLoading { get; private set; } = new HashSet<string>();
-    private Dictionary<string, List<AudioClip>> m_audioClips                               = new Dictionary<string, List<AudioClip>>();
-    private Dictionary<string, List<string>>    m_audioFileNames;
+    public string[]                             audioCategories       { get; private set; }
+    public HashSet<string>                      categoryFailedLoading { get; private set; } = new HashSet<string>();
+    private Dictionary<string, List<AudioClip>> m_audioClips          = new Dictionary<string, List<AudioClip>>();
+    private AnnouncerJsonSetting                m_jsonSetting;
     private string                              m_audioPath;
     #endregion
 
@@ -27,10 +27,7 @@ public class AudioLoader
     {
         this.m_audioPath      = audioPath;
         this.audioCategories  = audioCategories;
-        this.m_audioFileNames = jsonSetting.CategoryAudioMap.ToDictionary(
-            kvp => kvp.Key,
-            kvp => kvp.Value.AudioFiles
-        );
+        this.m_jsonSetting    = jsonSetting;
     }
     #endregion
 
@@ -71,22 +68,26 @@ public class AudioLoader
 
     public async Task<AudioClip> LoadSingleAudioClipAsync(string category)
     {
-        var clips = await LoadCategoryAsync(category);
-        if (clips == null || clips.Count == 0)
+        if (!TryGetValidAudioFiles(category, out var validFiles))
         {
-            Plugin.log.LogError($"Failed to load audio clip for key: {category}");
             return null;
         }
 
-        return SelectAudioClipRandomly(clips);
+        string selectedPath = validFiles[UnityEngine.Random.Range(0, validFiles.Count)];
+        var clip = await LoadAudioClipAsync(selectedPath);
+
+        if (clip == null)
+        {
+            LogCategoryFailure(category, "Selected file failed to load");
+        }
+
+        return clip;
     }
+
 
     public void UpdateAudioFileNames(AnnouncerJsonSetting jsonSetting)
     {
-        this.m_audioFileNames = jsonSetting.CategoryAudioMap.ToDictionary(
-            kvp => kvp.Key,
-            kvp => kvp.Value.AudioFiles
-        );;
+        this.m_jsonSetting = jsonSetting;
     }
 
     public void ClearCache()
@@ -122,27 +123,14 @@ public class AudioLoader
     
     private async Task<List<AudioClip>> LoadCategoryAsync(string category)
     {
-        if (!m_audioFileNames.TryGetValue(category, out var fileNames))
+        if (!TryGetValidAudioFiles(category, out var validFiles))
         {
-            LogCategoryFailure(category, "No file names configured");
-            return null;
-        }
-
-        var validFiles = fileNames
-            .Select(name => PathManager.GetFileWithExtension(m_audioPath, name))
-            .Where(File.Exists)
-            .ToList();
-
-        if (validFiles.Count == 0)
-        {
-            LogCategoryFailure(category, "No valid files found");
             return null;
         }
         
         #if DEBUG
         Plugin.log.LogInfo($"Loading category {category} with {validFiles.Count} files");
         #endif
-        
         
         var clipLoadingTasks = validFiles
             .Select(path => LoadAudioClipAsync(path));
@@ -277,7 +265,7 @@ public class AudioLoader
         foreach (var category in audioCategories)
         {
             int loaded = m_audioClips.TryGetValue(category, out var clips) ? clips.Count : 0;
-            int total = m_audioFileNames.TryGetValue(category, out var files) ? files.Count : 0;
+            int total = m_jsonSetting.CategoryAudioMap.TryGetValue(category, out var setting) ? setting.AudioFiles.Count : 0;
             builder.AppendLine($"{category} ({loaded}/{total})");
         }
 
@@ -290,6 +278,7 @@ public class AudioLoader
     #region Utility Methods
     private AudioType? GetUnityAudioType(string extension)
     {
+        // fuck unity
         return extension switch
         {
             ".wav"  => AudioType.WAV,
@@ -297,7 +286,7 @@ public class AudioLoader
             ".ogg"  => AudioType.OGGVORBIS,
             ".aiff" => AudioType.AIFF,
             ".aif"  => AudioType.AIFF,
-            ".acc"  => AudioType.ACC,   //fuck unity
+            ".acc"  => AudioType.ACC,
             _       => null
         };
     }
@@ -315,6 +304,33 @@ public class AudioLoader
             Plugin.log.LogWarning($"Audio directory not found: {m_audioPath}");
             Directory.CreateDirectory(m_audioPath);
         }
+    }
+
+    private bool TryGetValidAudioFiles(string category, out List<string> validFiles)
+    {
+        validFiles = null;
+
+        if (!m_jsonSetting.CategoryAudioMap.TryGetValue(category, out var categorySetting)
+            || categorySetting.AudioFiles == null
+            || categorySetting.AudioFiles.Count == 0)
+        {
+            LogCategoryFailure(category, "No file names configured");
+            return false;
+        }
+
+        var fileNames = categorySetting.AudioFiles;
+        validFiles = fileNames
+            .Select(name => PathManager.GetFileWithExtension(m_audioPath, name))
+            .Where(File.Exists)
+            .ToList();
+
+        if (validFiles.Count == 0)
+        {
+            LogCategoryFailure(category, "No valid files found");
+            return false;
+        }
+
+        return true;
     }
     #endregion
 }
