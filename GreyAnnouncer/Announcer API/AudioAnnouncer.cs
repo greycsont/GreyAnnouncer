@@ -156,7 +156,15 @@ public class AudioAnnouncer
     
     private void PlayAudioClipFromAudioClips(string category)
     {
-        var clip = m_audioLoader.GetClipFromAudioClips(category);
+        AudioClip clip = null;
+        if (false == true)
+        {
+            clip = m_audioLoader.GetClipFromAudioClips(category);
+        }
+        else
+        {
+            clip = m_audioLoader.GetRandomClipFromAudioClips();
+        }
         if (clip == null) return;
 
         SendClipToAudioSource(clip);
@@ -164,9 +172,19 @@ public class AudioAnnouncer
 
     private async Task LoadAndPlayAudioClip(string category)
     {
+        AudioClip clip = null;
+
         var currentRequestId = ++AnnouncerManager.playRequestId;
 
-        var clip = await m_audioLoader.LoadSingleAudioClipAsync(category);
+        if (false == true)
+        {
+            clip = await m_audioLoader.LoadAndGetSingleAudioClipAsync(category);
+        }
+        else
+        {
+            clip = await m_audioLoader.GetRandomClipFromAllAvailableFiles();
+        }
+
         if (clip == null) return;
 
         if (

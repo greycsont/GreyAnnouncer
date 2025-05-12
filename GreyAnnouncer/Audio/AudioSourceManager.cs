@@ -16,6 +16,8 @@ public class AudioSourceManager
         return audioSource;
     }
 
+// The values of lowPassFilter are directly copied from ULTRAKILL
+//
     public static AudioSource AddLowPassFilter(AudioSource audioSource)
     {
         if (audioSource == null) return null;

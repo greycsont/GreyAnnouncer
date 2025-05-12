@@ -15,7 +15,7 @@ namespace greycsont.GreyAnnouncer;
 public class Plugin : BaseUnityPlugin
 {
     internal static ManualLogSource log;
-    private         Harmony         m_harmony;  // patch
+    private         Harmony         m_harmony;
 
     private void Awake()
     {
