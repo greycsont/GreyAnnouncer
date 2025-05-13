@@ -190,6 +190,7 @@ public static class MainPanelBuilder
         audioRandomizationToggle.onValueChange += (e) =>
         {
             InstanceConfig.isAudioRandomizationEnabled.Value = e.value;
+            Plugin.log.LogInfo($"Switch audio randomization : {e.value}");
         }; 
     }
 

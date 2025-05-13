@@ -241,11 +241,6 @@ public class AudioAnnouncer
         if (m_cooldownManager.IsIndividualCooldownActive(category)){
             return ValidationState.IndividualCooldown;
         }
-           
-
-        if (m_audioLoader.categoryFailedLoading.Contains(category)){
-            return ValidationState.AudioFailedLoading;
-        }
 
 
         if (m_cooldownManager.IsSharedCooldownActive()){

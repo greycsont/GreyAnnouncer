@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace greycsont.GreyAnnouncer;
@@ -40,7 +41,11 @@ public class CooldownManager
 
     public void ResetCooldowns()
     {
-        m_individualCooldowns.Clear();
+        var keys = m_individualCooldowns.Keys.ToList();
+        foreach (var key in keys)
+        {
+            m_individualCooldowns[key] = 0f;
+        }
     }
     #endregion
 

@@ -6,7 +6,6 @@ using System;
 using System.Threading.Tasks;
 using UnityEngine.Networking;
 using System.ComponentModel;
-using GameConsole;
 
 namespace greycsont.GreyAnnouncer;
 
@@ -55,6 +54,12 @@ public class AudioLoader
 
     public AudioClip GetClipFromAudioClips(string category)
     {
+        if (categoryFailedLoading.Contains(category))
+        {
+            Plugin.log.LogInfo($"Category failed loaded : {category}");
+            return null;
+        }
+
         if (audioCategories.Contains(category) == false)
         {
             Plugin.log.LogWarning($"Invalid audio category: {category}");
@@ -62,7 +67,11 @@ public class AudioLoader
         }
 
         if (!m_audioClips.TryGetValue(category, out var clips) || clips.Count == 0)
+        {
+            Plugin.log.LogWarning($"Not found clips inside : {category}");
             return null;
+        }
+
             
         int randomIndex = UnityEngine.Random.Range(0, clips.Count);
         return clips[randomIndex];
