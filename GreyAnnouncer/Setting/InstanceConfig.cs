@@ -12,19 +12,23 @@ public static class InstanceConfig
     public static          ConfigEntry<string>                   audioFolderPath;
     public static          ConfigEntry<int>                      audioPlayOptions;
     public static          ConfigEntry<int>                      audioLoadingOptions;
+    public static          ConfigEntry<bool>                     isAudioRandomizationEnabled;
 
     public static readonly Dictionary<string, (string section, string name, object defaultValue, string description)> ConfigEntries = new()
     {
         // "Cooldown" section
-        { "SharedRankCooldown",     ("Cooldown",      "Shared_rank_play_cooldown",           DEFAULT_SHARED_PLAY_COOLDOWN,     "Shared rank play cooldown (in secs)") },
-        { "IndividualRankCooldown", ("Cooldown",      "Individual_rank_play_cooldown",       DEFAULT_INDIVIDUAL_PLAY_COOLDOWN, "Individual rank play cooldown (in secs)") },
+        { "SharedRankCooldown",     ("Cooldown", "Shared_rank_play_cooldown",           DEFAULT_SHARED_PLAY_COOLDOWN,         "Shared rank play cooldown (in secs)") },
+        { "IndividualRankCooldown", ("Cooldown", "Individual_rank_play_cooldown",       DEFAULT_INDIVIDUAL_PLAY_COOLDOWN,     "Individual rank play cooldown (in secs)") },
 
         // "Audio" section
-        { "AudioSourceVolume",      ("Audio",         "Audio_source_volume",                 DEFAULT_AUDIO_SOURCE_VOLUME,      "Volume of the Announcer ( Range : 0f ~ 1f )") },
-        { "LowPassFilter",          ("Audio",         "Under_water_low_pass_filter_Enabled", DEFAULT_LOW_PASS_FILTER_ENABLED,  "Set to true to enable muffle effect when under water") },
-        { "AudioFolderPath",        ("Audio",         "Audio_folder_path",                   DEFAULT_AUDIO_FOLDER_PATH,        "Path to the audio folder") },
-        { "AudioPlayOptions",       ("Audio",         "Audio_Play_Option",                   DEFAULT_AUDIO_PLAY_OPTIONS,       "0 : new audio will override the old one, 1 : audio will not effect each other") },
-        { "AudioLoadingOption",     ("Audio",         "Audio_Loading_Option",                DEFAULT_AUDIO_LOADING_OPTIONS,     "0 : load clip from file (less RAM more latency), 1 : preload clip to games (less latency more RAM)") }
+        { "AudioSourceVolume",      ("Audio",    "Audio_source_volume",                 DEFAULT_AUDIO_SOURCE_VOLUME,          "Volume of the Announcer ( Range : 0f ~ 1f )") },
+        { "LowPassFilter",          ("Audio",    "Under_water_low_pass_filter_Enabled", DEFAULT_LOW_PASS_FILTER_ENABLED,      "Set to true to enable muffle effect when under water") },
+        { "AudioFolderPath",        ("Audio",    "Audio_folder_path",                   DEFAULT_AUDIO_FOLDER_PATH,            "Path to the audio folder") },
+        { "AudioPlayOptions",       ("Audio",    "Audio_Play_Option",                   DEFAULT_AUDIO_PLAY_OPTIONS,           "0 : new audio will override the old one, 1 : audio will not effect each other") },
+        { "AudioLoadingOption",     ("Audio",    "Audio_Loading_Option",                DEFAULT_AUDIO_LOADING_OPTIONS,        "0 : load clip from file (less RAM more latency), 1 : preload clip to games (less latency more RAM)") },
+
+        // "Advanced" section
+        { "Randomization",         ("Advacned", "Audio_Randomization",                DEFAULT_AUDIO_RANDOMIZATION_ENABLED, "Set to true to enable audio randomlization of announcer (randomly selected a available audio)")}
     };
     
     public static void Initialize(Plugin plugin)
@@ -59,7 +63,8 @@ public static class InstanceConfig
                 (bool)defaultValue,
                 description
             );
-            if (name == "Under_water_low_pass_filter_Enabled") isLowPassFilterEnabled = configEntry;
+            if      (name == "Under_water_low_pass_filter_Enabled") isLowPassFilterEnabled       = configEntry;
+            else if (name == "Audio_Randomization")                isAudioRandomizationEnabled = configEntry;
         }
         else if (defaultValue is float)
         {
@@ -72,7 +77,7 @@ public static class InstanceConfig
 
             if      (name == "Shared_rank_play_cooldown")     sharedPlayCooldown     = configEntry;
             else if (name == "Individual_rank_play_cooldown") individualPlayCooldown = configEntry;
-            else if (name == "Audio_source_volume")           audioSourceVolume          = configEntry;
+            else if (name == "Audio_source_volume")           audioSourceVolume      = configEntry;
             
         }
         else if (defaultValue is string)
@@ -94,7 +99,7 @@ public static class InstanceConfig
                 (int)defaultValue,
                 description
             );
-            if (name == "Audio_Play_Option") audioPlayOptions = configEntry;
+            if      (name == "Audio_Play_Option")    audioPlayOptions    = configEntry;
             else if (name == "Audio_Loading_Option") audioLoadingOptions = configEntry;
         }
         else
@@ -150,6 +155,13 @@ public static class InstanceConfig
     {
         get => m_defaultAudioLoadingOptions < 2 ? m_defaultAudioLoadingOptions : 0;
         private set => m_defaultAudioLoadingOptions = value;
+    }
+
+    private static bool m_defaultAudioRandomizationEnabled = false;
+    public static bool DEFAULT_AUDIO_RANDOMIZATION_ENABLED
+    {
+        get => m_defaultAudioRandomizationEnabled;
+        private set => m_defaultAudioRandomizationEnabled = value;
     }
 }
 

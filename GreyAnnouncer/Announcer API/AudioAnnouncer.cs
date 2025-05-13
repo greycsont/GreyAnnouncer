@@ -157,7 +157,7 @@ public class AudioAnnouncer
     private void PlayAudioClipFromAudioClips(string category)
     {
         AudioClip clip = null;
-        if (false == true)
+        if (InstanceConfig.isAudioRandomizationEnabled.Value == false)
         {
             clip = m_audioLoader.GetClipFromAudioClips(category);
         }
@@ -176,7 +176,7 @@ public class AudioAnnouncer
 
         var currentRequestId = ++AnnouncerManager.playRequestId;
 
-        if (false == true)
+        if (InstanceConfig.isAudioRandomizationEnabled.Value == false)
         {
             clip = await m_audioLoader.LoadAndGetSingleAudioClipAsync(category);
         }

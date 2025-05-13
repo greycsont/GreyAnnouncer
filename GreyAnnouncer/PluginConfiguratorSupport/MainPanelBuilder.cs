@@ -167,7 +167,7 @@ public static class MainPanelBuilder
             AnnouncerManager.UpdateAllAnnouncerPaths();
         };
 
-        BoolField lowpassToggle   = new BoolField(
+        var lowpassToggle   = new BoolField(
             advancedPanel,
             "Muffle When Under Water",
             "LowPassFilter_Enabled",
@@ -179,6 +179,18 @@ public static class MainPanelBuilder
             InstanceConfig.isLowPassFilterEnabled.Value = e.value;
             UnderwaterController_inWater_Instance.CheckIsInWater();
         };
+
+        var audioRandomizationToggle = new BoolField(
+            advancedPanel, 
+            "Audio Randomlization", 
+            "Audio_Randomlization", 
+            InstanceConfig.isAudioRandomizationEnabled.Value
+        );
+        audioRandomizationToggle.defaultValue   = false;
+        audioRandomizationToggle.onValueChange += (e) =>
+        {
+            InstanceConfig.isAudioRandomizationEnabled.Value = e.value;
+        }; 
     }
 
     private static void CreateAnnouncerSection()
