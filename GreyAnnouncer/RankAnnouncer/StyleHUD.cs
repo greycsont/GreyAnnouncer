@@ -36,7 +36,7 @@ public class StyleHUDComboStart_Patch
     }
 }
 
-/*[HarmonyPatch(typeof(StyleHUD), "UpdateMeter")]  // For D rank only
+/*[HarmonyPatch(typeof(StyleHUD), "UpdateMeter")]  // For D rank only, left for review silly code, why do you want to patch a Update() function? 
 public static class StyleHUDUpdateMeter_Patch
 {
     private static readonly AccessTools.FieldRef<StyleHUD, float> currentMeterRef = AccessTools.FieldRefAccess<StyleHUD, float>("currentMeter");
