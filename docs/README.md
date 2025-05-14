@@ -44,7 +44,7 @@ You can customize the audio name in the **RankAnnouncer.json** which is **near t
 
 The default audio name given in the below:
 
-<img align="right" width="150" src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/customAudioName.png">
+<img align="right" width="200" src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/customAudioName.png">
 
 - `D`
 
