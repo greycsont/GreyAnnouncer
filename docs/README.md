@@ -3,20 +3,17 @@
 </div>
 <br>
 
-![License](https://img.shields.io/badge/License-AGPL--3.0-blue.svg) ![License](https://img.shields.io/badge/License-PostgreSQL-blue.svg)
-##### Supported and Unsupported Audio Formats
+##### Supported Audio Formats
 
 | Format      | Supported |                 
 |-------------|-----------|
 | `.mp3`      | ✅        |       
-| `.wav`      | ✅        |               
-| `.aac`      | not tested|           
-| `.ogg`      | not tested|                  
-| `.aiff/.aif`| not tested|
+| `.wav`      | ✅        |
+
+`aac, ogg, aiff/aif not tested yet`
 
 ## Mod description
-It will plays a **audio** when you reach to a higher style rank!
-( The mod itself doesn't include any audio )
+IDK how to describe this shitpost
 1. [Installation](#how-to-install-it)
 2. [Add audio](#how-to-add-the-audio)
 3. [Audio File naming](#audio-file-naming)
@@ -34,27 +31,40 @@ It will plays a **audio** when you reach to a higher style rank!
 
 ## How to add the audio
 After you install the mod and dependencies (BepInex and PluginConfigurator), Click the *Open Audio Folder* button then drag audio inside.
+
 <img src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/open_Audio_Folder.png">
+
 ## Audio File Naming
 
 You can customize the audio name in the **RankAnnouncer.json** which is **near the plugin**.
+
+`Size of files may different in this image`
 <img src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/file_structure_CLI.png">
-`Font used : Comic Mono`
+`Font : Comic Mono`
 
- the default audio name given in the below:
+The default audio name given in the below:
 
-<img align="right" width="180" src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/customAudioName.png">
+<img align="left" width="180" src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/customAudioName.png">
 
-- `D`
-- `C`
-- `B`
-- `A`
-- `S`
-- `SS`
-- `SSS`
-- `U`
-
+- ` D`
+<br>
+- ` C`
+<br>
+- ` B`
+<br>
+- ` A`
+<br>
+- ` S`
+<br>
+- ` SS`
+<br>
+- ` SSS`
+<br>
+- ` U`
 `Theme : One Dark Pro Monokai Darker`
+
+Make sure when you edit it and the game is running, click `Reload` button [in the right of Open Audio Folder button](#how-to-add-the-audio) after you change the .json
+`Or the game will be overwritten your setting`
 
 ## How to customize other setting
 - Download and Using [PluginConfigurator](https://thunderstore.io/c/ultrakill/p/EternalsTeam/PluginConfigurator/) to edit in-game.
@@ -63,16 +73,12 @@ You can customize the audio name in the **RankAnnouncer.json** which is **near t
 if you have any throuble with the mod, feel free to ask in 
 - [Github issue](https://github.com/greycsont/GreyAnnouncer/issues)
 - Email : 1106230622@qq.com
-- Discrod : csont.0721
+- Discord : csont.0721
 
 ## Resources
-- [1] BepInEX, used under GUN Lesser General Public License (LGPL) Version 2.1
-- [2] PluginConfigurator by eternalUnion, used under MIT License
-- [3] Newtonsoft.json by JamesNK, used under MIT License
-- [4] harmonyX, used under MIT License
-- [5] Krita, used under GNU General Public License (GPL) Version 3.0
-- [6] Samigirian by Siphercase, used under SIL Open Font License (OFL) Version 1.1
-- [7] D-DIN by datto, used under SIL Open Font License (OFL) Version 1.1
+- [1] Krita, used under GNU General Public License (GPL) Version 3.0
+- [2] Samigirian by Siphercase, used under SIL Open Font License (OFL) Version 1.1
+- [3] D-DIN by datto, used under SIL Open Font License (OFL) Version 1.1
   
 ## Credit
 Thanks:
@@ -97,7 +103,7 @@ Copyleft (c) 2025 greycsont
 
 
 ###### Easter egg
-The ULTRA_REVAMP update DESTROYed my favorite mod, So ......
-(But the mod updated to the ULTRA_REVAMP, please check **Announcer** in the Thanks)
-- [greycsont](https://space.bilibili.com/408475448)
-- [快乐萨卡兹厨](https://space.bilibili.com/93667339)
+There's a audio randomization preview if you want to see it.
+ [bilibili Link](https://www.bilibili.com/video/BV1Rf7RzGEZZ)
+
+
