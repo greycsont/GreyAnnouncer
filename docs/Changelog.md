@@ -1,15 +1,19 @@
 ### Known issue/TODO
-- reflection access
+- remove hard dependence of PluginConfigurator
 
 ### v1.0.2
 - Fixed when you quit the mission in the water, the muffle effect still exists when playing audio.
 - Changed the mod's icon, the old icon directly uses the Arknights's mini greythroat asset.
 - Some changes of license (fixed/added the Lib\ folder that does not include in License, This folder includes assembly-sharp of ULTRAKILL, PluginConfigurator and some unity assets).
+
 - Added parallel audio playing option for future idea.
-- Added Load-and-Play loading options for RAM performance.
+- Added Load-then-Play loading options for RAM performance.
 - Added loading log in PluginConfigurator to see the loading status
+- Added Audio randomization
+- Added Custom Audio directory
+- Added multiple audio in a single category
+
 - switch to using BepInex's config to customize audio loading path (Default path is the legacy method, you can edit it easily via PluginConfigurator).
-- Added more audio loading in a single category
 - RECONSTRUCT the code architecture.
 - removed patch to update() in StyleHUD.cs
 
