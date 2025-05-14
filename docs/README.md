@@ -38,7 +38,7 @@ After you install the mod and dependencies (BepInex and PluginConfigurator), Cli
 
 You can customize the audio name in the **RankAnnouncer.json** which is **near the plugin**.
 
-`Size of files may different in this image`
+`Size of files may different compare to this image`
 <img src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/file_structure_CLI.png">
 `Font : Comic Mono`
 
@@ -73,7 +73,7 @@ Make sure when you edit it and the game is running, click `Reload` button [in th
 if you have any throuble with the mod, feel free to ask in 
 - [Github issue](https://github.com/greycsont/GreyAnnouncer/issues)
 - Email : 1106230622@qq.com
-- Discord : csont.0721
+- Discord : username : csont.0721
 
 ## Resources
 - [1] Krita, used under GNU General Public License (GPL) Version 3.0
@@ -96,14 +96,11 @@ Starting from version 1.1.0, this project is licensed under different license. P
 
 Previous versions were licensed under the MIT License.
 
----
+---                     
 Copyleft (c) 2025 greycsont
 
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 
 ###### Easter egg
-There's a audio randomization preview if you want to see it.
- [bilibili Link](https://www.bilibili.com/video/BV1Rf7RzGEZZ)
-
-
+The DMC3 Crimson beta version have released in 2025/5/14!

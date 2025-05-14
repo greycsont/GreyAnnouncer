@@ -197,7 +197,6 @@ public class AudioAnnouncer
         }
 
         SendClipToAudioSource(clip);
-        AnnouncerManager.ClearAudioClipsCache();
     }
 
     private void SendClipToAudioSource(AudioClip clip)
