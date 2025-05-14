@@ -33,10 +33,14 @@ It will plays a **audio** when you reach to a higher style rank!
 
 
 ## How to add the audio
-After you install the mod and dependencies (BepInex and PluginConfigurator), you can find **Open Folder** button in the 
+After you install the mod and dependencies (BepInex and PluginConfigurator), Click the *Open Audio Folder* button then drag audio inside.
+<img src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/open_Audio_Folder.png">
 ## Audio File Naming
 
-You can customize the audio name in the **rankAnnouncer.json** which is **near the plugin**. the default audio name given in the below:
+You can customize the audio name in the **RankAnnouncer.json** which is **near the plugin**.
+<img src="">
+
+ the default audio name given in the below:
 
 <img align="right" width="180" src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/customAudioName.png">
 

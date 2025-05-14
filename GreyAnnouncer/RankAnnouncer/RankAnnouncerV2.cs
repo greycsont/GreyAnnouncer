@@ -29,7 +29,7 @@ public static class RankAnnouncerV2
     };
 
     private static readonly AudioAnnouncer       m_announcer     = new AudioAnnouncer();
-    private static readonly string               m_jsonName      = "rankSettings.json";
+    private static readonly string               m_jsonName      = "RankAnnouncer.json";
     private static readonly string               m_pageTitle     = "Rank Announcer";
     internal static          AnnouncerJsonSetting m_jsonSetting;
 
