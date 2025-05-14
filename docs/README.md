@@ -1,5 +1,5 @@
 <div align=center>
-<img src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/GreyAnnouncer_Icon_v3.png" width="300" height="300">
+<img src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/GreyAnnouncer_Icon_v4ver2.png" width="300" height="300">
 </div>
 <br>
 
@@ -33,7 +33,7 @@ It will plays a **audio** when you reach to a higher style rank!
 
 
 ## How to add the audio
-
+After you install the mod and dependencies (BepInex and PluginConfigurator), you can find **Open Folder** button in the 
 ## Audio File Naming
 
 You can customize the audio name in the **rankAnnouncer.json** which is **near the plugin**. the default audio name given in the below:
@@ -59,13 +59,14 @@ if you have any throuble with the mod, feel free to ask in
 - Discrod : csont.0721
 
 ## Resources
-- [1] Krita, used under GNU General Public License (GPL) Version 3.0
-- [2] BepInEX, used under GUN Lesser General Public License (LGPL) Version 2.1
-- [3] PluginConfigurator by eternalUnion, used under MIT License
-- [4] Newtonsoft.json by JamesNK, used under MIT License
-- [5] harmonyX, used under MIT License
+- [1] BepInEX, used under GUN Lesser General Public License (LGPL) Version 2.1
+- [2] PluginConfigurator by eternalUnion, used under MIT License
+- [3] Newtonsoft.json by JamesNK, used under MIT License
+- [4] harmonyX, used under MIT License
+- [5] Krita, used under GNU General Public License (GPL) Version 3.0
 - [6] Samigirian by Siphercase, used under SIL Open Font License (OFL) Version 1.1
-
+- [7] D-DIN by datto, used under SIL Open Font License (OFL) Version 1.1
+  
 ## Credit
 Thanks:
 - [Artless Games](https://space.bilibili.com/1237125233)
@@ -78,7 +79,7 @@ Thanks:
 - The file(s) in the **Lib/** folder are third-party and not authored by me. They are not covered by the License of this project. Please refer to the respective license(s) of those files.
 
 ## License Change
-Starting from version 1.0.2, this project is licensed under different license. Please refer to the [COPYING](https://github.com/greycsont/GreyAnnouncer/raw/main/COPYING) for the full details on the license change.
+Starting from version 1.1.0, this project is licensed under different license. Please refer to the [COPYING](https://github.com/greycsont/GreyAnnouncer/raw/main/COPYING) for the full details on the license change.
 
 Previous versions were licensed under the MIT License.
 

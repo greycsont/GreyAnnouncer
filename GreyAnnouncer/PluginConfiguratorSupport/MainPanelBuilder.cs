@@ -128,7 +128,7 @@ public static class MainPanelBuilder
             "audio_button_array",
             3,
             new float[] { 0.4f, 0.4f, 0.2f },
-            new string[] { "Open Audio Folder", "Reload Audio", "Advance" }
+            new string[] { "Open Audio Folder", "Reload", "Advance" }
             // 2 button
             // width of two buttons ( sum = 1f ) 
             // Two button's text
