@@ -46,21 +46,35 @@ The default audio name given in the below:
 
 <img align="right" width="150" src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/customAudioName.png">
 
-- ` D`
+- `D`
+
 <br>
-- ` C`
+
+- `C`
+
 <br>
-- ` B`
+
+- `B`
+
 <br>
-- ` A`
+
+- `A`
+
 <br>
-- ` S`
+
+- `S`
+
 <br>
-- ` SS`
+
+- `SS`
+
 <br>
-- ` SSS`
+
+- `SSS`
 <br>
-- ` U`
+
+- `U`
+
 `Theme : One Dark Pro Monokai Darker`
 
 Make sure when you edit it and the game is running, click `Reload` button [in the right of Open Audio Folder button](#how-to-add-the-audio) after you change the .json
