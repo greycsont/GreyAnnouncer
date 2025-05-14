@@ -21,7 +21,7 @@ It will plays a **audio** when you reach to a higher style rank!
 2. [Add audio](#how-to-add-the-audio)
 3. [Audio File naming](#audio-file-naming)
 4. [Supported audio format](#supported-and-unsupported-audio-formats)
-5. [Customize setting](#how-to-customize-the-setting)
+5. [Customize setting](#how-to-customize-other-setting)
 6. [Bug & Suggestions](#bugs--suggestions)
 7. [License](#license)
 
@@ -38,7 +38,8 @@ After you install the mod and dependencies (BepInex and PluginConfigurator), Cli
 ## Audio File Naming
 
 You can customize the audio name in the **RankAnnouncer.json** which is **near the plugin**.
-<img src="">
+<img src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/file_structure_CLI.png">
+`Font used : Comic Mono`
 
  the default audio name given in the below:
 
@@ -51,9 +52,11 @@ You can customize the audio name in the **RankAnnouncer.json** which is **near t
 - `S`
 - `SS`
 - `SSS`
-- `U`             
+- `U`
 
-## How to customize the setting
+`Theme : One Dark Pro Monokai Darker`
+
+## How to customize other setting
 - Download and Using [PluginConfigurator](https://thunderstore.io/c/ultrakill/p/EternalsTeam/PluginConfigurator/) to edit in-game.
 
 ## Bugs & Suggestions
