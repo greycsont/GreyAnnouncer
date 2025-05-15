@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace greycsont.GreyAnnouncer;
 
-public class JsonManager
+public static class JsonManager
 {
     #region Public Methods
     public static T ReadJson<T>(string jsonName) where T : class

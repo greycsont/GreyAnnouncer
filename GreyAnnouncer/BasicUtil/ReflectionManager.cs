@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace greycsont.GreyAnnouncer;
 
-public class ReflectionManager
+public static class ReflectionManager
 {   
     public static void LoadByReflection(string assemblyName, string methodName, object[] parameter = null)
     {

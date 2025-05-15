@@ -4,7 +4,7 @@ using System.Text;
 
 namespace greycsont.GreyAnnouncer;
                                                       
-public class AnnouncerManager
+public static class AnnouncerManager
 {
     public  static Action reloadAnnouncer;
     public  static Action updateAnnouncerPath;

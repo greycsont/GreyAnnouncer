@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Threading.Tasks;
-using UnityEngine.Networking;
 using System.ComponentModel;
 
 namespace greycsont.GreyAnnouncer;
@@ -31,7 +30,86 @@ public class AudioLoader
     }
     #endregion
 
+    #region Preload_and_Play API
+    public AudioClip GetClipFromCache(string category)
+    {
+        if (categoryFailedLoading.Contains(category)) return null;
+        
+
+        if (audioCategories.Contains(category) == false) return null;
+
+
+        if (!m_audioClips.TryGetValue(category, out var clips) || clips.Count == 0) return null;
+    
+        int randomIndex = UnityEngine.Random.Range(0, clips.Count);
+        return clips[randomIndex];
+    }
+    
+    public AudioClip GetRandomClipFromAudioClips()
+    {
+        var validClips = m_audioClips
+            .SelectMany(kvp => kvp.Value)
+            .Where(clip => clip != null)
+            .ToList();
+
+        var clip = validClips[UnityEngine.Random.Range(0,validClips.Count)];
+        return clip;
+    }
+
+
+    #endregion
+
+    #region Load_then_Play API
+    public async Task<AudioClip> LoadAndGetSingleAudioClipAsync(string category)
+    {
+        if (!TryGetValidAudioFiles(category, out var validFiles)) return null;
+    
+        string selectedPath = validFiles[UnityEngine.Random.Range(0, validFiles.Count)];
+        var clip = await AudioClipLoader.LoadAudioClipAsync(selectedPath);
+
+        if (clip == null)
+        {
+            LogCategoryFailure(category, "Selected file failed to load");
+        }
+
+        return clip;
+    }
+    public async Task<AudioClip> GetRandomClipFromAllAvailableFiles()
+    {
+        // 以后应该是返回一个category和一个音频名？
+        var totalValidFiles = new List<string>();
+        foreach (var category in audioCategories)
+        {
+            TryGetValidAudioFiles(category, out var validFiles);
+            foreach (var fileName in validFiles)
+            {
+                totalValidFiles.Add(fileName);
+            }
+        }
+
+        string selectedPath = totalValidFiles[UnityEngine.Random.Range(0, totalValidFiles.Count)];
+
+        var clip = await AudioClipLoader.LoadAudioClipAsync(selectedPath);
+
+        if (clip == null)
+        {
+            LogCategoryFailure(selectedPath, "Selected file failed to load");
+        }
+
+        return clip;
+    }
+    #endregion
+
+
     #region Public API
+    public async Task FindAvailableAudioAsync()
+    {
+        if (InstanceConfig.audioLoadingOptions.Value == 0) return;
+        ClearCache();
+        FileSystemUtil.ValidateAndPrepareDirectory(m_audioPath);
+        await LoadAllCategoriesAsync();
+        LogLoadingResults();
+    }
     public void UpdateAudioPath(string newAudioPath)
     {
         if (string.IsNullOrEmpty(newAudioPath))
@@ -41,58 +119,6 @@ public class AudioLoader
         }
         Plugin.log.LogInfo($"Updating audio paths and reloading audio...");
         this.m_audioPath = newAudioPath;
-    }
-
-    public async Task FindAvailableAudioAsync()
-    {
-        if (InstanceConfig.audioLoadingOptions.Value == 0) return;
-        ClearCache();
-        ValidateAndPrepareDirectory();
-        await LoadAllCategoriesAsync();
-        LogLoadingResults();
-    }
-
-    public AudioClip GetClipFromAudioClips(string category)
-    {
-        if (categoryFailedLoading.Contains(category))
-        {
-            Plugin.log.LogInfo($"Category failed loaded : {category}");
-            return null;
-        }
-
-        if (audioCategories.Contains(category) == false)
-        {
-            Plugin.log.LogWarning($"Invalid audio category: {category}");
-            return null;
-        }
-
-        if (!m_audioClips.TryGetValue(category, out var clips) || clips.Count == 0)
-        {
-            Plugin.log.LogWarning($"Not found clips inside : {category}");
-            return null;
-        }
-
-            
-        int randomIndex = UnityEngine.Random.Range(0, clips.Count);
-        return clips[randomIndex];
-    }
-
-    public async Task<AudioClip> LoadAndGetSingleAudioClipAsync(string category)
-    {
-        if (!TryGetValidAudioFiles(category, out var validFiles))
-        {
-            return null;
-        }
-
-        string selectedPath = validFiles[UnityEngine.Random.Range(0, validFiles.Count)];
-        var clip = await LoadAudioClipAsync(selectedPath);
-
-        if (clip == null)
-        {
-            LogCategoryFailure(category, "Selected file failed to load");
-        }
-
-        return clip;
     }
 
     public void UpdateAudioFileNames(AnnouncerJsonSetting jsonSetting)
@@ -107,18 +133,19 @@ public class AudioLoader
     }
     #endregion
 
+
     #region Loading Logic
     private async Task LoadAllCategoriesAsync()
     {
         var loadingTasks = new List<Task<(string category, List<AudioClip> clips)>>();
-        
-        foreach ( var category in audioCategories )
+
+        foreach (var category in audioCategories)
         {
             loadingTasks.Add(LoadCategoryAsync(category).ContinueWith(task => (category, task.Result)));
         }
-        
+
         var results = await Task.WhenAll(loadingTasks);
-        
+
         // Add all loaded clips to the audioClips dictionary
         foreach (var (category, clips) in results)
         {
@@ -130,32 +157,31 @@ public class AudioLoader
     }
 
 
-    
     private async Task<List<AudioClip>> LoadCategoryAsync(string category)
     {
         if (!TryGetValidAudioFiles(category, out var validFiles))
         {
             return null;
         }
-        
+
         #if DEBUG
         Plugin.log.LogInfo($"Loading category {category} with {validFiles.Count} files");
         #endif
-        
+
         var clipLoadingTasks = validFiles
-            .Select(path => LoadAudioClipAsync(path));
-        
+            .Select(path => AudioClipLoader.LoadAudioClipAsync(path));
+
         var loadedClips = new List<AudioClip>();
 
         try
         {
             var results = await Task.WhenAll(clipLoadingTasks);
-            
+
             // Filter out any null results (loading failures)
             loadedClips = results
                 .Where(c => c != null)
                 .ToList();
-            
+
             if (loadedClips.Count > 0)
             {
                 Plugin.log.LogInfo($"Successfully loaded {loadedClips.Count}/{validFiles.Count} clips for {category}");
@@ -173,63 +199,11 @@ public class AudioLoader
             return null;
         }
     }
-
-    private async Task<AudioClip> LoadAudioClipAsync(string path)
-    {
-        string extension = Path.GetExtension(path).ToLower();
-        AudioType? unityAudioType = GetUnityAudioType(extension);
-
-        if (!unityAudioType.HasValue)
-        {
-            Plugin.log.LogError($"Unsupported audio format: 「{extension}」 for {path}");
-            return null;
-        }
-
-        try
-        {
-            Plugin.log.LogInfo($"Started loading audio: {path}");
-            return await LoadWithUnityAsync(path, unityAudioType.Value);
-        }
-        catch (Exception ex)
-        {
-            Plugin.log.LogError($"Error loading {path}: {ex.Message}");
-            return null;
-        }
-    }
-    #endregion
-
-    #region Audio Loading Helpers
-    private async Task<AudioClip> LoadWithUnityAsync(string path, AudioType audioType)
-    {
-        string url = new Uri(path).AbsoluteUri;
-        
-        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, audioType))
-        {
-            var operation = www.SendWebRequest();
-            
-            while (!operation.isDone)
-            {
-                await Task.Delay(10); // Small delay to not block the thread
-            }
-
-            if (www.result != UnityWebRequest.Result.Success)
-            {
-                Plugin.log.LogError($"UnityRequest Failed to load audio: {www.error}");
-                return null;
-            }
-            
-            var clip = DownloadHandlerAudioClip.GetContent(www);
-            Plugin.log.LogInfo($"Loaded audio: {Path.GetFileName(path)}");
-            return clip;
-        }
-    }
     #endregion
 
     #region Cache Management
     private void ClearAudioClipCache()
     {
-        if (m_audioClips.Count == 0) return;
-
         foreach (var clipList in m_audioClips.Values)
         {
             foreach (var clip in clipList)
@@ -286,30 +260,6 @@ public class AudioLoader
     #endregion
 
     #region Utility Methods
-    private AudioType? GetUnityAudioType(string extension)
-    {
-        // fuck unity
-        return extension switch
-        {
-            ".wav"  => AudioType.WAV,
-            ".mp3"  => AudioType.MPEG,
-            ".ogg"  => AudioType.OGGVORBIS,
-            ".aiff" => AudioType.AIFF,
-            ".aif"  => AudioType.AIFF,
-            ".acc"  => AudioType.ACC,
-            _       => null
-        };
-    }
-
-    private void ValidateAndPrepareDirectory()
-    {
-        if (!Directory.Exists(m_audioPath))
-        {
-            Plugin.log.LogWarning($"Audio directory not found: {m_audioPath}");
-            Directory.CreateDirectory(m_audioPath);
-        }
-    }
-
     private bool TryGetValidAudioFiles(string category, out List<string> validFiles)
     {
         validFiles = null;
@@ -335,44 +285,6 @@ public class AudioLoader
         }
 
         return true;
-    }
-    #endregion
-
-    #region random Select Clip
-    public async Task<AudioClip> GetRandomClipFromAllAvailableFiles()
-    {
-        // 以后应该是返回一个category和一个音频名？
-        var totalValidFiles = new List<string>();
-        foreach (var category in audioCategories)
-        {
-            TryGetValidAudioFiles(category, out var validFiles);
-            foreach (var fileName in validFiles)
-            {
-                totalValidFiles.Add(fileName);
-            }
-        }
-
-        string selectedPath = totalValidFiles[UnityEngine.Random.Range(0,totalValidFiles.Count)];
-
-        var clip = await LoadAudioClipAsync(selectedPath);
-
-        if (clip == null)
-        {
-            LogCategoryFailure(selectedPath, "Selected file failed to load");
-        }
-
-        return clip;
-    }
-
-    public AudioClip GetRandomClipFromAudioClips()
-    {
-        var validClips = m_audioClips
-            .SelectMany(kvp => kvp.Value)
-            .Where(clip => clip != null)
-            .ToList();
-
-        var clip = validClips[UnityEngine.Random.Range(0,validClips.Count)];
-        return clip;
     }
     #endregion
 }

@@ -1,0 +1,60 @@
+{
+  "CategoryAudioMap": {
+    "D": {
+      "Enabled": true,
+      "DisplayName": "Destruction",
+      "AudioFiles": [
+        "D"
+      ]
+    },
+    "C": {
+      "Enabled": true,
+      "DisplayName": "Chaotic",
+      "AudioFiles": [
+        "C"
+      ]
+    },
+    "B": {
+      "Enabled": true,
+      "DisplayName": "Brutal",
+      "AudioFiles": [
+        "B"
+      ]
+    },
+    "A": {
+      "Enabled": true,
+      "DisplayName": "Anarchic",
+      "AudioFiles": [
+        "A"
+      ]
+    },
+    "S": {
+      "Enabled": true,
+      "DisplayName": "Supreme",
+      "AudioFiles": [
+        "S"
+      ]
+    },
+    "SS": {
+      "Enabled": true,
+      "DisplayName": "SSadistic",
+      "AudioFiles": [
+        "SS"
+      ]
+    },
+    "SSS": {
+      "Enabled": true,
+      "DisplayName": "SSShitstorm",
+      "AudioFiles": [
+        "SSS"
+      ]
+    },
+    "U": {
+      "Enabled": true,
+      "DisplayName": "ULTRAKILL",
+      "AudioFiles": [
+        "U"
+      ]
+    }
+  }
+}

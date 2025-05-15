@@ -7,7 +7,7 @@ namespace greycsont.GreyAnnouncer;
 /* This patch is used to add and remove the LowPassFilter directly copied from ULTRAKILL and trigger by EnterWater() and OutWater() */
 
 [Description("Because it's..... related so I just put it at here instead of creating a new object file")]
-public class UnderwaterController_inWater_Instance
+public static class UnderwaterController_inWater_Instance
 {
     public static bool isInWater 
     {

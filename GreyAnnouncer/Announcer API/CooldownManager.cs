@@ -10,7 +10,6 @@ public class CooldownManager
 {
     private Dictionary<string, float> m_individualCooldowns = new Dictionary<string, float>();
 
-    #region Public API
     public CooldownManager(string[] audioCategories)
     {
         foreach (var category in audioCategories)
@@ -47,10 +46,8 @@ public class CooldownManager
             m_individualCooldowns[key] = 0f;
         }
     }
-    #endregion
 
 
-    #region Private Methods
     private IEnumerator CooldownCoroutine(Action<float> setCooldown, float initialCooldown)
     {
         if (initialCooldown <= 0)
@@ -77,5 +74,4 @@ public class CooldownManager
 
         setCooldown(0);
     }
-    #endregion
 }

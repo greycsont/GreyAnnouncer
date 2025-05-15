@@ -159,7 +159,7 @@ public class AudioAnnouncer
         AudioClip clip = null;
         if (InstanceConfig.isAudioRandomizationEnabled.Value == false)
         {
-            clip = m_audioLoader.GetClipFromAudioClips(category);
+            clip = m_audioLoader.GetClipFromCache(category);
         }
         else
         {
@@ -167,7 +167,7 @@ public class AudioAnnouncer
         }
         if (clip == null) return;
 
-        SendClipToAudioSource(clip);
+        AudioDispatcher.SendClipToAudioSource(clip, m_audioSourceConfig);
     }
 
     private async Task LoadAndPlayAudioClip(string category)
@@ -196,24 +196,7 @@ public class AudioAnnouncer
             return;
         }
 
-        SendClipToAudioSource(clip);
-    }
-
-    private void SendClipToAudioSource(AudioClip clip)
-    {
-        switch (InstanceConfig.audioPlayOptions.Value)
-        {
-            case 0:
-                SoloAudioSource.Instance.PlayOneShot(clip, m_audioSourceConfig);
-                break;
-            case 1:
-                AudioSourcePool.Instance.PlayOneShot(clip, m_audioSourceConfig);
-                break;
-            default:
-                Plugin.log.LogWarning("Invalid play audio options, using the default one");
-                SoloAudioSource.Instance.PlayOneShot(clip, m_audioSourceConfig);
-                break;
-        }
+        AudioDispatcher.SendClipToAudioSource(clip, m_audioSourceConfig);
     }
 
     private void LogPlaybackError(Exception ex)

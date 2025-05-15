@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace greycsont.GreyAnnouncer;
 
-public class PathManager
+public static class PathManager
 {
     public static string GetCurrentPluginPath(string filePath = null)
     {

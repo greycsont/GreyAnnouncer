@@ -58,7 +58,13 @@
     <Reference Include="PluginConfigurator">
       <HintPath>Lib\PluginConfigurator.dll</HintPath>
       <private>false</private>
-    </Reference> 
+    </Reference>
+
+
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>Lib\UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
   </ItemGroup>
 
   <!-- Add beplnex and Harmony packet -->

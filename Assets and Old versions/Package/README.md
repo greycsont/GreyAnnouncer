@@ -17,7 +17,7 @@ IDK how to describe this shitpost
 1. [Installation](#how-to-install-it)
 2. [Add audio](#how-to-add-the-audio)
 3. [Audio File naming](#audio-file-naming)
-4. [Supported audio format](#supported-audio-formats)
+4. [Supported audio format](#supported-and-unsupported-audio-formats)
 5. [Customize setting](#how-to-customize-other-setting)
 6. [Bug & Suggestions](#bugs--suggestions)
 7. [License](#license)

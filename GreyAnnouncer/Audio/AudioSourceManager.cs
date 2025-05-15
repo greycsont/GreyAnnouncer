@@ -4,7 +4,7 @@ using System.Collections;
 
 namespace greycsont.GreyAnnouncer;
 
-public class AudioSourceManager
+public static class AudioSourceManager
 {
     public static AudioSource ConfigureAudioSource(AudioSource audioSource, AudioSourceSetting config)
     {
