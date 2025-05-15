@@ -39,6 +39,7 @@ public class StyleHUDComboStart_Patch
     }
 }
 
+<<<<<<< HEAD
 
 /*[HarmonyPatch(typeof(EnemyIdentifier))]
 public class EnemyIdentifier_Patch
@@ -174,6 +175,9 @@ public class EnemyIdentifier_Patch
 }*/
 
 /*[HarmonyPatch(typeof(StyleHUD), "UpdateMeter")]  // For D rank only
+=======
+/*[HarmonyPatch(typeof(StyleHUD), "UpdateMeter")]  // For D rank only, left for review silly code, why do you want to patch a Update() function? 
+>>>>>>> 145108309970536fe7b8cd4ad469d6e00f945bb7
 public static class StyleHUDUpdateMeter_Patch
 {
     private static readonly AccessTools.FieldRef<StyleHUD, float> currentMeterRef = AccessTools.FieldRefAccess<StyleHUD, float>("currentMeter");
