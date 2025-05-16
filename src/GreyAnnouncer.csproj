@@ -16,53 +16,53 @@
   <!-- Game's instruction set -->
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\Lib\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\Lib\Assembly-CSharp.dll</HintPath>
       <Private>false</Private>
     </Reference>
 
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>..\..\Lib\Unity.TextMeshPro.dll</HintPath>
+      <HintPath>..\Lib\Unity.TextMeshPro.dll</HintPath>
       <Private>false</Private>
     </Reference>
 
     <Reference Include="UnityEngine">
-      <HintPath>..\..\Lib\UnityEngine.dll</HintPath>
+      <HintPath>..\Lib\UnityEngine.dll</HintPath>
       <Private>false</Private>
     </Reference>
 
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\..\Lib\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>..\Lib\UnityEngine.CoreModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
 
     <Reference Include="UnityEngine.AudioModule">
-      <HintPath>..\..\Lib\UnityEngine.AudioModule.dll</HintPath>
+      <HintPath>..\Lib\UnityEngine.AudioModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
 
     <Reference Include="UnityEngine.TextRenderingModule">
-      <HintPath>..\..\Lib\UnityEngine.TextRenderingModule.dll</HintPath>
+      <HintPath>..\Lib\UnityEngine.TextRenderingModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
 
     <Reference Include="UnityEngine.UnityWebRequestModule">
-      <HintPath>..\..\Lib\UnityEngine.UnityWebRequestModule.dll</HintPath>
+      <HintPath>..\Lib\UnityEngine.UnityWebRequestModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
 
     <Reference Include="UnityEngine.UnityWebRequestAudioModule">
-      <HintPath>..\..\Lib\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
+      <HintPath>..\Lib\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
 
     <Reference Include="PluginConfigurator">
-      <HintPath>..\..\Lib\PluginConfigurator.dll</HintPath>
+      <HintPath>..\Lib\PluginConfigurator.dll</HintPath>
       <private>false</private>
     </Reference>
 
 
     <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>..\..\Lib\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>..\Lib\UnityEngine.PhysicsModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>
