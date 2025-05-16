@@ -3,7 +3,6 @@ using PluginConfig.API.Fields;
 using PluginConfig.API.Decorators;
 using System;
 using UnityEngine;
-using System.Collections.Generic;
 
 
 namespace greycsont.GreyAnnouncer;
@@ -26,7 +25,7 @@ public static class RegisterRankAnnouncerPage
         var actionCollection = new Action<BoolField.BoolValueChangeEvent>[]{
             e => {
                 RankAnnouncerV2.UpdateJson(announcerJsonSetting);
-                Plugin.log.LogInfo($"Updated json setting for {m_title}");
+                LogManager.LogInfo($"Updated json setting for {m_title}");
             }
         };
 
@@ -57,7 +56,7 @@ public static class RegisterRankAnnouncerPage
             }
             if (callbacks != null)
             {
-                foreach (var callback in callbacks)
+                 foreach (var callback in callbacks)
                     callback?.Invoke(e);
             }
         };

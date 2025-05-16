@@ -10,7 +10,7 @@ public static class RankAnnouncerV2
         "D",
         "C", 
         "B", 
-        "A", 
+        "A",
         "S", 
         "SS", 
         "SSS", 
@@ -51,7 +51,7 @@ public static class RankAnnouncerV2
     {
         if (rank < 0 || rank >= m_rankCategory.Length)
         {
-            Plugin.log.LogError($"Invalid rank index: {rank}");
+            LogManager.LogError($"Invalid rank index: {rank}");
             return;
         }
         m_announcer.PlayAudioViaIndex(rank);
@@ -127,10 +127,10 @@ public static class RankAnnouncerV2
 
     private static void PluginConfigPanelInitialization(string announcerName, AnnouncerJsonSetting jsonSetting)
     {
-        ReflectionManager.LoadByReflection(
-            "greycsont.GreyAnnouncer.RegisterRankAnnouncerPage", 
-            "Build", 
-            new object[]{announcerName, jsonSetting}
+        PluginDependencies.LoadIfPluginExists(
+            PluginDependencies.PLUGINCONFIGURATOR_GUID,
+            "RegisterRankAnnouncerPage",
+            () => ReflectionManager.LoadByReflection("greycsont.GreyAnnouncer.RegisterRankAnnouncerPage", "Build", new object[]{announcerName, jsonSetting})
         );
     }
 

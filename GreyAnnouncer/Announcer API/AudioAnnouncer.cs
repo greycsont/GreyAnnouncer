@@ -129,9 +129,9 @@ public class AudioAnnouncer
         var validationState = GetPlayValidationState(category);
         if (validationState != ValidationState.Success)
         {
-            #if DEBUG
-            Plugin.log.LogInfo($"PlayValidationState: {category}, {validationState}");
-            #endif
+            
+            LogManager.LogInfo($"PlayValidationState: {category}, {validationState}");
+            
             return false;
         }
         return true;
@@ -148,7 +148,7 @@ public class AudioAnnouncer
                 PlayAudioClipFromAudioClips(category);
                 break;
             default:
-                Plugin.log.LogWarning("Invalid play audio options, using the default one");
+                LogManager.LogWarning("Invalid play audio options, using the default one");
                 _ = LoadAndPlayAudioClip(category);
                 break;
         }
@@ -192,7 +192,7 @@ public class AudioAnnouncer
             && InstanceConfig.audioPlayOptions.Value == 0
         )
         {
-            Plugin.log.LogInfo($"Aborted outdated audio request for: {category}");
+            LogManager.LogInfo($"Aborted outdated audio request for: {category}");
             return;
         }
 
@@ -201,8 +201,8 @@ public class AudioAnnouncer
 
     private void LogPlaybackError(Exception ex)
     {
-        Plugin.log.LogError($"An error occurred while playing sound: {ex.Message}");
-        Plugin.log.LogError(ex.StackTrace);
+        LogManager.LogError($"An error occurred while playing sound: {ex.Message}");
+        LogManager.LogError(ex.StackTrace);
     }
     #endregion
 

@@ -10,7 +10,7 @@ public static class FileSystemUtil
     {
         if (!Directory.Exists(directoryPath))
         {
-            Plugin.log.LogWarning($"Directory not found: {directoryPath}");
+            LogManager.LogWarning($"Directory not found: {directoryPath}");
             Directory.CreateDirectory(directoryPath);
         }
     }

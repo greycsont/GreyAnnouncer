@@ -10,13 +10,13 @@ namespace greycsont.GreyAnnouncer;
 
 public static class MainPanelBuilder
 {
-    private static readonly Color              m_greyColour        = new Color(0.85f, 0.85f, 0.85f, 1f);
-    private static readonly Color              m_CyanColour        = new Color(0f, 1f, 1f, 1f);
-    private static readonly Color              m_OrangeColour      = new Color(1f, 0.6f, 0.2f, 1f);
-    private static          PluginConfigurator m_pluginConfigurator;
-    public  static          ConfigHeader       logHeader;
+    private static readonly Color m_greyColour = new Color(0.85f, 0.85f, 0.85f, 1f);
+    private static readonly Color m_CyanColour = new Color(0f, 1f, 1f, 1f);
+    private static readonly Color m_OrangeColour = new Color(1f, 0.6f, 0.2f, 1f);
+    private static PluginConfigurator m_pluginConfigurator;
+    public static ConfigHeader logHeader;
 
-    private static          ConfigPanel        advancedPanel;
+    private static ConfigPanel advancedPanel;
 
     public static void Build(PluginConfigurator config)
     {
@@ -27,6 +27,8 @@ public static class MainPanelBuilder
         CreateAudioControls();
         CreateAdvancedOptionPanel();
         CreateAnnouncerSection();
+
+        CreateDelegateTextFromBackEnd();
     }
 
     private static void CreateMainSettingSectionTitle()
@@ -34,7 +36,7 @@ public static class MainPanelBuilder
         new ConfigSpace(m_pluginConfigurator.rootPanel, 15f);
 
         ConfigHeader mainHeader = new ConfigHeader(m_pluginConfigurator.rootPanel, "Main Settings");
-        mainHeader.textColor    = m_CyanColour;
+        mainHeader.textColor = m_CyanColour;
 
     }
 
@@ -46,7 +48,7 @@ public static class MainPanelBuilder
             "sharedPlayCooldown",
             InstanceConfig.sharedPlayCooldown.Value, 0f, 114514f
         );
-        sharedCooldown.defaultValue   = InstanceConfig.DEFAULT_SHARED_PLAY_COOLDOWN;
+        sharedCooldown.defaultValue = InstanceConfig.DEFAULT_SHARED_PLAY_COOLDOWN;
         sharedCooldown.onValueChange += e =>
         {
             InstanceConfig.sharedPlayCooldown.Value = e.value;
@@ -59,7 +61,7 @@ public static class MainPanelBuilder
             "individualPlaycooldown",
             InstanceConfig.individualPlayCooldown.Value, 0f, 1113f
         );
-        individualCooldown.defaultValue   = InstanceConfig.DEFAULT_INDIVIDUAL_PLAY_COOLDOWN;
+        individualCooldown.defaultValue = InstanceConfig.DEFAULT_INDIVIDUAL_PLAY_COOLDOWN;
         individualCooldown.onValueChange += e =>
         {
             InstanceConfig.individualPlayCooldown.Value = e.value;
@@ -69,7 +71,7 @@ public static class MainPanelBuilder
 
     private static void CreateAudioControls()
     {
-        
+
         var volumeSlider = new FloatSliderField(
             m_pluginConfigurator.rootPanel,
             "Audio Volume",
@@ -78,7 +80,7 @@ public static class MainPanelBuilder
             InstanceConfig.audioSourceVolume.Value,
             2   // 2nd decimal
         );
-        volumeSlider.defaultValue   = InstanceConfig.DEFAULT_AUDIO_SOURCE_VOLUME;
+        volumeSlider.defaultValue = InstanceConfig.DEFAULT_AUDIO_SOURCE_VOLUME;
         volumeSlider.onValueChange += e =>
         {
             InstanceConfig.audioSourceVolume.Value = e.newValue;
@@ -86,8 +88,8 @@ public static class MainPanelBuilder
             SoloAudioSource.Instance.UpdateSoloAudioSourceVolume(e.newValue);
         };
 
-// It worked, but not working great as there's ton of audio when from low rank directly to the high rank
-// May be add a short cooldown as limitation
+        // It worked, but not working great as there's ton of audio when from low rank directly to the high rank
+        // May be add a short cooldown as limitation
 
         var playOption = new EnumField<PlayOptions>(
             m_pluginConfigurator.rootPanel,
@@ -113,12 +115,12 @@ public static class MainPanelBuilder
             InstanceConfig.audioLoadingOptions.Value = (int)e.value;
             if (e.value.Equals((audioLoadingOptions.Load_then_Play)))
             {
-                Plugin.log.LogInfo("Clear audio clip cache");
+                LogManager.LogInfo("Clear audio clip cache");
                 ClearAudioClipsCache();
             }
             if (e.value.Equals(audioLoadingOptions.Preload_and_Play))
             {
-                Plugin.log.LogInfo("Reloading all announcer audio");
+                LogManager.LogInfo("Reloading all announcer audio");
                 ReloadAllAnnouncers();
             }
         };
@@ -160,20 +162,20 @@ public static class MainPanelBuilder
             "Audio_Folder_Path",
             InstanceConfig.audioFolderPath.Value
         );
-        audioFolderPath.defaultValue   = InstanceConfig.DEFAULT_AUDIO_FOLDER_PATH;
+        audioFolderPath.defaultValue = InstanceConfig.DEFAULT_AUDIO_FOLDER_PATH;
         audioFolderPath.onValueChange += e =>
         {
             InstanceConfig.audioFolderPath.Value = e.value;
             AnnouncerManager.UpdateAllAnnouncerPaths();
         };
 
-        var lowpassToggle   = new BoolField(
+        var lowpassToggle = new BoolField(
             advancedPanel,
             "Muffle When Under Water",
             "LowPassFilter_Enabled",
             InstanceConfig.isLowPassFilterEnabled.Value
         );
-        lowpassToggle.defaultValue   = true;
+        lowpassToggle.defaultValue = true;
         lowpassToggle.onValueChange += (e) =>
         {
             InstanceConfig.isLowPassFilterEnabled.Value = e.value;
@@ -181,17 +183,17 @@ public static class MainPanelBuilder
         };
 
         var audioRandomizationToggle = new BoolField(
-            advancedPanel, 
-            "Audio Randomlization", 
-            "Audio_Randomlization", 
+            advancedPanel,
+            "Audio Randomlization",
+            "Audio_Randomlization",
             InstanceConfig.isAudioRandomizationEnabled.Value
         );
-        audioRandomizationToggle.defaultValue   = false;
+        audioRandomizationToggle.defaultValue = false;
         audioRandomizationToggle.onValueChange += (e) =>
         {
             InstanceConfig.isAudioRandomizationEnabled.Value = e.value;
-            Plugin.log.LogInfo($"Switch audio randomization : {e.value}");
-        }; 
+            LogManager.LogInfo($"Switch audio randomization : {e.value}");
+        };
     }
 
     private static void CreateAnnouncerSection()
@@ -202,8 +204,16 @@ public static class MainPanelBuilder
 
         logHeader = new ConfigHeader(m_pluginConfigurator.rootPanel, "");
         logHeader.tmpAnchor = TMPro.TextAlignmentOptions.TopLeft;
-        logHeader.textSize  = 12;
+        logHeader.textSize = 12;
         logHeader.textColor = m_CyanColour;
+    }
+
+    private static void CreateDelegateTextFromBackEnd()
+    {
+        AudioLoader.OnPluginConfiguratorLogUpdated = log =>
+        {
+            logHeader.text = log + "\n";
+        };
     }
 
     #region enum

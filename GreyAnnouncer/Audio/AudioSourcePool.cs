@@ -111,7 +111,7 @@ public class AudioSourcePool : MonoBehaviour
                 m_playingList.RemoveFirst();
                 m_playingMap.Remove(oldestNode.Value);
 
-                Plugin.log.LogWarning("Max audio sources reached, forcibly recycling the oldest source.");
+                LogManager.LogWarning("Max audio sources reached, forcibly recycling the oldest source.");
                 Recycle(oldestNode.Value);
             }
         }
@@ -128,7 +128,7 @@ public class AudioSourcePool : MonoBehaviour
 
     private AudioSource CreateNewAudioSource()
     {
-        Plugin.log.LogInfo("Create a new Audio Source");
+        LogManager.LogInfo("Create a new Audio Source");
         var go = new GameObject("PooledAudioSource");
         go.transform.SetParent(transform);
         var audioSource = go.AddComponent<AudioSource>();

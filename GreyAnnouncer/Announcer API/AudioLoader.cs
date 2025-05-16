@@ -17,6 +17,8 @@ public class AudioLoader
     private Dictionary<string, List<AudioClip>> m_audioClips          = new Dictionary<string, List<AudioClip>>();
     private AnnouncerJsonSetting                m_jsonSetting;
     private string                              m_audioPath;
+
+    public static Action<string> OnPluginConfiguratorLogUpdated;
     #endregion
 
     #region Constructor
@@ -67,10 +69,7 @@ public class AudioLoader
         string selectedPath = validFiles[UnityEngine.Random.Range(0, validFiles.Count)];
         var clip = await AudioClipLoader.LoadAudioClipAsync(selectedPath);
 
-        if (clip == null)
-        {
-            LogCategoryFailure(category, "Selected file failed to load");
-        }
+        if (clip == null) LogCategoryFailure(category, "Selected file failed to load");
 
         return clip;
     }
@@ -86,15 +85,13 @@ public class AudioLoader
                 totalValidFiles.Add(fileName);
             }
         }
+        if (totalValidFiles.Count == 0) throw new ArgumentOutOfRangeException("114514");
 
         string selectedPath = totalValidFiles[UnityEngine.Random.Range(0, totalValidFiles.Count)];
 
         var clip = await AudioClipLoader.LoadAudioClipAsync(selectedPath);
 
-        if (clip == null)
-        {
-            LogCategoryFailure(selectedPath, "Selected file failed to load");
-        }
+        if (clip == null) LogCategoryFailure(selectedPath, "Selected file failed to load");
 
         return clip;
     }
@@ -114,10 +111,10 @@ public class AudioLoader
     {
         if (string.IsNullOrEmpty(newAudioPath))
         {
-            Plugin.log.LogError("Cannot update with empty or null paths");
+            LogManager.LogError("Cannot update with empty or null paths");
             return;
         }
-        Plugin.log.LogInfo($"Updating audio paths and reloading audio...");
+        LogManager.LogInfo($"Updating audio paths and reloading audio...");
         this.m_audioPath = newAudioPath;
     }
 
@@ -164,9 +161,7 @@ public class AudioLoader
             return null;
         }
 
-        #if DEBUG
-        Plugin.log.LogInfo($"Loading category {category} with {validFiles.Count} files");
-        #endif
+        LogManager.LogInfo($"Loading category {category} with {validFiles.Count} files");
 
         var clipLoadingTasks = validFiles
             .Select(path => AudioClipLoader.LoadAudioClipAsync(path));
@@ -184,7 +179,7 @@ public class AudioLoader
 
             if (loadedClips.Count > 0)
             {
-                Plugin.log.LogInfo($"Successfully loaded {loadedClips.Count}/{validFiles.Count} clips for {category}");
+                LogManager.LogInfo($"Successfully loaded {loadedClips.Count}/{validFiles.Count} clips for {category}");
                 return loadedClips;
             }
             else
@@ -220,29 +215,26 @@ public class AudioLoader
     private void LogCategoryFailure(string category, string reason)
     {
         categoryFailedLoading.Add(category);
-        Plugin.log.LogWarning($"Failed to load category 「{category}」: {reason}");
+        LogManager.LogWarning($"Failed to load category 「{category}」: {reason}");
     }
 
     private void LogLoadingResults()
     {
         LogForPluginConfigurator();
         
-        string logMessage = null;
         if (categoryFailedLoading.Count == 0)
         {
-            logMessage = "All audio categories successfully loaded";
-            Plugin.log.LogInfo(logMessage);
+            LogManager.LogInfo("All audio categories successfully loaded");
         }
         else
         {
-            logMessage = "Failed to load audio categories: " + string.Join(", ", categoryFailedLoading);
-            Plugin.log.LogWarning(logMessage);
+            LogManager.LogWarning("Failed to load audio categories: " + string.Join(", ", categoryFailedLoading));
         }
   
     }
 
     private void LogForPluginConfigurator()
-    {   
+    {
         // Warning : PluginConfigurator
         var builder = new System.Text.StringBuilder();
 
@@ -255,7 +247,8 @@ public class AudioLoader
 
         //Reflection maybe
         string logMessage = builder.ToString();
-        MainPanelBuilder.logHeader.text = logMessage + "\n";
+
+        OnPluginConfiguratorLogUpdated?.Invoke(logMessage);
     }
     #endregion
 

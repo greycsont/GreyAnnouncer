@@ -104,7 +104,7 @@ public static class InstanceConfig
         }
         else
         {
-            Plugin.log.LogError($"Unsupported type for config entry: {key}, Type: {defaultValue?.GetType()?.FullName ?? "null"}");
+            LogManager.LogError($"Unsupported type for config entry: {key}, Type: {defaultValue?.GetType()?.FullName ?? "null"}");
         }
     }
                            

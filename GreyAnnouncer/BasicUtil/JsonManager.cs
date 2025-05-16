@@ -77,7 +77,7 @@ public static class JsonManager
         }
         catch (Exception ex)
         {
-            Plugin.log.LogError($"Error reading JSON file '{name}': {ex.Message}");
+            LogManager.LogError($"Error reading JSON file '{name}': {ex.Message}");
             throw;
         }
     }
@@ -88,12 +88,12 @@ public static class JsonManager
         {
             string json = JsonConvert.SerializeObject(data, Formatting.Indented);
             File.WriteAllText(path, json);
-            Plugin.log.LogInfo($"Writed JSON file '{name}' at path: {path}");
+            LogManager.LogInfo($"Writed JSON file '{name}' at path: {path}");
             return data;
         }
         catch (Exception ex)
         {
-            Plugin.log.LogError($"Error writing JSON file '{name}': {ex.Message}");
+            LogManager.LogError($"Error writing JSON file '{name}': {ex.Message}");
             throw;
         }
     }

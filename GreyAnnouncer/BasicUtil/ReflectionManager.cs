@@ -16,7 +16,7 @@ public static class ReflectionManager
         }
         catch (Exception ex)
         {
-            Plugin.log.LogError($"Failed to load {assemblyName}'s {methodName} by : {ex}");
+            LogManager.LogError($"Failed to load {assemblyName}'s {methodName} by : {ex}");
         }
     }
 }

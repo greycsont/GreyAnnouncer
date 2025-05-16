@@ -15,7 +15,6 @@ public static class AudioDispatcher
                 AudioSourcePool.Instance.PlayOneShot(clip, m_audioSourceConfig);
                 break;
             default:
-                Plugin.log.LogWarning("Invalid play audio options, using the default one");
                 SoloAudioSource.Instance.PlayOneShot(clip, m_audioSourceConfig);
                 break;
         }

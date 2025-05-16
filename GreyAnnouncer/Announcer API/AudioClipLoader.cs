@@ -15,18 +15,18 @@ public static class AudioClipLoader
 
         if (!unityAudioType.HasValue)
         {
-            Plugin.log.LogError($"Unsupported audio format: 「{extension}」 for {path}");
+            LogManager.LogError($"Unsupported audio format: 「{extension}」 for {path}");
             return null;
         }
 
         try
         {
-            Plugin.log.LogInfo($"Started loading audio: {path}");
+            LogManager.LogInfo($"Started loading audio: {path}");
             return await LoadWithUnityAsync(path, unityAudioType.Value);
         }
         catch (Exception ex)
         {
-            Plugin.log.LogError($"Error loading {path}: {ex.Message}");
+            LogManager.LogError($"Error loading {path}: {ex.Message}");
             return null;
         }
     }
@@ -46,12 +46,12 @@ public static class AudioClipLoader
 
             if (www.result != UnityWebRequest.Result.Success)
             {
-                Plugin.log.LogError($"UnityRequest Failed to load audio: {www.error}");
+                LogManager.LogError($"UnityRequest Failed to load audio: {www.error}");
                 return null;
             }
 
             var clip = DownloadHandlerAudioClip.GetContent(www);
-            Plugin.log.LogInfo($"Loaded audio: {Path.GetFileName(path)}");
+            LogManager.LogInfo($"Loaded audio: {Path.GetFileName(path)}");
             return clip;
         }
     }

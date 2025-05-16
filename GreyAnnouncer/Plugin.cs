@@ -19,13 +19,13 @@ public class Plugin : BaseUnityPlugin
 
     private void Awake()
     {
-        log = base.Logger;
+        log = base.Logger;;
         LoadMainModule();
         LoadOptionalModule();
         PatchHarmony();
-        log.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
+        LogManager.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
     }
-
+    
     private void LoadMainModule()
     {
         InstanceConfig.Initialize(this);
@@ -45,12 +45,11 @@ public class Plugin : BaseUnityPlugin
 
     private void CheckPluginLoaded(string GUID, string assemblyName)
     {
-        if (!Chainloader.PluginInfos.ContainsKey(GUID))
-        {
-            Plugin.log.LogWarning($"Plugin {GUID} not loaded, stopping loading {assemblyName}"); 
-            return;
-        }
-        ReflectionManager.LoadByReflection(assemblyName, "Initialize");
+        PluginDependencies.LoadIfPluginExists(
+            PluginDependencies.PLUGINCONFIGURATOR_GUID,
+            "PluginConfiguratorEntry",
+            () => ReflectionManager.LoadByReflection("greycsont.GreyAnnouncer.PluginConfiguratorEntry", "Initialize")
+        );
     }   
 }
 

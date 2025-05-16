@@ -39,7 +39,6 @@ public class StyleHUDComboStart_Patch
     }
 }
 
-<<<<<<< HEAD
 
 /*[HarmonyPatch(typeof(EnemyIdentifier))]
 public class EnemyIdentifier_Patch
