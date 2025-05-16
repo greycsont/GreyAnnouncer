@@ -2,19 +2,21 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace greycsont.GreyAnnouncer;
+using GreyAnnouncer.AnnouncerAPI;
+
+namespace GreyAnnouncer.RankAnnouncer;
 
 public static class RankAnnouncerV2
 {
-    private static readonly string[]              m_rankCategory = {
+    private static readonly string[] m_rankCategory = {
         "D",
-        "C", 
-        "B", 
+        "C",
+        "B",
         "A",
-        "S", 
-        "SS", 
-        "SSS", 
-        "U" 
+        "S",
+        "SS",
+        "SSS",
+        "U"
     };
 
     private static readonly Dictionary<string, string> m_displayNameMapping = new Dictionary<string, string>{   //used only for creating json
@@ -28,10 +30,10 @@ public static class RankAnnouncerV2
         {"U",   "ULTRAKILL"}
     };
 
-    private static readonly AudioAnnouncer       m_announcer     = new AudioAnnouncer();
-    private static readonly string               m_jsonName      = "RankAnnouncer.json";
-    private static readonly string               m_pageTitle     = "Rank Announcer";
-    internal static          AnnouncerJsonSetting m_jsonSetting;
+    private static readonly AudioAnnouncer m_announcer = new AudioAnnouncer();
+    private static readonly string m_jsonName = "RankAnnouncer.json";
+    private static readonly string m_pageTitle = "Rank Announcer";
+    internal static AnnouncerJsonSetting m_jsonSetting;
 
     public static void Initialize()
     {
@@ -46,7 +48,7 @@ public static class RankAnnouncerV2
         SubscribeAnnouncerManager();
         PluginConfigPanelInitialization(m_pageTitle, m_jsonSetting);
     }
-    
+
     public static void PlayRankSound(int rank)
     {
         if (rank < 0 || rank >= m_rankCategory.Length)
@@ -59,8 +61,8 @@ public static class RankAnnouncerV2
 
     private static void SubscribeAnnouncerManager()
     {
-        AnnouncerManager.reloadAnnouncer     += ReloadAnnouncer;
-        AnnouncerManager.resetCooldown       += ResetCooldowns;
+        AnnouncerManager.reloadAnnouncer += ReloadAnnouncer;
+        AnnouncerManager.resetCooldown += ResetCooldowns;
         AnnouncerManager.clearAudioClipCache += ClearAudioClipCache;
         AnnouncerManager.updateAnnouncerPath += UpdateAudioPath;
     }
@@ -83,7 +85,7 @@ public static class RankAnnouncerV2
     {
         m_announcer.ResetCooldown();
     }
-    
+
     private static void ClearAudioClipCache()
     {
         m_announcer.ClearAudioClipsCache();
@@ -107,8 +109,8 @@ public static class RankAnnouncerV2
     {
         var audioDict = m_rankCategory.ToDictionary(
             cat => cat,
-            cat => new CategoryAudioSetting 
-            { 
+            cat => new CategoryAudioSetting
+            {
                 Enabled = true,
                 DisplayName = m_displayNameMapping.TryGetValue(cat, out var name) ? name : cat,
                 AudioFiles = new List<string> { cat }
@@ -130,7 +132,7 @@ public static class RankAnnouncerV2
         PluginDependencies.LoadIfPluginExists(
             PluginDependencies.PLUGINCONFIGURATOR_GUID,
             "RegisterRankAnnouncerPage",
-            () => ReflectionManager.LoadByReflection("greycsont.GreyAnnouncer.RegisterRankAnnouncerPage", "Build", new object[]{announcerName, jsonSetting})
+            () => ReflectionManager.LoadByReflection("GreyAnnouncer.RegisterRankAnnouncerPage", "Build", new object[] { announcerName, jsonSetting })
         );
     }
 

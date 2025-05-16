@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace greycsont.GreyAnnouncer;
+namespace GreyAnnouncer.AnnouncerAPI;
 
 // shitest name ever named
 public class AnnouncerJsonSetting

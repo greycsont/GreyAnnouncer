@@ -4,8 +4,9 @@ using System.ComponentModel;
 using UnityEngine;
 using System.Threading.Tasks;
 
+using GreyAnnouncer.AudioSourceComponent;
 
-namespace greycsont.GreyAnnouncer;
+namespace GreyAnnouncer.AnnouncerAPI;
 
 public class AudioAnnouncer
 {

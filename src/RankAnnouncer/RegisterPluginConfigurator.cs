@@ -4,8 +4,10 @@ using PluginConfig.API.Decorators;
 using System;
 using UnityEngine;
 
+using GreyAnnouncer.AnnouncerAPI;
+using GreyAnnouncer.PluginConfiguratorGUI;
 
-namespace greycsont.GreyAnnouncer;
+namespace GreyAnnouncer.RankAnnouncer;
 
 public static class RegisterRankAnnouncerPage
 {

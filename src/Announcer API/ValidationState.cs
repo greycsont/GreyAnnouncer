@@ -1,4 +1,4 @@
-namespace greycsont.GreyAnnouncer;
+namespace GreyAnnouncer.AnnouncerAPI;
 
 public enum ValidationState
 {

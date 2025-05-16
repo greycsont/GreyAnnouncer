@@ -4,7 +4,7 @@ using System;
 using System.Threading.Tasks;
 using UnityEngine.Networking;
 
-namespace greycsont.GreyAnnouncer;
+namespace GreyAnnouncer.AnnouncerAPI;
 
 public static class AudioClipLoader
 {

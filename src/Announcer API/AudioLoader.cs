@@ -6,7 +6,7 @@ using System;
 using System.Threading.Tasks;
 using System.ComponentModel;
 
-namespace greycsont.GreyAnnouncer;
+namespace GreyAnnouncer.AnnouncerAPI;
 
 
 public class AudioLoader                                          

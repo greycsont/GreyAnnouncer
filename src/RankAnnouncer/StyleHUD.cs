@@ -2,10 +2,8 @@ using HarmonyLib;
 
 using UnityEngine;
 using System.Collections.Generic;
-
-
     
-namespace greycsont.GreyAnnouncer;
+namespace GreyAnnouncer.RankAnnouncer;
 
 /* This patch is used to determine the changes of rankIndex
     The rankIndex is basically the pointer to another arrays, list sth.
