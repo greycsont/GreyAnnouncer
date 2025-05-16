@@ -55,7 +55,7 @@ public static class AudioClipLoader
             return clip;
         }
     }
-    
+
     private static AudioType? GetUnityAudioType(string extension)
     {
         return extension switch
@@ -69,4 +69,5 @@ public static class AudioClipLoader
             _ => null
         };
     }
+
 }

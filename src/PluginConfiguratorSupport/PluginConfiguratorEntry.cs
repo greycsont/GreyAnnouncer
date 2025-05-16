@@ -6,7 +6,7 @@ namespace greycsont.GreyAnnouncer;
 
 
 [Description("This object is loaded via reflection from Plugin.cs")]
-public class PluginConfiguratorEntry
+public static class PluginConfiguratorEntry
 {
     public static PluginConfigurator config
     {

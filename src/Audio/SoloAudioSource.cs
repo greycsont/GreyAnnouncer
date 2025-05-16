@@ -2,7 +2,7 @@ using UnityEngine;
 
 using greycsont.GreyAnnouncer;
 
-public class SoloAudioSource : MonoBehaviour
+public sealed class SoloAudioSource : MonoBehaviour
 {
     private        AudioSource     m_audioSource;
     private static SoloAudioSource m_instance;

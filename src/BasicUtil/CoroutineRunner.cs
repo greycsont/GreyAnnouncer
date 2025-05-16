@@ -6,7 +6,7 @@ namespace greycsont.GreyAnnouncer;
 /// <summary>
 /// A helper MonoBehaviour, used to start a coroutine to load audio
 /// </summary>
-public class CoroutineRunner : MonoBehaviour
+public sealed class CoroutineRunner : MonoBehaviour
 {
     private static CoroutineRunner m_instance;
     public static CoroutineRunner  Instance

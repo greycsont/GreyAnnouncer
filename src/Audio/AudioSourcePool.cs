@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic; //audio clip
 using UnityEngine;
 
-public class AudioSourcePool : MonoBehaviour
+public sealed class AudioSourcePool : MonoBehaviour
 {
     #region Private Fields
     private                 Queue<AudioSource>                                   m_pool               = new Queue<AudioSource>();

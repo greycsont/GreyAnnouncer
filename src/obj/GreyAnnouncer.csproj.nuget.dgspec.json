@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "H:\\C#Project\\GreyAnnouncer\\GreyAnnouncer.csproj": {}
+    "H:\\C#Project\\GreyAnnouncer\\src\\core\\GreyAnnouncer.csproj": {}
   },
   "projects": {
-    "H:\\C#Project\\GreyAnnouncer\\GreyAnnouncer.csproj": {
+    "H:\\C#Project\\GreyAnnouncer\\src\\core\\GreyAnnouncer.csproj": {
       "version": "0.0.1",
       "restore": {
-        "projectUniqueName": "H:\\C#Project\\GreyAnnouncer\\GreyAnnouncer.csproj",
+        "projectUniqueName": "H:\\C#Project\\GreyAnnouncer\\src\\core\\GreyAnnouncer.csproj",
         "projectName": "GreyAnnouncer",
-        "projectPath": "H:\\C#Project\\GreyAnnouncer\\GreyAnnouncer.csproj",
+        "projectPath": "H:\\C#Project\\GreyAnnouncer\\src\\core\\GreyAnnouncer.csproj",
         "packagesPath": "C:\\Users\\asd\\.nuget\\packages\\",
-        "outputPath": "H:\\C#Project\\GreyAnnouncer\\obj\\",
+        "outputPath": "H:\\C#Project\\GreyAnnouncer\\src\\core\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "G:\\Visual studio\\shared\\NuGetPackages"
