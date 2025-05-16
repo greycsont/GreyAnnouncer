@@ -28,7 +28,7 @@ public static class InstanceConfig
         { "AudioLoadingOption",     ("Audio",    "Audio_Loading_Option",                DEFAULT_AUDIO_LOADING_OPTIONS,       "0 : load clip from file (less RAM more latency), 1 : preload clip to games (less latency more RAM)") },
 
         // "Advanced" section
-        { "Randomization",         ("Advacned", "Audio_Randomization",                  DEFAULT_AUDIO_RANDOMIZATION_ENABLED, "Set to true to enable audio randomlization of announcer (randomly selected a available audio)")}
+        { "Randomization",         ("Advance", "Audio_Randomization",                  DEFAULT_AUDIO_RANDOMIZATION_ENABLED, "Set to true to enable audio randomlization of announcer (randomly selected a available audio)")}
     };
     
     public static void Initialize(Plugin plugin)
