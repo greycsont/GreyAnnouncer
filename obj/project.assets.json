@@ -30,6 +30,19 @@
           "build/BepInEx.Core.targets": {}
         }
       },
+      "FFmpeg.AutoGen/7.1.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/FFmpeg.AutoGen.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/FFmpeg.AutoGen.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "HarmonyX/2.10.2": {
         "type": "package",
         "dependencies": {
@@ -176,6 +189,23 @@
         "tools/Install.ps1"
       ]
     },
+    "FFmpeg.AutoGen/7.1.1": {
+      "sha512": "p4FGdG654zut4Iseg7PeYo7sxFMOTuLTEKl/vX+44UQ6NmezF3wHcR6JzjH8xzK4VDPLJe5Xz563kXamMQj7Jg==",
+      "type": "package",
+      "path": "ffmpeg.autogen/7.1.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.txt",
+        "README.md",
+        "ffmpeg.autogen.7.1.1.nupkg.sha512",
+        "ffmpeg.autogen.nuspec",
+        "lib/netstandard2.0/FFmpeg.AutoGen.dll",
+        "lib/netstandard2.0/FFmpeg.AutoGen.xml",
+        "lib/netstandard2.1/FFmpeg.AutoGen.dll",
+        "lib/netstandard2.1/FFmpeg.AutoGen.xml"
+      ]
+    },
     "HarmonyX/2.10.2": {
       "sha512": "/5WwkxXX8mPsRuigQt957rJGx1f0dDQxk+bvk4yYITKFjXas9Em+O71zEP8X0ym8OFQQ2XH/2SxS4NC7vEC+Xg==",
       "type": "package",
@@ -295,6 +325,7 @@
     ".NETFramework,Version=v4.7.2": [
       "BepInEx.Analyzers >= 1.0.8",
       "BepInEx.Core >= 5.4.21",
+      "FFmpeg.AutoGen >= 7.1.1",
       "HarmonyX >= 2.10.2",
       "Newtonsoft.Json >= 13.0.3"
     ]
@@ -353,6 +384,10 @@
           "BepInEx.Core": {
             "target": "Package",
             "version": "[5.4.21, )"
+          },
+          "FFmpeg.AutoGen": {
+            "target": "Package",
+            "version": "[7.1.1, )"
           },
           "HarmonyX": {
             "target": "Package",

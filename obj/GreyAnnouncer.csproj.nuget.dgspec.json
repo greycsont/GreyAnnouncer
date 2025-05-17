@@ -55,6 +55,10 @@
               "target": "Package",
               "version": "[5.4.21, )"
             },
+            "FFmpeg.AutoGen": {
+              "target": "Package",
+              "version": "[7.1.1, )"
+            },
             "HarmonyX": {
               "target": "Package",
               "version": "[2.10.2, )"

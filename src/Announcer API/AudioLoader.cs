@@ -6,17 +6,19 @@ using System;
 using System.Threading.Tasks;
 using System.ComponentModel;
 
+using GreyAnnouncer.AudioLoading;
+
 namespace GreyAnnouncer.AnnouncerAPI;
 
 
-public class AudioLoader                                          
+public class AudioLoader
 {
     #region Properties
-    public string[]                             audioCategories       { get; private set; }
-    public HashSet<string>                      categoryFailedLoading { get; private set; } = new HashSet<string>();
-    private Dictionary<string, List<AudioClip>> m_audioClips          = new Dictionary<string, List<AudioClip>>();
-    private AnnouncerJsonSetting                m_jsonSetting;
-    private string                              m_audioPath;
+    public string[] audioCategories { get; private set; }
+    public HashSet<string> categoryFailedLoading { get; private set; } = new HashSet<string>();
+    private Dictionary<string, List<AudioClip>> m_audioClips = new Dictionary<string, List<AudioClip>>();
+    private AnnouncerJsonSetting m_jsonSetting;
+    private string m_audioPath;
 
     public static Action<string> OnPluginConfiguratorLogUpdated;
     #endregion
@@ -26,9 +28,9 @@ public class AudioLoader
                  "A : For future, what kinds of future? idk.")]
     public AudioLoader(string audioPath, string[] audioCategories, AnnouncerJsonSetting jsonSetting)
     {
-        this.m_audioPath      = audioPath;
-        this.audioCategories  = audioCategories;
-        this.m_jsonSetting    = jsonSetting;
+        this.m_audioPath = audioPath;
+        this.audioCategories = audioCategories;
+        this.m_jsonSetting = jsonSetting;
     }
     #endregion
 
@@ -36,17 +38,17 @@ public class AudioLoader
     public AudioClip GetClipFromCache(string category)
     {
         if (categoryFailedLoading.Contains(category)) return null;
-        
+
 
         if (audioCategories.Contains(category) == false) return null;
 
 
         if (!m_audioClips.TryGetValue(category, out var clips) || clips.Count == 0) return null;
-    
+
         int randomIndex = UnityEngine.Random.Range(0, clips.Count);
         return clips[randomIndex];
     }
-    
+
     public AudioClip GetRandomClipFromAudioClips()
     {
         var validClips = m_audioClips
@@ -54,7 +56,7 @@ public class AudioLoader
             .Where(clip => clip != null)
             .ToList();
 
-        var clip = validClips[UnityEngine.Random.Range(0,validClips.Count)];
+        var clip = validClips[UnityEngine.Random.Range(0, validClips.Count)];
         return clip;
     }
 
@@ -65,7 +67,7 @@ public class AudioLoader
     public async Task<AudioClip> LoadAndGetSingleAudioClipAsync(string category)
     {
         if (!TryGetValidAudioFiles(category, out var validFiles)) return null;
-    
+
         string selectedPath = validFiles[UnityEngine.Random.Range(0, validFiles.Count)];
         var clip = await AudioClipLoader.LoadAudioClipAsync(selectedPath);
 
@@ -221,7 +223,7 @@ public class AudioLoader
     private void LogLoadingResults()
     {
         LogForPluginConfigurator();
-        
+
         if (categoryFailedLoading.Count == 0)
         {
             LogManager.LogInfo("All audio categories successfully loaded");
@@ -230,7 +232,7 @@ public class AudioLoader
         {
             LogManager.LogWarning("Failed to load audio categories: " + string.Join(", ", categoryFailedLoading));
         }
-  
+
     }
 
     private void LogForPluginConfigurator()

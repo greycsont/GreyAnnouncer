@@ -91,6 +91,7 @@ if you have any throuble or suggestion with the mod, feel free to ask in
 
 for anything with the code, It's free to ask too, but I recommand using this first
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/greycsont/GreyAnnouncer)
+But directly ask person is the fastest way to doing it(
 
 ## Resources
 - [1] Krita, used under GNU General Public License (GPL) Version 3.0

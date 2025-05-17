@@ -1,4 +1,5 @@
 ### Known issue/TODO
+- FFmpeg support
 
 ### v1.1.1
 - Removed PluginConfigurator Hard Dependencies.
