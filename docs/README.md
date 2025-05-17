@@ -84,10 +84,13 @@ Make sure when you edit it and the game is running, click `Reload` button [in th
 - Download and Using [PluginConfigurator](https://thunderstore.io/c/ultrakill/p/EternalsTeam/PluginConfigurator/) to edit in-game.
 
 ## Bugs & Suggestions
-if you have any throuble with the mod, feel free to ask in 
+if you have any throuble or suggestion with the mod, feel free to ask in 
 - [Github issue](https://github.com/greycsont/GreyAnnouncer/issues)
 - Email : 1106230622@qq.com
 - Discord : username : csont.0721
+
+for anything with the code, It's free to ask too, but I recommand using this first
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/greycsont/GreyAnnouncer)
 
 ## Resources
 - [1] Krita, used under GNU General Public License (GPL) Version 3.0
