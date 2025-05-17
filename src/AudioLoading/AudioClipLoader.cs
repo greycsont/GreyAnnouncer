@@ -13,20 +13,20 @@ public static class AudioClipLoader
         string extension = Path.GetExtension(path).ToLower();
         AudioType? unityAudioType = GetUnityAudioType(extension);
 
-        if (!unityAudioType.HasValue)
-        {
-            LogManager.LogError($"Unsupported audio format: 「{extension}」 for {path}");
-            return null;
-        }
-
         try
         {
+             if (!unityAudioType.HasValue)
+            {
+                LogManager.LogError($"Unsupported audio format: 「{extension}」 for {path}");
+                LogManager.LogInfo($"Start to load with FFmpegSupport : {path}");
+                return await FFmpegSupport.DecodeAndLoad(path); 
+            }
             LogManager.LogInfo($"Started loading audio: {path}");
             return await LoadWithUnityAsync(path, unityAudioType.Value);
         }
         catch (Exception ex)
         {
-            LogManager.LogError($"Error loading {path}: {ex.Message}");
+            LogManager.LogError($"Error loading {path}: {ex.Message}\n{ex.StackTrace}");
             return null;
         }
     }

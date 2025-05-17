@@ -12,11 +12,12 @@ namespace GreyAnnouncer.AudioLoading;
 // Unsafe!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 public static class FFmpegSupport
 {
-    public static unsafe Task<AudioClip> LoadAndDecode(string filePath)
+    public static unsafe Task<AudioClip> DecodeAndLoad(string filePath)
     {
-        return Task.Run(() =>
+        return Task.Run( () =>
         {
-            ffmpeg.RootPath = Application.streamingAssetsPath; // 或者你手动指定 dll 路径
+            ffmpeg.RootPath = PathManager.GetCurrentPluginPath(); // 或者你手动指定 dll 路径
+            LogManager.LogWarning($"ffmpeg version: {ffmpeg.av_version_info()}");
             ffmpeg.avformat_network_init();
 
             AVFormatContext* formatContext = ffmpeg.avformat_alloc_context();
@@ -108,18 +109,18 @@ public static class FFmpegSupport
 
                 ffmpeg.av_packet_unref(packet);
             }
-
+            // 创建 Unity AudioClip
+            float[] sampleArray = samples.ToArray();
+            int channels114514 = codecCtx->ch_layout.nb_channels;
+            int sampleRate = codecCtx->sample_rate;
+            int sampleCount = sampleArray.Length / channels;
+            
             ffmpeg.av_frame_free(&frame);
             ffmpeg.av_packet_free(&packet);
             ffmpeg.avcodec_free_context(&codecCtx);
             ffmpeg.avformat_close_input(&formatContext);
             ffmpeg.swr_free(&swrCtx);
 
-            // 创建 Unity AudioClip
-            float[] sampleArray = samples.ToArray();
-            int channels114514 = (int)codecCtx->ch_layout.nb_channels;
-            int sampleRate = codecCtx->sample_rate;
-            int sampleCount = sampleArray.Length / channels;
 
             AudioClip clip = AudioClip.Create("decoded_clip", sampleCount, channels114514, sampleRate, false);
             clip.SetData(sampleArray, 0);
