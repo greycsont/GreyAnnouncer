@@ -12,20 +12,28 @@ public static class AudioClipLoader
     {
         string extension = Path.GetExtension(path).ToLower();
         AudioType? unityAudioType = GetUnityAudioType(extension);
-
+        AudioClip clip;
         try
         {
             if (unityAudioType.HasValue)
             {
                 LogManager.LogInfo($"Started loading audio: {path}");
-                return await LoadWithUnityAsync(path, unityAudioType.Value);
+                clip = await LoadWithUnityAsync(path, unityAudioType.Value);
             }
-            LogManager.LogError($"Unsupported audio format: 「{extension}」 for {path}");
-            if (true == true)
+            else if (true == true)
             {
-                LogManager.LogInfo($"Start to load with FFmpegSupport : {path}");
-                return await FFmpegSupport.DecodeAndLoad(path); 
+                LogManager.LogInfo($"Start to load via FFmpegSupport : {path}");
+                clip = await FFmpegSupport.DecodeAndLoad(path);
             }
+            else
+            {
+                LogManager.LogError($"Unsupported audio format: 「{extension}」 for {path}");
+            }
+
+            if (clip == null) return null;
+        
+            LogManager.LogInfo($"Loaded audio: {Path.GetFileName(path)}");
+            return clip;
         }
         catch (Exception ex)
         {
@@ -54,7 +62,6 @@ public static class AudioClipLoader
             }
 
             var clip = DownloadHandlerAudioClip.GetContent(www);
-            LogManager.LogInfo($"Loaded audio: {Path.GetFileName(path)}");
             return clip;
         }
     }

@@ -11,13 +11,13 @@ namespace GreyAnnouncer.AnnouncerAPI;
 public class AudioAnnouncer
 {
     #region Private Fields
-    private AnnouncerJsonSetting m_jsonSetting;
-    private AudioLoader          m_audioLoader;
-    private CooldownManager      m_cooldownManager;
-    private AudioSourceSetting   m_audioSourceConfig;
+    private    AnnouncerJsonSetting    m_jsonSetting;
+    private    AudioLoader             m_audioLoader;
+    private    CooldownManager         m_cooldownManager;
+    private    AudioSourceSetting      m_audioSourceConfig;
     
-    private string[]             m_audioCategories;
-    private string               m_audioPath;
+    private    string[]                m_audioCategories;
+    private    string                  m_audioPath;
     #endregion
 
 

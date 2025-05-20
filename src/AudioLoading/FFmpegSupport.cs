@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using FFmpeg.AutoGen;
@@ -15,13 +16,13 @@ public static class FFmpegSupport
     {
         return Task.Run(() =>
         {
-            AVFormatContext* formatContext    = null;
-            AVCodecContext*  codecCtx         = null;
-            SwrContext*      swrCtx           = null;
-            AVPacket*        packet           = null;
-            AVFrame*         frame            = null;
+            AVFormatContext*    formatContext    = null;
+            AVCodecContext*     codecCtx         = null;
+            SwrContext*         swrCtx           = null;
+            AVPacket*           packet           = null;
+            AVFrame*            frame            = null;
 
-            int              audioStreamIndex;
+            int                 audioStreamIndex;
 
             ffmpeg.RootPath = PathManager.GetCurrentPluginPath(); // 或者你手动指定 dll 路径
             LogManager.LogWarning($"ffmpeg version: {ffmpeg.av_version_info()}");
@@ -29,23 +30,26 @@ public static class FFmpegSupport
             ffmpeg.avformat_network_init();
 
             formatContext = InitializeFormatContext(filePath);
-
+            
+            // 查找音频流
             audioStreamIndex = FindAudioStreamIndex(formatContext);
 
             // 设置解码器
             codecCtx = InitializeCodecContext(formatContext, audioStreamIndex);
 
+            // swrCtx 初始化方式
             swrCtx = InitializeResampler(codecCtx);
 
             packet = ffmpeg.av_packet_alloc();
 
             frame = ffmpeg.av_frame_alloc();
 
-            var samples = DecodeAudioFrames(formatContext, codecCtx, swrCtx, packet, frame, audioStreamIndex);
-            // 创建 Unity AudioClip
             var streamedData = DecodeAudioFrames(formatContext, codecCtx, swrCtx, packet, frame, audioStreamIndex);
 
-            float[] sampleArray = samples.ToArray();
+
+            // 创建 Unity AudioClip
+
+            float[] sampleArray = streamedData.GetAllSamples();
             int channelCount = codecCtx->ch_layout.nb_channels;
             int sampleRate = codecCtx->sample_rate;
             int sampleCount = sampleArray.Length / channelCount;
@@ -70,7 +74,6 @@ public static class FFmpegSupport
         if (ffmpeg.avformat_find_stream_info(formatContext, null) != 0)
             throw new Exception("Could not find stream info.");
 
-        int audioStreamIndex = FindAudioStreamIndex(formatContext);
         return formatContext;
     }
 
@@ -124,10 +127,14 @@ public static class FFmpegSupport
         return swrCtx;
     }
 
-    private static unsafe List<float> DecodeAudioFrames(AVFormatContext* formatContext, AVCodecContext* codecCtx, SwrContext* swrCtx, AVPacket* packet, AVFrame* frame, int audioStreamIndex)
+    private static unsafe StreamedAudioData DecodeAudioFrames(AVFormatContext* formatContext, AVCodecContext* codecCtx, SwrContext* swrCtx, AVPacket* packet, AVFrame* frame, int audioStreamIndex)
     {
+        var streamedData = new StreamedAudioData
+        {
+            Channels = codecCtx->ch_layout.nb_channels,
+            SampleRate = codecCtx->sample_rate
+        };
 
-        var samples = new List<float>();
         while (ffmpeg.av_read_frame(formatContext, packet) >= 0)
         {
             if (packet->stream_index != audioStreamIndex)
@@ -136,14 +143,14 @@ public static class FFmpegSupport
                 continue;
             }
 
-            ProcessAudioFrame(codecCtx, swrCtx, packet, frame, samples);
+            ProcessAudioFrame(codecCtx, swrCtx, packet, frame, streamedData);
             ffmpeg.av_packet_unref(packet);
         }
-        return samples;
+        return streamedData;
     }
 
 
-    private static unsafe void ProcessAudioFrame(AVCodecContext* codecCtx, SwrContext* swrCtx, AVPacket* packet, AVFrame* frame, List<float> samples)
+    private static unsafe void ProcessAudioFrame(AVCodecContext* codecCtx, SwrContext* swrCtx, AVPacket* packet, AVFrame* frame, StreamedAudioData streamedData)
     {
         ffmpeg.avcodec_send_packet(codecCtx, packet);
         while (ffmpeg.avcodec_receive_frame(codecCtx, frame) == 0)
@@ -173,7 +180,7 @@ public static class FFmpegSupport
 
             float[] buffer = new float[bufferSize / sizeof(float)];
             Marshal.Copy((IntPtr)convertedData[0], buffer, 0, buffer.Length);
-            samples.AddRange(buffer);
+            streamedData.AddSamples(buffer);
 
             ffmpeg.av_freep(&convertedData[0]);
         }

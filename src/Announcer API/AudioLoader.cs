@@ -14,13 +14,13 @@ namespace GreyAnnouncer.AnnouncerAPI;
 public class AudioLoader
 {
     #region Properties
-    public string[] audioCategories { get; private set; }
-    public HashSet<string> categoryFailedLoading { get; private set; } = new HashSet<string>();
-    private Dictionary<string, List<AudioClip>> m_audioClips = new Dictionary<string, List<AudioClip>>();
-    private AnnouncerJsonSetting m_jsonSetting;
-    private string m_audioPath;
+    public  string[]                            audioCategories       { get; private set; }
+    public  HashSet<string>                     categoryFailedLoading { get; private set; } = new HashSet<string>();
+    private Dictionary<string, List<AudioClip>> m_audioClips                                = new Dictionary<string, List<AudioClip>>();
+    private AnnouncerJsonSetting                m_jsonSetting;
+    private string                              m_audioPath;
 
-    public static Action<string> OnPluginConfiguratorLogUpdated;
+    public static Action<string>                OnPluginConfiguratorLogUpdated;
     #endregion
 
     #region Constructor
@@ -28,9 +28,9 @@ public class AudioLoader
                  "A : For future, what kinds of future? idk.")]
     public AudioLoader(string audioPath, string[] audioCategories, AnnouncerJsonSetting jsonSetting)
     {
-        this.m_audioPath = audioPath;
+        this.m_audioPath     = audioPath;
         this.audioCategories = audioCategories;
-        this.m_jsonSetting = jsonSetting;
+        this.m_jsonSetting   = jsonSetting;
     }
     #endregion
 

@@ -1,4 +1,3 @@
-using BepInEx;
 using System;
 
 namespace GreyAnnouncer;

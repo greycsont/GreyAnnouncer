@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using GreyAnnouncer.AudioSourceComponent;
 
 
 namespace GreyAnnouncer;
@@ -16,15 +17,15 @@ public static class AudioSourceManager
         return audioSource;
     }
 
-// The values of lowPassFilter are directly copied from ULTRAKILL
-//
+    // The values of lowPassFilter are directly copied from ULTRAKILL
+    //
     public static AudioSource AddLowPassFilter(AudioSource audioSource)
     {
         if (audioSource == null) return null;
         AudioLowPassFilter lowPassFilter = audioSource.gameObject.GetComponent<AudioLowPassFilter>()
                                             ?? audioSource.gameObject.AddComponent<AudioLowPassFilter>();
-        lowPassFilter.cutoffFrequency    = 1000f;
-        lowPassFilter.lowpassResonanceQ  = 1f;
+        lowPassFilter.cutoffFrequency   = 1000f;
+        lowPassFilter.lowpassResonanceQ = 1f;
         return audioSource;
     }
 
@@ -52,6 +53,12 @@ public static class AudioSourceManager
             yield return new WaitForSeconds(timeStep);
         }
         audioSource.volume = targetVolume;
+    }
+
+    public static void StopAllAudioSource()
+    {
+        SoloAudioSource.Instance.StopAudioSource();
+        AudioSourcePool.Instance.StopAllAudioSource();
     }
 
 }

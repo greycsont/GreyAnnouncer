@@ -4,7 +4,7 @@ namespace GreyAnnouncer.AudioSourceComponent;
 
 public sealed class SoloAudioSource : MonoBehaviour
 {
-    private        AudioSource     m_audioSource;
+    private AudioSource m_audioSource;
     private static SoloAudioSource m_instance;
 
     #region Constructor
@@ -14,7 +14,7 @@ public sealed class SoloAudioSource : MonoBehaviour
         {
             if (m_instance == null)
             {
-                var obj  = new GameObject("SoloAudioSource");
+                var obj = new GameObject("SoloAudioSource");
                 DontDestroyOnLoad(obj);
                 m_instance = obj.AddComponent<SoloAudioSource>();
             }
@@ -51,9 +51,15 @@ public sealed class SoloAudioSource : MonoBehaviour
     public void UpdateSoloAudioSourceVolume(float targetVolume, float duration = 0.35f)
     {
         if (m_audioSource != null)
-        {                          
+        {
             StartCoroutine(AudioSourceManager.FadeVolume(m_audioSource, targetVolume, duration));
         }
+    }
+
+    public void StopAudioSource()
+    {
+        m_audioSource.Stop();
+        Destroy(m_audioSource.clip);
     }
     #endregion
 }        

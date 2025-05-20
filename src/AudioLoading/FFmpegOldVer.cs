@@ -9,8 +9,8 @@ using UnityEngine;
 namespace GreyAnnouncer.AudioLoading;
 
 
-// Unsafe!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-public static class FFmpegSupportA
+[Obsolete("The reason of leave it here is only for review and study")]
+public static class FFmpegSupportOldVer
 {
     public static unsafe Task<AudioClip> DecodeAndLoad(string filePath)
     {

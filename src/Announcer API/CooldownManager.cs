@@ -56,8 +56,8 @@ public class CooldownManager
             yield break;
         }
 
-        float cooldown = initialCooldown;
-        float waitTime = cooldown * 3 / 4f;
+        float cooldown      = initialCooldown;
+        float waitTime      = cooldown * 3 / 4f;
         float deltaTimeTime = cooldown * 1 / 4f;
         setCooldown(cooldown);
 

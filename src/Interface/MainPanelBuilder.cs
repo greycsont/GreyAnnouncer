@@ -16,6 +16,7 @@ public static class MainPanelBuilder
     private static readonly Color m_greyColour = new Color(0.85f, 0.85f, 0.85f, 1f);
     private static readonly Color m_CyanColour = new Color(0f, 1f, 1f, 1f);
     private static readonly Color m_OrangeColour = new Color(1f, 0.6f, 0.2f, 1f);
+    private static readonly Color m_RedColour = new Color(1f, 0f, 0f, 1f);
     private static PluginConfigurator m_pluginConfigurator;
     public static ConfigHeader logHeader;
 
@@ -30,6 +31,7 @@ public static class MainPanelBuilder
         CreateAudioControls();
         CreateAdvancedOptionPanel();
         CreateAnnouncerSection();
+        CreateEmergencySection();
 
         CreateDelegateTextFromBackEnd();
     }
@@ -209,6 +211,18 @@ public static class MainPanelBuilder
         logHeader.tmpAnchor = TMPro.TextAlignmentOptions.TopLeft;
         logHeader.textSize = 12;
         logHeader.textColor = m_CyanColour;
+    }
+
+    private static void CreateEmergencySection()
+    {
+        var emergencyHeader = new ConfigHeader(m_pluginConfigurator.rootPanel, "Emergency");
+        emergencyHeader.textColor = m_RedColour;
+
+        var stopAudioSourceButton = new ButtonField(m_pluginConfigurator.rootPanel, "Stop All Audio Source", "Stop_All_Audio_Source");
+        stopAudioSourceButton.onClick += () =>
+        {
+            AudioSourceManager.StopAllAudioSource();
+        };
     }
 
     private static void CreateDelegateTextFromBackEnd()

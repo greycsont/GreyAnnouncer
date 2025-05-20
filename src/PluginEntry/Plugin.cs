@@ -1,9 +1,7 @@
 ﻿using BepInEx;
-using BepInEx.Bootstrap;
 using BepInEx.Logging;
 using HarmonyLib;
 
-using GreyAnnouncer;
 using GreyAnnouncer.RankAnnouncer;
 
 
@@ -18,7 +16,7 @@ namespace GreyAnnouncer;
 public class Plugin : BaseUnityPlugin
 {
     internal static ManualLogSource log;
-    private Harmony m_harmony;
+    private         Harmony         m_harmony;
 
     private void Awake()
     {

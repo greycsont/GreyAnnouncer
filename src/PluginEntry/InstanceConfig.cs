@@ -13,6 +13,7 @@ public static class InstanceConfig
     public static          ConfigEntry<int>                      audioPlayOptions;
     public static          ConfigEntry<int>                      audioLoadingOptions;
     public static          ConfigEntry<bool>                     isAudioRandomizationEnabled;
+    public static          ConfigEntry<bool>                     isFFmpegSupportEnabled;
 
     public static readonly Dictionary<string, (string section, string name, object defaultValue, string description)> ConfigEntries = new()
     {

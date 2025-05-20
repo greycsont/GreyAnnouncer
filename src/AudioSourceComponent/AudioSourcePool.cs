@@ -5,18 +5,14 @@ using UnityEngine;
 namespace GreyAnnouncer.AudioSourceComponent;
 public sealed class AudioSourcePool : MonoBehaviour
 {
-    #region Private Fields
-    private Queue<AudioSource> m_pool = new Queue<AudioSource>();
-    private readonly HashSet<AudioSource> m_activeAudioSources = new HashSet<AudioSource>();
-    private LinkedList<AudioSource> m_playingList = new LinkedList<AudioSource>();
-    private Dictionary<AudioSource, LinkedListNode<AudioSource>> m_playingMap = new Dictionary<AudioSource, LinkedListNode<AudioSource>>();
-    private static AudioSourcePool m_instance;
-    #endregion
+    private Queue<AudioSource>                                   m_pool               = new Queue<AudioSource>();
+    private readonly HashSet<AudioSource>                        m_activeAudioSources = new HashSet<AudioSource>();
+    private LinkedList<AudioSource>                              m_playingList        = new LinkedList<AudioSource>();
+    private Dictionary<AudioSource, LinkedListNode<AudioSource>> m_playingMap         = new Dictionary<AudioSource, LinkedListNode<AudioSource>>();
+    private static AudioSourcePool                               m_instance;
 
-    #region Public Fields
-    public int initialSize = 2;
-    public int maxSize = 7;
-    #endregion
+    public int                                                   initialSize = 2;
+    public int                                                   maxSize = 7;
 
 
     #region Constructor
@@ -95,6 +91,14 @@ public sealed class AudioSourcePool : MonoBehaviour
             {
                 StartCoroutine(AudioSourceManager.FadeVolume(audioSource, targetVolume, duration));
             }
+        }
+    }
+
+    public void StopAllAudioSource()
+    {
+        foreach (var audioSource in m_activeAudioSources)
+        {
+            Recycle(audioSource);
         }
     }
     #endregion
