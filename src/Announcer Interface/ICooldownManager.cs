@@ -1,4 +1,4 @@
-interface ICooldownManager
+public interface ICooldownManager
 {
     public bool IsIndividualCooldownActive(string category);
     public bool IsSharedCooldownActive();

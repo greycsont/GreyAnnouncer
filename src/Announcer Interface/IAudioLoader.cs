@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using UnityEngine;
 
-interface IAudioLoader
+public interface IAudioLoader
 {
     public AudioClip GetClipFromCache(string category);
     public AudioClip GetRandomClipFromAudioClips();

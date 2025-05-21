@@ -13,7 +13,9 @@ public class AudioAnnouncer
     #region Private Fields
     private    AnnouncerJsonSetting    m_jsonSetting;
     private    AudioLoader             m_audioLoader;
+    private    IAudioLoader            audioLoader;
     private    CooldownManager         m_cooldownManager;
+    private    ICooldownManager        cooldownManager;
     private    AudioSourceSetting      m_audioSourceConfig;
     
     private    string[]                m_audioCategories;
@@ -22,9 +24,11 @@ public class AudioAnnouncer
 
 
     #region Public API
-    public void Initialize(string[] audioCategories, AnnouncerJsonSetting jsonSetting, string audioPath)
+    public void Initialize(string[] audioCategories, AnnouncerJsonSetting jsonSetting, string audioPath, IAudioLoader audioLoader, ICooldownManager cooldownManager)
     {
         VariableInitialization(audioCategories, jsonSetting, audioPath);
+        this.audioLoader = audioLoader;
+        this.cooldownManager = cooldownManager;
         ComponentInitialization();
     }
 
@@ -215,7 +219,7 @@ public class AudioAnnouncer
         }
 
 
-        if (m_audioLoader.audioCategories == null || !m_audioLoader.audioCategories.Contains(category)){
+        if (m_audioLoader.jsonSetting.CategoryAudioMap.Keys == null || !m_audioLoader.jsonSetting.CategoryAudioMap.Keys.Contains(category)){
             return ValidationState.InvalidKey;
         }
 

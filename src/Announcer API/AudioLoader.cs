@@ -13,10 +13,9 @@ namespace GreyAnnouncer.AnnouncerAPI;
 
 public class AudioLoader : IAudioLoader
 {
-    public  string[]                            audioCategories       { get; private set; }
     public  HashSet<string>                     categoryFailedLoading { get; private set; } = new HashSet<string>();
     private Dictionary<string, List<AudioClip>> m_audioClips                                = new Dictionary<string, List<AudioClip>>();
-    private AnnouncerJsonSetting                m_jsonSetting;
+    public  AnnouncerJsonSetting                jsonSetting;
     private string                              m_audioPath;
 
     public static Action<string>                OnPluginConfiguratorLogUpdated;
@@ -26,9 +25,8 @@ public class AudioLoader : IAudioLoader
                  "A : For future, what kinds of future? idk.")]
     public AudioLoader(string audioPath, string[] audioCategories, AnnouncerJsonSetting jsonSetting)
     {
-        this.m_audioPath     = audioPath;
-        this.audioCategories = audioCategories;
-        this.m_jsonSetting   = jsonSetting;
+        this.m_audioPath   = audioPath;
+        this.jsonSetting   = jsonSetting;
     }
     #endregion
 
@@ -38,7 +36,7 @@ public class AudioLoader : IAudioLoader
         if (categoryFailedLoading.Contains(category)) return null;
 
 
-        if (audioCategories.Contains(category) == false) return null;
+        if (jsonSetting.CategoryAudioMap.Keys.Contains(category) == false) return null;
 
 
         if (!m_audioClips.TryGetValue(category, out var clips) || clips.Count == 0) return null;
@@ -77,7 +75,7 @@ public class AudioLoader : IAudioLoader
     {
         // 以后应该是返回一个category和一个音频名？
         var totalValidFiles = new List<string>();
-        foreach (var category in audioCategories)
+        foreach (var category in jsonSetting.CategoryAudioMap.Keys)
         {
             TryGetValidAudioFiles(category, out var validFiles);
             foreach (var fileName in validFiles)
@@ -120,7 +118,7 @@ public class AudioLoader : IAudioLoader
 
     public void UpdateJsonSetting(AnnouncerJsonSetting jsonSetting)
     {
-        this.m_jsonSetting = jsonSetting;
+        this.jsonSetting = jsonSetting;
     }
 
     public void ClearCache()
@@ -136,7 +134,7 @@ public class AudioLoader : IAudioLoader
     {
         var loadingTasks = new List<Task<(string category, List<AudioClip> clips)>>();
 
-        foreach (var category in audioCategories)
+        foreach (var category in jsonSetting.CategoryAudioMap.Keys)
         {
             loadingTasks.Add(LoadCategoryAsync(category).ContinueWith(task => (category, task.Result)));
         }
@@ -238,10 +236,10 @@ public class AudioLoader : IAudioLoader
         // Warning : PluginConfigurator
         var builder = new System.Text.StringBuilder();
 
-        foreach (var category in audioCategories)
+        foreach (var category in jsonSetting.CategoryAudioMap.Keys)
         {
             int loaded = m_audioClips.TryGetValue(category, out var clips) ? clips.Count : 0;
-            int total = m_jsonSetting.CategoryAudioMap.TryGetValue(category, out var setting) ? setting.AudioFiles.Count : 0;
+            int total = jsonSetting.CategoryAudioMap.TryGetValue(category, out var setting) ? setting.AudioFiles.Count : 0;
             builder.AppendLine($"{category} ({loaded}/{total})");
         }
 
@@ -257,7 +255,7 @@ public class AudioLoader : IAudioLoader
     {
         validFiles = null;
 
-        if (!m_jsonSetting.CategoryAudioMap.TryGetValue(category, out var categorySetting)
+        if (!jsonSetting.CategoryAudioMap.TryGetValue(category, out var categorySetting)
             || categorySetting.AudioFiles == null
             || categorySetting.AudioFiles.Count == 0)
         {
