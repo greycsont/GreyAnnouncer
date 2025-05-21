@@ -11,7 +11,7 @@ using GreyAnnouncer.AudioLoading;
 namespace GreyAnnouncer.AnnouncerAPI;
 
 
-public class AudioLoader
+public class AudioLoader : IAudioLoader
 {
     public  string[]                            audioCategories       { get; private set; }
     public  HashSet<string>                     categoryFailedLoading { get; private set; } = new HashSet<string>();
@@ -118,7 +118,7 @@ public class AudioLoader
         this.m_audioPath = newAudioPath;
     }
 
-    public void UpdateAudioFileNames(AnnouncerJsonSetting jsonSetting)
+    public void UpdateJsonSetting(AnnouncerJsonSetting jsonSetting)
     {
         this.m_jsonSetting = jsonSetting;
     }

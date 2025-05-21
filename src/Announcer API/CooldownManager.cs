@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace GreyAnnouncer.AnnouncerAPI;
 
-public class CooldownManager
+public class CooldownManager : ICooldownManager
 {
     private Dictionary<string, float> m_individualCooldowns = new Dictionary<string, float>();
 
@@ -28,14 +28,10 @@ public class CooldownManager
         return AnnouncerManager.sharedCooldown > 0f;
     }
 
-    public void StartIndividualCooldown(string category, float duration)
+    public void StartCooldowns(string category, float duration)
     {
-        CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => m_individualCooldowns[category] = value, duration));
-    }
-
-    public void StartSharedCooldown(float duration)
-    {
-        CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => AnnouncerManager.sharedCooldown = value, duration));
+        StartIndividualCooldown(category, duration);
+        StartSharedCooldown(InstanceConfig.sharedPlayCooldown.Value);
     }
 
     public void ResetCooldowns()
@@ -46,6 +42,18 @@ public class CooldownManager
             m_individualCooldowns[key] = 0f;
         }
     }
+
+    private void StartIndividualCooldown(string category, float duration)
+    {
+        CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => m_individualCooldowns[category] = value, duration));
+    }
+
+    private void StartSharedCooldown(float duration)
+    {
+        CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => AnnouncerManager.sharedCooldown = value, duration));
+    }
+
+
 
 
     private IEnumerator CooldownCoroutine(Action<float> setCooldown, float initialCooldown)

@@ -52,7 +52,7 @@ public class AudioAnnouncer
     public void ReloadAudio(AnnouncerJsonSetting jsonSetting)
     {
         this.m_jsonSetting = jsonSetting; 
-        m_audioLoader.UpdateAudioFileNames(m_jsonSetting);
+        m_audioLoader.UpdateJsonSetting(m_jsonSetting);
         _ = m_audioLoader.FindAvailableAudioAsync();
     }
 
@@ -74,7 +74,7 @@ public class AudioAnnouncer
     public void UpdateJsonSetting(AnnouncerJsonSetting jsonSetting)
     {
         this.m_jsonSetting = jsonSetting;
-        m_audioLoader.UpdateAudioFileNames(jsonSetting);
+        m_audioLoader.UpdateJsonSetting(jsonSetting);
     }
     #endregion
 
@@ -118,8 +118,7 @@ public class AudioAnnouncer
     #region Cooldown related
     public void SetCooldown(string category, float cooldown)
     {
-        m_cooldownManager.StartSharedCooldown(InstanceConfig.sharedPlayCooldown.Value);
-        m_cooldownManager.StartIndividualCooldown(category, cooldown);
+        m_cooldownManager.StartCooldowns(category, cooldown);
     }
     #endregion
 
