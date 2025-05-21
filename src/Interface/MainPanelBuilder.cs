@@ -31,7 +31,6 @@ public static class MainPanelBuilder
         CreateAudioControls();
         CreateAdvancedOptionPanel();
         CreateAnnouncerSection();
-        CreateEmergencySection();
 
         CreateDelegateTextFromBackEnd();
     }
@@ -136,9 +135,6 @@ public static class MainPanelBuilder
             3,
             new float[] { 0.4f, 0.4f, 0.2f },
             new string[] { "Open Audio Folder", "Reload", "Advance" }
-            // 2 button
-            // width of two buttons ( sum = 1f ) 
-            // Two button's text
         );
         audioButtonArray.OnClickEventHandler(0).onClick += () =>
         {
@@ -199,6 +195,28 @@ public static class MainPanelBuilder
             InstanceConfig.isAudioRandomizationEnabled.Value = e.value;
             LogManager.LogInfo($"Switch audio randomization : {e.value}");
         };
+
+        var ffmpegToggle = new BoolField(
+            advancedPanel,
+            "FFmpeg Support",
+            "FFmpeg_Support",
+            InstanceConfig.isFFmpegSupportEnabled.Value
+        );
+        ffmpegToggle.defaultValue = false;
+        ffmpegToggle.onValueChange += (e) =>
+        {
+            InstanceConfig.isFFmpegSupportEnabled.Value = e.value;
+            LogManager.LogInfo($"Switched FFmpeg support : {e.value}");
+        };
+
+        var emergencyHeader = new ConfigHeader(advancedPanel, "Emergency");
+        emergencyHeader.textColor = m_RedColour;
+
+        var stopAudioSourceButton = new ButtonField(advancedPanel, "Stop All Audio Source", "Stop_All_Audio_Source");
+        stopAudioSourceButton.onClick += () =>
+        {
+            AudioSourceManager.StopAllAudioSource();
+        };
     }
 
     private static void CreateAnnouncerSection()
@@ -211,18 +229,6 @@ public static class MainPanelBuilder
         logHeader.tmpAnchor = TMPro.TextAlignmentOptions.TopLeft;
         logHeader.textSize = 12;
         logHeader.textColor = m_CyanColour;
-    }
-
-    private static void CreateEmergencySection()
-    {
-        var emergencyHeader = new ConfigHeader(m_pluginConfigurator.rootPanel, "Emergency");
-        emergencyHeader.textColor = m_RedColour;
-
-        var stopAudioSourceButton = new ButtonField(m_pluginConfigurator.rootPanel, "Stop All Audio Source", "Stop_All_Audio_Source");
-        stopAudioSourceButton.onClick += () =>
-        {
-            AudioSourceManager.StopAllAudioSource();
-        };
     }
 
     private static void CreateDelegateTextFromBackEnd()

@@ -168,7 +168,7 @@ public class AudioAnnouncer
         }
         if (clip == null) return;
 
-        AudioDispatcher.SendClipToAudioSource(clip, m_audioSourceConfig);
+        AudioDispatcher.SendClipToAudioSource(clip, m_audioSourceConfig, InstanceConfig.audioPlayOptions.Value);
     }
 
     private async Task LoadAndPlayAudioClip(string category)
@@ -197,7 +197,7 @@ public class AudioAnnouncer
             return;
         }
 
-        AudioDispatcher.SendClipToAudioSource(clip, m_audioSourceConfig);
+        AudioDispatcher.SendClipToAudioSource(clip, m_audioSourceConfig, InstanceConfig.audioPlayOptions.Value);
     }
 
     private void LogPlaybackError(Exception ex)

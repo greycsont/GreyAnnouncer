@@ -132,7 +132,7 @@ public static class RankAnnouncerV2
         PluginDependencies.LoadIfPluginExists(
             PluginDependencies.PLUGINCONFIGURATOR_GUID,
             "RegisterRankAnnouncerPage",
-            () => ReflectionManager.LoadByReflection("GreyAnnouncer.RegisterRankAnnouncerPage", "Build", new object[] { announcerName, jsonSetting })
+            () => ReflectionManager.LoadByReflection("GreyAnnouncer.RankAnnouncer.RegisterRankAnnouncerPage", "Build", new object[] { announcerName, jsonSetting })
         );
     }
 

@@ -45,7 +45,12 @@ public static class RegisterRankAnnouncerPage
         }
     }
 
-    private static BoolField CreateBoolField(ConfigPanel panel, string label, string guid, AnnouncerJsonSetting jsonSetting, bool defaultValue, Action<BoolField.BoolValueChangeEvent>[] callbacks = null)
+    private static BoolField CreateBoolField(ConfigPanel panel,
+                                             string label,
+                                             string guid,
+                                             AnnouncerJsonSetting jsonSetting,
+                                             bool defaultValue,
+                                             Action<BoolField.BoolValueChangeEvent>[] callbacks = null)
     {
         var fullGuid         = GuidPrefixAdder.AddPrefixToGUID(guid);
         var field            = new BoolField(panel, label, fullGuid, jsonSetting.CategoryAudioMap[guid].Enabled);

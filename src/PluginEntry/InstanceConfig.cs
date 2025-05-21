@@ -29,7 +29,8 @@ public static class InstanceConfig
         { "AudioLoadingOption",     ("Audio",    "Audio_Loading_Option",                DEFAULT_AUDIO_LOADING_OPTIONS,       "0 : load clip from file (less RAM more latency), 1 : preload clip to games (less latency more RAM)") },
 
         // "Advanced" section
-        { "Randomization",         ("Advance", "Audio_Randomization",                  DEFAULT_AUDIO_RANDOMIZATION_ENABLED, "Set to true to enable audio randomlization of announcer (randomly selected a available audio)")}
+        { "Randomization",          ("Advance",   "Audio_Randomization",                DEFAULT_AUDIO_RANDOMIZATION_ENABLED, "Set to true to enable audio randomlization of announcer (randomly selected a available audio)")},
+        { "FFmpegSupport",          ("Advance",   "FFmpeg_Support",                     false,                               "Set to true to enable FFmpeg support for loading non-unity supported audios")}
     };
     
     public static void Initialize(Plugin plugin)
@@ -54,7 +55,12 @@ public static class InstanceConfig
         }
     }
 
-    private static void BindConfigEntry(Plugin plugin, string key, string section, string name, object defaultValue, string description)
+    private static void BindConfigEntry(Plugin plugin,
+                                        string key,
+                                        string section,
+                                        string name,
+                                        object defaultValue,
+                                        string description)
     {
         if (defaultValue is bool)
         {
@@ -66,6 +72,7 @@ public static class InstanceConfig
             );
             if      (name == "Under_water_low_pass_filter_Enabled") isLowPassFilterEnabled      = configEntry;
             else if (name == "Audio_Randomization")                 isAudioRandomizationEnabled = configEntry;
+            else if (name == "FFmpeg_Support")                      isFFmpegSupportEnabled      = configEntry;
         }
         else if (defaultValue is float)
         {

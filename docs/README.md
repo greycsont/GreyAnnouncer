@@ -94,9 +94,10 @@ for anything with the code, It's free to ask too, but I recommand using this fir
 But directly ask person is the fastest way to doing it(
 
 ## Resources
-- [1] Krita, used under GNU General Public License (GPL) Version 3.0
-- [2] Samigirian by Siphercase, used under SIL Open Font License (OFL) Version 1.1
-- [3] D-DIN by datto, used under SIL Open Font License (OFL) Version 1.1
+- [1] FFmpeg, used under GNU Lesser General Public License (LGPL) Version 2.1
+- [2] Krita, used under GNU General Public License (GPL) Version 3.0
+- [3] Samigirian by Siphercase, used under SIL Open Font License (OFL) Version 1.1
+- [4] D-DIN by datto, used under SIL Open Font License (OFL) Version 1.1
   
 ## Credit
 Thanks:

@@ -3,26 +3,30 @@ using UnityEngine;
 using System;
 using System.Threading.Tasks;
 using UnityEngine.Networking;
+using System.Diagnostics;
 
 namespace GreyAnnouncer.AudioLoading;
 
 public static class AudioClipLoader
 {
-    public static async Task<AudioClip> LoadAudioClipAsync(string path)
+    public static async Task<AudioClip> LoadAudioClipAsync(string path, bool FFmpegFlag)
     {
         string extension = Path.GetExtension(path).ToLower();
         AudioType? unityAudioType = GetUnityAudioType(extension);
-        AudioClip clip;
+        AudioClip clip = null;
         try
         {
-            if (unityAudioType.HasValue)
+            if (!FFmpegFlag && unityAudioType.HasValue)
+            {
+                clip = await UnitySupport.LoadWithUnityAsync(path, unityAudioType.Value);
+            }
+            /*if (unityAudioType.HasValue)
             {
                 LogManager.LogInfo($"Started loading audio: {path}");
                 clip = await LoadWithUnityAsync(path, unityAudioType.Value);
-            }
-            else if (true == true)
+            }*/
+            else if (FFmpegFlag)
             {
-                LogManager.LogInfo($"Start to load via FFmpegSupport : {path}");
                 clip = await FFmpegSupport.DecodeAndLoad(path);
             }
             else
@@ -31,38 +35,14 @@ public static class AudioClipLoader
             }
 
             if (clip == null) return null;
-        
-            LogManager.LogInfo($"Loaded audio: {Path.GetFileName(path)}");
+
+            //LogManager.LogInfo($"Loaded audio: {Path.GetFileName(path)}");
             return clip;
         }
         catch (Exception ex)
         {
             LogManager.LogError($"Error loading {path}: {ex.Message}\n{ex.StackTrace}");
             return null;
-        }
-    }
-
-    private static async Task<AudioClip> LoadWithUnityAsync(string path, AudioType audioType)
-    {
-        string url = new Uri(path).AbsoluteUri;
-
-        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, audioType))
-        {
-            var operation = www.SendWebRequest();
-
-            while (!operation.isDone)
-            {
-                await Task.Delay(10);
-            }
-
-            if (www.result != UnityWebRequest.Result.Success)
-            {
-                LogManager.LogError($"UnityRequest Failed to load audio: {www.error}");
-                return null;
-            }
-
-            var clip = DownloadHandlerAudioClip.GetContent(www);
-            return clip;
         }
     }
 
@@ -79,5 +59,4 @@ public static class AudioClipLoader
             _ => null
         };
     }
-
 }

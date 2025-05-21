@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -16,6 +17,11 @@ public static class FFmpegSupport
     {
         return Task.Run(() =>
         {
+            // 可以爆线程
+            var stopwatch = new Stopwatch();
+
+            stopwatch.Start();
+
             AVFormatContext*    formatContext    = null;
             AVCodecContext*     codecCtx         = null;
             SwrContext*         swrCtx           = null;
@@ -25,7 +31,7 @@ public static class FFmpegSupport
             int                 audioStreamIndex;
 
             ffmpeg.RootPath = PathManager.GetCurrentPluginPath(); // 或者你手动指定 dll 路径
-            LogManager.LogWarning($"ffmpeg version: {ffmpeg.av_version_info()}");
+            //LogManager.LogWarning($"ffmpeg version: {ffmpeg.av_version_info()}");
 
             ffmpeg.avformat_network_init();
 
@@ -50,9 +56,9 @@ public static class FFmpegSupport
             // 创建 Unity AudioClip
 
             float[] sampleArray = streamedData.GetAllSamples();
-            int channelCount = codecCtx->ch_layout.nb_channels;
-            int sampleRate = codecCtx->sample_rate;
-            int sampleCount = sampleArray.Length / channelCount;
+            int channelCount    = codecCtx->ch_layout.nb_channels;
+            int sampleRate      = codecCtx->sample_rate;
+            int sampleCount     = sampleArray.Length / channelCount;
 
 
 
@@ -60,6 +66,10 @@ public static class FFmpegSupport
             clip.SetData(sampleArray, 0);
 
             CleanupResources(frame, packet, codecCtx, swrCtx, formatContext);
+
+            stopwatch.Stop();
+            TimeSpan elapsedTime = stopwatch.Elapsed;
+            LogManager.LogInfo($"Time used when loading with FFmpeg : {elapsedTime}");
 
             return clip;
         });
@@ -127,7 +137,12 @@ public static class FFmpegSupport
         return swrCtx;
     }
 
-    private static unsafe StreamedAudioData DecodeAudioFrames(AVFormatContext* formatContext, AVCodecContext* codecCtx, SwrContext* swrCtx, AVPacket* packet, AVFrame* frame, int audioStreamIndex)
+    private static unsafe StreamedAudioData DecodeAudioFrames(AVFormatContext* formatContext,
+                                                              AVCodecContext* codecCtx,
+                                                              SwrContext* swrCtx,
+                                                              AVPacket* packet,
+                                                              AVFrame* frame,
+                                                              int audioStreamIndex)
     {
         var streamedData = new StreamedAudioData
         {
@@ -150,7 +165,11 @@ public static class FFmpegSupport
     }
 
 
-    private static unsafe void ProcessAudioFrame(AVCodecContext* codecCtx, SwrContext* swrCtx, AVPacket* packet, AVFrame* frame, StreamedAudioData streamedData)
+    private static unsafe void ProcessAudioFrame(AVCodecContext* codecCtx,
+                                                 SwrContext* swrCtx,
+                                                 AVPacket* packet,
+                                                 AVFrame* frame,
+                                                 StreamedAudioData streamedData)
     {
         ffmpeg.avcodec_send_packet(codecCtx, packet);
         while (ffmpeg.avcodec_receive_frame(codecCtx, frame) == 0)
@@ -186,17 +205,25 @@ public static class FFmpegSupport
         }
     }
     
-    private static unsafe void CleanupResources(
-        AVFrame* frame,
-        AVPacket* packet,
-        AVCodecContext* codecCtx,
-        SwrContext* swrCtx,
-        AVFormatContext* formatContext)
+    private static unsafe void CleanupResources(AVFrame* frame,
+                                                AVPacket* packet,
+                                                AVCodecContext* codecCtx,
+                                                SwrContext* swrCtx,
+                                                AVFormatContext* formatContext)
     {
         if (frame != null) ffmpeg.av_frame_free(&frame);
         if (packet != null) ffmpeg.av_packet_free(&packet);
         if (codecCtx != null) ffmpeg.avcodec_free_context(&codecCtx);
-        if (swrCtx != null) ffmpeg.swr_free(&swrCtx);
-        if (formatContext != null) ffmpeg.avformat_close_input(&formatContext);
+        if (swrCtx != null)
+        {
+            ffmpeg.swr_close(swrCtx);
+            ffmpeg.swr_free(&swrCtx);
+        }
+        if (formatContext != null)
+        {
+            ffmpeg.avformat_close_input(&formatContext);
+            ffmpeg.avformat_free_context(formatContext);
+        }
+        ffmpeg.avformat_network_deinit();
     }
 }

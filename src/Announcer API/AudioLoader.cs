@@ -13,7 +13,6 @@ namespace GreyAnnouncer.AnnouncerAPI;
 
 public class AudioLoader
 {
-    #region Properties
     public  string[]                            audioCategories       { get; private set; }
     public  HashSet<string>                     categoryFailedLoading { get; private set; } = new HashSet<string>();
     private Dictionary<string, List<AudioClip>> m_audioClips                                = new Dictionary<string, List<AudioClip>>();
@@ -21,7 +20,6 @@ public class AudioLoader
     private string                              m_audioPath;
 
     public static Action<string>                OnPluginConfiguratorLogUpdated;
-    #endregion
 
     #region Constructor
     [Description("Q : Why do you using whole AnnouncerJsonSetting as input instead only CategoryAudioMap?" +
@@ -69,7 +67,7 @@ public class AudioLoader
         if (!TryGetValidAudioFiles(category, out var validFiles)) return null;
 
         string selectedPath = validFiles[UnityEngine.Random.Range(0, validFiles.Count)];
-        var clip = await AudioClipLoader.LoadAudioClipAsync(selectedPath);
+        var clip = await AudioClipLoader.LoadAudioClipAsync(selectedPath, InstanceConfig.isFFmpegSupportEnabled.Value);
 
         if (clip == null) LogCategoryFailure(category, "Selected file failed to load");
 
@@ -91,7 +89,7 @@ public class AudioLoader
 
         string selectedPath = totalValidFiles[UnityEngine.Random.Range(0, totalValidFiles.Count)];
 
-        var clip = await AudioClipLoader.LoadAudioClipAsync(selectedPath);
+        var clip = await AudioClipLoader.LoadAudioClipAsync(selectedPath, InstanceConfig.isFFmpegSupportEnabled.Value);
 
         if (clip == null) LogCategoryFailure(selectedPath, "Selected file failed to load");
 
@@ -166,7 +164,7 @@ public class AudioLoader
         LogManager.LogInfo($"Loading category {category} with {validFiles.Count} files");
 
         var clipLoadingTasks = validFiles
-            .Select(path => AudioClipLoader.LoadAudioClipAsync(path));
+            .Select(path => AudioClipLoader.LoadAudioClipAsync(path, InstanceConfig.isFFmpegSupportEnabled.Value));
 
         var loadedClips = new List<AudioClip>();
 

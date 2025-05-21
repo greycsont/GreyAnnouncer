@@ -4,9 +4,9 @@ namespace GreyAnnouncer.AudioSourceComponent;
 
 public static class AudioDispatcher
 {
-    public static void SendClipToAudioSource(AudioClip clip, AudioSourceSetting m_audioSourceConfig)
+    public static void SendClipToAudioSource(AudioClip clip, AudioSourceSetting m_audioSourceConfig, int flag)
     {
-        switch (InstanceConfig.audioPlayOptions.Value)
+        switch (flag)
         {
             case 0:
                 SoloAudioSource.Instance.PlayOneShot(clip, m_audioSourceConfig);
