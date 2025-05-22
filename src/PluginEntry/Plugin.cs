@@ -16,7 +16,7 @@ namespace GreyAnnouncer;
 public class Plugin : BaseUnityPlugin
 {
     internal static ManualLogSource log;
-    private         Harmony         m_harmony;
+    private         Harmony         _harmony;
 
     private void Awake()
     {
@@ -41,8 +41,8 @@ public class Plugin : BaseUnityPlugin
 
     private void PatchHarmony()
     {
-        m_harmony = new Harmony(PluginInfo.PLUGIN_GUID + ".harmony");
-        m_harmony.PatchAll();
+        _harmony = new Harmony(PluginInfo.PLUGIN_GUID + ".harmony");
+        _harmony.PatchAll();
     }
 
     private void CheckPluginLoaded(string GUID, string assemblyName)

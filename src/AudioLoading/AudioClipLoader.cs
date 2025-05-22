@@ -7,16 +7,16 @@ using System.Diagnostics;
 
 namespace GreyAnnouncer.AudioLoading;
 
-public static class AudioClipLoader
+public class AudioClipLoader : IAudioClipLoader
 {
-    public static async Task<AudioClip> LoadAudioClipAsync(string path, bool FFmpegFlag)
+    public async Task<AudioClip> LoadAudioClipAsync(string path)
     {
         string extension = Path.GetExtension(path).ToLower();
         AudioType? unityAudioType = GetUnityAudioType(extension);
         AudioClip clip = null;
         try
         {
-            if (!FFmpegFlag && unityAudioType.HasValue)
+            if (!InstanceConfig.isFFmpegSupportEnabled.Value && unityAudioType.HasValue)
             {
                 clip = await UnitySupport.LoadWithUnityAsync(path, unityAudioType.Value);
             }
@@ -25,7 +25,7 @@ public static class AudioClipLoader
                 LogManager.LogInfo($"Started loading audio: {path}");
                 clip = await LoadWithUnityAsync(path, unityAudioType.Value);
             }*/
-            else if (FFmpegFlag)
+            else if (InstanceConfig.isFFmpegSupportEnabled.Value)
             {
                 clip = await FFmpegSupport.DecodeAndLoad(path);
             }

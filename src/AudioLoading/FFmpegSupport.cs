@@ -17,7 +17,8 @@ public static class FFmpegSupport
     {
         return Task.Run(() =>
         {
-            // 可以爆线程
+            // stopwatch + ffmpeg + BepInEx logging = weird bug
+            // Can be fixed without any of these
             var stopwatch = new Stopwatch();
 
             stopwatch.Start();

@@ -116,60 +116,60 @@ public static class InstanceConfig
         }
     }
                            
-    private static float m_defaultSharedPlayCooldown = 0f;
+    private static float _defaultSharedPlayCooldown = 0f;
     public static float DEFAULT_SHARED_PLAY_COOLDOWN 
     {
-        get => m_defaultSharedPlayCooldown;
-        private set => m_defaultSharedPlayCooldown = value;
+        get => _defaultSharedPlayCooldown;
+        private set => _defaultSharedPlayCooldown = value;
     }
 
-    private static float m_defaultIndividualPlayCooldown = 3f;
+    private static float _defaultIndividualPlayCooldown = 3f;
     public static float DEFAULT_INDIVIDUAL_PLAY_COOLDOWN 
     {
-        get => m_defaultIndividualPlayCooldown;
-        private set => m_defaultIndividualPlayCooldown = value;
+        get => _defaultIndividualPlayCooldown;
+        private set => _defaultIndividualPlayCooldown = value;
     }
 
-    private static float m_defaultAudioSourceVolume = 1f;
+    private static float _defaultAudioSourceVolume = 1f;
     public static float DEFAULT_AUDIO_SOURCE_VOLUME 
     {
-        get => m_defaultAudioSourceVolume;
-        private set => m_defaultAudioSourceVolume = value;
+        get => _defaultAudioSourceVolume;
+        private set => _defaultAudioSourceVolume = value;
     }
 
-    private static bool m_defaultLowPassFilterEnabled = true;
+    private static bool _defaultLowPassFilterEnabled = true;
     public static bool DEFAULT_LOW_PASS_FILTER_ENABLED 
     {
-        get => m_defaultLowPassFilterEnabled;
-        private set => m_defaultLowPassFilterEnabled = value;
+        get => _defaultLowPassFilterEnabled;
+        private set => _defaultLowPassFilterEnabled = value;
     }
 
-    private static string m_audioFolderPath;
+    private static string _audioFolderPath;
     public static string DEFAULT_AUDIO_FOLDER_PATH
     {
-        get => m_audioFolderPath ?? PathManager.GetCurrentPluginPath("Audio");
-        private set => m_audioFolderPath = value;
+        get => _audioFolderPath ?? PathManager.GetCurrentPluginPath("Audio");
+        private set => _audioFolderPath = value;
     }
 
-    private static int m_defaultAudioPlayOptions = 0;
+    private static int _defaultAudioPlayOptions = 0;
     public static int DEFAULT_AUDIO_PLAY_OPTIONS
     {
-        get => m_defaultAudioPlayOptions < 2 ? m_defaultAudioPlayOptions : 0;
-        private set => m_defaultAudioPlayOptions = value;
+        get => _defaultAudioPlayOptions < 2 ? _defaultAudioPlayOptions : 0;
+        private set => _defaultAudioPlayOptions = value;
     }
 
-    private static int m_defaultAudioLoadingOptions = 0;
+    private static int _defaultAudioLoadingOptions = 0;
     public static int DEFAULT_AUDIO_LOADING_OPTIONS
     {
-        get => m_defaultAudioLoadingOptions < 2 ? m_defaultAudioLoadingOptions : 0;
-        private set => m_defaultAudioLoadingOptions = value;
+        get => _defaultAudioLoadingOptions < 2 ? _defaultAudioLoadingOptions : 0;
+        private set => _defaultAudioLoadingOptions = value;
     }
 
-    private static bool m_defaultAudioRandomizationEnabled = false;
+    private static bool _defaultAudioRandomizationEnabled = false;
     public static bool DEFAULT_AUDIO_RANDOMIZATION_ENABLED
     {
-        get => m_defaultAudioRandomizationEnabled;
-        private set => m_defaultAudioRandomizationEnabled = value;
+        get => _defaultAudioRandomizationEnabled;
+        private set => _defaultAudioRandomizationEnabled = value;
     }
 }
 

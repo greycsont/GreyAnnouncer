@@ -4,21 +4,21 @@ namespace GreyAnnouncer.AudioSourceComponent;
 
 public sealed class SoloAudioSource : MonoBehaviour
 {
-    private AudioSource m_audioSource;
-    private static SoloAudioSource m_instance;
+    private AudioSource _audioSource;
+    private static SoloAudioSource _instance;
 
     #region Constructor
     public static SoloAudioSource Instance
     {
         get
         {
-            if (m_instance == null)
+            if (_instance == null)
             {
                 var obj = new GameObject("SoloAudioSource");
                 DontDestroyOnLoad(obj);
-                m_instance = obj.AddComponent<SoloAudioSource>();
+                _instance = obj.AddComponent<SoloAudioSource>();
             }
-            return m_instance;
+            return _instance;
         }
     }
     #endregion
@@ -27,39 +27,39 @@ public sealed class SoloAudioSource : MonoBehaviour
     #region Public API
     public void PlayOneShot(AudioClip clip, AudioSourceSetting config)
     {
-        if (m_audioSource == null)
+        if (_audioSource == null)
         {
-            m_audioSource = gameObject.AddComponent<AudioSource>();
-            m_audioSource = AudioSourceManager.ConfigureAudioSource(m_audioSource, config);
+            _audioSource = gameObject.AddComponent<AudioSource>();
+            _audioSource = AudioSourceManager.ConfigureAudioSource(_audioSource, config);
         }
 
-        m_audioSource.clip = clip;
+        _audioSource.clip = clip;
         UnderwaterController_inWater_Instance.CheckIsInWater();
-        m_audioSource.Play();
+        _audioSource.Play();
     }
 
     public void AddAudioLowPassFilter()
     {
-        m_audioSource = AudioSourceManager.AddLowPassFilter(m_audioSource);
+        _audioSource = AudioSourceManager.AddLowPassFilter(_audioSource);
     }
 
     public void RemoveAudioLowPassFilter()
     {
-        m_audioSource = AudioSourceManager.RemoveLowPassFilter(m_audioSource);
+        _audioSource = AudioSourceManager.RemoveLowPassFilter(_audioSource);
     }
 
     public void UpdateSoloAudioSourceVolume(float targetVolume, float duration = 0.35f)
     {
-        if (m_audioSource != null)
+        if (_audioSource != null)
         {
-            StartCoroutine(AudioSourceManager.FadeVolume(m_audioSource, targetVolume, duration));
+            StartCoroutine(AudioSourceManager.FadeVolume(_audioSource, targetVolume, duration));
         }
     }
 
     public void StopAudioSource()
     {
-        m_audioSource.Stop();
-        Destroy(m_audioSource.clip);
+        _audioSource.Stop();
+        Destroy(_audioSource.clip);
     }
     #endregion
 }        

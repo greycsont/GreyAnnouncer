@@ -3,12 +3,13 @@ using System.Linq;
 using System.Collections.Generic;
 
 using GreyAnnouncer.AnnouncerAPI;
+using GreyAnnouncer.AudioLoading;
 
 namespace GreyAnnouncer.RankAnnouncer;
 
 public static class RankAnnouncerV2
 {
-    private static readonly string[] m_rankCategory = {
+    private static readonly string[] _rankCategory = {
         "D",
         "C",
         "B",
@@ -19,7 +20,7 @@ public static class RankAnnouncerV2
         "U"
     };
 
-    private static readonly Dictionary<string, string> m_displayNameMapping = new Dictionary<string, string>{   //used only for creating json
+    private static readonly Dictionary<string, string> _displayNameMapping = new Dictionary<string, string>{   //used only for creating json
         {"D", "Destruction"},
         {"C", "Chaotic"},
         {"B", "Brutal"},
@@ -30,39 +31,39 @@ public static class RankAnnouncerV2
         {"U",   "ULTRAKILL"}
     };
 
-    private static readonly AudioAnnouncer m_announcer = new AudioAnnouncer();
-    private static readonly string m_jsonName = "RankAnnouncer.json";
-    private static readonly string m_pageTitle = "Rank Announcer";
-    internal static AnnouncerJsonSetting m_jsonSetting;
+    private static readonly AudioAnnouncer _announcer = new AudioAnnouncer();
+    private static readonly string _jsonName = "RankAnnouncer.json";
+    private static readonly string _pageTitle = "Rank Announcer";
+    internal static AnnouncerJsonSetting _jsonSetting;
 
     public static void Initialize()
     {
         JsonInitialization();
 
-        m_announcer.Initialize(
-            m_rankCategory,
-            m_jsonSetting,
-            InstanceConfig.audioFolderPath.Value
+        _announcer.Initialize(
+            _jsonSetting,
+            new AudioLoader(InstanceConfig.audioFolderPath.Value, _jsonSetting, new AudioClipLoader()),
+            new CooldownManager(_jsonSetting.CategoryAudioMap.Keys.ToArray())
         );
 
         SubscribeAnnouncerManager();
-        PluginConfigPanelInitialization(m_pageTitle, m_jsonSetting);
+        PluginConfigPanelInitialization(_pageTitle, _jsonSetting);
     }
 
     public static void PlayRankSound(int rank)
     {
-        if (rank < 0 || rank >= m_rankCategory.Length)
+        if (rank < 0 || rank >= _rankCategory.Length)
         {
             LogManager.LogError($"Invalid rank index: {rank}");
             return;
         }
-        m_announcer.PlayAudioViaIndex(rank);
+        _announcer.PlayAudioViaIndex(rank);
     }
 
     private static void SubscribeAnnouncerManager()
     {
-        AnnouncerManager.reloadAnnouncer     += ReloadAnnouncer;
-        AnnouncerManager.resetCooldown       += ResetCooldowns;
+        AnnouncerManager.reloadAnnouncer += ReloadAnnouncer;
+        AnnouncerManager.resetCooldown += ResetCooldowns;
         AnnouncerManager.clearAudioClipCache += ClearAudioClipCache;
         AnnouncerManager.updateAnnouncerPath += UpdateAudioPath;
     }
@@ -73,22 +74,22 @@ public static class RankAnnouncerV2
     {
         JsonInitialization();
         UpdateAnnouncerJson();
-        m_announcer.ReloadAudio(m_jsonSetting);
+        _announcer.ReloadAudio(_jsonSetting);
     }
 
     private static void UpdateAudioPath()
     {
-        m_announcer.UpdateAudioPath(InstanceConfig.audioFolderPath.Value);
+        _announcer.UpdateAudioPath(InstanceConfig.audioFolderPath.Value);
     }
 
     private static void ResetCooldowns()
     {
-        m_announcer.ResetCooldown();
+        _announcer.ResetCooldown();
     }
 
     private static void ClearAudioClipCache()
     {
-        m_announcer.ClearAudioClipsCache();
+        _announcer.ClearAudioClipsCache();
     }
     #endregion
 
@@ -97,32 +98,32 @@ public static class RankAnnouncerV2
     private static void JsonInitialization()
     {
         if (CheckDoesJsonExists() == false) CreateJson();
-        m_jsonSetting = JsonManager.ReadJson<AnnouncerJsonSetting>(m_jsonName);
+        _jsonSetting = JsonManager.ReadJson<AnnouncerJsonSetting>(_jsonName);
     }
 
     private static bool CheckDoesJsonExists()
     {
-        return File.Exists(PathManager.GetCurrentPluginPath(m_jsonName));
+        return File.Exists(PathManager.GetCurrentPluginPath(_jsonName));
     }
 
     private static void CreateJson()
     {
-        var audioDict = m_rankCategory.ToDictionary(
+        var audioDict = _rankCategory.ToDictionary(
             cat => cat,
             cat => new CategoryAudioSetting
             {
                 Enabled = true,
-                DisplayName = m_displayNameMapping.TryGetValue(cat, out var name) ? name : cat,
+                DisplayName = _displayNameMapping.TryGetValue(cat, out var name) ? name : cat,
                 AudioFiles = new List<string> { cat }
             }
         );
-        m_jsonSetting = new AnnouncerJsonSetting { CategoryAudioMap = audioDict };
-        JsonManager.CreateJson(m_jsonName, m_jsonSetting);
+        _jsonSetting = new AnnouncerJsonSetting { CategoryAudioMap = audioDict };
+        JsonManager.CreateJson(_jsonName, _jsonSetting);
     }
 
     public static void UpdateJson(AnnouncerJsonSetting jsonSetting)
     {
-        m_jsonSetting = jsonSetting;
+        _jsonSetting = jsonSetting;
         UpdateAnnouncerJson();
     }
     #endregion
@@ -138,7 +139,7 @@ public static class RankAnnouncerV2
 
     private static void UpdateAnnouncerJson()
     {
-        m_announcer.UpdateJsonSetting(m_jsonSetting);
-        JsonManager.WriteJson(m_jsonName, m_jsonSetting);
+        _announcer.UpdateJsonSetting(_jsonSetting);
+        JsonManager.WriteJson(_jsonName, _jsonSetting);
     }
 }

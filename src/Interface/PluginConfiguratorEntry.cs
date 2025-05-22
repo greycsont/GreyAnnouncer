@@ -10,21 +10,21 @@ public static class PluginConfiguratorEntry
 {
     public static PluginConfigurator config
     {
-        get => m_config;
-        private set => m_config = value;
+        get => _config;
+        private set => _config = value;
     }
-    private static PluginConfigurator m_config;
+    private static PluginConfigurator _config;
 
     public static void Initialize()
     {
         CreatePluginPages();
 
-        MainPanelBuilder.Build(m_config);
+        MainPanelBuilder.Build(_config);
     }
 
     private static void CreatePluginPages()
     {
-        m_config = PluginConfigurator.Create(PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_GUID);
-        m_config.SetIconWithURL(PathManager.GetCurrentPluginPath("icon.png"));
+        _config = PluginConfigurator.Create(PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_GUID);
+        _config.SetIconWithURL(PathManager.GetCurrentPluginPath("icon.png"));
     }                          
 }

@@ -233,7 +233,7 @@ public static class MainPanelBuilder
 
     private static void CreateDelegateTextFromBackEnd()
     {
-        AudioLoader.OnPluginConfiguratorLogUpdated = log =>
+        AudioLoader.onPluginConfiguratorLogUpdated = log =>
         {
             logHeader.text = log + "\n";
         };

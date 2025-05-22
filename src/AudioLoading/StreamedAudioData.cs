@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 public class StreamedAudioData
 {
-    private const int CHUNK_SIZE = 8192; // 8KB chunks
-    private readonly List<float[]> chunks = new List<float[]>();
-    private float[] currentChunk = new float[CHUNK_SIZE];
-    private int currentPos;
+    private const int _CHUNK_SIZE = 8192; // 8KB chunks
+    private readonly List<float[]> _chunks = new List<float[]>();
+    private float[] _currentChunk = new float[_CHUNK_SIZE];
+    private int _currentPos;
 
     public int Channels { get; set; }
     public int SampleRate { get; set; }
@@ -16,31 +16,31 @@ public class StreamedAudioData
     {
         foreach (var sample in samples)
         {
-            currentChunk[currentPos++] = sample;
+            _currentChunk[_currentPos++] = sample;
             TotalSamples++;
 
-            if (currentPos >= CHUNK_SIZE)
+            if (_currentPos >= _CHUNK_SIZE)
             {
-                chunks.Add(currentChunk);
-                currentChunk = new float[CHUNK_SIZE];
-                currentPos = 0;
+                _chunks.Add(_currentChunk);
+                _currentChunk = new float[_CHUNK_SIZE];
+                _currentPos = 0;
             }
         }
     }
 
     public float[] GetAllSamples()
     {
-        if (currentPos > 0)
+        if (_currentPos > 0)
         {
-            Array.Resize(ref currentChunk, currentPos);
-            chunks.Add(currentChunk);
-            currentChunk = Array.Empty<float>();
+            Array.Resize(ref _currentChunk, _currentPos);
+            _chunks.Add(_currentChunk);
+            _currentChunk = Array.Empty<float>();
         }
 
         var result = new float[TotalSamples];
         int pos = 0;
 
-        foreach (var chunk in chunks)
+        foreach (var chunk in _chunks)
         {
             Array.Copy(chunk, 0, result, pos, chunk.Length);
             pos += chunk.Length;

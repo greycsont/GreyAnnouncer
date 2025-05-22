@@ -11,23 +11,23 @@ namespace GreyAnnouncer.RankAnnouncer;
 
 public static class RegisterRankAnnouncerPage
 {
-    private static PluginConfigurator            m_pluginConfigurator;
-    private static string                        m_title;
+    private static PluginConfigurator            _pluginConfigurator;
+    private static string                        _title;
     public static void Build(string title, AnnouncerJsonSetting announcerJsonSetting)
     {
-        m_pluginConfigurator = PluginConfiguratorEntry.config;
-        m_title              = title;
+        _pluginConfigurator = PluginConfiguratorEntry.config;
+        _title              = title;
 
-        ConfigPanel panel   = new ConfigPanel (m_pluginConfigurator.rootPanel, m_title, m_title);
+        ConfigPanel panel   = new ConfigPanel (_pluginConfigurator.rootPanel, _title, _title);
         new ConfigSpace(panel, 15f);
 
-        ConfigHeader header = new ConfigHeader(panel, m_title);
+        ConfigHeader header = new ConfigHeader(panel, _title);
         header.textColor    = HeaderColor;
 
         var actionCollection = new Action<BoolField.BoolValueChangeEvent>[]{
             e => {
                 RankAnnouncerV2.UpdateJson(announcerJsonSetting);
-                LogManager.LogInfo($"Updated json setting for {m_title}");
+                LogManager.LogInfo($"Updated json setting for {_title}");
             }
         };
 

@@ -8,18 +8,18 @@ namespace GreyAnnouncer;
 /// </summary>
 public sealed class CoroutineRunner : MonoBehaviour
 {
-    private static CoroutineRunner m_instance;
+    private static CoroutineRunner _instance;
     public static CoroutineRunner  Instance
     {
         get
         {
-            if (m_instance == null)
+            if (_instance == null)
             {
                 GameObject go = new GameObject("CoroutineRunner");
-                m_instance    = go.AddComponent<CoroutineRunner>();
+                _instance    = go.AddComponent<CoroutineRunner>();
                 DontDestroyOnLoad(go);
             }
-            return m_instance;
+            return _instance;
         }
     }
 }

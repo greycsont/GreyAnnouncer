@@ -13,20 +13,21 @@ namespace GreyAnnouncer.AnnouncerAPI;
 
 public class AudioLoader : IAudioLoader
 {
-    public  HashSet<string>                     categoryFailedLoading { get; private set; } = new HashSet<string>();
-    private Dictionary<string, List<AudioClip>> m_audioClips                                = new Dictionary<string, List<AudioClip>>();
-    public  AnnouncerJsonSetting                jsonSetting;
-    private string                              m_audioPath;
-
-    public static Action<string>                OnPluginConfiguratorLogUpdated;
+    public        AnnouncerJsonSetting                jsonSetting           { get; set; }
+    public        HashSet<string>                     categoryFailedLoading { get; private set; } = new HashSet<string>();
+    private       Dictionary<string, List<AudioClip>> _audioClips                                 = new Dictionary<string, List<AudioClip>>();
+    private       string                              _audioPath;
+    private       IAudioClipLoader                    _audioClipLoader;
+    public static Action<string>                      onPluginConfiguratorLogUpdated;
 
     #region Constructor
     [Description("Q : Why do you using whole AnnouncerJsonSetting as input instead only CategoryAudioMap?" +
                  "A : For future, what kinds of future? idk.")]
-    public AudioLoader(string audioPath, string[] audioCategories, AnnouncerJsonSetting jsonSetting)
+    public AudioLoader(string audioPath, AnnouncerJsonSetting jsonSetting, IAudioClipLoader audioClipLoader)
     {
-        this.m_audioPath   = audioPath;
-        this.jsonSetting   = jsonSetting;
+        this._audioPath       = audioPath;
+        this.jsonSetting      = jsonSetting;
+        this._audioClipLoader = audioClipLoader;
     }
     #endregion
 
@@ -39,7 +40,7 @@ public class AudioLoader : IAudioLoader
         if (jsonSetting.CategoryAudioMap.Keys.Contains(category) == false) return null;
 
 
-        if (!m_audioClips.TryGetValue(category, out var clips) || clips.Count == 0) return null;
+        if (!_audioClips.TryGetValue(category, out var clips) || clips.Count == 0) return null;
 
         int randomIndex = UnityEngine.Random.Range(0, clips.Count);
         return clips[randomIndex];
@@ -47,7 +48,7 @@ public class AudioLoader : IAudioLoader
 
     public AudioClip GetRandomClipFromAudioClips()
     {
-        var validClips = m_audioClips
+        var validClips = _audioClips
             .SelectMany(kvp => kvp.Value)
             .Where(clip => clip != null)
             .ToList();
@@ -65,7 +66,7 @@ public class AudioLoader : IAudioLoader
         if (!TryGetValidAudioFiles(category, out var validFiles)) return null;
 
         string selectedPath = validFiles[UnityEngine.Random.Range(0, validFiles.Count)];
-        var clip = await AudioClipLoader.LoadAudioClipAsync(selectedPath, InstanceConfig.isFFmpegSupportEnabled.Value);
+        var clip = await _audioClipLoader.LoadAudioClipAsync(selectedPath);
 
         if (clip == null) LogCategoryFailure(category, "Selected file failed to load");
 
@@ -87,7 +88,7 @@ public class AudioLoader : IAudioLoader
 
         string selectedPath = totalValidFiles[UnityEngine.Random.Range(0, totalValidFiles.Count)];
 
-        var clip = await AudioClipLoader.LoadAudioClipAsync(selectedPath, InstanceConfig.isFFmpegSupportEnabled.Value);
+        var clip = await _audioClipLoader.LoadAudioClipAsync(selectedPath);
 
         if (clip == null) LogCategoryFailure(selectedPath, "Selected file failed to load");
 
@@ -101,7 +102,7 @@ public class AudioLoader : IAudioLoader
     {
         if (InstanceConfig.audioLoadingOptions.Value == 0) return;
         ClearCache();
-        FileSystemUtil.ValidateAndPrepareDirectory(m_audioPath);
+        FileSystemUtil.ValidateAndPrepareDirectory(_audioPath);
         await LoadAllCategoriesAsync();
         LogLoadingResults();
     }
@@ -113,7 +114,7 @@ public class AudioLoader : IAudioLoader
             return;
         }
         LogManager.LogInfo($"Updating audio paths and reloading audio...");
-        this.m_audioPath = newAudioPath;
+        this._audioPath = newAudioPath;
     }
 
     public void UpdateJsonSetting(AnnouncerJsonSetting jsonSetting)
@@ -146,7 +147,7 @@ public class AudioLoader : IAudioLoader
         {
             if (clips != null && clips.Count > 0)
             {
-                m_audioClips[category] = clips;
+                _audioClips[category] = clips;
             }
         }
     }
@@ -162,7 +163,7 @@ public class AudioLoader : IAudioLoader
         LogManager.LogInfo($"Loading category {category} with {validFiles.Count} files");
 
         var clipLoadingTasks = validFiles
-            .Select(path => AudioClipLoader.LoadAudioClipAsync(path, InstanceConfig.isFFmpegSupportEnabled.Value));
+            .Select(path => _audioClipLoader.LoadAudioClipAsync(path));
 
         var loadedClips = new List<AudioClip>();
 
@@ -197,7 +198,7 @@ public class AudioLoader : IAudioLoader
     #region Cache Management
     private void ClearAudioClipCache()
     {
-        foreach (var clipList in m_audioClips.Values)
+        foreach (var clipList in _audioClips.Values)
         {
             foreach (var clip in clipList)
             {
@@ -205,7 +206,7 @@ public class AudioLoader : IAudioLoader
                     UnityEngine.Object.Destroy(clip);
             }
         }
-        m_audioClips.Clear();
+        _audioClips.Clear();
     }
     #endregion
 
@@ -238,7 +239,7 @@ public class AudioLoader : IAudioLoader
 
         foreach (var category in jsonSetting.CategoryAudioMap.Keys)
         {
-            int loaded = m_audioClips.TryGetValue(category, out var clips) ? clips.Count : 0;
+            int loaded = _audioClips.TryGetValue(category, out var clips) ? clips.Count : 0;
             int total = jsonSetting.CategoryAudioMap.TryGetValue(category, out var setting) ? setting.AudioFiles.Count : 0;
             builder.AppendLine($"{category} ({loaded}/{total})");
         }
@@ -246,7 +247,7 @@ public class AudioLoader : IAudioLoader
         //Reflection maybe
         string logMessage = builder.ToString();
 
-        OnPluginConfiguratorLogUpdated?.Invoke(logMessage);
+        onPluginConfiguratorLogUpdated?.Invoke(logMessage);
     }
     #endregion
 
@@ -265,7 +266,7 @@ public class AudioLoader : IAudioLoader
 
         var fileNames = categorySetting.AudioFiles;
         validFiles = fileNames
-            .Select(name => PathManager.GetFileWithExtension(m_audioPath, name))
+            .Select(name => PathManager.GetFileWithExtension(_audioPath, name))
             .Where(File.Exists)
             .ToList();
 

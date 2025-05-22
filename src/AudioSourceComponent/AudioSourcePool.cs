@@ -5,11 +5,11 @@ using UnityEngine;
 namespace GreyAnnouncer.AudioSourceComponent;
 public sealed class AudioSourcePool : MonoBehaviour
 {
-    private Queue<AudioSource>                                   m_pool               = new Queue<AudioSource>();
-    private readonly HashSet<AudioSource>                        m_activeAudioSources = new HashSet<AudioSource>();
-    private LinkedList<AudioSource>                              m_playingList        = new LinkedList<AudioSource>();
-    private Dictionary<AudioSource, LinkedListNode<AudioSource>> m_playingMap         = new Dictionary<AudioSource, LinkedListNode<AudioSource>>();
-    private static AudioSourcePool                               m_instance;
+    private Queue<AudioSource>                                   _pool               = new Queue<AudioSource>();
+    private readonly HashSet<AudioSource>                        _activeAudioSources = new HashSet<AudioSource>();
+    private LinkedList<AudioSource>                              _playingList        = new LinkedList<AudioSource>();
+    private Dictionary<AudioSource, LinkedListNode<AudioSource>> _playingMap         = new Dictionary<AudioSource, LinkedListNode<AudioSource>>();
+    private static AudioSourcePool                               _instance;
 
     public int                                                   initialSize = 2;
     public int                                                   maxSize = 7;
@@ -20,14 +20,14 @@ public sealed class AudioSourcePool : MonoBehaviour
     {
         get
         {
-            if (m_instance == null)
+            if (_instance == null)
             {
                 var obj = new GameObject("AudioSourcePool");
                 DontDestroyOnLoad(obj);
-                m_instance = obj.AddComponent<AudioSourcePool>();
-                m_instance.Initialize();
+                _instance = obj.AddComponent<AudioSourcePool>();
+                _instance.Initialize();
             }
-            return m_instance;
+            return _instance;
         }
     }
     #endregion
@@ -39,7 +39,7 @@ public sealed class AudioSourcePool : MonoBehaviour
         for (int i = 0; i < initialSize; i++)
         {
             var audioSource = CreateNewAudioSource();
-            m_pool.Enqueue(audioSource);
+            _pool.Enqueue(audioSource);
         }
     }
 
@@ -57,7 +57,7 @@ public sealed class AudioSourcePool : MonoBehaviour
 
     public void AddAudioLowPassFilterToActiveAudioSource()
     {
-        foreach (AudioSource audioSource in m_activeAudioSources)
+        foreach (AudioSource audioSource in _activeAudioSources)
         {
             if (audioSource != null && audioSource.gameObject.activeInHierarchy)
             {
@@ -69,7 +69,7 @@ public sealed class AudioSourcePool : MonoBehaviour
 
     public void RemoveAudioLowPassFilterFromActiveAudioSource()
     {
-        foreach (AudioSource audioSource in m_activeAudioSources)
+        foreach (AudioSource audioSource in _activeAudioSources)
         {
             if (audioSource != null && audioSource.gameObject.activeInHierarchy)
             {
@@ -81,7 +81,7 @@ public sealed class AudioSourcePool : MonoBehaviour
 
     public void UpdateAllActiveSourcesVolume(float targetVolume, float duration = 0.35f)
     {
-        foreach (var audioSource in m_activeAudioSources)
+        foreach (var audioSource in _activeAudioSources)
         {
             if (
                 audioSource != null
@@ -96,7 +96,7 @@ public sealed class AudioSourcePool : MonoBehaviour
 
     public void StopAllAudioSource()
     {
-        foreach (var audioSource in m_activeAudioSources)
+        foreach (var audioSource in _activeAudioSources)
         {
             Recycle(audioSource);
         }
@@ -107,25 +107,25 @@ public sealed class AudioSourcePool : MonoBehaviour
     #region Pool Management
     private AudioSource Get()
     {
-        if (m_activeAudioSources.Count >= maxSize)
+        if (_activeAudioSources.Count >= maxSize)
         {
-            if (m_playingList.Count > 0)
+            if (_playingList.Count > 0)
             {
-                var oldestNode = m_playingList.First;
-                m_playingList.RemoveFirst();
-                m_playingMap.Remove(oldestNode.Value);
+                var oldestNode = _playingList.First;
+                _playingList.RemoveFirst();
+                _playingMap.Remove(oldestNode.Value);
 
                 LogManager.LogWarning("Max audio sources reached, forcibly recycling the oldest source.");
                 Recycle(oldestNode.Value);
             }
         }
 
-        AudioSource audioSource = (m_pool.Count > 0) ? m_pool.Dequeue() : CreateNewAudioSource();
+        AudioSource audioSource = (_pool.Count > 0) ? _pool.Dequeue() : CreateNewAudioSource();
         audioSource.gameObject.SetActive(true);
-        m_activeAudioSources.Add(audioSource);
+        _activeAudioSources.Add(audioSource);
 
-        var node = m_playingList.AddLast(audioSource);
-        m_playingMap[audioSource] = node;
+        var node = _playingList.AddLast(audioSource);
+        _playingMap[audioSource] = node;
 
         return audioSource;
     }
@@ -145,10 +145,10 @@ public sealed class AudioSourcePool : MonoBehaviour
     {
         yield return new WaitForSeconds(audioSource.clip.length);
 
-        if (m_playingMap.TryGetValue(audioSource, out var node))
+        if (_playingMap.TryGetValue(audioSource, out var node))
         {
-            m_playingList.Remove(node);
-            m_playingMap.Remove(audioSource);
+            _playingList.Remove(node);
+            _playingMap.Remove(audioSource);
         }
 
         Recycle(audioSource);
@@ -160,8 +160,8 @@ public sealed class AudioSourcePool : MonoBehaviour
         audioSource.Stop();
         audioSource.clip = null;
         audioSource.gameObject.SetActive(false);
-        m_activeAudioSources.Remove(audioSource);
-        m_pool.Enqueue(audioSource);
+        _activeAudioSources.Remove(audioSource);
+        _pool.Enqueue(audioSource);
     }
     #endregion
 

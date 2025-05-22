@@ -10,26 +10,17 @@ namespace GreyAnnouncer.AnnouncerAPI;
 
 public class AudioAnnouncer
 {
-    #region Private Fields
-    private    AnnouncerJsonSetting    m_jsonSetting;
-    private    AudioLoader             m_audioLoader;
-    private    IAudioLoader            audioLoader;
-    private    CooldownManager         m_cooldownManager;
-    private    ICooldownManager        cooldownManager;
-    private    AudioSourceSetting      m_audioSourceConfig;
-    
-    private    string[]                m_audioCategories;
-    private    string                  m_audioPath;
-    #endregion
+    private    AnnouncerJsonSetting    _jsonSetting;
+    private    IAudioLoader            _audioLoader;
+    private    ICooldownManager        _cooldownManager;
+    private    AudioSourceSetting      _audioSourceConfig;
 
-
-    #region Public API
-    public void Initialize(string[] audioCategories, AnnouncerJsonSetting jsonSetting, string audioPath, IAudioLoader audioLoader, ICooldownManager cooldownManager)
+    public void Initialize(AnnouncerJsonSetting jsonSetting, IAudioLoader audioLoader, ICooldownManager cooldownManager)
     {
-        VariableInitialization(audioCategories, jsonSetting, audioPath);
-        this.audioLoader = audioLoader;
-        this.cooldownManager = cooldownManager;
-        ComponentInitialization();
+        VariableInitialization();
+        this._jsonSetting = jsonSetting;
+        this._audioLoader = audioLoader;
+        this._cooldownManager = cooldownManager;
     }
 
     [Description("Parry balls of Maurice -> Hit Maurice -> AscendingRank() -> Postfix() -> PlaySound() -> CheckPlayValidation(), " +
@@ -50,47 +41,40 @@ public class AudioAnnouncer
 
     public void PlayAudioViaIndex(int index)
     {
-        PlayAudioViaCategory(m_audioCategories[index]);
+        PlayAudioViaCategory(_jsonSetting.CategoryAudioMap.Keys.ToArray()[index]);
     }
 
     public void ReloadAudio(AnnouncerJsonSetting jsonSetting)
     {
-        this.m_jsonSetting = jsonSetting; 
-        m_audioLoader.UpdateJsonSetting(m_jsonSetting);
-        _ = m_audioLoader.FindAvailableAudioAsync();
+        this._jsonSetting = jsonSetting; 
+        _audioLoader.UpdateJsonSetting(_jsonSetting);
+        _ = _audioLoader.FindAvailableAudioAsync();
     }
 
     public void UpdateAudioPath(string newAudioPaths)
     {
-        m_audioLoader.UpdateAudioPath(newAudioPaths);
+        _audioLoader.UpdateAudioPath(newAudioPaths);
     }
 
     public void ResetCooldown()
     {
-        m_cooldownManager.ResetCooldowns();
+        _cooldownManager.ResetCooldowns();
     }
 
     public void ClearAudioClipsCache()
     {
-        m_audioLoader.ClearCache();
+        _audioLoader.ClearCache();
     }
 
     public void UpdateJsonSetting(AnnouncerJsonSetting jsonSetting)
     {
-        this.m_jsonSetting = jsonSetting;
-        m_audioLoader.UpdateJsonSetting(jsonSetting);
+        this._jsonSetting = jsonSetting;
+        _audioLoader.UpdateJsonSetting(jsonSetting);
     }
-    #endregion
 
-
-    #region Initialize related
-    private void VariableInitialization(string[] audioCategories, AnnouncerJsonSetting jsonSetting, string audioPath)
+    private void VariableInitialization()
     {
-        this.m_jsonSetting     = jsonSetting;
-        this.m_audioPath       = audioPath;
-        this.m_audioCategories = audioCategories;
-
-        m_audioSourceConfig = new AudioSourceSetting
+        _audioSourceConfig = new AudioSourceSetting
         {
             SpatialBlend = 0f,
             Priority     = 0,
@@ -99,30 +83,12 @@ public class AudioAnnouncer
         };
     }
 
-    private void ComponentInitialization()
-    {
-        AudioLoaderInitialization();
-        CooldownManagerInitialization();
-    }
-
-
-    private void AudioLoaderInitialization()
-    {
-        m_audioLoader = new AudioLoader(m_audioPath, m_audioCategories, m_jsonSetting);
-        _ = m_audioLoader.FindAvailableAudioAsync();
-    }
-
-    private void CooldownManagerInitialization()
-    {
-        m_cooldownManager = new CooldownManager(m_audioCategories);
-    }
-    #endregion
 
 
     #region Cooldown related
     public void SetCooldown(string category, float cooldown)
     {
-        m_cooldownManager.StartCooldowns(category, cooldown);
+        _cooldownManager.StartCooldowns(category, cooldown);
     }
     #endregion
 
@@ -163,15 +129,15 @@ public class AudioAnnouncer
         AudioClip clip = null;
         if (InstanceConfig.isAudioRandomizationEnabled.Value == false)
         {
-            clip = m_audioLoader.GetClipFromCache(category);
+            clip = _audioLoader.GetClipFromCache(category);
         }
         else
         {
-            clip = m_audioLoader.GetRandomClipFromAudioClips();
+            clip = _audioLoader.GetRandomClipFromAudioClips();
         }
         if (clip == null) return;
 
-        AudioDispatcher.SendClipToAudioSource(clip, m_audioSourceConfig, InstanceConfig.audioPlayOptions.Value);
+        AudioDispatcher.SendClipToAudioSource(clip, _audioSourceConfig, InstanceConfig.audioPlayOptions.Value);
     }
 
     private async Task LoadAndPlayAudioClip(string category)
@@ -182,11 +148,11 @@ public class AudioAnnouncer
 
         if (InstanceConfig.isAudioRandomizationEnabled.Value == false)
         {
-            clip = await m_audioLoader.LoadAndGetSingleAudioClipAsync(category);
+            clip = await _audioLoader.LoadAndGetSingleAudioClipAsync(category);
         }
         else
         {
-            clip = await m_audioLoader.GetRandomClipFromAllAvailableFiles();
+            clip = await _audioLoader.GetRandomClipFromAllAvailableFiles();
         }
 
         if (clip == null) return;
@@ -200,7 +166,7 @@ public class AudioAnnouncer
             return;
         }
 
-        AudioDispatcher.SendClipToAudioSource(clip, m_audioSourceConfig, InstanceConfig.audioPlayOptions.Value);
+        AudioDispatcher.SendClipToAudioSource(clip, _audioSourceConfig, InstanceConfig.audioPlayOptions.Value);
     }
 
     private void LogPlaybackError(Exception ex)
@@ -211,35 +177,32 @@ public class AudioAnnouncer
     #endregion
 
 
-    #region Validation related
     private ValidationState GetPlayValidationState(string category)
     {
-        if (m_cooldownManager == null || m_audioLoader == null){
+        if (_cooldownManager == null || _audioLoader == null){
             return ValidationState.ComponentsNotInitialized;
         }
 
 
-        if (m_audioLoader.jsonSetting.CategoryAudioMap.Keys == null || !m_audioLoader.jsonSetting.CategoryAudioMap.Keys.Contains(category)){
+        if (_audioLoader.jsonSetting.CategoryAudioMap.Keys == null || !_audioLoader.jsonSetting.CategoryAudioMap.Keys.Contains(category)){
             return ValidationState.InvalidKey;
         }
 
 
-        if (m_cooldownManager.IsIndividualCooldownActive(category)){
+        if (_cooldownManager.IsIndividualCooldownActive(category)){
             return ValidationState.IndividualCooldown;
         }
 
 
-        if (m_cooldownManager.IsSharedCooldownActive()){
+        if (_cooldownManager.IsSharedCooldownActive()){
             return ValidationState.SharedCooldown;
         }
 
 
-        if (!m_jsonSetting.CategoryAudioMap[category].Enabled){
+        if (!_jsonSetting.CategoryAudioMap[category].Enabled){
             return ValidationState.DisabledByConfig;
         }
 
         return ValidationState.Success;
     }
-
-    #endregion
 }
