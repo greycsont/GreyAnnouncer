@@ -18,7 +18,6 @@ public static class PluginConfiguratorEntry
     public static void Initialize()
     {
         CreatePluginPages();
-
         MainPanelBuilder.Build(_config);
     }
 

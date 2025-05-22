@@ -7,9 +7,9 @@ using System.Diagnostics;
 
 namespace GreyAnnouncer.AudioLoading;
 
-public class AudioClipLoader : IAudioClipLoader
+public static class AudioClipLoader
 {
-    public async Task<AudioClip> LoadAudioClipAsync(string path)
+    public static async Task<AudioClip> LoadAudioClipAsync(string path)
     {
         string extension = Path.GetExtension(path).ToLower();
         AudioType? unityAudioType = GetUnityAudioType(extension);

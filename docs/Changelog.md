@@ -1,4 +1,5 @@
 ### Known issue/TODO
+- folder adjustment (.json goes to stm setting folder, ffmpeg goes to like lib\ffmpeg folder etc.)
 - FFmpeg support
 
 ### v1.1.1

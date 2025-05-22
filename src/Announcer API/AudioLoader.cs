@@ -17,17 +17,15 @@ public class AudioLoader : IAudioLoader
     public        HashSet<string>                     categoryFailedLoading { get; private set; } = new HashSet<string>();
     private       Dictionary<string, List<AudioClip>> _audioClips                                 = new Dictionary<string, List<AudioClip>>();
     private       string                              _audioPath;
-    private       IAudioClipLoader                    _audioClipLoader;
     public static Action<string>                      onPluginConfiguratorLogUpdated;
 
     #region Constructor
     [Description("Q : Why do you using whole AnnouncerJsonSetting as input instead only CategoryAudioMap?" +
                  "A : For future, what kinds of future? idk.")]
-    public AudioLoader(string audioPath, AnnouncerJsonSetting jsonSetting, IAudioClipLoader audioClipLoader)
+    public AudioLoader(string audioPath, AnnouncerJsonSetting jsonSetting)
     {
         this._audioPath       = audioPath;
         this.jsonSetting      = jsonSetting;
-        this._audioClipLoader = audioClipLoader;
     }
     #endregion
 
@@ -66,7 +64,7 @@ public class AudioLoader : IAudioLoader
         if (!TryGetValidAudioFiles(category, out var validFiles)) return null;
 
         string selectedPath = validFiles[UnityEngine.Random.Range(0, validFiles.Count)];
-        var clip = await _audioClipLoader.LoadAudioClipAsync(selectedPath);
+        var clip = await AudioClipLoader.LoadAudioClipAsync(selectedPath);
 
         if (clip == null) LogCategoryFailure(category, "Selected file failed to load");
 
@@ -88,7 +86,7 @@ public class AudioLoader : IAudioLoader
 
         string selectedPath = totalValidFiles[UnityEngine.Random.Range(0, totalValidFiles.Count)];
 
-        var clip = await _audioClipLoader.LoadAudioClipAsync(selectedPath);
+        var clip = await AudioClipLoader.LoadAudioClipAsync(selectedPath);
 
         if (clip == null) LogCategoryFailure(selectedPath, "Selected file failed to load");
 
@@ -163,7 +161,7 @@ public class AudioLoader : IAudioLoader
         LogManager.LogInfo($"Loading category {category} with {validFiles.Count} files");
 
         var clipLoadingTasks = validFiles
-            .Select(path => _audioClipLoader.LoadAudioClipAsync(path));
+            .Select(path => AudioClipLoader.LoadAudioClipAsync(path));
 
         var loadedClips = new List<AudioClip>();
 

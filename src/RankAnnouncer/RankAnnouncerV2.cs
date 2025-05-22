@@ -42,7 +42,7 @@ public static class RankAnnouncerV2
 
         _announcer.Initialize(
             _jsonSetting,
-            new AudioLoader(InstanceConfig.audioFolderPath.Value, _jsonSetting, new AudioClipLoader()),
+            new AudioLoader(InstanceConfig.audioFolderPath.Value, _jsonSetting),
             new CooldownManager(_jsonSetting.CategoryAudioMap.Keys.ToArray())
         );
 

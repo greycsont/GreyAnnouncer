@@ -118,6 +118,15 @@ Previous versions were licensed under the MIT License.
 ---                     
 Copyleft (c) 2025 greycsont
 
+## stm argument(?)
+KISS - No, keep it simple to handle for stupid people, complex problem needs complex solution to solve. 
+
+(example : CrowdStrike using regular expression blowed up wide range of windows computers in 2024/7/19) [video link](https://www.bilibili.com/video/BV1h9WReZEE7)
+
+(example 2 : Cloudflare's CPU overload caused by a catastrophic regular expression backtracking in 2019/7/2) [Cloudflare Report](https://blog.cloudflare.com/details-of-the-cloudflare-outage-on-july-2-2019/)
+
+Do one thing and do it well - What's the range of "one thing"? (example : systemmd replaced cron, sysV, and tons of system component) [video link](https://www.bilibili.com/video/BV1Es4yeUEdS)
+
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 
