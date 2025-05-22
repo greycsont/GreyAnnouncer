@@ -125,7 +125,7 @@ KISS - No, keep it simple to handle for stupid people, complex problem needs com
 
 (example 2 : Cloudflare's CPU overload caused by a catastrophic regular expression backtracking in 2019/7/2) [Cloudflare Report](https://blog.cloudflare.com/details-of-the-cloudflare-outage-on-july-2-2019/)
 
-Do one thing and do it well - What's the range of "one thing"? (example : systemmd replaced cron, sysV, and tons of system component) [video link](https://www.bilibili.com/video/BV1Es4yeUEdS)
+Do one thing and do it well - What's the range of "one thing"? (example : Systemd) [video link](https://www.bilibili.com/video/BV1Es4yeUEdS)
 
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
