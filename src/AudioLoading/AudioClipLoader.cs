@@ -16,7 +16,7 @@ public static class AudioClipLoader
         AudioClip clip = null;
         try
         {
-            if (!InstanceConfig.isFFmpegSupportEnabled.Value && unityAudioType.HasValue)
+            if (unityAudioType.HasValue)
             {
                 clip = await UnitySupport.LoadWithUnityAsync(path, unityAudioType.Value);
             }

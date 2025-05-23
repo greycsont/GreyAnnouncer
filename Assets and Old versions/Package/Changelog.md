@@ -1,5 +1,8 @@
 ### Known issue/TODO
 
+### v1.2.0
+- Removed PostgreSQL License
+
 ### v1.1.1
 - Removed PluginConfigurator Hard Dependencies.
 - Fixed typo in Bepinex's config, may have trouble but it should be fix ASAP.

@@ -29,7 +29,8 @@ public class AudioAnnouncer
     {
         try
         {
-            if (!ValidateAndLogPlayback(category)) return;
+            if (!ValidateAndLogPlayback(category))
+                return;
             PlayAudioClip(category);
             SetCooldown(category, InstanceConfig.individualPlayCooldown.Value);
         }
@@ -109,6 +110,8 @@ public class AudioAnnouncer
 
     private void PlayAudioClip(string category)
     {
+        AudioClip clip = null;
+        // 需要改成加载AudioClip后直接传过去，省的这么多东西（
         switch (InstanceConfig.audioLoadingOptions.Value)
         {
             case 0:
@@ -122,6 +125,11 @@ public class AudioAnnouncer
                 _ = LoadAndPlayAudioClip(category);
                 break;
         }
+
+        if (clip == null) 
+            return;
+
+        
     }
     
     private void PlayAudioClipFromAudioClips(string category)
@@ -135,8 +143,10 @@ public class AudioAnnouncer
         {
             clip = _audioLoader.GetRandomClipFromAudioClips();
         }
-        if (clip == null) return;
 
+        if (clip == null) 
+            return;
+        
         AudioDispatcher.SendClipToAudioSource(clip, _audioSourceConfig, InstanceConfig.audioPlayOptions.Value);
     }
 
@@ -154,11 +164,12 @@ public class AudioAnnouncer
         {
             clip = await _audioLoader.GetRandomClipFromAllAvailableFiles();
         }
-
-        if (clip == null) return;
+        
+        if (clip == null) 
+            return;
 
         if (
-            currentRequestId != AnnouncerManager.playRequestId 
+            currentRequestId != AnnouncerManager.playRequestId
             && InstanceConfig.audioPlayOptions.Value == 0
         )
         {

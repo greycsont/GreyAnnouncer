@@ -3,6 +3,8 @@
 </div>
 <br>
 
+[![Static Badge](https://img.shields.io/badge/Ask-Deepwiki-blue)](https://deepwiki.com/greycsont/GreyAnnouncer)
+
 ##### Supported Audio Formats
 
 | Format      | Supported |                 
@@ -13,7 +15,12 @@
 `aac, ogg, aiff/aif not tested yet`
 
 ## Mod description
-IDK how to describe this shitpost
+IDK how to describe this mod
+
+<img src="https://syste.md/">
+
+` Source : https://syste.md `
+
 1. [Installation](#how-to-install-it)
 2. [Add audio](#how-to-add-the-audio)
 3. [Audio File naming](#audio-file-naming)
@@ -21,6 +28,8 @@ IDK how to describe this shitpost
 5. [Customize setting](#how-to-customize-other-setting)
 6. [Bug & Suggestions](#bugs--suggestions)
 7. [License](#license)
+
+`The thunderstore's README support have some issue with this`
 
 ## How to install it
 1. [r2modman](https://thunderstore.io/c/ultrakill/p/ebkr/r2modman/)
@@ -40,6 +49,7 @@ You can customize the audio name in the **RankAnnouncer.json** which is **near t
 
 `Size of files may different compare to this image`
 <img src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/file_structure_CLI.png">
+
 `Font : Comic Mono`
 
 The default audio name given in the below:
@@ -89,10 +99,6 @@ if you have any throuble or suggestion with the mod, feel free to ask in
 - Email : 1106230622@qq.com
 - Discord : username : csont.0721
 
-for anything with the code, It's free to ask too, but I recommand using this first
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/greycsont/GreyAnnouncer)
-But directly ask person is the fastest way to doing it(
-
 ## Resources
 - [1] FFmpeg, used under GNU Lesser General Public License (LGPL) Version 2.1
 - [2] Krita, used under GNU General Public License (GPL) Version 3.0
@@ -131,4 +137,4 @@ Do one thing and do it well - What's the range of "one thing"? (example : System
 
 
 ###### Easter egg
-The DMC3 Crimson beta version have released in 2025/5/14!
+然后是博√大人，人类开局被博√秒杀，第二个人又被博√秒杀，第三个人接着被博√秒杀，第四个人还是被博√秒杀，自带霸体，不受委屈，哪怕不需要挂人也能全场游龙，自身超短的前摇外加锦上添花的插地窖机制，使得博√非常的超模

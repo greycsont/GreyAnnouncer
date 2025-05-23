@@ -1,34 +1,3 @@
 The Grey Announcer is provided under:
 
         SPDX-License-Identifier: AGPL-3.0-or-later
-        With an explicit exception for local plugins and static API usage.
-
-This project is licensed under the GNU Affero General Public License v3.0 or later,
-with the following exception:
-
-        Code that interacts solely through the officially documented public APIs (e.g.,
-        via GreyAnnouncer.AnnouncerClass), whether through static linking or dynamic plugins,
-        is *not considered a derivative work* and may be used under:
-
-                SPDX-License-Identifier: PostgreSQL
-
-        The term "Public API" refers specifically to the interfaces, classes, variables, functions, etc.,
-        that are publicly documented and explicitly exposed for direct interaction.
-
-        In addition, code that accesses internal members via reflection or similar mechanisms
-        *for the purpose of reading or writing data* (e.g., modifying configuration values, observing internal state)
-        is also permitted under this exception, provided that:
-
-        - No new executable logic is injected into the core system (e.g., no method patching, IL rewriting, or code hooking).
-        - Such reflective access does not replace or override existing logic, only extends or configures it.
-
-        Code that performs runtime method injection, behavioral patching, or otherwise alters the
-        control flow of the core software *is considered a derivative work* and must comply with the AGPL-3.0-or-later.
-
-
-However, any deployment of this software as a networked service (such as SaaS or
-remote interaction) *must comply with AGPL Section 13*, requiring the complete
-Corresponding Source to be made available to all users of the service.
-
-Modifications to the core framework, including internal components not accessed through
-the defined Public APIs, are fully subject to the AGPL-3.0-or-later license.

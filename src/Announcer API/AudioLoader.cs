@@ -73,6 +73,8 @@ public class AudioLoader : IAudioLoader
     public async Task<AudioClip> GetRandomClipFromAllAvailableFiles()
     {
         // 以后应该是返回一个category和一个音频名？
+        // 对的，因为以后随机需要用到category来搞一些设置之类的，或者直接返回audioSourceSetting？
+        
         var totalValidFiles = new List<string>();
         foreach (var category in jsonSetting.CategoryAudioMap.Keys)
         {
