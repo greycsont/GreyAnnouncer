@@ -15,7 +15,7 @@
 `aac, ogg, aiff/aif not tested yet`
 
 ## Mod description
-IDK how to describe this mod
+IDK how to describe this mod, post a random image here
 
 <img src="https://syste.md/">
 
@@ -112,20 +112,24 @@ Thanks:
 - [PluginConfigurator doc](https://github.com/eternalUnion/UKPluginConfigurator/wiki)
 - [Maxwell's puzzling demon](https://store.steampowered.com/app/2770160/)
 - [Everything](https://www.voidtools.com/) Why vscode always auto pull and merge the source from the github.
+- 快乐萨卡兹厨, jamcame, 夕柱.
 
 ## License
 - The file(s) in the **Lib/** folder are third-party and not authored by me. They are not covered by the License of this project. Please refer to the respective license(s) of those files.
 
 ## License Change
-Starting from version 1.1.0, this project is licensed under different license. Please refer to the [COPYING](https://github.com/greycsont/GreyAnnouncer/raw/main/COPYING) for the full details on the license change.
+Starting from version 1.2.0, this project is licensed under
 
-Previous versions were licensed under the MIT License.
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+v1.1.0/v1.1.1 was licensed under AGPL+PostgreSQL.
 
 ---                     
-Copyleft (c) 2025 greycsont
+Copyleft (c) 2025 greycsont, all rights reserved
+
 
 ## stm argument(?)
-KISS - No, keep it simple to handle for stupid people, complex problem needs complex solution to solve. 
+Complex problem needs complex solution to solve, there's some example of overusing KISS principles :
 
 (example : CrowdStrike using regular expression blowed up wide range of windows computers in 2024/7/19) [video link](https://www.bilibili.com/video/BV1h9WReZEE7)
 

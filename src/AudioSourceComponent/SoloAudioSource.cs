@@ -28,12 +28,10 @@ public sealed class SoloAudioSource : MonoBehaviour
     public void PlayOneShot(AudioClip clip, AudioSourceSetting config)
     {
         if (_audioSource == null)
-        {
             _audioSource = gameObject.AddComponent<AudioSource>();
-            _audioSource = AudioSourceManager.ConfigureAudioSource(_audioSource, config);
-        }
 
         _audioSource.clip = clip;
+        _audioSource = AudioSourceManager.ConfigureAudioSource(_audioSource, config);
         UnderwaterController_inWater_Instance.CheckIsInWater();
         _audioSource.Play();
     }

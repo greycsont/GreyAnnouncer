@@ -30,7 +30,7 @@ public class AudioLoader : IAudioLoader
     #endregion
 
     #region Preload_and_Play API
-    public AudioClip GetClipFromCache(string category)
+    public AudioClipWithCategory? GetClipFromCache(string category)
     {
         if (categoryFailedLoading.Contains(category)) return null;
 
@@ -41,25 +41,29 @@ public class AudioLoader : IAudioLoader
         if (!_audioClips.TryGetValue(category, out var clips) || clips.Count == 0) return null;
 
         int randomIndex = UnityEngine.Random.Range(0, clips.Count);
-        return clips[randomIndex];
+
+        var clip = clips[randomIndex];
+
+        return new AudioClipWithCategory(category, clip);
     }
 
-    public AudioClip GetRandomClipFromAudioClips()
+    public AudioClipWithCategory? GetRandomClipFromAudioClips()
     {
-        var validClips = _audioClips
-            .SelectMany(kvp => kvp.Value)
-            .Where(clip => clip != null)
+        var validEntries = _audioClips
+            .SelectMany(kvp => kvp.Value.Select(clip => new AudioClipWithCategory(kvp.Key, clip)))
+            .Where(entry => entry.clip != null)
             .ToList();
 
-        var clip = validClips[UnityEngine.Random.Range(0, validClips.Count)];
-        return clip;
+        if (validEntries.Count == 0) return null;
+        
+        return validEntries[UnityEngine.Random.Range(0, validEntries.Count)];
     }
 
 
     #endregion
 
     #region Load_then_Play API
-    public async Task<AudioClip> LoadAndGetSingleAudioClipAsync(string category)
+    public async Task<AudioClipWithCategory?> LoadAndGetSingleAudioClipAsync(string category)
     {
         if (!TryGetValidAudioFiles(category, out var validFiles)) return null;
 
@@ -68,31 +72,32 @@ public class AudioLoader : IAudioLoader
 
         if (clip == null) LogCategoryFailure(category, "Selected file failed to load");
 
-        return clip;
+        return new AudioClipWithCategory (category, clip);
     }
-    public async Task<AudioClip> GetRandomClipFromAllAvailableFiles()
+    public async Task<AudioClipWithCategory?> GetRandomClipFromAllAvailableFiles()
     {
-        // 以后应该是返回一个category和一个音频名？
-        // 对的，因为以后随机需要用到category来搞一些设置之类的，或者直接返回audioSourceSetting？
+        var allValidFiles = new List<(string category, string path)>();
         
-        var totalValidFiles = new List<string>();
         foreach (var category in jsonSetting.CategoryAudioMap.Keys)
         {
-            TryGetValidAudioFiles(category, out var validFiles);
-            foreach (var fileName in validFiles)
+            if (TryGetValidAudioFiles(category, out var validFiles))
             {
-                totalValidFiles.Add(fileName);
+                allValidFiles.AddRange(validFiles.Select(path => (category, path)));
             }
         }
-        if (totalValidFiles.Count == 0) throw new ArgumentOutOfRangeException("114514");
-
-        string selectedPath = totalValidFiles[UnityEngine.Random.Range(0, totalValidFiles.Count)];
-
-        var clip = await AudioClipLoader.LoadAudioClipAsync(selectedPath);
-
-        if (clip == null) LogCategoryFailure(selectedPath, "Selected file failed to load");
-
-        return clip;
+        
+        if (allValidFiles.Count == 0) return null;
+        
+        var selected = allValidFiles[UnityEngine.Random.Range(0, allValidFiles.Count)];
+        var clip = await AudioClipLoader.LoadAudioClipAsync(selected.path);
+        
+        if (clip == null)
+        {
+            LogCategoryFailure(selected.category, "Selected file failed to load");
+            return null;
+        }
+        
+        return new AudioClipWithCategory(selected.category, clip);
     }
     #endregion
 

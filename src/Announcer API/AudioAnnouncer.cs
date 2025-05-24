@@ -13,11 +13,9 @@ public class AudioAnnouncer
     private    AnnouncerJsonSetting    _jsonSetting;
     private    IAudioLoader            _audioLoader;
     private    ICooldownManager        _cooldownManager;
-    private    AudioSourceSetting      _audioSourceConfig;
 
     public void Initialize(AnnouncerJsonSetting jsonSetting, IAudioLoader audioLoader, ICooldownManager cooldownManager)
     {
-        VariableInitialization();
         this._jsonSetting = jsonSetting;
         this._audioLoader = audioLoader;
         this._cooldownManager = cooldownManager;
@@ -73,18 +71,6 @@ public class AudioAnnouncer
         _audioLoader.UpdateJsonSetting(jsonSetting);
     }
 
-    private void VariableInitialization()
-    {
-        _audioSourceConfig = new AudioSourceSetting
-        {
-            SpatialBlend = 0f,
-            Priority     = 0,
-            Volume       = InstanceConfig.audioSourceVolume.Value,
-            Pitch        = 1f,
-        };
-    }
-
-
 
     #region Cooldown related
     public void SetCooldown(string category, float cooldown)
@@ -110,7 +96,6 @@ public class AudioAnnouncer
 
     private void PlayAudioClip(string category)
     {
-        AudioClip clip = null;
         // 需要改成加载AudioClip后直接传过去，省的这么多东西（
         switch (InstanceConfig.audioLoadingOptions.Value)
         {
@@ -124,17 +109,12 @@ public class AudioAnnouncer
                 LogManager.LogWarning("Invalid play audio options, using the default one");
                 _ = LoadAndPlayAudioClip(category);
                 break;
-        }
-
-        if (clip == null) 
-            return;
-
-        
+        } 
     }
     
     private void PlayAudioClipFromAudioClips(string category)
     {
-        AudioClip clip = null;
+        AudioClipWithCategory? clip;
         if (InstanceConfig.isAudioRandomizationEnabled.Value == false)
         {
             clip = _audioLoader.GetClipFromCache(category);
@@ -146,13 +126,23 @@ public class AudioAnnouncer
 
         if (clip == null) 
             return;
+
+        var audioSourceConfig = new AudioSourceSetting
+        {
+            SpatialBlend = 0f,
+            Priority     = 0,
+            Volume       = InstanceConfig.audioSourceVolume.Value,
+            Pitch        = _jsonSetting.CategoryAudioMap[clip.Value.category].Pitch,
+        };
+
+        LogManager.LogInfo($"category : {clip.Value.category}, Pitch : {audioSourceConfig.Pitch}");
         
-        AudioDispatcher.SendClipToAudioSource(clip, _audioSourceConfig, InstanceConfig.audioPlayOptions.Value);
+        AudioDispatcher.SendClipToAudioSource(clip.Value.clip, audioSourceConfig, InstanceConfig.audioPlayOptions.Value);
     }
 
     private async Task LoadAndPlayAudioClip(string category)
     {
-        AudioClip clip = null;
+        AudioClipWithCategory? clip = null;
 
         var currentRequestId = ++AnnouncerManager.playRequestId;
 
@@ -177,7 +167,17 @@ public class AudioAnnouncer
             return;
         }
 
-        AudioDispatcher.SendClipToAudioSource(clip, _audioSourceConfig, InstanceConfig.audioPlayOptions.Value);
+        var audioSourceConfig = new AudioSourceSetting
+        {
+            SpatialBlend = 0f,
+            Priority     = 0,
+            Volume       = InstanceConfig.audioSourceVolume.Value,
+            Pitch        = _jsonSetting.CategoryAudioMap[clip.Value.category].Pitch,
+        };
+        
+        LogManager.LogInfo($"category : {clip.Value.category}, Pitch : {audioSourceConfig.Pitch}");
+
+        AudioDispatcher.SendClipToAudioSource(clip.Value.clip, audioSourceConfig, InstanceConfig.audioPlayOptions.Value);
     }
 
     private void LogPlaybackError(Exception ex)

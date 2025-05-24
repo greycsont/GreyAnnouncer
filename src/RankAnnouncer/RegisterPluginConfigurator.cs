@@ -13,36 +13,43 @@ public static class RegisterRankAnnouncerPage
 {
     private static PluginConfigurator            _pluginConfigurator;
     private static string                        _title;
+    private static AnnouncerJsonSetting          _announcerJsonSetting;
     public static void Build(string title, AnnouncerJsonSetting announcerJsonSetting)
     {
-        _pluginConfigurator = PluginConfiguratorEntry.config;
-        _title              = title;
+        _pluginConfigurator   = PluginConfiguratorEntry.config;
+        _title                = title;
+        _announcerJsonSetting = announcerJsonSetting;
 
-        ConfigPanel panel   = new ConfigPanel (_pluginConfigurator.rootPanel, _title, _title);
+        ConfigPanel panel = new ConfigPanel(_pluginConfigurator.rootPanel, _title, _title);
         new ConfigSpace(panel, 15f);
 
         ConfigHeader header = new ConfigHeader(panel, _title);
-        header.textColor    = HeaderColor;
+        header.textColor = HeaderColor;
 
         var actionCollection = new Action<BoolField.BoolValueChangeEvent>[]{
             e => {
-                RankAnnouncerV2.UpdateJson(announcerJsonSetting);
+                RankAnnouncerV2.UpdateJson(_announcerJsonSetting);
                 LogManager.LogInfo($"Updated json setting for {_title}");
             }
         };
 
 
-        foreach (var category in announcerJsonSetting.CategoryAudioMap)
+        foreach (var category in _announcerJsonSetting.CategoryAudioMap)
         {
             var field = CreateBoolField(
                 panel,
                 category.Value.DisplayName,
                 category.Key,
-                announcerJsonSetting,
+                _announcerJsonSetting,
                 true,
                 actionCollection
             );
         }
+    }
+
+    public static void UpdateJsonSetting(AnnouncerJsonSetting announcerJsonSetting)
+    {
+        _announcerJsonSetting = announcerJsonSetting;
     }
 
     private static BoolField CreateBoolField(ConfigPanel panel,
@@ -52,9 +59,9 @@ public static class RegisterRankAnnouncerPage
                                              bool defaultValue,
                                              Action<BoolField.BoolValueChangeEvent>[] callbacks = null)
     {
-        var fullGuid         = GuidPrefixAdder.AddPrefixToGUID(guid);
-        var field            = new BoolField(panel, label, fullGuid, jsonSetting.CategoryAudioMap[guid].Enabled);
-        field.defaultValue   = defaultValue;
+        var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid);
+        var field = new BoolField(panel, label, fullGuid, jsonSetting.CategoryAudioMap[guid].Enabled);
+        field.defaultValue = defaultValue;
         field.onValueChange += e =>
         {
             if (jsonSetting.CategoryAudioMap.ContainsKey(guid))
@@ -63,7 +70,7 @@ public static class RegisterRankAnnouncerPage
             }
             if (callbacks != null)
             {
-                 foreach (var callback in callbacks)
+                foreach (var callback in callbacks)
                     callback?.Invoke(e);
             }
         };

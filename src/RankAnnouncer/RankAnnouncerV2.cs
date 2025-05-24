@@ -75,6 +75,12 @@ public static class RankAnnouncerV2
         JsonInitialization();
         UpdateAnnouncerJson();
         _announcer.ReloadAudio(_jsonSetting);
+
+        PluginDependencies.LoadIfPluginExists(
+            PluginDependencies.PLUGINCONFIGURATOR_GUID,
+            "RegisterRankAnnouncerPage",
+            () => ReflectionManager.LoadByReflection("GreyAnnouncer.RankAnnouncer.RegisterRankAnnouncerPage", "UpdateJsonSetting", new object[] { _jsonSetting })
+        );
     }
 
     private static void UpdateAudioPath()
