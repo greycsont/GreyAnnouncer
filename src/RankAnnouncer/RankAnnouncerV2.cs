@@ -62,8 +62,8 @@ public static class RankAnnouncerV2
 
     private static void SubscribeAnnouncerManager()
     {
-        AnnouncerManager.reloadAnnouncer += ReloadAnnouncer;
-        AnnouncerManager.resetCooldown += ResetCooldowns;
+        AnnouncerManager.reloadAnnouncer     += ReloadAnnouncer;
+        AnnouncerManager.resetCooldown       += ResetCooldowns;
         AnnouncerManager.clearAudioClipCache += ClearAudioClipCache;
         AnnouncerManager.updateAnnouncerPath += UpdateAudioPath;
     }

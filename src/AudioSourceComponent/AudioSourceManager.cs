@@ -13,7 +13,7 @@ public static class AudioSourceManager
         audioSource.priority     = config.Priority;
         audioSource.volume       = config.Volume < 1f ? config.Volume : 1f;
         audioSource.pitch        = config.Pitch;
-
+        //audioSource.outputAudioMixerGroup = null;
         return audioSource;
     }
 
@@ -31,12 +31,12 @@ public static class AudioSourceManager
 
     public static AudioSource RemoveLowPassFilter(AudioSource audioSource)
     {
-        if (audioSource == null) return null;
+        if (audioSource == null)
+            return null;
         AudioLowPassFilter lowPassFilter = audioSource.GetComponent<AudioLowPassFilter>();
         if (lowPassFilter != null)
-        {
             GameObject.Destroy(lowPassFilter);
-        }
+        
         return audioSource;
     }
 
@@ -46,8 +46,7 @@ public static class AudioSourceManager
         float startVolume = audioSource.volume;
         float timeStep    = duration / 5f;
         float time        = 0f;
-        while (time < duration)
-        {
+        while (time < duration) {
             audioSource.volume = Mathf.Lerp(startVolume, targetVolume, time / duration);
             time += timeStep;
             yield return new WaitForSeconds(timeStep);

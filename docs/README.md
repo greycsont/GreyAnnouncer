@@ -114,6 +114,18 @@ Thanks:
 - [Everything](https://www.voidtools.com/) Why vscode always auto pull and merge the source from the github.
 - 快乐萨卡兹厨, jamcame, 夕柱.
 
+- And Everyone who used this mod.
+
+- Except me, The only thing I did is just collect idea from others and fix bugs in a worst way.
+
+- Due to the unity audioSource's limitations(max volume : 1f, There's a solution but considering the performance...), I cannot do something like this : 
+**Warning : It's non-english website, don't wear earphone and lower the volume down, I takes 0 responbilities of any damage caused by these videos**
+https://www.bilibili.com/video/BV1CmLdzQEPB
+https://www.bilibili.com/video/BV1P4pqe8Eyu
+https://www.bilibili.com/video/BV1rrFyeXE1D
+
+
+
 ## License
 - The file(s) in the **Lib/** folder are third-party and not authored by me. They are not covered by the License of this project. Please refer to the respective license(s) of those files.
 

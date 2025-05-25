@@ -86,7 +86,7 @@ public class AudioAnnouncer
         var validationState = GetPlayValidationState(category);
         if (validationState != ValidationState.Success)
         {
-            
+
             LogManager.LogInfo($"PlayValidationState: {category}, {validationState}");
             
             return false;

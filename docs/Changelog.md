@@ -1,9 +1,11 @@
 ### Known issue/TODO
 - folder adjustment (.json goes to stm setting folder, ffmpeg goes to like lib\ffmpeg folder etc.)
-- FFmpeg support
+- .NET upgrade
+
 ### v1.2.0
 - Added Pitch setting in .json
-- Fixed modify .json through via editor will not synchronous the new setting to PluginConfigurator's interface, and cause setting overwrite.
+- Added FFmpeg support (require libs and put them in ./libs/ffmpeg folder)
+- *Fixed modify .json through via editor will not synchronous the new setting to PluginConfigurator's interface, and cause setting overwrite*.
 
 ### v1.1.1
 - Removed PluginConfigurator Hard Dependencies.
