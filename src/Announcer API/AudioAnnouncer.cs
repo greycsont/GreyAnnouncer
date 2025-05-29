@@ -14,7 +14,9 @@ public class AudioAnnouncer
     private    IAudioLoader            _audioLoader;
     private    ICooldownManager        _cooldownManager;
 
-    public void Initialize(AnnouncerJsonSetting jsonSetting, IAudioLoader audioLoader, ICooldownManager cooldownManager)
+    public void Initialize(AnnouncerJsonSetting jsonSetting, 
+                           IAudioLoader audioLoader, 
+                           ICooldownManager cooldownManager)
     {
         this._jsonSetting = jsonSetting;
         this._audioLoader = audioLoader;
@@ -137,7 +139,9 @@ public class AudioAnnouncer
 
         LogManager.LogInfo($"category : {clip.Value.category}, Pitch : {audioSourceConfig.Pitch}");
         
-        AudioDispatcher.SendClipToAudioSource(clip.Value.clip, audioSourceConfig, InstanceConfig.audioPlayOptions.Value);
+        AudioDispatcher.SendClipToAudioSource(clip.Value.clip, 
+                                              audioSourceConfig, 
+                                              InstanceConfig.audioPlayOptions.Value);
     }
 
     private async Task LoadAndPlayAudioClip(string category)
@@ -177,7 +181,9 @@ public class AudioAnnouncer
         
         LogManager.LogInfo($"category : {clip.Value.category}, Pitch : {audioSourceConfig.Pitch}");
 
-        AudioDispatcher.SendClipToAudioSource(clip.Value.clip, audioSourceConfig, InstanceConfig.audioPlayOptions.Value);
+        AudioDispatcher.SendClipToAudioSource(clip.Value.clip, 
+                                              audioSourceConfig, 
+                                              InstanceConfig.audioPlayOptions.Value);
     }
 
     private void LogPlaybackError(Exception ex)
@@ -195,7 +201,8 @@ public class AudioAnnouncer
         }
 
 
-        if (_audioLoader.jsonSetting.CategoryAudioMap.Keys == null || !_audioLoader.jsonSetting.CategoryAudioMap.Keys.Contains(category)){
+        if (_audioLoader.jsonSetting.CategoryAudioMap.Keys == null 
+            || !_audioLoader.jsonSetting.CategoryAudioMap.Keys.Contains(category)){
             return ValidationState.InvalidKey;
         }
 

@@ -79,7 +79,11 @@ public static class RankAnnouncerV2
         PluginDependencies.LoadIfPluginExists(
             PluginDependencies.PLUGINCONFIGURATOR_GUID,
             "RegisterRankAnnouncerPage",
-            () => ReflectionManager.LoadByReflection("GreyAnnouncer.RankAnnouncer.RegisterRankAnnouncerPage", "UpdateJsonSetting", new object[] { _jsonSetting })
+            () => ReflectionManager.LoadByReflection(
+                      "GreyAnnouncer.RankAnnouncer.RegisterRankAnnouncerPage", 
+                      "UpdateJsonSetting", 
+                      new object[] { _jsonSetting }
+                  )
         );
     }
 
@@ -120,6 +124,7 @@ public static class RankAnnouncerV2
             {
                 Enabled = true,
                 DisplayName = _displayNameMapping.TryGetValue(cat, out var name) ? name : cat,
+                Pitch = 1f,
                 AudioFiles = new List<string> { cat }
             }
         );
@@ -134,12 +139,16 @@ public static class RankAnnouncerV2
     }
     #endregion
 
-    private static void PluginConfigPanelInitialization(string announcerName, AnnouncerJsonSetting jsonSetting)
+    private static void PluginConfigPanelInitialization(string announcerName, 
+                                                        AnnouncerJsonSetting jsonSetting)
     {
         PluginDependencies.LoadIfPluginExists(
             PluginDependencies.PLUGINCONFIGURATOR_GUID,
             "RegisterRankAnnouncerPage",
-            () => ReflectionManager.LoadByReflection("GreyAnnouncer.RankAnnouncer.RegisterRankAnnouncerPage", "Build", new object[] { announcerName, jsonSetting })
+            () => ReflectionManager.LoadByReflection(
+                      "GreyAnnouncer.RankAnnouncer.RegisterRankAnnouncerPage", 
+                      "Build", 
+                      new object[] { announcerName, jsonSetting })
         );
     }
 

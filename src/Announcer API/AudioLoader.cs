@@ -1,4 +1,13 @@
-﻿using System.IO;
+﻿/* 
+ * 基本上就是依靠 category 加载音频
+ * 以及配套的获取 audioclip 的函数
+ *
+ *
+ */
+
+
+
+using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
@@ -219,7 +228,7 @@ public class AudioLoader : IAudioLoader
     private void LogCategoryFailure(string category, string reason)
     {
         categoryFailedLoading.Add(category);
-        LogManager.LogWarning($"Failed to load category 「{category}」: {reason}");
+        LogManager.LogDebug($"Failed to load category 「{category}」: {reason}");
     }
 
     private void LogLoadingResults()

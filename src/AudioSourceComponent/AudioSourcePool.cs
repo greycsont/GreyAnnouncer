@@ -1,3 +1,13 @@
+/* 
+ * 使用了和线程池/Thread Pool类似的概念
+ * 后面发现有PlayOneShot这个函数
+ * 但具体性能我觉得还是这个舒服
+ *
+ */
+
+
+
+
 using System.Collections;
 using System.Collections.Generic; //audio clip
 using UnityEngine;
@@ -89,7 +99,9 @@ public sealed class AudioSourcePool : MonoBehaviour
                 && audioSource.isPlaying
             )
             {
-                StartCoroutine(AudioSourceManager.FadeVolume(audioSource, targetVolume, duration));
+                StartCoroutine(AudioSourceManager.FadeVolume(audioSource, 
+                                                             targetVolume, 
+                                                             duration));
             }
         }
     }

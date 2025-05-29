@@ -1,3 +1,15 @@
+
+/*
+ * stopwatch + ffmpeg + BepInEx logging = 崩溃
+ * 如果没有其中一个都不会崩
+ *
+ * 已解决，利用.NET Core 的 code analyze 发现了 ProcessAudioFrame()
+ * 里面的 while 循环会频繁调用 byte** convertedData = stackalloc byte*[1]
+ * 导致 StackOverFlowException / 栈溢出
+ *
+ */
+
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,12 +29,9 @@ public static class FFmpegSupport
     {
         return Task.Run(() =>
         {
-            // stopwatch + ffmpeg + BepInEx logging = weird bug
-            // Can be fixed without any of these
             var stopwatch = new Stopwatch();
 
             stopwatch.Start();
-
             AVFormatContext*    formatContext    = null;
             AVCodecContext*     codecCtx         = null;
             SwrContext*         swrCtx           = null;
@@ -31,13 +40,12 @@ public static class FFmpegSupport
 
             int                 audioStreamIndex;
 
-            ffmpeg.RootPath = PathManager.GetCurrentPluginPath(Path.Combine("lib","ffmpeg")); // 或者你手动指定 dll 路径
+            ffmpeg.RootPath = PathManager.GetCurrentPluginPath(Path.Combine("lib", "ffmpeg")); // 或者你手动指定 dll 路径
             //LogManager.LogWarning($"ffmpeg version: {ffmpeg.av_version_info()}");
 
             ffmpeg.avformat_network_init();
 
             formatContext = InitializeFormatContext(filePath);
-            
             // 查找音频流
             audioStreamIndex = FindAudioStreamIndex(formatContext);
 
@@ -110,7 +118,7 @@ public static class FFmpegSupport
 
         AVCodecContext* codecCtx = ffmpeg.avcodec_alloc_context3(codec);
         ffmpeg.avcodec_parameters_to_context(codecCtx, codecpar);
-        
+
         if (ffmpeg.avcodec_open2(codecCtx, codec, null) < 0)
         {
             ffmpeg.avcodec_free_context(&codecCtx);
@@ -172,11 +180,11 @@ public static class FFmpegSupport
                                                  AVFrame* frame,
                                                  StreamedAudioData streamedData)
     {
+        byte** convertedData = stackalloc byte*[1];
+        int outLinesize;
         ffmpeg.avcodec_send_packet(codecCtx, packet);
         while (ffmpeg.avcodec_receive_frame(codecCtx, frame) == 0)
         {
-            byte** convertedData = stackalloc byte*[1];
-            int outLinesize;
 
             int outSamples = ffmpeg.av_samples_alloc_array_and_samples(
                 &convertedData, &outLinesize,
@@ -205,7 +213,7 @@ public static class FFmpegSupport
             ffmpeg.av_freep(&convertedData[0]);
         }
     }
-    
+
     private static unsafe void CleanupResources(AVFrame* frame,
                                                 AVPacket* packet,
                                                 AVCodecContext* codecCtx,

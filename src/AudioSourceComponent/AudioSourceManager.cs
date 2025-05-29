@@ -7,7 +7,8 @@ namespace GreyAnnouncer;
 
 public static class AudioSourceManager
 {
-    public static AudioSource ConfigureAudioSource(AudioSource audioSource, AudioSourceSetting config)
+    public static AudioSource ConfigureAudioSource(AudioSource audioSource, 
+                                                   AudioSourceSetting config)
     {
         audioSource.spatialBlend = config.SpatialBlend;
         audioSource.priority     = config.Priority;
@@ -33,14 +34,16 @@ public static class AudioSourceManager
     {
         if (audioSource == null)
             return null;
-        AudioLowPassFilter lowPassFilter = audioSource.GetComponent<AudioLowPassFilter>();
+        AudioLowPassFilter lowPassFilter = audioSource.GetComponent<AudioLowPassFilter>(); 
         if (lowPassFilter != null)
             GameObject.Destroy(lowPassFilter);
-        
+
         return audioSource;
     }
 
-    public static IEnumerator FadeVolume(AudioSource audioSource, float targetVolume, float duration)
+    public static IEnumerator FadeVolume(AudioSource audioSource, 
+                                         float targetVolume, 
+                                         float duration)
     {
         if (audioSource == null) yield break;
         float startVolume = audioSource.volume;

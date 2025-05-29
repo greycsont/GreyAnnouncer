@@ -45,12 +45,16 @@ public class CooldownManager : ICooldownManager
 
     private void StartIndividualCooldown(string category, float duration)
     {
-        CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => _individualCooldowns[category] = value, duration));
+        CoroutineRunner.Instance.StartCoroutine(
+            CooldownCoroutine(value => _individualCooldowns[category] = value, 
+            duration));
     }
 
     private void StartSharedCooldown(float duration)
     {
-        CoroutineRunner.Instance.StartCoroutine(CooldownCoroutine(value => AnnouncerManager.sharedCooldown = value, duration));
+        CoroutineRunner.Instance.StartCoroutine(
+            CooldownCoroutine(value => AnnouncerManager.sharedCooldown = value, 
+            duration));
     }
 
 

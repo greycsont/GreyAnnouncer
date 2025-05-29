@@ -4,7 +4,9 @@ namespace GreyAnnouncer.AudioSourceComponent;
 
 public static class AudioDispatcher
 {
-    public static void SendClipToAudioSource(AudioClip clip, AudioSourceSetting audioSourceConfig, int flag)
+    public static void SendClipToAudioSource(AudioClip clip, 
+                                             AudioSourceSetting audioSourceConfig, 
+                                             int flag)
     {
         switch (flag)
         {

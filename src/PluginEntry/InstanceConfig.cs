@@ -21,7 +21,7 @@ public static class InstanceConfig
         { "SharedRankCooldown",     ("Cooldown", "Shared_rank_play_cooldown",           DEFAULT_SHARED_PLAY_COOLDOWN,        "Shared rank play cooldown (in secs)") },
         { "IndividualRankCooldown", ("Cooldown", "Individual_rank_play_cooldown",       DEFAULT_INDIVIDUAL_PLAY_COOLDOWN,    "Individual rank play cooldown (in secs)") },
 
-        // "Audio" section
+        // "Audio" section 
         { "AudioSourceVolume",      ("Audio",    "Audio_source_volume",                 DEFAULT_AUDIO_SOURCE_VOLUME,         "Volume of the Announcer ( Range : 0f ~ 1f )") },
         { "LowPassFilter",          ("Audio",    "Under_water_low_pass_filter_Enabled", DEFAULT_LOW_PASS_FILTER_ENABLED,     "Set to true to enable muffle effect when under water") },
         { "AudioFolderPath",        ("Audio",    "Audio_folder_path",                   DEFAULT_AUDIO_FOLDER_PATH,           "Path to the audio folder") },

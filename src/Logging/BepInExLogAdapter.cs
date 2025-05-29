@@ -14,4 +14,5 @@ public class BepInExLogAdapter : ILog
     public void LogInfo(object data)    => log.LogInfo(data);
     public void LogWarning(object data) => log.LogWarning(data);
     public void LogError(object data)   => log.LogError(data);
+    public void LogDebug(object data)   => log.LogDebug(data);
 }

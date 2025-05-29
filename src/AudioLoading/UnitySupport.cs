@@ -1,3 +1,12 @@
+/*
+ * Unity 我超你妈，为什么一个这么流行的游戏引擎
+ * 结果对对应编程语言的支持一塌糊涂
+ * 都他妈 2025 了我还不能用最新最热的C# 和 dotnet
+ * 
+ */
+
+
+
 using System.IO;
 using UnityEngine;
 using System;
