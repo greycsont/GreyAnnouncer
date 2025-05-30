@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using HarmonyLib;
+using UnityEngine;
 
 
 namespace GreyAnnouncer.AudioSourceComponent;
@@ -28,6 +29,21 @@ public static class UnderwaterController_inWater_Instance
         {
             AddAudioLowPassFilterToAllAudioSource();
         }
+    }
+
+    public static AudioSource GetAudioSourceWithLowPassFilter(AudioSource audioSource)
+    {
+        if (audioSource == null) return null;
+        if (isInWater && InstanceConfig.isLowPassFilterEnabled.Value == true)
+        {
+            audioSource = AudioSourceManager.AddLowPassFilter(audioSource);
+        }
+        else
+        {
+            audioSource = AudioSourceManager.RemoveLowPassFilter(audioSource);
+        }
+
+        return audioSource;
     }
 
     private static void RemoveAudioLowPassFilterFromAllAudioSource()

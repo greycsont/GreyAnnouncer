@@ -25,15 +25,25 @@ public sealed class SoloAudioSource : MonoBehaviour
 
 
     #region Public API
+    public void Play(AudioClip clip, AudioSourceSetting config)
+    {
+        if (_audioSource == null)
+            _audioSource = gameObject.AddComponent<AudioSource>();
+
+        _audioSource.Stop();
+        _audioSource = AudioSourceManager.ConfigureAudioSource(_audioSource, config);
+        _audioSource = UnderwaterController_inWater_Instance.GetAudioSourceWithLowPassFilter(_audioSource);
+        _audioSource.PlayOneShot(clip, 1f);
+    }
+
     public void PlayOneShot(AudioClip clip, AudioSourceSetting config)
     {
         if (_audioSource == null)
             _audioSource = gameObject.AddComponent<AudioSource>();
 
-        _audioSource.clip = clip;
         _audioSource = AudioSourceManager.ConfigureAudioSource(_audioSource, config);
-        UnderwaterController_inWater_Instance.CheckIsInWater();
-        _audioSource.Play();
+        _audioSource = UnderwaterController_inWater_Instance.GetAudioSourceWithLowPassFilter(_audioSource);
+        _audioSource.PlayOneShot(clip, 1f);
     }
 
     public void AddAudioLowPassFilter()
@@ -49,9 +59,7 @@ public sealed class SoloAudioSource : MonoBehaviour
     public void UpdateSoloAudioSourceVolume(float targetVolume, float duration = 0.35f)
     {
         if (_audioSource != null)
-        {
             StartCoroutine(AudioSourceManager.FadeVolume(_audioSource, targetVolume, duration));
-        }
     }
 
     public void StopAudioSource()

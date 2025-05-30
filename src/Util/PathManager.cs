@@ -38,7 +38,9 @@ public static class PathManager
         /* 我恨你， 当我用GPT-SOTIVS都是因为这个破东西导致一直说没找到路径,摸摸灰喉（ */
     }
 
-
+    /*
+     * Unity 什么时候支持 .NET Core?
+     */
     [Description("Reference : (C# 判断操作系统是 Windows 还是 Linux - 青叶煮酒 - 博客园, 11/1/2022) https://www.cnblogs.com/dhqy/p/15787463.html (Accessed in 25/4/2025)")]
     public static void OpenDirectory(string path)
     {

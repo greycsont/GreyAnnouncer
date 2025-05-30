@@ -11,13 +11,14 @@ public static class AudioDispatcher
         switch (flag)
         {
             case 0:
-                SoloAudioSource.Instance.PlayOneShot(clip, audioSourceConfig);
+                SoloAudioSource.Instance.Play(clip, audioSourceConfig);
                 break;
             case 1:
-                AudioSourcePool.Instance.PlayOneShot(clip, audioSourceConfig);
+                //AudioSourcePool.Instance.PlayOneShot(clip, audioSourceConfig);
+                SoloAudioSource.Instance.PlayOneShot(clip, audioSourceConfig);
                 break;
             default:
-                SoloAudioSource.Instance.PlayOneShot(clip, audioSourceConfig);
+                SoloAudioSource.Instance.Play(clip, audioSourceConfig);
                 break;
         }
     }

@@ -2,27 +2,35 @@
  * 使用了和线程池/Thread Pool类似的概念
  * 后面发现有PlayOneShot这个函数
  * 但具体性能我觉得还是这个舒服
+ * 
+ * https://discussions.unity.com/t/playoneshot-performance/595405
  *
+ * 爆了，直接使用playOneShot()比搞个池子性能高一倍
  */
 
 
 
 
+using System;
 using System.Collections;
 using System.Collections.Generic; //audio clip
 using UnityEngine;
 
+
+
 namespace GreyAnnouncer.AudioSourceComponent;
+
+[Obsolete("https://discussions.unity.com/t/playoneshot-performance/595405 PlayOneShot() have two times better performance than pool system")]
 public sealed class AudioSourcePool : MonoBehaviour
 {
-    private Queue<AudioSource>                                   _pool               = new Queue<AudioSource>();
-    private readonly HashSet<AudioSource>                        _activeAudioSources = new HashSet<AudioSource>();
-    private LinkedList<AudioSource>                              _playingList        = new LinkedList<AudioSource>();
-    private Dictionary<AudioSource, LinkedListNode<AudioSource>> _playingMap         = new Dictionary<AudioSource, LinkedListNode<AudioSource>>();
-    private static AudioSourcePool                               _instance;
+    private Queue<AudioSource> _pool = new Queue<AudioSource>();
+    private readonly HashSet<AudioSource> _activeAudioSources = new HashSet<AudioSource>();
+    private LinkedList<AudioSource> _playingList = new LinkedList<AudioSource>();
+    private Dictionary<AudioSource, LinkedListNode<AudioSource>> _playingMap = new Dictionary<AudioSource, LinkedListNode<AudioSource>>();
+    private static AudioSourcePool _instance;
 
-    public int                                                   initialSize = 2;
-    public int                                                   maxSize = 7;
+    public int initialSize = 2;
+    public int maxSize = 7;
 
 
     #region Constructor
@@ -99,8 +107,8 @@ public sealed class AudioSourcePool : MonoBehaviour
                 && audioSource.isPlaying
             )
             {
-                StartCoroutine(AudioSourceManager.FadeVolume(audioSource, 
-                                                             targetVolume, 
+                StartCoroutine(AudioSourceManager.FadeVolume(audioSource,
+                                                             targetVolume,
                                                              duration));
             }
         }
