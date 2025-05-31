@@ -60,7 +60,6 @@ public static class AudioSourceManager
     public static void StopAllAudioSource()
     {
         SoloAudioSource.Instance.StopAudioSource();
-        AudioSourcePool.Instance.StopAllAudioSource();
     }
 
 }

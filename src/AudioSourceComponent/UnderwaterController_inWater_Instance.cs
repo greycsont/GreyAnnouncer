@@ -48,13 +48,11 @@ public static class UnderwaterController_inWater_Instance
 
     private static void RemoveAudioLowPassFilterFromAllAudioSource()
     {
-        AudioSourcePool.Instance.RemoveAudioLowPassFilterFromActiveAudioSource();
         SoloAudioSource.Instance.RemoveAudioLowPassFilter();
     }
 
     private static void AddAudioLowPassFilterToAllAudioSource()
     {
-        AudioSourcePool.Instance.AddAudioLowPassFilterToActiveAudioSource();
         SoloAudioSource.Instance.AddAudioLowPassFilter();
     }
 }

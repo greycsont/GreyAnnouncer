@@ -88,7 +88,6 @@ public static class MainPanelBuilder
         volumeSlider.onValueChange += e =>
         {
             InstanceConfig.audioSourceVolume.Value = e.newValue;
-            AudioSourcePool.Instance.UpdateAllActiveSourcesVolume(e.newValue);
             SoloAudioSource.Instance.UpdateSoloAudioSourceVolume(e.newValue);
         };
 

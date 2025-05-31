@@ -137,11 +137,14 @@ public class AudioAnnouncer
             Pitch        = _jsonSetting.CategoryAudioMap[clip.Value.category].Pitch,
         };
 
+        var volumeMultiplier = _jsonSetting.CategoryAudioMap[clip.Value.category].VolumeMultiplier;
+
         LogManager.LogInfo($"category : {clip.Value.category}, Pitch : {audioSourceConfig.Pitch}");
         
         AudioDispatcher.SendClipToAudioSource(clip.Value.clip, 
                                               audioSourceConfig, 
-                                              InstanceConfig.audioPlayOptions.Value);
+                                              InstanceConfig.audioPlayOptions.Value,
+                                              volumeMultiplier);
     }
 
     private async Task LoadAndPlayAudioClip(string category)
@@ -178,12 +181,15 @@ public class AudioAnnouncer
             Volume       = InstanceConfig.audioSourceVolume.Value,
             Pitch        = _jsonSetting.CategoryAudioMap[clip.Value.category].Pitch,
         };
+
+        var volumeMultiplier = _jsonSetting.CategoryAudioMap[clip.Value.category].VolumeMultiplier;
         
         LogManager.LogInfo($"category : {clip.Value.category}, Pitch : {audioSourceConfig.Pitch}");
 
         AudioDispatcher.SendClipToAudioSource(clip.Value.clip, 
                                               audioSourceConfig, 
-                                              InstanceConfig.audioPlayOptions.Value);
+                                              InstanceConfig.audioPlayOptions.Value,
+                                              volumeMultiplier);
     }
 
     private void LogPlaybackError(Exception ex)

@@ -12,7 +12,7 @@ public class CategoryAudioSetting
 {
     public bool         Enabled     { get; set; } = true;
     public string       DisplayName { get; set; }
+    public float        VolumeMultiplier      { get; set; } = 1.0f;
     public float        Pitch       { get; set; } = 1.0f;
     public List<string> AudioFiles  { get; set; } = new List<string>();
-
 }
