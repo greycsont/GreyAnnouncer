@@ -25,48 +25,57 @@ public class AudioAnnouncer
 
     [Description("Parry balls of Maurice -> Hit Maurice -> AscendingRank() -> Postfix() -> PlaySound() -> CheckPlayValidation(), " +
                  "This error will skip all the function before CheckPlayValidation(), That's why try-catch has implemented in the fucntion")]
-    public void PlayAudioViaCategory(string category)
+                 
+    /// <summary>Will Play a random audio in the belong category</summary>
+    public async Task PlayAudioViaCategory(string category)
     {
         try
         {
             if (!ValidateAndLogPlayback(category))
                 return;
-            PlayAudioClip(category);
-            SetCooldown(category, InstanceConfig.individualPlayCooldown.Value);
+                
+            if (await PlayAudioClip(category))
+                SetCooldown(category, InstanceConfig.individualPlayCooldown.Value);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             LogPlaybackError(ex);
         }
     }
 
-    public void PlayAudioViaIndex(int index)
+    /// <summary>Will Play a random audio in the belong category by jsonSetting mapping via index</summary>
+    public async Task PlayAudioViaIndex(int index)
     {
-        PlayAudioViaCategory(_jsonSetting.CategoryAudioMap.Keys.ToArray()[index]);
+        await PlayAudioViaCategory(_jsonSetting.CategoryAudioMap.Keys.ToArray()[index]);
     }
 
+    /// <summary>Reload Audio, only works when using Preload and Play options</summary>
     public void ReloadAudio(AnnouncerJsonSetting jsonSetting)
     {
-        this._jsonSetting = jsonSetting; 
+        this._jsonSetting = jsonSetting;
         _audioLoader.UpdateJsonSetting(_jsonSetting);
         _ = _audioLoader.FindAvailableAudioAsync();
     }
 
+    /// <summary>Updates path stored audio files</summary>
     public void UpdateAudioPath(string newAudioPaths)
     {
         _audioLoader.UpdateAudioPath(newAudioPaths);
     }
 
+    /// <summary>Resets the announcer's cooldown</summary>
     public void ResetCooldown()
     {
         _cooldownManager.ResetCooldowns();
     }
 
+    /// <summary>Clear audioclip in audioloader, only works when using Preload and Play options</summary>
     public void ClearAudioClipsCache()
     {
         _audioLoader.ClearCache();
     }
 
+    /// <summary>Update jsonSetting and send the setting to other component</summary>
     public void UpdateJsonSetting(AnnouncerJsonSetting jsonSetting)
     {
         this._jsonSetting = jsonSetting;
@@ -75,7 +84,7 @@ public class AudioAnnouncer
 
 
     #region Cooldown related
-    public void SetCooldown(string category, float cooldown)
+    private void SetCooldown(string category, float cooldown)
     {
         _cooldownManager.StartCooldowns(category, cooldown);
     }
@@ -96,25 +105,52 @@ public class AudioAnnouncer
         return true;
     }
 
-    private void PlayAudioClip(string category)
+    private async Task<bool> PlayAudioClip(string category)
     {
+        AudioClipWithCategory? clip = null;
         // 需要改成加载AudioClip后直接传过去，省的这么多东西（
         switch (InstanceConfig.audioLoadingOptions.Value)
         {
             case 0:
-                _ = LoadAndPlayAudioClip(category);
+                clip = await LoadAndPlayAudioClip(category);
                 break;
             case 1:
-                PlayAudioClipFromAudioClips(category);
+                clip = PlayAudioClipFromAudioClips(category);
                 break;
             default:
                 LogManager.LogWarning("Invalid play audio options, using the default one");
-                _ = LoadAndPlayAudioClip(category);
+                clip = await LoadAndPlayAudioClip(category);
                 break;
-        } 
+        }
+
+        if (clip == null)
+        {
+            LogManager.LogError($"Failed to load audio clip for category: {category}");
+            return false;
+        }
+
+        var audioSourceConfig = new AudioSourceSetting
+        {
+            SpatialBlend = 0f,
+            Priority = 0,
+            Volume = InstanceConfig.audioSourceVolume.Value,
+            Pitch = _jsonSetting.CategoryAudioMap[clip.Value.category].Pitch,
+        };
+
+        var volumeMultiplier = _jsonSetting.CategoryAudioMap[clip.Value.category].VolumeMultiplier;
+
+        LogManager.LogInfo($"category : {clip.Value.category}, Pitch : {audioSourceConfig.Pitch}");
+
+        AudioDispatcher.SendClipToAudioSource(clip.Value.clip,
+                                              audioSourceConfig,
+                                              InstanceConfig.audioPlayOptions.Value,
+                                              volumeMultiplier);
+
+        return true;
+
     }
     
-    private void PlayAudioClipFromAudioClips(string category)
+    private AudioClipWithCategory? PlayAudioClipFromAudioClips(string category)
     {
         AudioClipWithCategory? clip;
         if (InstanceConfig.isAudioRandomizationEnabled.Value == false)
@@ -127,27 +163,12 @@ public class AudioAnnouncer
         }
 
         if (clip == null) 
-            return;
+            return null;
 
-        var audioSourceConfig = new AudioSourceSetting
-        {
-            SpatialBlend = 0f,
-            Priority     = 0,
-            Volume       = InstanceConfig.audioSourceVolume.Value,
-            Pitch        = _jsonSetting.CategoryAudioMap[clip.Value.category].Pitch,
-        };
-
-        var volumeMultiplier = _jsonSetting.CategoryAudioMap[clip.Value.category].VolumeMultiplier;
-
-        LogManager.LogInfo($"category : {clip.Value.category}, Pitch : {audioSourceConfig.Pitch}");
-        
-        AudioDispatcher.SendClipToAudioSource(clip.Value.clip, 
-                                              audioSourceConfig, 
-                                              InstanceConfig.audioPlayOptions.Value,
-                                              volumeMultiplier);
+        return clip;
     }
 
-    private async Task LoadAndPlayAudioClip(string category)
+    private async Task<AudioClipWithCategory?> LoadAndPlayAudioClip(string category)
     {
         AudioClipWithCategory? clip = null;
 
@@ -163,7 +184,7 @@ public class AudioAnnouncer
         }
         
         if (clip == null) 
-            return;
+            return null;
 
         if (
             currentRequestId != AnnouncerManager.playRequestId
@@ -171,25 +192,10 @@ public class AudioAnnouncer
         )
         {
             LogManager.LogInfo($"Aborted outdated audio request for: {category}");
-            return;
+            return null;
         }
 
-        var audioSourceConfig = new AudioSourceSetting
-        {
-            SpatialBlend = 0f,
-            Priority     = 0,
-            Volume       = InstanceConfig.audioSourceVolume.Value,
-            Pitch        = _jsonSetting.CategoryAudioMap[clip.Value.category].Pitch,
-        };
-
-        var volumeMultiplier = _jsonSetting.CategoryAudioMap[clip.Value.category].VolumeMultiplier;
-        
-        LogManager.LogInfo($"category : {clip.Value.category}, Pitch : {audioSourceConfig.Pitch}");
-
-        AudioDispatcher.SendClipToAudioSource(clip.Value.clip, 
-                                              audioSourceConfig, 
-                                              InstanceConfig.audioPlayOptions.Value,
-                                              volumeMultiplier);
+        return clip;
     }
 
     private void LogPlaybackError(Exception ex)

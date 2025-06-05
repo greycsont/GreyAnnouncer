@@ -1,9 +1,10 @@
 ### Known issue/TODO
 - folder adjustment (.json goes to stm setting folder, ffmpeg goes to like lib\ffmpeg folder etc.)
-- .NET upgrade
+- .NET upgrade (fuck you unity)
 
 ### v1.2.0
 - Added Pitch setting in .json
+- Added VolumeMultiplier in .json
 - Added FFmpeg support (require libs and put them in ./libs/ffmpeg folder)
 - *Fixed modify .json through via editor will not synchronous the new setting to PluginConfigurator's interface, and cause setting overwrite*.
 

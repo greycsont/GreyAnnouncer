@@ -15,11 +15,9 @@
 `aac, ogg, aiff/aif not tested yet`
 
 ## Mod description
-IDK how to describe this mod, post a random image here
+IDK how to describe this mod, post a random clickable image here
 
-<img src="https://syste.md/">
-
-` Source : https://syste.md `
+[![BV1wo4y1h74n](https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/爱音跳舞.gif)](https://www.bilibili.com/video/BV1wo4y1h74n) 
 
 1. [Installation](#how-to-install-it)
 2. [Add audio](#how-to-add-the-audio)
@@ -116,12 +114,16 @@ Thanks:
 
 - And Everyone who used this mod.
 
-- Except me, The only thing I did is just collect idea from others and fix bugs in a worst way.
+- Except me, The only thing I did is just collect idea from others and fix bugs in a worst way ever.
 
-- Due to the unity audioSource's limitations(max volume : 1f, There's a solution but considering the performance...), I cannot do something like this : 
+Due to the unity audioSource's limitations(max volume : 1f, There's a solution but considering the performance...), I cannot do something like this : 
+
 **Warning : It's non-english website, don't wear earphone and lower the volume down, I takes 0 responbilities of any damage caused by these videos**
+
 https://www.bilibili.com/video/BV1CmLdzQEPB
+
 https://www.bilibili.com/video/BV1P4pqe8Eyu
+
 https://www.bilibili.com/video/BV1rrFyeXE1D
 
 
