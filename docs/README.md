@@ -20,7 +20,6 @@ IDK how to describe this mod, post a random clickable image with link here
 [![BV1wo4y1h74n](https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/爱音跳舞.gif)](https://www.bilibili.com/video/BV1wo4y1h74n) 
 
 Maximizer! Maximizer!
-
 `Dialogue Source : https://www.youtube.com/watch?v=jMKPYg0uhCI`
 
 1. [Installation](#how-to-install-it)

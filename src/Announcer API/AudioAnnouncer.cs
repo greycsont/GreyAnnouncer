@@ -27,14 +27,14 @@ public class AudioAnnouncer
                  "This error will skip all the function before CheckPlayValidation(), That's why try-catch has implemented in the fucntion")]
                  
     /// <summary>Will Play a random audio in the belong category</summary>
-    public async Task PlayAudioViaCategory(string category)
+    public async Task PlayAudioViaCategory(string category, int audioPlayOptions = 0)
     {
         try
         {
             if (!ValidateAndLogPlayback(category))
                 return;
                 
-            if (await PlayAudioClip(category, InstanceConfig.audioPlayOptions.Value))
+            if (await PlayAudioClip(category, audioPlayOptions))
                 SetCooldown(category, InstanceConfig.individualPlayCooldown.Value);
         }
         catch (Exception ex)
@@ -44,9 +44,9 @@ public class AudioAnnouncer
     }
 
     /// <summary>Will Play a random audio in the belong category by jsonSetting mapping via index</summary>
-    public async Task PlayAudioViaIndex(int index)
+    public async Task PlayAudioViaIndex(int index, int audioPlayOptions = 0)
     {
-        await PlayAudioViaCategory(_jsonSetting.CategoryAudioMap.Keys.ToArray()[index]);
+        await PlayAudioViaCategory(_jsonSetting.CategoryAudioMap.Keys.ToArray()[index], audioPlayOptions);
     }
 
     /// <summary>Reload Audio, only works when using Preload and Play options</summary>
