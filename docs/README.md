@@ -95,8 +95,6 @@ Make sure when you edit it and the game is running, click `Reload` button [in th
 ## How to customize other setting
 - Download and Using [PluginConfigurator](https://thunderstore.io/c/ultrakill/p/EternalsTeam/PluginConfigurator/) to edit in-game.
 
-
-
 ## Bugs & Suggestions
 if you have any throuble or suggestion with the mod, feel free to ask in 
 - [Github issue](https://github.com/greycsont/GreyAnnouncer/issues)
@@ -141,6 +139,7 @@ https://www.bilibili.com/video/BV1rrFyeXE1D
 
 - Also the files in ./docs/image folder or any image used in this README.md are not covered by the License of the project.
 
+
 ## License Change
 Starting from version 1.2.0, this project is licensed under
 
@@ -154,6 +153,8 @@ Copyleft (c) 2025 greycsont, all rights reserved
 
 ## stm argument(?)
 All video/audio file format is basically a container, the only thing needs to find is the audio stream.
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 
 ###### Easter egg

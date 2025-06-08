@@ -34,7 +34,7 @@ public class AudioAnnouncer
             if (!ValidateAndLogPlayback(category))
                 return;
                 
-            if (await PlayAudioClip(category,InstanceConfig.audioPlayOptions.Value))
+            if (await PlayAudioClip(category, InstanceConfig.audioPlayOptions.Value))
                 SetCooldown(category, InstanceConfig.individualPlayCooldown.Value);
         }
         catch (Exception ex)
@@ -109,8 +109,7 @@ public class AudioAnnouncer
     {
         AudioClipWithCategory? clip = null;
         // 需要改成加载AudioClip后直接传过去，省的这么多东西（
-        // 改好了
-        switch (audioPlayOptions)
+        switch (InstanceConfig.audioLoadingOptions.Value)
         {
             case 0:
                 clip = await LoadAndPlayAudioClip(category);
