@@ -3,7 +3,7 @@
 </div>
 <br>
 
-[![Static Badge](https://img.shields.io/badge/Ask-Deepwiki-blue)](https://deepwiki.com/greycsont/GreyAnnouncer)
+[![Static Badge](https://img.shields.io/badge/There's-Repository-blue)](https://github.com/greycsont/GreyAnnouncer) [![Static Badge](https://img.shields.io/badge/Ask-Deepwiki-blue)](https://deepwiki.com/greycsont/GreyAnnouncer) 
 
 ##### Supported Audio Formats
 
@@ -15,9 +15,12 @@
 `aac, ogg, aiff/aif not tested yet`
 
 ## Mod description
-IDK how to describe this mod, post a random clickable image here
+IDK how to describe this mod, post a random clickable image with link here
 
 [![BV1wo4y1h74n](https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/爱音跳舞.gif)](https://www.bilibili.com/video/BV1wo4y1h74n) 
+
+Maximizer! Maximizer!
+`Dialogue Source : https://www.youtube.com/watch?v=jMKPYg0uhCI`
 
 1. [Installation](#how-to-install-it)
 2. [Add audio](#how-to-add-the-audio)
@@ -91,6 +94,8 @@ Make sure when you edit it and the game is running, click `Reload` button [in th
 ## How to customize other setting
 - Download and Using [PluginConfigurator](https://thunderstore.io/c/ultrakill/p/EternalsTeam/PluginConfigurator/) to edit in-game.
 
+
+
 ## Bugs & Suggestions
 if you have any throuble or suggestion with the mod, feel free to ask in 
 - [Github issue](https://github.com/greycsont/GreyAnnouncer/issues)
@@ -102,6 +107,8 @@ if you have any throuble or suggestion with the mod, feel free to ask in
 - [2] Krita, used under GNU General Public License (GPL) Version 3.0
 - [3] Samigirian by Siphercase, used under SIL Open Font License (OFL) Version 1.1
 - [4] D-DIN by datto, used under SIL Open Font License (OFL) Version 1.1
+- [5] PluginConfigurator by eternalUnion, used under MIT License
+- [6] BepInEx, used under GNU Lesser General Public License (LGPL).
   
 ## Credit
 Thanks:
@@ -116,9 +123,9 @@ Thanks:
 
 - Except me, The only thing I did is just collect idea from others and fix bugs in a worst way ever.
 
-Due to the unity audioSource's limitations(max volume : 1f, There's a solution but considering the performance...), I cannot do something like this : 
+Some inspiration of the mod :
 
-**Warning : It's non-english website, don't wear earphone and lower the volume down, I takes 0 responbilities of any damage caused by these videos**
+**Warning : It's non-english website, don't wear earphone and lower the volume down, I takes 0 responbilities of any damage/hurt caused by these videos**
 
 https://www.bilibili.com/video/BV1CmLdzQEPB
 
@@ -130,6 +137,8 @@ https://www.bilibili.com/video/BV1rrFyeXE1D
 
 ## License
 - The file(s) in the **Lib/** folder are third-party and not authored by me. They are not covered by the License of this project. Please refer to the respective license(s) of those files.
+
+- Also the files in ./docs/image folder or any image used in this README.md are not covered by the License of the project.
 
 ## License Change
 Starting from version 1.2.0, this project is licensed under
@@ -143,15 +152,7 @@ Copyleft (c) 2025 greycsont, all rights reserved
 
 
 ## stm argument(?)
-Complex problem needs complex solution to solve, there's some example of overusing KISS principles :
-
-(example : CrowdStrike using regular expression blowed up wide range of windows computers in 2024/7/19) [video link](https://www.bilibili.com/video/BV1h9WReZEE7)
-
-(example 2 : Cloudflare's CPU overload caused by a catastrophic regular expression backtracking in 2019/7/2) [Cloudflare Report](https://blog.cloudflare.com/details-of-the-cloudflare-outage-on-july-2-2019/)
-
-Do one thing and do it well - What's the range of "one thing"? (example : Systemd) [video link](https://www.bilibili.com/video/BV1Es4yeUEdS)
-
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+All video/audio file format is basically a container, the only thing needs to find is the audio stream.
 
 
 ###### Easter egg
