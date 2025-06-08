@@ -57,7 +57,7 @@ public static class RankAnnouncerV2
             LogManager.LogError($"Invalid rank index: {rank}");
             return;
         }
-        _ = _announcer.PlayAudioViaIndex(rank, InstanceConfig.audioPlayOptions.Value);
+        _ = _announcer.PlayAudioViaIndex(rank);
     }
 
     private static void SubscribeAnnouncerManager()
