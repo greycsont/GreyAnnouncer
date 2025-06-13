@@ -124,6 +124,8 @@ Thanks:
 
 Some inspiration of the mod :
 
+https://www.bilibili.com/video/BV1gk5kzREen
+
 **Warning : It's non-english website, don't wear earphone and lower the volume down, I takes 0 responbilities of any damage/hurt caused by these videos**
 
 https://www.bilibili.com/video/BV1CmLdzQEPB

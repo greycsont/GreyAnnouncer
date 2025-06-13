@@ -79,6 +79,7 @@
   <PropertyGroup>
     <!--<OutputPath>$(SolutionDir)BuildOutput\</OutputPath>-->
     <OutputPath>E:\SteamLibrary\steamapps\common\ULTRAKILL\BepInEx\plugins\GreyAnnouncer</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 	
   <PropertyGroup>
