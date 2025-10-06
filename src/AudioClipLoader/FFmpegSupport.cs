@@ -11,7 +11,6 @@
 
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -31,7 +30,6 @@ public static class FFmpegSupport
         {
             var stopwatch = new Stopwatch();
 
-            stopwatch.Start();
             AVFormatContext*    formatContext    = null;
             AVCodecContext*     codecCtx         = null;
             SwrContext*         swrCtx           = null;
@@ -77,9 +75,6 @@ public static class FFmpegSupport
 
             CleanupResources(frame, packet, codecCtx, swrCtx, formatContext);
 
-            stopwatch.Stop();
-            TimeSpan elapsedTime = stopwatch.Elapsed;
-            LogManager.LogInfo($"Time used when loading with FFmpeg : {elapsedTime}");
 
             return clip;
         });

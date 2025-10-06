@@ -1,26 +1,37 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.ComponentModel;
-using UnityEngine;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using UnityEngine;
 
 using GreyAnnouncer.AudioSourceComponent;
+using GreyAnnouncer;
 
 namespace GreyAnnouncer.AnnouncerAPI;
 
 public class AudioAnnouncer
 {
-    private    AnnouncerJsonSetting    _jsonSetting;
+    public AnnouncerJsonSetting _jsonSetting;
+    private string _jsonName;
     private    IAudioLoader            _audioLoader;
     private    ICooldownManager        _cooldownManager;
+    private Dictionary<string, string> _displayNameMapping;
+    
 
-    public void Initialize(AnnouncerJsonSetting jsonSetting, 
-                           IAudioLoader audioLoader, 
-                           ICooldownManager cooldownManager)
+    public void Initialize(string jsonName,
+                           IAudioLoader audioLoader,
+                           ICooldownManager cooldownManager,
+                           Dictionary<string, string> displayNameMapping)
     {
-        this._jsonSetting = jsonSetting;
+        this._jsonName = jsonName;
         this._audioLoader = audioLoader;
         this._cooldownManager = cooldownManager;
+        this._displayNameMapping = displayNameMapping;
+        this._jsonSetting = JsonInitialization(jsonName, _displayNameMapping);
+
+
     }
 
     [Description("Parry balls of Maurice -> Hit Maurice -> AscendingRank() -> Postfix() -> PlaySound() -> CheckPlayValidation(), " +
@@ -50,9 +61,9 @@ public class AudioAnnouncer
     }
 
     /// <summary>Reload Audio, only works when using Preload and Play options</summary>
-    public void ReloadAudio(AnnouncerJsonSetting jsonSetting)
+    public void ReloadAudio()
     {
-        this._jsonSetting = jsonSetting;
+        this._jsonSetting = JsonInitialization(_jsonName, _displayNameMapping);
         _audioLoader.UpdateJsonSetting(_jsonSetting);
         _ = _audioLoader.FindAvailableAudioAsync();
     }
@@ -74,14 +85,6 @@ public class AudioAnnouncer
     {
         _audioLoader.ClearCache();
     }
-
-    /// <summary>Update jsonSetting and send the setting to other component</summary>
-    public void UpdateJsonSetting(AnnouncerJsonSetting jsonSetting)
-    {
-        this._jsonSetting = jsonSetting;
-        _audioLoader.UpdateJsonSetting(jsonSetting);
-    }
-
 
     #region Cooldown related
     private void SetCooldown(string category, float cooldown)
@@ -208,31 +211,56 @@ public class AudioAnnouncer
 
     private ValidationState GetPlayValidationState(string category)
     {
-        if (_cooldownManager == null || _audioLoader == null){
+        if (_cooldownManager == null || _audioLoader == null)
+        {
             return ValidationState.ComponentsNotInitialized;
         }
 
 
-        if (_audioLoader.jsonSetting.CategoryAudioMap.Keys == null 
-            || !_audioLoader.jsonSetting.CategoryAudioMap.Keys.Contains(category)){
+        if (_audioLoader.jsonSetting.CategoryAudioMap.Keys == null
+            || !_audioLoader.jsonSetting.CategoryAudioMap.Keys.Contains(category))
+        {
             return ValidationState.InvalidKey;
         }
 
 
-        if (_cooldownManager.IsIndividualCooldownActive(category)){
+        if (_cooldownManager.IsIndividualCooldownActive(category))
+        {
             return ValidationState.IndividualCooldown;
         }
 
 
-        if (_cooldownManager.IsSharedCooldownActive()){
+        if (_cooldownManager.IsSharedCooldownActive())
+        {
             return ValidationState.SharedCooldown;
         }
 
 
-        if (!_jsonSetting.CategoryAudioMap[category].Enabled){
+        if (!_jsonSetting.CategoryAudioMap[category].Enabled)
+        {
             return ValidationState.DisabledByConfig;
         }
 
         return ValidationState.Success;
+    }
+
+    private static AnnouncerJsonSetting JsonInitialization(string jsonName, Dictionary<string, string> displayNameMapping)
+    {
+        if (File.Exists(PathManager.GetCurrentPluginPath(jsonName)) == false)
+        {
+            var audioDict = displayNameMapping.Keys.ToDictionary(
+                cat => cat,
+                cat => new CategoryAudioSetting
+                {
+                    Enabled = true,
+                    DisplayName = displayNameMapping.TryGetValue(cat, out var name) ? name : cat,
+                    Pitch = 1f,
+                    AudioFiles = new List<string> { cat }
+                }
+            );
+            var jsonSetting = new AnnouncerJsonSetting { CategoryAudioMap = audioDict };
+            JsonManager.CreateJson(jsonName, jsonSetting);
+        }
+        return JsonManager.ReadJson<AnnouncerJsonSetting>(jsonName);
     }
 }

@@ -9,16 +9,16 @@ using GreyAnnouncer.PluginConfiguratorGUI;
 
 namespace GreyAnnouncer.RankAnnouncer;
 
-public static class RegisterRankAnnouncerPage
+public static class RegisterRankAnnouncerPagev2
 {
     private static PluginConfigurator            _pluginConfigurator;
     private static string                        _title;
-    private static AnnouncerJsonSetting          _announcerJsonSetting;
-    public static void Build(string title, AnnouncerJsonSetting announcerJsonSetting)
+    private static AudioAnnouncer        _announcer;
+    public static void Build(string title, AudioAnnouncer announcer)
     {
         _pluginConfigurator = PluginConfiguratorEntry.config;
         _title = title;
-        _announcerJsonSetting = announcerJsonSetting;
+        _announcer = announcer;
 
         ConfigPanel panel = new ConfigPanel(_pluginConfigurator.rootPanel, _title, _title);
         new ConfigSpace(panel, 15f);
@@ -27,13 +27,13 @@ public static class RegisterRankAnnouncerPage
         titleHeader.textColor = HeaderColor;
 
 
-        foreach (var category in _announcerJsonSetting.CategoryAudioMap)
+        foreach (var category in _announcer._jsonSetting.CategoryAudioMap)
         {
             var field = CreateEnabledField(
                 panel,
                 category.Value.DisplayName,
                 category.Key,
-                _announcerJsonSetting,
+                _announcer._jsonSetting,
                 true
             );
         }
@@ -41,13 +41,13 @@ public static class RegisterRankAnnouncerPage
         ConfigHeader volumeHeader = new ConfigHeader(panel, "Volume Settings");
         volumeHeader.textColor = new UnityEngine.Color(0f, 1f, 1f, 1f);
 
-        foreach (var category in _announcerJsonSetting.CategoryAudioMap)
+        foreach (var category in _announcer._jsonSetting.CategoryAudioMap)
         {
             var field = CreateVolumeField(
                 panel,
                 category.Value.DisplayName,
                 category.Key,
-                _announcerJsonSetting,
+                _announcer._jsonSetting,
                 1
             );
         }
@@ -55,21 +55,16 @@ public static class RegisterRankAnnouncerPage
         ConfigHeader pitchHeader = new ConfigHeader(panel, "Pitch Settings");
         pitchHeader.textColor = new UnityEngine.Color(1f, 0.6f, 0.2f, 1f);
         
-        foreach (var category in _announcerJsonSetting.CategoryAudioMap)
+        foreach (var category in _announcer._jsonSetting.CategoryAudioMap)
         {
             var field = CreatePitchField(
                 panel,
                 category.Value.DisplayName,
                 category.Key,
-                _announcerJsonSetting,
+                _announcer._jsonSetting,
                 1
             );
         } 
-    }
-
-    public static void UpdateJsonSetting(AnnouncerJsonSetting announcerJsonSetting)
-    {
-        _announcerJsonSetting = announcerJsonSetting;
     }
 
     private static BoolField CreateEnabledField(ConfigPanel panel,
@@ -88,8 +83,7 @@ public static class RegisterRankAnnouncerPage
                 jsonSetting.CategoryAudioMap[guid].Enabled = e.value;
             }
 
-            RankAnnouncerV2.UpdateJson(_announcerJsonSetting);
-            LogManager.LogInfo($"Updated json setting for {_title}");
+            SomethingAfterUpdateJson();
         };
 
         return field;
@@ -112,15 +106,14 @@ public static class RegisterRankAnnouncerPage
                 jsonSetting.CategoryAudioMap[guid].VolumeMultiplier = e.value;
             }
 
-            RankAnnouncerV2.UpdateJson(_announcerJsonSetting);
-            LogManager.LogInfo($"Updated json setting for {_title}");
+            SomethingAfterUpdateJson();
         };
 
         return field;
     }
 
     private static FloatSliderField CreatePitchField(ConfigPanel panel,
-                                                     string label, 
+                                                     string label,
                                                      string guid,
                                                      AnnouncerJsonSetting jsonSetting,
                                                      float defaultValue)
@@ -135,11 +128,16 @@ public static class RegisterRankAnnouncerPage
                 jsonSetting.CategoryAudioMap[guid].Pitch = e.newValue;
             }
 
-            RankAnnouncerV2.UpdateJson(_announcerJsonSetting);
-            LogManager.LogInfo($"Updated json setting for {_title}");
+            SomethingAfterUpdateJson();
+            
         };
 
         return field;
+    }
+    
+    private static void SomethingAfterUpdateJson()
+    {
+        LogManager.LogInfo($"Updated json setting for {_title}");
     }
 
     private static readonly Color HeaderColor = new Color(0.85f, 0.85f, 0.85f, 1f);
