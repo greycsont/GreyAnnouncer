@@ -9,17 +9,6 @@ namespace GreyAnnouncer.RankAnnouncer;
 
 public static class RankAnnouncerV2
 {
-    private static readonly string[] _rankCategory = {
-        "D",
-        "C",
-        "B",
-        "A",
-        "S",
-        "SS",
-        "SSS",
-        "U"
-    };
-
     private static readonly Dictionary<string, string> _displayNameMapping = new Dictionary<string, string>{   //used only for creating json
         {"D", "Destruction"},
         {"C", "Chaotic"},
@@ -38,25 +27,20 @@ public static class RankAnnouncerV2
 
     public static void Initialize()
     {
-        JsonInitialization();
-
         _announcer.Initialize(
-            _jsonSetting,
+            _jsonName,
             new AudioLoader(InstanceConfig.audioFolderPath.Value, _jsonSetting),
-            new CooldownManager(_jsonSetting.CategoryAudioMap.Keys.ToArray())
+            new CooldownManager(_jsonSetting.CategoryAudioMap.Keys.ToArray()),
+
+            _displayNameMapping
         );
 
         SubscribeAnnouncerManager();
-        PluginConfigPanelInitialization(_pageTitle, _jsonSetting);
+        PluginConfigPanelInitialization(_pageTitle, _announcer);
     }
 
     public static void PlayRankSound(int rank)
     {
-        if (rank < 0 || rank >= _rankCategory.Length)
-        {
-            LogManager.LogError($"Invalid rank index: {rank}");
-            return;
-        }
         _ = _announcer.PlayAudioViaIndex(rank);
     }
 
@@ -68,23 +52,11 @@ public static class RankAnnouncerV2
         AnnouncerManager.updateAnnouncerPath += UpdateAudioPath;
     }
 
-
+ 
     #region Subscription
     private static void ReloadAnnouncer()
     {
-        JsonInitialization();
-        UpdateAnnouncerJson();
-        _announcer.ReloadAudio(_jsonSetting);
-
-        PluginDependencies.LoadIfPluginExists(
-            PluginDependencies.PLUGINCONFIGURATOR_GUID,
-            "RegisterRankAnnouncerPage",
-            () => ReflectionManager.LoadByReflection(
-                      "GreyAnnouncer.RankAnnouncer.RegisterRankAnnouncerPage", 
-                      "UpdateJsonSetting", 
-                      new object[] { _jsonSetting }
-                  )
-        );
+        _announcer.ReloadAudio();
     }
 
     private static void UpdateAudioPath()
@@ -103,58 +75,15 @@ public static class RankAnnouncerV2
     }
     #endregion
 
-
-    #region Json
-    private static void JsonInitialization()
-    {
-        if (CheckDoesJsonExists() == false) CreateJson();
-        _jsonSetting = JsonManager.ReadJson<AnnouncerJsonSetting>(_jsonName);
-    }
-
-    private static bool CheckDoesJsonExists()
-    {
-        return File.Exists(PathManager.GetCurrentPluginPath(_jsonName));
-    }
-
-    private static void CreateJson()
-    {
-        var audioDict = _rankCategory.ToDictionary(
-            cat => cat,
-            cat => new CategoryAudioSetting
-            {
-                Enabled = true,
-                DisplayName = _displayNameMapping.TryGetValue(cat, out var name) ? name : cat,
-                Pitch = 1f,
-                AudioFiles = new List<string> { cat }
-            }
-        );
-        _jsonSetting = new AnnouncerJsonSetting { CategoryAudioMap = audioDict };
-        JsonManager.CreateJson(_jsonName, _jsonSetting);
-    }
-
-    public static void UpdateJson(AnnouncerJsonSetting jsonSetting)
-    {
-        _jsonSetting = jsonSetting;
-        UpdateAnnouncerJson();
-    }
-    #endregion
-
-    private static void PluginConfigPanelInitialization(string announcerName, 
-                                                        AnnouncerJsonSetting jsonSetting)
+    private static void PluginConfigPanelInitialization(string announcerName, AudioAnnouncer audioAnnouncer)
     {
         PluginDependencies.LoadIfPluginExists(
             PluginDependencies.PLUGINCONFIGURATOR_GUID,
-            "RegisterRankAnnouncerPage",
+            "RegisterRankAnnouncerPageV2",
             () => ReflectionManager.LoadByReflection(
-                      "GreyAnnouncer.RankAnnouncer.RegisterRankAnnouncerPage", 
+                      "GreyAnnouncer.RankAnnouncer.RegisterRankAnnouncerPageV2", 
                       "Build", 
-                      new object[] { announcerName, jsonSetting })
+                      new object[] { announcerName, audioAnnouncer })
         );
-    }
-
-    private static void UpdateAnnouncerJson()
-    {
-        _announcer.UpdateJsonSetting(_jsonSetting);
-        JsonManager.WriteJson(_jsonName, _jsonSetting);
     }
 }

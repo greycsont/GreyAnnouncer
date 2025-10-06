@@ -15,23 +15,7 @@
 `aac, ogg, aiff/aif not tested yet`
 
 ## Mod description
-IDK how to describe this mod, post a random clickable image with link here
-
-[![BV1wo4y1h74n](https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/爱音跳舞.gif)](https://www.bilibili.com/video/BV1wo4y1h74n) 
-
-Maximizer! Maximizer!
-
-`Dialogue Source : https://www.youtube.com/watch?v=jMKPYg0uhCI`
-
-1. [Installation](#how-to-install-it)
-2. [Add audio](#how-to-add-the-audio)
-3. [Audio File naming](#audio-file-naming)
-4. [Supported audio format](#supported-audio-formats)
-5. [Customize setting](#how-to-customize-other-setting)
-6. [Bug & Suggestions](#bugs--suggestions)
-7. [License](#license)
-
-`The thunderstore's README support have some issue with this`
+The mod itselfs it's like the *Simple Spear* in [魔法少女ノ魔女裁判](https://store.steampowered.com/app/3101040)
 
 ## How to install it
 1. [r2modman](https://thunderstore.io/c/ultrakill/p/ebkr/r2modman/)
@@ -100,6 +84,7 @@ if you have any throuble or suggestion with the mod, feel free to ask in
 - [Github issue](https://github.com/greycsont/GreyAnnouncer/issues)
 - Email : 1106230622@qq.com
 - Discord : username : csont.0721
+- Check .\src\RankAnnouncer folder if you want to make your own announcer(
 
 ## Resources
 - [1] FFmpeg, used under GNU Lesser General Public License (LGPL) Version 2.1
@@ -118,22 +103,21 @@ Thanks:
 - [Everything](https://www.voidtools.com/) Why vscode always auto pull and merge the source from the github.
 - 快乐萨卡兹厨, jamcame, 夕柱.
 
-- And Everyone who used this mod.
+- Everyone who used this mod.
 
 - Except me, The only thing I did is just collect idea from others and fix bugs in a worst way ever.
 
 Some inspiration of the mod :
 
+**Warning : It's non-english website, don't wear earphone and lower the volume down to nearly 0, I takes 0 responsbilities of any damage/hurt caused by these videos**
+
 https://www.bilibili.com/video/BV1gk5kzREen
 
-**Warning : It's non-english website, don't wear earphone and lower the volume down, I takes 0 responbilities of any damage/hurt caused by these videos**
+~~https://www.bilibili.com/video/BV1CmLdzQEPB~~
 
-https://www.bilibili.com/video/BV1CmLdzQEPB
+~~https://www.bilibili.com/video/BV1P4pqe8Eyu~~
 
-https://www.bilibili.com/video/BV1P4pqe8Eyu
-
-https://www.bilibili.com/video/BV1rrFyeXE1D
-
+~~https://www.bilibili.com/video/BV1rrFyeXE1D~~
 
 
 ## License

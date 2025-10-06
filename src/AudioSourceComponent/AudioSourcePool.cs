@@ -61,6 +61,11 @@ public sealed class AudioSourcePool : MonoBehaviour
         }
     }
 
+    public void CancelAudioPlaying(string tag)
+    {
+        
+    }
+
 
     public void PlayOneShot(AudioClip clip, AudioSourceSetting config)
     {
