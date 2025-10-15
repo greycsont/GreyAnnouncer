@@ -1,9 +1,12 @@
+using System;
+
 public struct AudioSourceSetting
 {
-    public float SpatialBlend { get; set; }
-    public int   Priority     { get; set; }
-    public float Volume       { get; set; }
-    public float Pitch        { get; set; }
+    public float    SpatialBlend { get; set; }
+    public int      Priority     { get; set; }
+    public float    Volume       { get; set; }
+    public float    Pitch        { get; set; }
+    public string[] Tags         { get; set; }
 
     public static AudioSourceSetting Default => new()
     {
@@ -11,6 +14,7 @@ public struct AudioSourceSetting
         Priority     = 0,
         Volume       = 1f,
         Pitch        = 1f,
+        Tags         = Array.Empty<string>()
     };
 }
    
