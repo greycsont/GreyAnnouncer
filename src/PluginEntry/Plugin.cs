@@ -36,7 +36,7 @@ public class Plugin : BaseUnityPlugin
     private void LoadOptionalModule()
     {
         CheckPluginLoaded(PluginDependencies.PLUGINCONFIGURATOR_GUID, "greycsont.GreyAnnouncer.PluginConfiguratorEntry");
-        RankAnnouncerV2.Initialize();
+        RankAnnouncer.RankAnnouncer.Initialize();
     }
 
     private void PatchHarmony()

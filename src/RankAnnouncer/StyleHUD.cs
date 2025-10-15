@@ -18,7 +18,7 @@ public static class StyleHUDAscendRank_Patch
         var rank = __instance.rankIndex;
         if (rank >= 0 && rank <= 7)
         {
-            RankAnnouncerV2.PlayRankSound(rank);
+            RankAnnouncer.PlayRankSound(rank);
         }
     }
 }
@@ -32,7 +32,7 @@ public class StyleHUDComboStart_Patch
         var rank = __instance.rankIndex;
         if (rank == 0)
         {
-            RankAnnouncerV2.PlayRankSound(0);
+            RankAnnouncer.PlayRankSound(0);
         }
     }
 }

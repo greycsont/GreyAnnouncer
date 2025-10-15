@@ -15,6 +15,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic; //audio clip
 using UnityEngine;
+using UnityEngine.Rendering;
 
 
 
@@ -23,14 +24,14 @@ namespace GreyAnnouncer.AudioSourceComponent;
 [Obsolete("https://discussions.unity.com/t/playoneshot-performance/595405 PlayOneShot() have two times better performance than pool system")]
 public sealed class AudioSourcePool : MonoBehaviour
 {
-    private Queue<AudioSource> _pool = new Queue<AudioSource>();
-    private readonly HashSet<AudioSource> _activeAudioSources = new HashSet<AudioSource>();
-    private LinkedList<AudioSource> _playingList = new LinkedList<AudioSource>();
-    private Dictionary<AudioSource, LinkedListNode<AudioSource>> _playingMap = new Dictionary<AudioSource, LinkedListNode<AudioSource>>();
+    private Queue<TagedAudioSource> _pool = new Queue<TagedAudioSource>();
+    private readonly HashSet<TagedAudioSource> _activeAudioSources = new HashSet<TagedAudioSource>();
+    private LinkedList<TagedAudioSource> _playingList = new LinkedList<TagedAudioSource>();
+    private Dictionary<TagedAudioSource, LinkedListNode<TagedAudioSource>> _playingMap = new Dictionary<TagedAudioSource, LinkedListNode<TagedAudioSource>>();
     private static AudioSourcePool _instance;
 
     public int initialSize = 2;
-    public int maxSize = 7;
+    public int maxSize = 15;
 
 
     #region Constructor
@@ -61,27 +62,51 @@ public sealed class AudioSourcePool : MonoBehaviour
         }
     }
 
-    public void CancelAudioPlaying(string tag)
+    public void CancelAudioPlaying(string[] tags)
     {
-        
+        var toRecycle = new List<TagedAudioSource>();
+
+        // 第一步：先找出要回收的
+        foreach (var tagedAudioSource in _activeAudioSources)
+        {
+            foreach (var tag in tags)
+            {
+                if (tagedAudioSource.HasTag(tag))
+                {
+                    toRecycle.Add(tagedAudioSource);
+                    break;
+                }
+            }
+        }
+
+        // 第二步：再统一回收
+        foreach (var tagedAudioSource in toRecycle)
+        {
+            Recycle(tagedAudioSource);
+        }
     }
 
 
     public void PlayOneShot(AudioClip clip, AudioSourceSetting config)
     {
-        var audioSource = Get();
+        var tagedAudioSource = Get();
+        tagedAudioSource.tags = config.Tags;
+
+        var audioSource = tagedAudioSource.audioSource;
+
         audioSource = AudioSourceManager.ConfigureAudioSource(audioSource, config);
         audioSource.clip = clip;
         UnderwaterController_inWater_Instance.CheckIsInWater();
         audioSource.Play();
 
-        StartCoroutine(RecycleAfterPlay(audioSource));
+        StartCoroutine(RecycleAfterPlay(tagedAudioSource));
     }
 
     public void AddAudioLowPassFilterToActiveAudioSource()
     {
-        foreach (AudioSource audioSource in _activeAudioSources)
+        foreach (TagedAudioSource tagedAudioSource in _activeAudioSources)
         {
+            var audioSource = tagedAudioSource.audioSource;
             if (audioSource != null && audioSource.gameObject.activeInHierarchy)
             {
                 AudioSourceManager.AddLowPassFilter(audioSource);
@@ -92,8 +117,9 @@ public sealed class AudioSourcePool : MonoBehaviour
 
     public void RemoveAudioLowPassFilterFromActiveAudioSource()
     {
-        foreach (AudioSource audioSource in _activeAudioSources)
+        foreach (TagedAudioSource tagedAudioSource in _activeAudioSources)
         {
+            var audioSource = tagedAudioSource.audioSource;
             if (audioSource != null && audioSource.gameObject.activeInHierarchy)
             {
                 AudioSourceManager.RemoveLowPassFilter(audioSource);
@@ -104,8 +130,9 @@ public sealed class AudioSourcePool : MonoBehaviour
 
     public void UpdateAllActiveSourcesVolume(float targetVolume, float duration = 0.35f)
     {
-        foreach (var audioSource in _activeAudioSources)
+        foreach (var tagedAudioSource in _activeAudioSources)
         {
+            var audioSource = tagedAudioSource.audioSource;
             if (
                 audioSource != null
                 && audioSource.gameObject.activeInHierarchy
@@ -130,7 +157,7 @@ public sealed class AudioSourcePool : MonoBehaviour
 
 
     #region Pool Management
-    private AudioSource Get()
+    private TagedAudioSource Get()
     {
         if (_activeAudioSources.Count >= maxSize)
         {
@@ -145,48 +172,54 @@ public sealed class AudioSourcePool : MonoBehaviour
             }
         }
 
-        AudioSource audioSource = (_pool.Count > 0) ? _pool.Dequeue() : CreateNewAudioSource();
-        audioSource.gameObject.SetActive(true);
-        _activeAudioSources.Add(audioSource);
+        var tagedAudioSource = (_pool.Count > 0) ? _pool.Dequeue() : CreateNewAudioSource();
+        tagedAudioSource.audioSource.gameObject.SetActive(true);
+        _activeAudioSources.Add(tagedAudioSource);
 
-        var node = _playingList.AddLast(audioSource);
-        _playingMap[audioSource] = node;
+        var node = _playingList.AddLast(tagedAudioSource);
+        _playingMap[tagedAudioSource] = node;
 
-        return audioSource;
+        return tagedAudioSource;
     }
 
-    private AudioSource CreateNewAudioSource()
+    private TagedAudioSource CreateNewAudioSource()
     {
         LogManager.LogInfo("Create a new Audio Source");
         var go = new GameObject("PooledAudioSource");
         go.transform.SetParent(transform);
-        var audioSource = go.AddComponent<AudioSource>();
+        var newAudioSource = go.AddComponent<AudioSource>();
         go.SetActive(false);
-        return audioSource;
+        
+        return new TagedAudioSource { audioSource = newAudioSource };
     }
 
 
-    private IEnumerator RecycleAfterPlay(AudioSource audioSource)
+    private IEnumerator RecycleAfterPlay(TagedAudioSource tagedAudioSource)
     {
-        yield return new WaitForSeconds(audioSource.clip.length);
+        yield return new WaitForSeconds(tagedAudioSource.audioSource.clip.length);
 
-        if (_playingMap.TryGetValue(audioSource, out var node))
+        if (_playingMap.TryGetValue(tagedAudioSource, out var node))
         {
             _playingList.Remove(node);
-            _playingMap.Remove(audioSource);
+            _playingMap.Remove(tagedAudioSource);
         }
 
-        Recycle(audioSource);
+        Recycle(tagedAudioSource);
     }
 
-    private void Recycle(AudioSource audioSource)
+    private void Recycle(TagedAudioSource tagedAudioSource)
     {
+        tagedAudioSource.tags = Array.Empty<string>();
+
+        var audioSource = tagedAudioSource.audioSource;
+
         if (audioSource == null) return;
         audioSource.Stop();
         audioSource.clip = null;
         audioSource.gameObject.SetActive(false);
-        _activeAudioSources.Remove(audioSource);
-        _pool.Enqueue(audioSource);
+
+        _activeAudioSources.Remove(tagedAudioSource);
+        _pool.Enqueue(tagedAudioSource);
     }
     #endregion
 

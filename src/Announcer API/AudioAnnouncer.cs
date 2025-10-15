@@ -20,18 +20,18 @@ public class AudioAnnouncer
     private Dictionary<string, string> _displayNameMapping;
     
 
-    public void Initialize(string jsonName,
-                           IAudioLoader audioLoader,
+    public void Initialize(IAudioLoader audioLoader,
                            ICooldownManager cooldownManager,
-                           Dictionary<string, string> displayNameMapping)
+                           Dictionary<string, string> displayNameMapping,
+                           string jsonName)
     {
-        this._jsonName = jsonName;
         this._audioLoader = audioLoader;
         this._cooldownManager = cooldownManager;
         this._displayNameMapping = displayNameMapping;
+        this._jsonName = jsonName;
         this._jsonSetting = JsonInitialization(jsonName, _displayNameMapping);
 
-
+        _audioLoader.UpdateJsonSetting(_jsonSetting);
     }
 
     [Description("Parry balls of Maurice -> Hit Maurice -> AscendingRank() -> Postfix() -> PlaySound() -> CheckPlayValidation(), " +
@@ -100,9 +100,7 @@ public class AudioAnnouncer
         var validationState = GetPlayValidationState(category);
         if (validationState != ValidationState.Success)
         {
-
-            LogManager.LogInfo($"PlayValidationState: {category}, {validationState}");
-            
+            //LogManager.LogInfo($"PlayValidationState: {category}, {validationState}");
             return false;
         }
         return true;

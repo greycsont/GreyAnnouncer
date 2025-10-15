@@ -144,4 +144,11 @@ All video/audio file format is basically a container, the only thing needs to fi
 
 
 ###### Easter egg
-然后是博√大人，人类开局被博√秒杀，第二个人又被博√秒杀，第三个人接着被博√秒杀，第四个人还是被博√秒杀，自带霸体，不受委屈，哪怕不需要挂人也能全场游龙，自身超短的前摇外加锦上添花的插地窖机制，使得博√非常的超模
+你是谁，请支持[魔法少女的魔女审判](https://store.steampowered.com/app/3101040)
+
+Hello vendetta.
+May I ask for your permission to translate and upload the [ULTRAKILL Prelude p% route overview](https://www.youtube.com/watch?v=QUmrX6dAh50&list=PLZgoJ3qxXmAv0rs4hXWn8P8hG158mF0NK&index=1) video on Bilibili? 
+The reason is that Youtube is not easily accessible in China, and there's non of the resources discussing the details of speedrun in the Bilibili website.
+I'll make sure to properly credit you and include the link to the source video in the video description.
+Sorry if the message bothers you.
+

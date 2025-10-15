@@ -5,24 +5,17 @@ using System.Collections.Generic;
 using GreyAnnouncer.AnnouncerAPI;
 using GreyAnnouncer.PluginConfiguratorGUI;
 
-namespace GreyAnnouncer.RankAnnouncer;
+namespace GreyAnnouncer.ResultAnnouncer;
 
-public static class RankAnnouncer
+public static class ResultAnnouncer
 {
     private static readonly Dictionary<string, string> _displayNameMapping = new Dictionary<string, string>{   //used only for creating json
-        {"D", "Destruction"},
-        {"C", "Chaotic"},
-        {"B", "Brutal"},
-        {"A", "Anarchic"},
-        {"S", "Supreme"},
-        {"SS", "SSadistic"},
-        {"SSS", "SSShitstorm"},
-        {"U",   "ULTRAKILL"}
+        
     };
 
     private static readonly AudioAnnouncer _announcer = new AudioAnnouncer();
-    private static readonly string _jsonName = "RankAnnouncer.json";
-    private static readonly string _pageTitle = "Rank Announcer";
+    private static readonly string _jsonName = "ResultAnnouncer.json";
+    private static readonly string _pageTitle = "Result Announcer";
 
     public static void Initialize()
     {

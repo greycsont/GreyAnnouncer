@@ -31,10 +31,9 @@ public class AudioLoader : IAudioLoader
     #region Constructor
     [Description("Q : Why do you using whole AnnouncerJsonSetting as input instead only CategoryAudioMap?" +
                  "A : For future, what kinds of future? idk.")]
-    public AudioLoader(string audioPath, AnnouncerJsonSetting jsonSetting)
+    public AudioLoader(string audioPath)
     {
-        this._audioPath       = audioPath;
-        this.jsonSetting      = jsonSetting;
+        this._audioPath = audioPath;
     }
     #endregion
 

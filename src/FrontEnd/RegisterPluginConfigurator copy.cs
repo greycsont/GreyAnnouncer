@@ -5,14 +5,13 @@ using System;
 using UnityEngine;
 
 using GreyAnnouncer.AnnouncerAPI;
-using GreyAnnouncer.PluginConfiguratorGUI;
 
-namespace GreyAnnouncer.RankAnnouncer;
+namespace GreyAnnouncer.PluginConfiguratorGUI;
 
 public static class RegisterRankAnnouncerPagev2
 {
-    private static PluginConfigurator            _pluginConfigurator;
-    private static string                        _title;
+    private static PluginConfigurator    _pluginConfigurator;
+    private static string                _title;
     private static AudioAnnouncer        _announcer;
     public static void Build(string title, AudioAnnouncer announcer)
     {
