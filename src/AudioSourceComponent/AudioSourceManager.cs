@@ -13,7 +13,7 @@ public static class AudioSourceManager
         audioSource.spatialBlend = sound.SpatialBlend;
         audioSource.priority     = sound.Priority;
         audioSource.volume       = sound.Volume < 1f ? sound.Volume : 1f;
-        audioSource.pitch        = sound.Pitch;
+        audioSource.pitch        = UnityEngine.Random.Range(sound.Pitch[0], sound.Pitch[1]);
         audioSource.clip         = sound.clip;
         //audioSource.outputAudioMixerGroup = null;
         return audioSource;

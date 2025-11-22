@@ -77,12 +77,26 @@ public static class RegisterRankAnnouncerPagev2
             );
         }
 
-        ConfigHeader pitchHeader = new ConfigHeader(panel, "Pitch Settings");
-        pitchHeader.textColor = new UnityEngine.Color(1f, 0.6f, 0.2f, 1f);
+        ConfigHeader pitchMinHeader = new ConfigHeader(panel, "Pitch Min");
+        pitchMinHeader.textColor = new UnityEngine.Color(1f, 0.6f, 0.2f, 1f);
         
         foreach (var category in _announcer._jsonSetting.CategoryAudioMap)
         {
-            var field = CreatePitchField(
+            var field = CreatePitchMinField(
+                panel,
+                category.Value.DisplayName,
+                category.Key,
+                _announcer._jsonSetting,
+                1
+            );
+        } 
+
+        ConfigHeader pitchMaxHeader = new ConfigHeader(panel, "Pitch Max");
+        pitchMaxHeader.textColor = new UnityEngine.Color(1f, 0.6f, 0.2f, 1f);
+        
+        foreach (var category in _announcer._jsonSetting.CategoryAudioMap)
+        {
+            var field = CreatePitchMaxField(
                 panel,
                 category.Value.DisplayName,
                 category.Key,
@@ -137,20 +151,43 @@ public static class RegisterRankAnnouncerPagev2
         return field;
     }
 
-    private static FloatSliderField CreatePitchField(ConfigPanel panel,
+    private static FloatSliderField CreatePitchMinField(ConfigPanel panel,
                                                      string label,
                                                      string guid,
                                                      AnnouncerMapping jsonSetting,
                                                      float defaultValue)
     {
-        var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid, "Pitch");
-        var field = new FloatSliderField(panel, label, fullGuid, Tuple.Create(0.2f, 2f), jsonSetting.CategoryAudioMap[guid].Pitch, 2);
+        var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid, "PitchMax");
+        var field = new FloatSliderField(panel, label, fullGuid, Tuple.Create(0.2f, 2f), jsonSetting.CategoryAudioMap[guid].Pitch[0], 2);
         field.defaultValue = defaultValue;
         field.onValueChange += e =>
         {
             if (jsonSetting.CategoryAudioMap.ContainsKey(guid))
             {
-                jsonSetting.CategoryAudioMap[guid].Pitch = e.newValue;
+                jsonSetting.CategoryAudioMap[guid].Pitch[0] = e.newValue;
+            }
+
+            SomethingAfterUpdateJson();
+            
+        };
+
+        return field;
+    }
+
+    private static FloatSliderField CreatePitchMaxField(ConfigPanel panel,
+                                                     string label,
+                                                     string guid,
+                                                     AnnouncerMapping jsonSetting,
+                                                     float defaultValue)
+    {
+        var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid, "PitchMax");
+        var field = new FloatSliderField(panel, label, fullGuid, Tuple.Create(0.2f, 2f), jsonSetting.CategoryAudioMap[guid].Pitch[1], 2);
+        field.defaultValue = defaultValue;
+        field.onValueChange += e =>
+        {
+            if (jsonSetting.CategoryAudioMap.ContainsKey(guid))
+            {
+                jsonSetting.CategoryAudioMap[guid].Pitch[1] = e.newValue;
             }
 
             SomethingAfterUpdateJson();
