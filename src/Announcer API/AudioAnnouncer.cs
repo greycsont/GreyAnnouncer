@@ -184,7 +184,6 @@ public class AudioAnnouncer
                 {
                     Enabled = true,
                     DisplayName = displayNameMapping.TryGetValue(cat, out var name) ? name : cat,
-                    Pitch = 1f,
                     AudioFiles = new List<string> { cat }
                 }
             );
