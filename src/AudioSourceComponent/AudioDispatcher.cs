@@ -4,22 +4,20 @@ namespace GreyAnnouncer.AudioSourceComponent;
 
 public static class AudioDispatcher
 {
-    public static void SendClipToAudioSource(AudioClip clip, 
-                                             AudioSourceSetting audioSourceConfig, 
-                                             int flag,
-                                             float volumeMultiplier = 1f)
+    public static void SendClipToAudioSource(Sound sound,
+                                             int flag)
     {
         switch (flag)
         {
             case 0:
-                SoloAudioSource.Instance.Play(clip, audioSourceConfig, volumeMultiplier);
+                SoloAudioSource.Instance.Play(sound);
                 break;
             case 1:
                 //AudioSourcePool.Instance.PlayOneShot(clip, audioSourceConfig);
-                SoloAudioSource.Instance.PlayOneShot(clip, audioSourceConfig, volumeMultiplier);
+                SoloAudioSource.Instance.PlayOneShot(sound);
                 break;
             default:
-                SoloAudioSource.Instance.Play(clip, audioSourceConfig, volumeMultiplier);
+                SoloAudioSource.Instance.Play(sound);
                 break;
         }
     }

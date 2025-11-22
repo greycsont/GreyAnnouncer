@@ -1,4 +1,4 @@
-using System.IO;
+/*using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -76,6 +76,7 @@ public static class ResultAnnouncer
                       "GreyAnnouncer.RankAnnouncer.RegisterRankAnnouncerPageV2", 
                       "Build", 
                       new object[] { announcerName, audioAnnouncer })
-        );*/
+        );
     }
 }
+*/

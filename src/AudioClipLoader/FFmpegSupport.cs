@@ -38,7 +38,9 @@ public static class FFmpegSupport
 
             int                 audioStreamIndex;
 
-            ffmpeg.RootPath = PathManager.GetCurrentPluginPath(Path.Combine("lib", "ffmpeg")); // 或者你手动指定 dll 路径
+            ffmpeg.RootPath = PathManager.FindExecutable("ffmpeg");
+
+            LogManager.LogDebug($"ffmpeg path: {ffmpeg.RootPath}");
             
             LogManager.LogDebug($"ffmpeg version: {ffmpeg.av_version_info()}");
 

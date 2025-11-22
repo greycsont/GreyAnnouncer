@@ -31,7 +31,7 @@ public class CooldownManager : ICooldownManager
     public void StartCooldowns(string category, float duration)
     {
         StartIndividualCooldown(category, duration);
-        StartSharedCooldown(InstanceConfig.sharedPlayCooldown.Value);
+        StartSharedCooldown(BepInExConfig.sharedPlayCooldown.Value);
     }
 
     public void ResetCooldowns()

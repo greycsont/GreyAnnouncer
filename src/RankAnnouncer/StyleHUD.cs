@@ -1,8 +1,5 @@
 using HarmonyLib;
 
-using UnityEngine;
-using System.Collections.Generic;
-    
 namespace GreyAnnouncer.RankAnnouncer;
 
 /* This patch is used to determine the changes of rankIndex
@@ -10,7 +7,7 @@ namespace GreyAnnouncer.RankAnnouncer;
     More information in the Announcer.cs 
     StyleHUD.cs -> RankAnnouncer.cs */
 
-[HarmonyPatch(typeof(StyleHUD), "AscendRank")]  // For non-D ranks
+[HarmonyPatch(typeof(StyleHUD), nameof(StyleHUD.AscendRank))]  // For non-D ranks
 public static class StyleHUDAscendRank_Patch
 {
     static void Postfix(StyleHUD __instance)
@@ -24,7 +21,7 @@ public static class StyleHUDAscendRank_Patch
 }
 
 
-[HarmonyPatch(typeof(StyleHUD), "ComboStart")]
+[HarmonyPatch(typeof(StyleHUD), nameof(StyleHUD.ComboStart))]
 public class StyleHUDComboStart_Patch
 {
     static void Postfix(StyleHUD __instance)

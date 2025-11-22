@@ -3,7 +3,7 @@ using BepInEx.Configuration;
 
 namespace GreyAnnouncer;
 
-public static class InstanceConfig
+public static class BepInExConfig
 {
     public static          ConfigEntry<float>                    sharedPlayCooldown;    // Range : 0f ~ 10f
     public static          ConfigEntry<float>                    individualPlayCooldown;    // Range : 0f ~ 114514f
