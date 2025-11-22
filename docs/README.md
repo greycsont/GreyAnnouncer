@@ -26,6 +26,8 @@
 ## Mod description
 The mod itselfs it's like the *Simple Spear* in [魔法少女ノ魔女裁判](https://store.steampowered.com/app/3101040)
 
+Basically WHY I'M DOING BY THIS WAY AND WHY IT'S FUCKING WORKING
+
 ## How to install it
 1. [r2modman](https://thunderstore.io/c/ultrakill/p/ebkr/r2modman/)
 

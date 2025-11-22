@@ -27,7 +27,7 @@ public static class RankAnnouncer
     public static void Initialize()
     {
         _announcer = new AudioAnnouncer(
-            new AudioLoader(BepInExConfig.audioFolderPath.Value),
+            new AudioLoader(),
             new CooldownManager(_displayNameMapping.Keys.ToArray()),
             _displayNameMapping,
             _jsonName
@@ -47,7 +47,6 @@ public static class RankAnnouncer
         AnnouncerManager.reloadAnnouncer     += ReloadAnnouncer;
         AnnouncerManager.resetCooldown       += ResetCooldowns;
         AnnouncerManager.clearAudioClipCache += ClearAudioClipCache;
-        AnnouncerManager.updateAnnouncerPath += UpdateAudioPath;
     }
 
  
@@ -55,11 +54,6 @@ public static class RankAnnouncer
     private static void ReloadAnnouncer()
     {
         _announcer.ReloadAudio();
-    }
-
-    private static void UpdateAudioPath()
-    {
-        _announcer.UpdateAudioPath(BepInExConfig.audioFolderPath.Value);
     }
 
     private static void ResetCooldowns()
@@ -76,13 +70,5 @@ public static class RankAnnouncer
     private static void PluginConfigPanelInitialization(string announcerName, AudioAnnouncer audioAnnouncer)
     {
         RegisterRankAnnouncerPagev2.Build(announcerName, audioAnnouncer);
-        /*PluginDependencies.LoadIfPluginExists(
-            PluginDependencies.PLUGINCONFIGURATOR_GUID,
-            "RegisterRankAnnouncerPageV2",
-            () => ReflectionManager.LoadByReflection(
-                      "GreyAnnouncer.RankAnnouncer.RegisterRankAnnouncerPageV2", 
-                      "Build", 
-                      new object[] { announcerName, audioAnnouncer })
-        );*/
     }
 }

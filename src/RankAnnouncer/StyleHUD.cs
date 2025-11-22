@@ -7,24 +7,23 @@ namespace GreyAnnouncer.RankAnnouncer;
     More information in the Announcer.cs 
     StyleHUD.cs -> RankAnnouncer.cs */
 
-[HarmonyPatch(typeof(StyleHUD), nameof(StyleHUD.AscendRank))]  // For non-D ranks
-public static class StyleHUDAscendRank_Patch
+[HarmonyPatch(typeof(StyleHUD))]
+public static class StyleHUDPatcher
 {
-    static void Postfix(StyleHUD __instance)
-    {  
+    [HarmonyPrefix]
+    [HarmonyPatch(nameof(StyleHUD.AscendRank))]  // For non-D ranks
+    public static void GetNonDrankAscend(StyleHUD __instance)
+    {
         var rank = __instance.rankIndex;
         if (rank >= 0 && rank <= 7)
         {
             RankAnnouncer.PlayRankSound(rank);
         }
     }
-}
 
-
-[HarmonyPatch(typeof(StyleHUD), nameof(StyleHUD.ComboStart))]
-public class StyleHUDComboStart_Patch
-{
-    static void Postfix(StyleHUD __instance)
+    [HarmonyPostfix]
+    [HarmonyPatch(nameof(StyleHUD.ComboStart))] // For non-D ranks
+    public static void GetDrank(StyleHUD __instance)
     {
         var rank = __instance.rankIndex;
         if (rank == 0)

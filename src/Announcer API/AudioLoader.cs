@@ -22,17 +22,15 @@ namespace GreyAnnouncer.AnnouncerAPI;
 
 public class AudioLoader : IAudioLoader
 {
-    public        AnnouncerJsonSetting                jsonSetting           { get; set; }
+    public        AnnouncerMapping                jsonSetting           { get; set; }
     public        HashSet<string>                     categoryFailedLoading { get; private set; } = new HashSet<string>();
     private       Dictionary<string, List<AudioClip>> _audioClips                                 = new Dictionary<string, List<AudioClip>>();
-    private       string                              _audioPath;
     public static Action<string>                      onPluginConfiguratorLogUpdated;
 
     [Description("Q : Why do you using whole AnnouncerJsonSetting as input instead only CategoryAudioMap?" +
                  "A : For future, what kinds of future? idk.")]
-    public AudioLoader(string audioPath)
+    public AudioLoader()
     {
-        this._audioPath = audioPath;
     }
 
     public async Task<Sound> LoadAudioClip(string category)
@@ -43,7 +41,7 @@ public class AudioLoader : IAudioLoader
         {
             var currentRequestId = ++AnnouncerManager.playRequestId;
 
-            if (BepInExConfig.isAudioRandomizationEnabled.Value == false)
+            if (jsonSetting.RandomizeAudioOnPlay == false)
                 clip = await LoadAndGetSingleAudioClipAsync(category);
             else
                 clip = await GetRandomClipFromAllAvailableFiles();
@@ -58,7 +56,7 @@ public class AudioLoader : IAudioLoader
         }
         else
         {
-            if (BepInExConfig.isAudioRandomizationEnabled.Value == false)
+            if (jsonSetting.RandomizeAudioOnPlay == false)
             {
                 clip = GetClipFromCache(category);
             }
@@ -158,22 +156,12 @@ public class AudioLoader : IAudioLoader
     {
         if (BepInExConfig.audioLoadingOptions.Value == 0) return;
         ClearCache();
-        FileSystemUtil.ValidateAndPrepareDirectory(_audioPath);
+        FileSystemUtil.ValidateAndPrepareDirectory(jsonSetting.AudioPath);
         await LoadAllCategoriesAsync();
         LogLoadingResults();
     }
-    public void UpdateAudioPath(string newAudioPath)
-    {
-        if (string.IsNullOrEmpty(newAudioPath))
-        {
-            LogManager.LogError("Cannot update with empty or null paths");
-            return;
-        }
-        LogManager.LogInfo($"Updating audio paths and reloading audio...");
-        this._audioPath = newAudioPath;
-    }
 
-    public void UpdateJsonSetting(AnnouncerJsonSetting jsonSetting)
+    public void UpdateJsonSetting(AnnouncerMapping jsonSetting)
     {
         this.jsonSetting = jsonSetting;
     }
@@ -322,7 +310,7 @@ public class AudioLoader : IAudioLoader
 
         var fileNames = categorySetting.AudioFiles;
         validFiles = fileNames
-            .Select(name => PathManager.GetFileWithExtension(_audioPath, name))
+            .Select(name => PathManager.GetFileWithExtension(jsonSetting.AudioPath, name))
             .Where(File.Exists)
             .ToList();
 

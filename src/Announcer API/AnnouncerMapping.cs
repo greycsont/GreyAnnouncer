@@ -2,9 +2,10 @@ using System.Collections.Generic;
 
 namespace GreyAnnouncer.AnnouncerAPI;
 
-// shitest name ever named
-public class AnnouncerJsonSetting
+public class AnnouncerMapping
 {
+    public string AudioPath { get; set; } = PathManager.GetCurrentPluginPath();
+    public bool RandomizeAudioOnPlay { get; set; } = false;
     public Dictionary<string, CategoryAudioSetting> CategoryAudioMap { get; set; }
 }
 
