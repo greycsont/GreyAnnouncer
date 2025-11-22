@@ -164,19 +164,6 @@ public static class MainPanelBuilder
         advancedPanel.hidden = true;
         new ConfigSpace(advancedPanel, 15f);
 
-        var audioFolderPath = new StringField(
-            advancedPanel,
-            "Audio Folder Path",
-            "Audio_Folder_Path",
-            BepInExConfig.audioFolderPath.Value
-        );
-        audioFolderPath.defaultValue = BepInExConfig.DEFAULT_AUDIO_FOLDER_PATH;
-        audioFolderPath.onValueChange += e =>
-        {
-            CommandExecutor.SetAudioFolderPath(e.value);
-            AnnouncerManager.UpdateAllAnnouncerPaths();
-        };
-
         var lowpassToggle = new BoolField(
             advancedPanel,
             "Muffle When Under Water",
@@ -188,19 +175,6 @@ public static class MainPanelBuilder
         {
             CommandExecutor.EnableLowPassFilter(e.value);
             UnderwaterController_inWater_Instance.CheckIsInWater();
-        };
-
-        var audioRandomizationToggle = new BoolField(
-            advancedPanel,
-            "Audio Randomlization",
-            "Audio_Randomlization",
-            BepInExConfig.isAudioRandomizationEnabled.Value
-        );
-        audioRandomizationToggle.defaultValue = false;
-        audioRandomizationToggle.onValueChange += (e) =>
-        {
-            BepInExConfig.isAudioRandomizationEnabled.Value = e.value;
-            LogManager.LogInfo($"Switch audio randomization : {e.value}");
         };
 
         var ffmpegToggle = new BoolField(

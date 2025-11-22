@@ -25,6 +25,32 @@ public static class RegisterRankAnnouncerPagev2
         ConfigHeader titleHeader = new ConfigHeader(panel, _title);
         titleHeader.textColor = HeaderColor;
 
+        var audioPathField = new StringField(
+            panel,
+            "Audio Path",
+            GuidPrefixAdder.AddPrefixToGUID("AudioPath", _title),
+            _announcer._jsonSetting.AudioPath
+        );
+        audioPathField.defaultValue = PathManager.GetCurrentPluginPath();
+        audioPathField.onValueChange += e =>
+        {
+            _announcer._jsonSetting.AudioPath = e.value;
+            SomethingAfterUpdateJson();
+        };
+
+        var randomizeAudioField = new BoolField(
+            panel,
+            "Randomize Audio On Play",
+            GuidPrefixAdder.AddPrefixToGUID("RandomizeAudioOnPlay", _title),
+            _announcer._jsonSetting.RandomizeAudioOnPlay
+        );
+        randomizeAudioField.defaultValue = false;
+        randomizeAudioField.onValueChange += e =>
+        {
+            _announcer._jsonSetting.RandomizeAudioOnPlay = e.value;
+            SomethingAfterUpdateJson();
+        };
+
 
         foreach (var category in _announcer._jsonSetting.CategoryAudioMap)
         {
@@ -69,7 +95,7 @@ public static class RegisterRankAnnouncerPagev2
     private static BoolField CreateEnabledField(ConfigPanel panel,
                                                 string label,
                                                 string guid,
-                                                AnnouncerJsonSetting jsonSetting,
+                                                AnnouncerMapping jsonSetting,
                                                 bool defaultValue)
     {
         var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid, "Enabled");
@@ -92,7 +118,7 @@ public static class RegisterRankAnnouncerPagev2
     private static FloatField CreateVolumeField(ConfigPanel panel,
                                              string label,
                                              string guid,
-                                             AnnouncerJsonSetting jsonSetting,
+                                             AnnouncerMapping jsonSetting,
                                              float defaultValue)
     {
         var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid, "VolumeMultiplier");
@@ -114,7 +140,7 @@ public static class RegisterRankAnnouncerPagev2
     private static FloatSliderField CreatePitchField(ConfigPanel panel,
                                                      string label,
                                                      string guid,
-                                                     AnnouncerJsonSetting jsonSetting,
+                                                     AnnouncerMapping jsonSetting,
                                                      float defaultValue)
     {
         var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid, "Pitch");

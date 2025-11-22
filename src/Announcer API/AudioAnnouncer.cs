@@ -14,7 +14,7 @@ namespace GreyAnnouncer.AnnouncerAPI;
 
 public class AudioAnnouncer
 {
-    public AnnouncerJsonSetting _jsonSetting;
+    public AnnouncerMapping _jsonSetting;
     private string _jsonName;
     private    IAudioLoader            _audioLoader;
     private    ICooldownManager        _cooldownManager;
@@ -73,16 +73,17 @@ public class AudioAnnouncer
         _ = _audioLoader.FindAvailableAudioAsync();
     }
 
-    /// <summary>Updates path stored audio files</summary>
-    public void UpdateAudioPath(string newAudioPaths)
-    {
-        _audioLoader.UpdateAudioPath(newAudioPaths);
-    }
 
     /// <summary>Resets the announcer's cooldown</summary>
     public void ResetCooldown()
     {
         _cooldownManager.ResetCooldowns();
+    }
+
+    public void UpdateJsonSetting(AnnouncerMapping newSetting)
+    {
+        _jsonSetting = newSetting;
+        _audioLoader.UpdateJsonSetting(_jsonSetting);
     }
 
     /// <summary>Clear audioclip in audioloader, only works when using Preload and Play options</summary>
@@ -173,7 +174,7 @@ public class AudioAnnouncer
         return ValidationState.Success;
     }
 
-    private static AnnouncerJsonSetting JsonInitialization(string jsonName, Dictionary<string, string> displayNameMapping)
+    private static AnnouncerMapping JsonInitialization(string jsonName, Dictionary<string, string> displayNameMapping)
     {
         if (File.Exists(PathManager.GetCurrentPluginPath(jsonName)) == false)
         {
@@ -187,9 +188,9 @@ public class AudioAnnouncer
                     AudioFiles = new List<string> { cat }
                 }
             );
-            var jsonSetting = new AnnouncerJsonSetting { CategoryAudioMap = audioDict };
+            var jsonSetting = new AnnouncerMapping { CategoryAudioMap = audioDict };
             JsonManager.CreateJson(jsonName, jsonSetting);
         }
-        return JsonManager.ReadJson<AnnouncerJsonSetting>(jsonName);
+        return JsonManager.ReadJson<AnnouncerMapping>(jsonName);
     }
 }

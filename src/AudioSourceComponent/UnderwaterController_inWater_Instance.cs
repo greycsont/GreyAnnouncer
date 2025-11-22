@@ -57,22 +57,21 @@ public static class UnderwaterController_inWater_Instance
     }
 }
 
-
 [Description("Q : Why? A : Prevent when audio is playing and enter/out of the water")]
-[HarmonyPatch(typeof(UnderwaterController), "EnterWater")]
-public static class EnterWater_Patch
+[HarmonyPatch(typeof(UnderwaterController))]
+public class UnderwaterPatcher
 {
-    public static void Postfix()
+    [HarmonyPostfix]
+    [HarmonyPatch(nameof(UnderwaterController.EnterWater))]
+    public static void EnterWater()
     {
         UnderwaterController_inWater_Instance.CheckIsInWater();
     }
-}
-[HarmonyPatch(typeof(UnderwaterController), "OutWater")]
-public static class OutWater_Patch
-{
-    public static void Postfix()
-    {
-        UnderwaterController_inWater_Instance.CheckIsInWater();
-    }
-}
 
+    [HarmonyPostfix]
+    [HarmonyPatch(nameof(UnderwaterController.OutWater))]
+    public static void OutWater()
+    {
+        UnderwaterController_inWater_Instance.CheckIsInWater();
+    }
+}

@@ -17,22 +17,17 @@ public sealed class GreyAnnouncerCommand(Console con) : CommandRoot(con), IConso
         return Branch(Name,
                       Branch("set",
                              Leaf<float>("audiosourcevolume", vol => BepInExConfig.audioSourceVolume.Value = vol),
-                             
-                             Leaf<string>("audiofolderpath", path => BepInExConfig.audioFolderPath.Value = path),
 
                              Leaf<bool>("ffmpegenabled", enabled => BepInExConfig.isFFmpegSupportEnabled.Value = enabled),
                              Leaf<bool>("lowpassenabled", enabled => BepInExConfig.isLowPassFilterEnabled.Value = enabled)
                              ),
                       Branch("get",
                              Leaf("audiosourcevolume", () => Log.Info($"Audio Source Volume: {BepInExConfig.audioSourceVolume.Value}")),
-                             
-                             Leaf("audiofolderpath", () => Log.Info($"Audio Folder Path: {BepInExConfig.audioFolderPath.Value}")),
 
                              Leaf("ffmpegenabled", () => Log.Info($"FFmpeg Support Enabled: {BepInExConfig.isFFmpegSupportEnabled.Value}")),
                              Leaf("lowpassenabled", () => Log.Info($"Under Water Low Pass Filter Enabled: {BepInExConfig.isLowPassFilterEnabled.Value}"))
                              ),
                       Branch("util",
-                             Leaf("openaudiofolder", () => PathManager.OpenDirectory(BepInExConfig.audioFolderPath.Value)),
                              Leaf("reloadannouncers", () => AnnouncerManager.ReloadAllAnnouncers())
                              )
                       );
