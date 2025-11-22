@@ -28,17 +28,61 @@ public class AudioLoader : IAudioLoader
     private       string                              _audioPath;
     public static Action<string>                      onPluginConfiguratorLogUpdated;
 
-    #region Constructor
     [Description("Q : Why do you using whole AnnouncerJsonSetting as input instead only CategoryAudioMap?" +
                  "A : For future, what kinds of future? idk.")]
     public AudioLoader(string audioPath)
     {
         this._audioPath = audioPath;
     }
-    #endregion
+
+    public async Task<Sound> LoadAudioClip(string category)
+    {
+        AudioClip clip;
+
+        if (BepInExConfig.audioLoadingOptions.Value == 0)
+        {
+            var currentRequestId = ++AnnouncerManager.playRequestId;
+
+            if (BepInExConfig.isAudioRandomizationEnabled.Value == false)
+                clip = await LoadAndGetSingleAudioClipAsync(category);
+            else
+                clip = await GetRandomClipFromAllAvailableFiles();
+
+            if (
+                currentRequestId != AnnouncerManager.playRequestId
+                && BepInExConfig.audioPlayOptions.Value == 0
+            )
+            {
+                return null;
+            }
+        }
+        else
+        {
+            if (BepInExConfig.isAudioRandomizationEnabled.Value == false)
+            {
+                clip = GetClipFromCache(category);
+            }
+            else
+            {
+                clip = GetRandomClipFromAudioClips();
+            }
+        }
+
+        if (clip == null)
+        {
+            LogCategoryFailure(category, "No audio clip available to play");
+            return null;
+        }
+
+        Sound sound = new Sound(category, clip, jsonSetting.CategoryAudioMap[category].VolumeMultiplier, jsonSetting.CategoryAudioMap[category].Pitch);
+
+        return sound;
+    }
+
+
 
     #region Preload_and_Play API
-    public AudioClipWithCategory? GetClipFromCache(string category)
+    public AudioClip GetClipFromCache(string category)
     {
         if (categoryFailedLoading.Contains(category)) return null;
 
@@ -52,14 +96,14 @@ public class AudioLoader : IAudioLoader
 
         var clip = clips[randomIndex];
 
-        return new AudioClipWithCategory(category, clip);
+        return clip;
     }
 
-    public AudioClipWithCategory? GetRandomClipFromAudioClips()
+    public AudioClip GetRandomClipFromAudioClips()
     {
         var validEntries = _audioClips
-            .SelectMany(kvp => kvp.Value.Select(clip => new AudioClipWithCategory(kvp.Key, clip)))
-            .Where(entry => entry.clip != null)
+            .SelectMany(kvp => kvp.Value.Select(clip => clip))
+            .Where(clip => clip != null)
             .ToList();
 
         if (validEntries.Count == 0) return null;
@@ -71,7 +115,7 @@ public class AudioLoader : IAudioLoader
     #endregion
 
     #region Load_then_Play API
-    public async Task<AudioClipWithCategory?> LoadAndGetSingleAudioClipAsync(string category)
+    public async Task<AudioClip> LoadAndGetSingleAudioClipAsync(string category)
     {
         if (!TryGetValidAudioFiles(category, out var validFiles)) return null;
 
@@ -80,9 +124,9 @@ public class AudioLoader : IAudioLoader
 
         if (clip == null) LogCategoryFailure(category, "Selected file failed to load");
 
-        return new AudioClipWithCategory (category, clip);
+        return clip;
     }
-    public async Task<AudioClipWithCategory?> GetRandomClipFromAllAvailableFiles()
+    public async Task<AudioClip> GetRandomClipFromAllAvailableFiles()
     {
         var allValidFiles = new List<(string category, string path)>();
         
@@ -105,15 +149,14 @@ public class AudioLoader : IAudioLoader
             return null;
         }
         
-        return new AudioClipWithCategory(selected.category, clip);
+        return clip;
     }
     #endregion
-
 
     #region Public API
     public async Task FindAvailableAudioAsync()
     {
-        if (InstanceConfig.audioLoadingOptions.Value == 0) return;
+        if (BepInExConfig.audioLoadingOptions.Value == 0) return;
         ClearCache();
         FileSystemUtil.ValidateAndPrepareDirectory(_audioPath);
         await LoadAllCategoriesAsync();

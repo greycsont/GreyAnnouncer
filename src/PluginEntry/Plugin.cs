@@ -3,6 +3,7 @@ using BepInEx.Logging;
 using HarmonyLib;
 
 using GreyAnnouncer.RankAnnouncer;
+using GreyAnnouncer.Commands;
 
 
 /* The StyleHUD.cs in the HarmonyPatches folder is the starting point of the whole sequence of announcer 
@@ -30,7 +31,7 @@ public class Plugin : BaseUnityPlugin
 
     private void LoadMainModule()
     {
-        InstanceConfig.Initialize(this);
+        BepInExConfig.Initialize(this);
     }
 
     private void LoadOptionalModule()

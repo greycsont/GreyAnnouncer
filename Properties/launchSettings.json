@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "GreyAnnouncer": {
-      "commandName": "Project",
-      "workingDirectory": "E:\\SteamLibrary\\steamapps\\common\\ULTRAKILL",
-      "remoteDebugEnabled": false
-    }
-  }
-}

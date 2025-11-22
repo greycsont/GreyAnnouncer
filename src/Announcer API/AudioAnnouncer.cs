@@ -8,6 +8,7 @@ using UnityEngine;
 
 using GreyAnnouncer.AudioSourceComponent;
 using GreyAnnouncer;
+using GameConsole.pcon;
 
 namespace GreyAnnouncer.AnnouncerAPI;
 
@@ -18,13 +19,13 @@ public class AudioAnnouncer
     private    IAudioLoader            _audioLoader;
     private    ICooldownManager        _cooldownManager;
     private Dictionary<string, string> _displayNameMapping;
-    
 
-    public void Initialize(IAudioLoader audioLoader,
+    public AudioAnnouncer(IAudioLoader audioLoader,
                            ICooldownManager cooldownManager,
                            Dictionary<string, string> displayNameMapping,
                            string jsonName)
     {
+        LogManager.LogInfo($"Initializing AudioAnnouncer {jsonName}");
         this._audioLoader = audioLoader;
         this._cooldownManager = cooldownManager;
         this._displayNameMapping = displayNameMapping;
@@ -32,21 +33,25 @@ public class AudioAnnouncer
         this._jsonSetting = JsonInitialization(jsonName, _displayNameMapping);
 
         _audioLoader.UpdateJsonSetting(_jsonSetting);
-    }
+        LogManager.LogInfo("Starting to find available audio asynchronously.");
+        _ = _audioLoader.FindAvailableAudioAsync();
 
+    }
+    
     [Description("Parry balls of Maurice -> Hit Maurice -> AscendingRank() -> Postfix() -> PlaySound() -> CheckPlayValidation(), " +
                  "This error will skip all the function before CheckPlayValidation(), That's why try-catch has implemented in the fucntion")]
                  
     /// <summary>Will Play a random audio in the belong category</summary>
     public async Task PlayAudioViaCategory(string category)
     {
+        LogManager.LogInfo($"Request to play audio for category: {category}");
         try
         {
             if (!ValidateAndLogPlayback(category))
                 return;
                 
-            if (await PlayAudioClip(category, InstanceConfig.audioPlayOptions.Value))
-                SetCooldown(category, InstanceConfig.individualPlayCooldown.Value);
+            if (await PlayAudioClip(category, BepInExConfig.audioPlayOptions.Value))
+                SetCooldown(category, BepInExConfig.individualPlayCooldown.Value);
         }
         catch (Exception ex)
         {
@@ -108,95 +113,21 @@ public class AudioAnnouncer
 
     private async Task<bool> PlayAudioClip(string category, int audioPlayOptions = 0)
     {
-        AudioClipWithCategory? clip = null;
-        // 需要改成加载AudioClip后直接传过去，省的这么多东西（
-        switch (InstanceConfig.audioLoadingOptions.Value)
-        {
-            case 0:
-                clip = await LoadAndPlayAudioClip(category);
-                break;
-            case 1:
-                clip = PlayAudioClipFromAudioClips(category);
-                break;
-            default:
-                LogManager.LogWarning("Invalid play audio options, using the default one");
-                clip = await LoadAndPlayAudioClip(category);
-                break;
-        }
+        LogManager.LogInfo($"Attempting to play audio for category: {category}");
+        Sound sound = await _audioLoader.LoadAudioClip(category);
 
-        if (clip == null)
+        if (sound == null)
         {
             LogManager.LogError($"Failed to load audio clip for category: {category}");
             return false;
         }
 
-        var audioSourceConfig = new AudioSourceSetting
-        {
-            SpatialBlend = 0f,
-            Priority = 0,
-            Volume = InstanceConfig.audioSourceVolume.Value,
-            Pitch = _jsonSetting.CategoryAudioMap[clip.Value.category].Pitch,
-        };
+        LogManager.LogInfo($"category : {sound.category}, Pitch : {sound.Pitch}");
 
-        var volumeMultiplier = _jsonSetting.CategoryAudioMap[clip.Value.category].VolumeMultiplier;
-
-        LogManager.LogInfo($"category : {clip.Value.category}, Pitch : {audioSourceConfig.Pitch}");
-
-        AudioDispatcher.SendClipToAudioSource(clip.Value.clip,
-                                              audioSourceConfig,
-                                              audioPlayOptions,
-                                              volumeMultiplier);
+        AudioDispatcher.SendClipToAudioSource(sound, audioPlayOptions);
 
         return true;
 
-    }
-    
-    private AudioClipWithCategory? PlayAudioClipFromAudioClips(string category)
-    {
-        AudioClipWithCategory? clip;
-        if (InstanceConfig.isAudioRandomizationEnabled.Value == false)
-        {
-            clip = _audioLoader.GetClipFromCache(category);
-        }
-        else
-        {
-            clip = _audioLoader.GetRandomClipFromAudioClips();
-        }
-
-        if (clip == null) 
-            return null;
-
-        return clip;
-    }
-
-    private async Task<AudioClipWithCategory?> LoadAndPlayAudioClip(string category)
-    {
-        AudioClipWithCategory? clip = null;
-
-        var currentRequestId = ++AnnouncerManager.playRequestId;
-
-        if (InstanceConfig.isAudioRandomizationEnabled.Value == false)
-        {
-            clip = await _audioLoader.LoadAndGetSingleAudioClipAsync(category);
-        }
-        else
-        {
-            clip = await _audioLoader.GetRandomClipFromAllAvailableFiles();
-        }
-        
-        if (clip == null) 
-            return null;
-
-        if (
-            currentRequestId != AnnouncerManager.playRequestId
-            && InstanceConfig.audioPlayOptions.Value == 0
-        )
-        {
-            LogManager.LogInfo($"Aborted outdated audio request for: {category}");
-            return null;
-        }
-
-        return clip;
     }
 
     private void LogPlaybackError(Exception ex)

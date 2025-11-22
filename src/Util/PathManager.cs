@@ -3,6 +3,8 @@ using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System;
+
 
 namespace GreyAnnouncer;
 
@@ -47,21 +49,13 @@ public static class PathManager
         if (!string.IsNullOrEmpty(path) && Directory.Exists(path))
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
                 System.Diagnostics.Process.Start("explorer.exe", path);
-            }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
                 System.Diagnostics.Process.Start("xdg-open", path);
-            }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
                 System.Diagnostics.Process.Start("open", path);
-            }
             else
-            {
                 LogManager.LogWarning("Unsupported OS platform.");
-            }
         }
         else
         {
@@ -74,13 +68,43 @@ public static class PathManager
     {
         string searchPattern = fileName + ".*";
         string[] files = Directory.GetFiles(filePath, searchPattern);
-
         
         if (files.Length > 0)
-        {
             return files[0];
+
+        return null;
+    }
+
+    internal static string FindExecutable(string envVariable, string fallbackPath = null)
+    {
+        // Enviroment path
+        var envPath = Environment.GetEnvironmentVariable(envVariable);
+        if (!string.IsNullOrEmpty(envPath) && Directory.Exists(envPath))
+        {
+            var exe = Path.Combine(envPath, envVariable + ".exe");
+            if (File.Exists(exe))
+                return envPath;
         }
 
+        // PATH variable
+        var pathEnv = Environment.GetEnvironmentVariable("PATH");
+        if (!string.IsNullOrEmpty(pathEnv))
+        {
+            var dirs = pathEnv.Split(';');
+            foreach (var dir in dirs)
+            {
+                if (string.IsNullOrWhiteSpace(dir))
+                    continue;
+
+                var exe = Path.Combine(dir, envVariable + ".exe");
+                if (File.Exists(exe))
+                    return dir;
+            }
+        }
+
+        // fallback
+        if (!string.IsNullOrEmpty(fallbackPath) && Directory.Exists(fallbackPath))
+            return fallbackPath;
 
         return null;
     }

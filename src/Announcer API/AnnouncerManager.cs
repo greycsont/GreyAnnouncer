@@ -12,7 +12,7 @@ public static class AnnouncerManager
     public  static long   playRequestId  = 0;
 
     #region Public Methods
-    public static void ReloadAllAnnouncer()
+    public static void ReloadAllAnnouncers()
     {
         reloadAnnouncer?.Invoke();
     }

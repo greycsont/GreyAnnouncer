@@ -20,14 +20,14 @@ public static class RankAnnouncer
         {"U",   "ULTRAKILL"}
     };
 
-    private static readonly AudioAnnouncer _announcer = new AudioAnnouncer();
+    private static AudioAnnouncer _announcer;
     private static readonly string _jsonName = "RankAnnouncer.json";
     private static readonly string _pageTitle = "Rank Announcer";
 
     public static void Initialize()
     {
-        _announcer.Initialize(
-            new AudioLoader(InstanceConfig.audioFolderPath.Value),
+        _announcer = new AudioAnnouncer(
+            new AudioLoader(BepInExConfig.audioFolderPath.Value),
             new CooldownManager(_displayNameMapping.Keys.ToArray()),
             _displayNameMapping,
             _jsonName
@@ -59,7 +59,7 @@ public static class RankAnnouncer
 
     private static void UpdateAudioPath()
     {
-        _announcer.UpdateAudioPath(InstanceConfig.audioFolderPath.Value);
+        _announcer.UpdateAudioPath(BepInExConfig.audioFolderPath.Value);
     }
 
     private static void ResetCooldowns()

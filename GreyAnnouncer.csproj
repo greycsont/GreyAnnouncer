@@ -15,54 +15,68 @@
 
   <!-- Game's instruction set -->
   <ItemGroup>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>Lib\Assembly-CSharp.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-
-    <Reference Include="Unity.TextMeshPro">
-      <HintPath>Lib\Unity.TextMeshPro.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-
-    <Reference Include="UnityEngine">
-      <HintPath>Lib\UnityEngine.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>Lib\UnityEngine.CoreModule.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-
-    <Reference Include="UnityEngine.AudioModule">
-      <HintPath>Lib\UnityEngine.AudioModule.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-
-    <Reference Include="UnityEngine.TextRenderingModule">
-      <HintPath>Lib\UnityEngine.TextRenderingModule.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-
-    <Reference Include="UnityEngine.UnityWebRequestModule">
-      <HintPath>Lib\UnityEngine.UnityWebRequestModule.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-
-    <Reference Include="UnityEngine.UnityWebRequestAudioModule">
-      <HintPath>Lib\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
+    <Reference Include="Assembly-CSharp_publicized">
+      <HintPath>lib\Assembly-CSharp_publicized.dll</HintPath>
       <Private>false</Private>
     </Reference>
 
     <Reference Include="PluginConfigurator">
-      <HintPath>Lib\PluginConfigurator.dll</HintPath>
+      <HintPath>lib\PluginConfigurator.dll</HintPath>
       <private>false</private>
     </Reference>
 
+    <Reference Include="plog">
+      <HintPath>$(ManagedDir)\plog.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>$(ManagedDir)\Unity.TextMeshPro.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="UnityEngine">
+      <HintPath>$(ManagedDir)\UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>$(ManagedDir)\UnityEngine.UIModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(ManagedDir)\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>$(ManagedDir)\UnityEngine.AudioModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>$(ManagedDir)\UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="UnityEngine.UnityWebRequestModule">
+      <HintPath>$(ManagedDir)\UnityEngine.UnityWebRequestModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="UnityEngine.UnityWebRequestAudioModule">
+      <HintPath>$(ManagedDir)\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>$(ManagedDir)\UnityEngine.AssetBundleModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
 
     <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>Lib\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>$(ManagedDir)\UnityEngine.PhysicsModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>
@@ -75,6 +89,10 @@
     <PackageReference Include="BepInEx.Analyzers" Version="1.0.8" PrivateAssets="all" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <ManagedDir>E:\SteamLibrary\steamapps\common\ULTRAKILL\ULTRAKILL_Data\Managed</ManagedDir>
+  </PropertyGroup>
 
   <PropertyGroup>
     <!--<OutputPath>$(SolutionDir)BuildOutput\</OutputPath>-->

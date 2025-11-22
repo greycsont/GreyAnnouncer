@@ -9,6 +9,8 @@ using GreyAnnouncer.AnnouncerAPI;
 
 using GreyAnnouncer.AudioSourceComponent;
 
+using GreyAnnouncer.Commands;
+
 namespace GreyAnnouncer.PluginConfiguratorGUI;
 
 public static class MainPanelBuilder
@@ -33,6 +35,12 @@ public static class MainPanelBuilder
         CreateAnnouncerSection();
 
         CreateDelegateTextFromBackEnd();
+
+        var testButton = new ButtonField(m_pluginConfigurator.rootPanel, "testButton", "testButton");
+        testButton.onClick += () =>
+        {
+            AssetBundleUI.CreateUI();
+        };
     }
 
     private static void CreateMainSettingSectionTitle()
@@ -50,12 +58,12 @@ public static class MainPanelBuilder
             m_pluginConfigurator.rootPanel,
             "Shared Cooldown",
             "sharedPlayCooldown",
-            InstanceConfig.sharedPlayCooldown.Value, 0f, 114514f
+            BepInExConfig.sharedPlayCooldown.Value, 0f, 114514f
         );
-        sharedCooldown.defaultValue = InstanceConfig.DEFAULT_SHARED_PLAY_COOLDOWN;
+        sharedCooldown.defaultValue = BepInExConfig.DEFAULT_SHARED_PLAY_COOLDOWN;
         sharedCooldown.onValueChange += e =>
         {
-            InstanceConfig.sharedPlayCooldown.Value = e.value;
+            BepInExConfig.sharedPlayCooldown.Value = e.value;
             AnnouncerManager.ResetCooldown();
         };
 
@@ -63,12 +71,12 @@ public static class MainPanelBuilder
             m_pluginConfigurator.rootPanel,
             "Individual Cooldown",
             "individualPlaycooldown",
-            InstanceConfig.individualPlayCooldown.Value, 0f, 1113f
+            BepInExConfig.individualPlayCooldown.Value, 0f, 1114f
         );
-        individualCooldown.defaultValue = InstanceConfig.DEFAULT_INDIVIDUAL_PLAY_COOLDOWN;
+        individualCooldown.defaultValue = BepInExConfig.DEFAULT_INDIVIDUAL_PLAY_COOLDOWN;
         individualCooldown.onValueChange += e =>
         {
-            InstanceConfig.individualPlayCooldown.Value = e.value;
+            BepInExConfig.individualPlayCooldown.Value = e.value;
             AnnouncerManager.ResetCooldown();
         };
     }
@@ -81,13 +89,13 @@ public static class MainPanelBuilder
             "Audio Volume",
             "Audio_Volume",
             Tuple.Create(0f, 1f),
-            InstanceConfig.audioSourceVolume.Value,
+            BepInExConfig.audioSourceVolume.Value,
             2   // 2nd decimal
         );
-        volumeSlider.defaultValue = InstanceConfig.DEFAULT_AUDIO_SOURCE_VOLUME;
+        volumeSlider.defaultValue = BepInExConfig.DEFAULT_AUDIO_SOURCE_VOLUME;
         volumeSlider.onValueChange += e =>
         {
-            InstanceConfig.audioSourceVolume.Value = e.newValue;
+            CommandExecutor.SetVolume(e.newValue);
             SoloAudioSource.Instance.UpdateSoloAudioSourceVolume(e.newValue);
         };
 
@@ -98,24 +106,24 @@ public static class MainPanelBuilder
             m_pluginConfigurator.rootPanel,
             "Audio Play Option",
             "Audio_Play_Option",
-            (PlayOptions)InstanceConfig.audioPlayOptions.Value
+            (PlayOptions)BepInExConfig.audioPlayOptions.Value
         );
-        playOption.defaultValue = (PlayOptions)InstanceConfig.DEFAULT_AUDIO_PLAY_OPTIONS;
+        playOption.defaultValue = (PlayOptions)BepInExConfig.DEFAULT_AUDIO_PLAY_OPTIONS;
         playOption.onValueChange += e =>
         {
-            InstanceConfig.audioPlayOptions.Value = (int)e.value;
+            BepInExConfig.audioPlayOptions.Value = (int)e.value;
         };
 
         var loadingOption = new EnumField<audioLoadingOptions>(
             m_pluginConfigurator.rootPanel,
             "Audio Loading Option",
             "Audio_Loading_Option",
-            (audioLoadingOptions)InstanceConfig.audioLoadingOptions.Value
+            (audioLoadingOptions)BepInExConfig.audioLoadingOptions.Value
         );
-        loadingOption.defaultValue = (audioLoadingOptions)InstanceConfig.DEFAULT_AUDIO_LOADING_OPTIONS;
+        loadingOption.defaultValue = (audioLoadingOptions)BepInExConfig.DEFAULT_AUDIO_LOADING_OPTIONS;
         loadingOption.onValueChange += e =>
         {
-            InstanceConfig.audioLoadingOptions.Value = (int)e.value;
+            BepInExConfig.audioLoadingOptions.Value = (int)e.value;
             if (e.value.Equals((audioLoadingOptions.Load_then_Play)))
             {
                 LogManager.LogInfo("Clear audio clip cache");
@@ -137,11 +145,11 @@ public static class MainPanelBuilder
         );
         audioButtonArray.OnClickEventHandler(0).onClick += () =>
         {
-            PathManager.OpenDirectory(InstanceConfig.audioFolderPath.Value);
+            CommandExecutor.OpenAudioFolder();
         };
         audioButtonArray.OnClickEventHandler(1).onClick += () =>
         {
-            ReloadAllAnnouncers();
+            CommandExecutor.ReloadAnnouncers();
         };
         audioButtonArray.OnClickEventHandler(2).onClick += () =>
         {
@@ -160,12 +168,12 @@ public static class MainPanelBuilder
             advancedPanel,
             "Audio Folder Path",
             "Audio_Folder_Path",
-            InstanceConfig.audioFolderPath.Value
+            BepInExConfig.audioFolderPath.Value
         );
-        audioFolderPath.defaultValue = InstanceConfig.DEFAULT_AUDIO_FOLDER_PATH;
+        audioFolderPath.defaultValue = BepInExConfig.DEFAULT_AUDIO_FOLDER_PATH;
         audioFolderPath.onValueChange += e =>
         {
-            InstanceConfig.audioFolderPath.Value = e.value;
+            CommandExecutor.SetAudioFolderPath(e.value);
             AnnouncerManager.UpdateAllAnnouncerPaths();
         };
 
@@ -173,12 +181,12 @@ public static class MainPanelBuilder
             advancedPanel,
             "Muffle When Under Water",
             "LowPassFilter_Enabled",
-            InstanceConfig.isLowPassFilterEnabled.Value
+            BepInExConfig.isLowPassFilterEnabled.Value
         );
         lowpassToggle.defaultValue = true;
         lowpassToggle.onValueChange += (e) =>
         {
-            InstanceConfig.isLowPassFilterEnabled.Value = e.value;
+            CommandExecutor.EnableLowPassFilter(e.value);
             UnderwaterController_inWater_Instance.CheckIsInWater();
         };
 
@@ -186,12 +194,12 @@ public static class MainPanelBuilder
             advancedPanel,
             "Audio Randomlization",
             "Audio_Randomlization",
-            InstanceConfig.isAudioRandomizationEnabled.Value
+            BepInExConfig.isAudioRandomizationEnabled.Value
         );
         audioRandomizationToggle.defaultValue = false;
         audioRandomizationToggle.onValueChange += (e) =>
         {
-            InstanceConfig.isAudioRandomizationEnabled.Value = e.value;
+            BepInExConfig.isAudioRandomizationEnabled.Value = e.value;
             LogManager.LogInfo($"Switch audio randomization : {e.value}");
         };
 
@@ -199,12 +207,12 @@ public static class MainPanelBuilder
             advancedPanel,
             "FFmpeg Support",
             "FFmpeg_Support",
-            InstanceConfig.isFFmpegSupportEnabled.Value
+            BepInExConfig.isFFmpegSupportEnabled.Value
         );
         ffmpegToggle.defaultValue = false;
         ffmpegToggle.onValueChange += (e) =>
         {
-            InstanceConfig.isFFmpegSupportEnabled.Value = e.value;
+            CommandExecutor.EnableFFmpegSupport(e.value);
             LogManager.LogInfo($"Switched FFmpeg support : {e.value}");
         };
 
@@ -257,7 +265,7 @@ public static class MainPanelBuilder
     private static void ReloadAllAnnouncers()
     {
         logHeader.text = string.Empty;
-        AnnouncerManager.ReloadAllAnnouncer();
+        AnnouncerManager.ReloadAllAnnouncers();
     }
 
     private static void ClearAudioClipsCache()

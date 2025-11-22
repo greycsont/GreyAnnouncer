@@ -5,6 +5,14 @@
 
 [![Static Badge](https://img.shields.io/badge/There's-Repository-blue)](https://github.com/greycsont/GreyAnnouncer) [![Static Badge](https://img.shields.io/badge/Ask-Deepwiki-blue)](https://deepwiki.com/greycsont/GreyAnnouncer) 
 
+#### WIP
+| Feature      | Supported |                 
+|-------------|-----------|
+| `ffmpeg`    | ✅        |       
+| `new UI`      |  ❌      |
+| `new AudiosourceManagement`      |  ❌      |
+| `swapperable announcer config`      |  ❌      |
+
 ##### Supported Audio Formats
 
 | Format      | Supported |                 
@@ -13,6 +21,7 @@
 | `.wav`      | ✅        |
 
 `aac, ogg, aiff/aif not tested yet`
+
 
 ## Mod description
 The mod itselfs it's like the *Simple Spear* in [魔法少女ノ魔女裁判](https://store.steampowered.com/app/3101040)
@@ -136,19 +145,8 @@ v1.1.0/v1.1.1 was licensed under AGPL+PostgreSQL.
 ---                     
 Copyleft (c) 2025 greycsont, all rights reserved
 
-
-## stm argument(?)
-All video/audio file format is basically a container, the only thing needs to find is the audio stream.
-
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 
 ###### Easter egg
 你是谁，请支持[魔法少女的魔女审判](https://store.steampowered.com/app/3101040)
-
-Hello vendetta.
-May I ask for your permission to translate and upload the [ULTRAKILL Prelude p% route overview](https://www.youtube.com/watch?v=QUmrX6dAh50&list=PLZgoJ3qxXmAv0rs4hXWn8P8hG158mF0NK&index=1) video on Bilibili? 
-The reason is that Youtube is not easily accessible in China, and there's non of the resources discussing the details of speedrun in the Bilibili website.
-I'll make sure to properly credit you and include the link to the source video in the video description.
-Sorry if the message bothers you.
-

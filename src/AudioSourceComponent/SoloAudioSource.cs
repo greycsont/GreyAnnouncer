@@ -5,6 +5,8 @@ namespace GreyAnnouncer.AudioSourceComponent;
 public sealed class SoloAudioSource : MonoBehaviour
 {
     private AudioSource _audioSource;
+    private AudioSource _backgroundAudioSource;
+    private AudioSource _sfxAudioSource;
     private static SoloAudioSource _instance;
 
     #region Constructor
@@ -25,25 +27,39 @@ public sealed class SoloAudioSource : MonoBehaviour
 
 
     #region Public API
-    public void Play(AudioClip clip, AudioSourceSetting config, float volumeMultiplier)
+    public void Play(Sound sound)
     {
         if (_audioSource == null)
             _audioSource = gameObject.AddComponent<AudioSource>();
 
         _audioSource.Stop();
-        _audioSource = AudioSourceManager.ConfigureAudioSource(_audioSource, config);
-        _audioSource = UnderwaterController_inWater_Instance.GetAudioSourceWithLowPassFilter(_audioSource);
-        _audioSource.PlayOneShot(clip, volumeMultiplier);
+        
+        ConfigureAndPlayAudioSource(sound, _audioSource);
     }
 
-    public void PlayOneShot(AudioClip clip, AudioSourceSetting config, float volumeMultiplier)
+    public void PlayOneShot(Sound sound)
     {
         if (_audioSource == null)
             _audioSource = gameObject.AddComponent<AudioSource>();
 
-        _audioSource = AudioSourceManager.ConfigureAudioSource(_audioSource, config);
-        _audioSource = UnderwaterController_inWater_Instance.GetAudioSourceWithLowPassFilter(_audioSource);
-        _audioSource.PlayOneShot(clip, volumeMultiplier);
+        ConfigureAndPlayAudioSource(sound, _audioSource);
+
+    }
+
+    private void ConfigureAndPlayAudioSource(Sound sound, AudioSource audioSource)
+    {
+        audioSource.spatialBlend = sound.SpatialBlend;
+        audioSource.priority = sound.Priority;
+        audioSource.volume = Mathf.Clamp01(BepInExConfig.audioSourceVolume.Value * sound.Volume);
+        audioSource.pitch = sound.Pitch;
+        audioSource.clip = sound.clip;
+        audioSource = UnderwaterController_inWater_Instance.GetAudioSourceWithLowPassFilter(_audioSource);
+        audioSource.PlayOneShot(sound.clip, sound.Volume);
+    }
+
+    private AudioSource GetAudioSource(Sound sound)
+    {
+        return _sfxAudioSource;
     }
 
     public void AddAudioLowPassFilter()
