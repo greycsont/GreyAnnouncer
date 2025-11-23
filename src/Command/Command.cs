@@ -23,12 +23,12 @@ public sealed class GreyAnnouncerCommand(Console con) : CommandRoot(con), IConso
                              ),
                       Branch("get",
                              Leaf("audiosourcevolume", () => Log.Info($"Audio Source Volume: {BepInExConfig.audioSourceVolume.Value}")),
-
                              Leaf("ffmpegenabled", () => Log.Info($"FFmpeg Support Enabled: {BepInExConfig.isFFmpegSupportEnabled.Value}")),
                              Leaf("lowpassenabled", () => Log.Info($"Under Water Low Pass Filter Enabled: {BepInExConfig.isLowPassFilterEnabled.Value}"))
                              ),
                       Branch("util",
-                             Leaf("reloadannouncers", () => AnnouncerManager.ReloadAllAnnouncers())
+                             Leaf("reloadannouncers", () => AnnouncerManager.ReloadAllAnnouncers()),
+                             Leaf("stopallaudiosources", () => AudioSourceManager.StopAllAudioSource())
                              )
                       );
     }

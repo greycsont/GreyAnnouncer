@@ -51,7 +51,7 @@ public class AudioAnnouncer
                 return;
                 
             if (await PlayAudioClip(category, BepInExConfig.audioPlayOptions.Value))
-                SetCooldown(category, BepInExConfig.individualPlayCooldown.Value);
+                SetCooldown(category, _jsonSetting.CategoryAudioMap[category].Cooldown);
         }
         catch (Exception ex)
         {
@@ -84,6 +84,7 @@ public class AudioAnnouncer
     {
         _jsonSetting = newSetting;
         _audioLoader.UpdateJsonSetting(_jsonSetting);
+        JsonManager.WriteJson(_jsonName, _jsonSetting);
     }
 
     /// <summary>Clear audioclip in audioloader, only works when using Preload and Play options</summary>
@@ -123,7 +124,7 @@ public class AudioAnnouncer
             return false;
         }
 
-        LogManager.LogInfo($"category : {sound.category}, Pitch : {sound.Pitch}");
+        LogManager.LogInfo($"category : {sound.category}, Pitch : {sound.Pitch[0]}, {sound.Pitch[1]}, Cooldown : {_jsonSetting.CategoryAudioMap[category].Cooldown}");
 
         AudioDispatcher.SendClipToAudioSource(sound, audioPlayOptions);
 
@@ -160,12 +161,6 @@ public class AudioAnnouncer
         }
 
 
-        if (_cooldownManager.IsSharedCooldownActive())
-        {
-            return ValidationState.SharedCooldown;
-        }
-
-
         if (!_jsonSetting.CategoryAudioMap[category].Enabled)
         {
             return ValidationState.DisabledByConfig;
@@ -182,7 +177,6 @@ public class AudioAnnouncer
                 cat => cat,
                 cat => new CategoryAudioSetting
                 {
-                    Enabled = true,
                     DisplayName = displayNameMapping.TryGetValue(cat, out var name) ? name : cat,
                     AudioFiles = new List<string> { cat }
                 }

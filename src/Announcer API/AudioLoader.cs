@@ -263,35 +263,11 @@ public class AudioLoader : IAudioLoader
 
     private void LogLoadingResults()
     {
-        LogForPluginConfigurator();
-
+        LogManager.LogDebug("Loading directory: " + jsonSetting.AudioPath);
         if (categoryFailedLoading.Count == 0)
-        {
             LogManager.LogInfo("All audio categories successfully loaded");
-        }
         else
-        {
             LogManager.LogWarning("Failed to load audio categories: " + string.Join(", ", categoryFailedLoading));
-        }
-
-    }
-
-    private void LogForPluginConfigurator()
-    {
-        // Warning : PluginConfigurator
-        var builder = new System.Text.StringBuilder();
-
-        foreach (var category in jsonSetting.CategoryAudioMap.Keys)
-        {
-            int loaded = _audioClips.TryGetValue(category, out var clips) ? clips.Count : 0;
-            int total = jsonSetting.CategoryAudioMap.TryGetValue(category, out var setting) ? setting.AudioFiles.Count : 0;
-            builder.AppendLine($"{category} ({loaded}/{total})");
-        }
-
-        //Reflection maybe
-        string logMessage = builder.ToString();
-
-        onPluginConfiguratorLogUpdated?.Invoke(logMessage);
     }
     #endregion
 
@@ -316,7 +292,7 @@ public class AudioLoader : IAudioLoader
 
         if (validFiles.Count == 0)
         {
-            LogCategoryFailure(category, "No valid files found");
+            LogCategoryFailure(category, "No valid files found :" + string.Join(", ", fileNames));
             return false;
         }
 

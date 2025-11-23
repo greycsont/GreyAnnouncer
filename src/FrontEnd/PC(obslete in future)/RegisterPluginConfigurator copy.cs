@@ -77,6 +77,19 @@ public static class RegisterRankAnnouncerPagev2
             );
         }
 
+        ConfigHeader cooldownHeader = new ConfigHeader(panel, "Volume Settings");
+        cooldownHeader.textColor = new UnityEngine.Color(0f, 1f, 1f, 1f);
+        foreach (var category in _announcer._jsonSetting.CategoryAudioMap)
+        {
+            var field = CreateCooldownField(
+                panel,
+                category.Value.DisplayName,
+                category.Key,
+                _announcer._jsonSetting,
+                3.0f
+            );
+        } 
+
         ConfigHeader pitchMinHeader = new ConfigHeader(panel, "Pitch Min");
         pitchMinHeader.textColor = new UnityEngine.Color(1f, 0.6f, 0.2f, 1f);
         
@@ -196,9 +209,33 @@ public static class RegisterRankAnnouncerPagev2
 
         return field;
     }
+
+    private static FloatSliderField CreateCooldownField(ConfigPanel panel,
+                                                     string label,
+                                                     string guid,
+                                                     AnnouncerMapping jsonSetting,
+                                                     float defaultValue)
+    {
+        var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid, "Cooldown");
+        var field = new FloatSliderField(panel, label, fullGuid, Tuple.Create(0.2f, 6f), jsonSetting.CategoryAudioMap[guid].Cooldown, 1);
+        field.defaultValue = defaultValue;
+        field.onValueChange += e =>
+        {
+            if (jsonSetting.CategoryAudioMap.ContainsKey(guid))
+            {
+                jsonSetting.CategoryAudioMap[guid].Cooldown = e.newValue;
+            }
+
+            SomethingAfterUpdateJson();
+            
+        };
+
+        return field;
+    }
     
     private static void SomethingAfterUpdateJson()
     {
+        _announcer.UpdateJsonSetting(_announcer._jsonSetting);
         LogManager.LogInfo($"Updated json setting for {_title}");
     }
 
