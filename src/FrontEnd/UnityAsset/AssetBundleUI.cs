@@ -1,5 +1,6 @@
+using System.IO;
 using UnityEngine;
-
+using UnityEngine.Video;
 
 namespace GreyAnnouncer;
 
@@ -9,6 +10,7 @@ public static class AssetBundleUI
     public static string bundlePath = PathManager.GetCurrentPluginPath("ui");
     public static void CreateUI()
     {   
+        LogManager.LogInfo("Loading");
         if (bundle == null)
         {
             bundle = AssetBundle.LoadFromFile(bundlePath);
@@ -34,6 +36,22 @@ public static class AssetBundleUI
             uiObject.transform.SetAsLastSibling();
 
             LogManager.LogInfo("UI Loaded!");
+
+            Transform videoPlayerTransform = uiObject.transform.Find("Mask/VideoPlayer");
+
+            if (videoPlayerTransform != null)
+            {
+                VideoPlayer vp = videoPlayerTransform.GetComponent<VideoPlayer>(); 
+
+                if (vp == null)
+                {
+                    LogManager.LogInfo("Fuck VideoPlayer");
+                    return;
+                }
+                vp.source = VideoSource.Url;
+                vp.url = PathManager.GetCurrentPluginPath("output_h264.mp4");
+                vp.Play();
+            }       
         }
         else
         {
