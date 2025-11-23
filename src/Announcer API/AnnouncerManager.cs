@@ -7,7 +7,6 @@ public static class AnnouncerManager
     public  static Action reloadAnnouncer;
     public  static Action resetCooldown;
     public  static Action clearAudioClipCache;            
-    public  static float  sharedCooldown = 0f;
     public  static long   playRequestId  = 0;
 
     #region Public Methods
@@ -18,7 +17,6 @@ public static class AnnouncerManager
 
     public static void ResetCooldown()
     {
-        sharedCooldown = 0f;
         resetCooldown?.Invoke();
     }
 

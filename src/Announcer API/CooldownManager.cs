@@ -23,15 +23,9 @@ public class CooldownManager : ICooldownManager
         return _individualCooldowns[category] > 0f;
     }
 
-    public bool IsSharedCooldownActive()
-    {
-        return AnnouncerManager.sharedCooldown > 0f;
-    }
-
     public void StartCooldowns(string category, float duration)
     {
         StartIndividualCooldown(category, duration);
-        StartSharedCooldown(BepInExConfig.sharedPlayCooldown.Value);
     }
 
     public void ResetCooldowns()
@@ -49,15 +43,6 @@ public class CooldownManager : ICooldownManager
             CooldownCoroutine(value => _individualCooldowns[category] = value, 
             duration));
     }
-
-    private void StartSharedCooldown(float duration)
-    {
-        CoroutineRunner.Instance.StartCoroutine(
-            CooldownCoroutine(value => AnnouncerManager.sharedCooldown = value, 
-            duration));
-    }
-
-
 
 
     private IEnumerator CooldownCoroutine(Action<float> setCooldown, float initialCooldown)

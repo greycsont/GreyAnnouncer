@@ -5,8 +5,6 @@ namespace GreyAnnouncer;
 
 public static class BepInExConfig
 {
-    public static          ConfigEntry<float>                    sharedPlayCooldown;    // Range : 0f ~ 10f
-    public static          ConfigEntry<float>                    individualPlayCooldown;    // Range : 0f ~ 114514f
     public static          ConfigEntry<float>                    audioSourceVolume; // Range : 0f ~ 1f
     public static          ConfigEntry<bool>                     isLowPassFilterEnabled;
     public static          ConfigEntry<int>                      audioPlayOptions;
@@ -15,10 +13,6 @@ public static class BepInExConfig
 
     public static readonly Dictionary<string, (string section, string name, object defaultValue, string description)> ConfigEntries = new()
     {
-        // "Cooldown" section
-        { "SharedRankCooldown",     ("Cooldown", "Shared_rank_play_cooldown",           DEFAULT_SHARED_PLAY_COOLDOWN,        "Shared rank play cooldown (in secs)") },
-        { "IndividualRankCooldown", ("Cooldown", "Individual_rank_play_cooldown",       DEFAULT_INDIVIDUAL_PLAY_COOLDOWN,    "Individual rank play cooldown (in secs)") },
-
         // "Audio" section 
         { "AudioSourceVolume",      ("Audio",    "Audio_source_volume",                 DEFAULT_AUDIO_SOURCE_VOLUME,         "Volume of the Announcer ( Range : 0f ~ 1f )") },
         { "LowPassFilter",          ("Audio",    "Under_water_low_pass_filter_Enabled", DEFAULT_LOW_PASS_FILTER_ENABLED,     "Set to true to enable muffle effect when under water") },
@@ -76,10 +70,7 @@ public static class BepInExConfig
                 (float)defaultValue,
                 description
             );
-
-            if      (name == "Shared_rank_play_cooldown")     sharedPlayCooldown     = configEntry;
-            else if (name == "Individual_rank_play_cooldown") individualPlayCooldown = configEntry;
-            else if (name == "Audio_source_volume")           audioSourceVolume      = configEntry;
+            if (name == "Audio_source_volume")           audioSourceVolume      = configEntry;
             
         }
         else if (defaultValue is string)
@@ -108,20 +99,6 @@ public static class BepInExConfig
         }
     }
                            
-    private static float _defaultSharedPlayCooldown = 0f;
-    public static float DEFAULT_SHARED_PLAY_COOLDOWN 
-    {
-        get => _defaultSharedPlayCooldown;
-        private set => _defaultSharedPlayCooldown = value;
-    }
-
-    private static float _defaultIndividualPlayCooldown = 3f;
-    public static float DEFAULT_INDIVIDUAL_PLAY_COOLDOWN 
-    {
-        get => _defaultIndividualPlayCooldown;
-        private set => _defaultIndividualPlayCooldown = value;
-    }
-
     private static float _defaultAudioSourceVolume = 1f;
     public static float DEFAULT_AUDIO_SOURCE_VOLUME 
     {

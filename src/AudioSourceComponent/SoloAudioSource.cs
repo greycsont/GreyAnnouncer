@@ -54,6 +54,14 @@ public sealed class SoloAudioSource : MonoBehaviour
         audioSource.pitch = UnityEngine.Random.Range(sound.Pitch[0], sound.Pitch[1]);
         audioSource.clip = sound.clip;
         audioSource = UnderwaterController_inWater_Instance.GetAudioSourceWithLowPassFilter(_audioSource);
+
+        LogManager.LogDebug("Playing solo audio source: " +
+                            $"Category={sound.category}, " +
+                            $"Clip={sound.clip.name}, " +
+                            $"Volume={audioSource.volume}, " +
+                            $"Pitch={audioSource.pitch}, " +
+                            $"SpatialBlend={audioSource.spatialBlend}, " +
+                            $"Priority={audioSource.priority}");
         audioSource.PlayOneShot(sound.clip, sound.Volume);
     }
 

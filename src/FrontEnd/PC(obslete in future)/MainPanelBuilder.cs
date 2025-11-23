@@ -29,7 +29,6 @@ public static class MainPanelBuilder
         m_pluginConfigurator = config;
 
         CreateMainSettingSectionTitle();
-        CreateCooldownControls();
         CreateAudioControls();
         CreateAdvancedOptionPanel();
         CreateAnnouncerSection();
@@ -52,34 +51,6 @@ public static class MainPanelBuilder
 
     }
 
-    private static void CreateCooldownControls()
-    {
-        var sharedCooldown = new FloatField(
-            m_pluginConfigurator.rootPanel,
-            "Shared Cooldown",
-            "sharedPlayCooldown",
-            BepInExConfig.sharedPlayCooldown.Value, 0f, 114514f
-        );
-        sharedCooldown.defaultValue = BepInExConfig.DEFAULT_SHARED_PLAY_COOLDOWN;
-        sharedCooldown.onValueChange += e =>
-        {
-            BepInExConfig.sharedPlayCooldown.Value = e.value;
-            AnnouncerManager.ResetCooldown();
-        };
-
-        var individualCooldown = new FloatField(
-            m_pluginConfigurator.rootPanel,
-            "Individual Cooldown",
-            "individualPlaycooldown",
-            BepInExConfig.individualPlayCooldown.Value, 0f, 1114f
-        );
-        individualCooldown.defaultValue = BepInExConfig.DEFAULT_INDIVIDUAL_PLAY_COOLDOWN;
-        individualCooldown.onValueChange += e =>
-        {
-            BepInExConfig.individualPlayCooldown.Value = e.value;
-            AnnouncerManager.ResetCooldown();
-        };
-    }
 
     private static void CreateAudioControls()
     {
