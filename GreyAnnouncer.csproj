@@ -40,6 +40,7 @@
       <Private>false</Private>
     </Reference>
 
+
     <Reference Include="UnityEngine.UIModule">
       <HintPath>$(ManagedDir)\UnityEngine.UIModule.dll</HintPath>
       <Private>false</Private>
@@ -52,6 +53,12 @@
 
     <Reference Include="UnityEngine.AudioModule">
       <HintPath>$(ManagedDir)\UnityEngine.AudioModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+
+    <Reference Include="UnityEngine.VideoModule">
+      <HintPath>$(ManagedDir)\UnityEngine.VideoModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
 

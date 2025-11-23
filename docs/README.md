@@ -11,7 +11,7 @@
 | `ffmpeg`    | ✅        |       
 | `new UI`      |  ❌      |
 | `new AudiosourceManagement`      |  ❌      |
-| `swapperable announcer config`      |  ❌      |
+| `swapperable announcer config`      |  WIP      |
 
 ##### Supported Audio Formats
 

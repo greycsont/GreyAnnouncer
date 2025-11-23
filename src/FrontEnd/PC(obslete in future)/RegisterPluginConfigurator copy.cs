@@ -157,7 +157,7 @@ public static class RegisterRankAnnouncerPagev2
                                                      AnnouncerMapping jsonSetting,
                                                      float defaultValue)
     {
-        var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid, "PitchMax");
+        var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid, "PitchMin");
         var field = new FloatSliderField(panel, label, fullGuid, Tuple.Create(0.2f, 2f), jsonSetting.CategoryAudioMap[guid].Pitch[0], 2);
         field.defaultValue = defaultValue;
         field.onValueChange += e =>
