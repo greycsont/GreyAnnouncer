@@ -22,7 +22,7 @@ namespace GreyAnnouncer.AnnouncerAPI;
 
 public class AudioLoader : IAudioLoader
 {
-    public        AnnouncerMapping                jsonSetting           { get; set; }
+    public        AnnouncerConfig                announcerConfig           { get; set; }
     public        HashSet<string>                     categoryFailedLoading { get; private set; } = new HashSet<string>();
     private       Dictionary<string, List<AudioClip>> _audioClips                                 = new Dictionary<string, List<AudioClip>>();
     public static Action<string>                      onPluginConfiguratorLogUpdated;
@@ -41,7 +41,7 @@ public class AudioLoader : IAudioLoader
         {
             var currentRequestId = ++AnnouncerManager.playRequestId;
 
-            if (jsonSetting.RandomizeAudioOnPlay == false)
+            if (announcerConfig.RandomizeAudioOnPlay == false)
                 clip = await LoadAndGetSingleAudioClipAsync(category);
             else
                 clip = await GetRandomClipFromAllAvailableFiles();
@@ -56,7 +56,7 @@ public class AudioLoader : IAudioLoader
         }
         else
         {
-            if (jsonSetting.RandomizeAudioOnPlay == false)
+            if (announcerConfig.RandomizeAudioOnPlay == false)
             {
                 clip = GetClipFromCache(category);
             }
@@ -72,7 +72,7 @@ public class AudioLoader : IAudioLoader
             return null;
         }
 
-        Sound sound = new Sound(category, clip, jsonSetting.CategoryAudioMap[category].VolumeMultiplier, jsonSetting.CategoryAudioMap[category].Pitch);
+        Sound sound = new Sound(category, clip, announcerConfig.CategoryAudioMap[category].VolumeMultiplier, announcerConfig.CategoryAudioMap[category].Pitch);
 
         return sound;
     }
@@ -85,7 +85,7 @@ public class AudioLoader : IAudioLoader
         if (categoryFailedLoading.Contains(category)) return null;
 
 
-        if (jsonSetting.CategoryAudioMap.Keys.Contains(category) == false) return null;
+        if (announcerConfig.CategoryAudioMap.Keys.Contains(category) == false) return null;
 
 
         if (!_audioClips.TryGetValue(category, out var clips) || clips.Count == 0) return null;
@@ -128,7 +128,7 @@ public class AudioLoader : IAudioLoader
     {
         var allValidFiles = new List<(string category, string path)>();
         
-        foreach (var category in jsonSetting.CategoryAudioMap.Keys)
+        foreach (var category in announcerConfig.CategoryAudioMap.Keys)
         {
             if (TryGetValidAudioFiles(category, out var validFiles))
             {
@@ -156,14 +156,14 @@ public class AudioLoader : IAudioLoader
     {
         if (BepInExConfig.audioLoadingOptions.Value == 0) return;
         ClearCache();
-        FileSystemUtil.ValidateAndPrepareDirectory(jsonSetting.AudioPath);
+        FileSystemUtil.ValidateAndPrepareDirectory(announcerConfig.AudioPath);
         await LoadAllCategoriesAsync();
         LogLoadingResults();
     }
 
-    public void UpdateJsonSetting(AnnouncerMapping jsonSetting)
+    public void UpdateAnnouncerConfig(AnnouncerConfig newAnnouncerConfig)
     {
-        this.jsonSetting = jsonSetting;
+        this.announcerConfig = newAnnouncerConfig;
     }
 
     public void ClearCache()
@@ -179,7 +179,7 @@ public class AudioLoader : IAudioLoader
     {
         var loadingTasks = new List<Task<(string category, List<AudioClip> clips)>>();
 
-        foreach (var category in jsonSetting.CategoryAudioMap.Keys)
+        foreach (var category in announcerConfig.CategoryAudioMap.Keys)
         {
             loadingTasks.Add(LoadCategoryAsync(category).ContinueWith(task => (category, task.Result)));
         }
@@ -263,7 +263,7 @@ public class AudioLoader : IAudioLoader
 
     private void LogLoadingResults()
     {
-        LogManager.LogDebug("Loading directory: " + jsonSetting.AudioPath);
+        LogManager.LogDebug("Loading directory: " + announcerConfig.AudioPath);
         if (categoryFailedLoading.Count == 0)
             LogManager.LogInfo("All audio categories successfully loaded");
         else
@@ -276,7 +276,7 @@ public class AudioLoader : IAudioLoader
     {
         validFiles = null;
 
-        if (!jsonSetting.CategoryAudioMap.TryGetValue(category, out var categorySetting)
+        if (!announcerConfig.CategoryAudioMap.TryGetValue(category, out var categorySetting)
             || categorySetting.AudioFiles == null
             || categorySetting.AudioFiles.Count == 0)
         {
@@ -286,7 +286,7 @@ public class AudioLoader : IAudioLoader
 
         var fileNames = categorySetting.AudioFiles;
         validFiles = fileNames
-            .Select(name => PathManager.GetFileWithExtension(jsonSetting.AudioPath, name))
+            .Select(name => PathManager.GetFileWithExtension(announcerConfig.AudioPath, name))
             .Where(File.Exists)
             .ToList();
 

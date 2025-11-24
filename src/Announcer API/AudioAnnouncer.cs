@@ -14,8 +14,9 @@ namespace GreyAnnouncer.AnnouncerAPI;
 
 public class AudioAnnouncer
 {
-    public AnnouncerMapping _jsonSetting;
-    private string _jsonName;
+    public AnnouncerConfig _announcerConfig;
+    private string _announcerConfigJsonName;
+    private string _announcerConfigPathSetJsonName;
     private    IAudioLoader            _audioLoader;
     private    ICooldownManager        _cooldownManager;
     private Dictionary<string, string> _displayNameMapping;
@@ -29,10 +30,10 @@ public class AudioAnnouncer
         this._audioLoader = audioLoader;
         this._cooldownManager = cooldownManager;
         this._displayNameMapping = displayNameMapping;
-        this._jsonName = jsonName;
-        this._jsonSetting = JsonInitialization(jsonName, _displayNameMapping);
+        this._announcerConfigJsonName = jsonName;
+        this._announcerConfig = AnnouncerConfigInitialization(jsonName, _displayNameMapping);
 
-        _audioLoader.UpdateJsonSetting(_jsonSetting);
+        _audioLoader.UpdateAnnouncerConfig(_announcerConfig);
         LogManager.LogInfo("Starting to find available audio asynchronously.");
         _ = _audioLoader.FindAvailableAudioAsync();
 
@@ -51,7 +52,7 @@ public class AudioAnnouncer
                 return;
                 
             if (await PlayAudioClip(category, BepInExConfig.audioPlayOptions.Value))
-                SetCooldown(category, _jsonSetting.CategoryAudioMap[category].Cooldown);
+                SetCooldown(category, _announcerConfig.CategoryAudioMap[category].Cooldown);
         }
         catch (Exception ex)
         {
@@ -62,14 +63,14 @@ public class AudioAnnouncer
     /// <summary>Will Play a random audio in the belong category by jsonSetting mapping via index</summary>
     public async Task PlayAudioViaIndex(int index)
     {
-        await PlayAudioViaCategory(_jsonSetting.CategoryAudioMap.Keys.ToArray()[index]);
+        await PlayAudioViaCategory(_announcerConfig.CategoryAudioMap.Keys.ToArray()[index]);
     }
 
     /// <summary>Reload Audio, only works when using Preload and Play options</summary>
     public void ReloadAudio()
     {
-        this._jsonSetting = JsonInitialization(_jsonName, _displayNameMapping);
-        _audioLoader.UpdateJsonSetting(_jsonSetting);
+        this._announcerConfig = AnnouncerConfigInitialization(_announcerConfigJsonName, _displayNameMapping);
+        _audioLoader.UpdateAnnouncerConfig(_announcerConfig);
         _ = _audioLoader.FindAvailableAudioAsync();
     }
 
@@ -80,11 +81,11 @@ public class AudioAnnouncer
         _cooldownManager.ResetCooldowns();
     }
 
-    public void UpdateJsonSetting(AnnouncerMapping newSetting)
+    public void UpdateJsonSetting(AnnouncerConfig newSetting)
     {
-        _jsonSetting = newSetting;
-        _audioLoader.UpdateJsonSetting(_jsonSetting);
-        JsonManager.WriteJson(_jsonName, _jsonSetting);
+        _announcerConfig = newSetting;
+        _audioLoader.UpdateAnnouncerConfig(_announcerConfig);
+        JsonManager.WriteJson(_announcerConfigJsonName, _announcerConfig);
     }
 
     /// <summary>Clear audioclip in audioloader, only works when using Preload and Play options</summary>
@@ -124,7 +125,7 @@ public class AudioAnnouncer
             return false;
         }
 
-        LogManager.LogInfo($"category : {sound.category}, Pitch : {sound.Pitch[0]}, {sound.Pitch[1]}, Cooldown : {_jsonSetting.CategoryAudioMap[category].Cooldown}");
+        LogManager.LogDebug($"category : {sound.category}, Pitch : {sound.Pitch[0]}, {sound.Pitch[1]}, Cooldown : {_announcerConfig.CategoryAudioMap[category].Cooldown}");
 
         AudioDispatcher.SendClipToAudioSource(sound, audioPlayOptions);
 
@@ -148,8 +149,8 @@ public class AudioAnnouncer
         }
 
 
-        if (_audioLoader.jsonSetting.CategoryAudioMap.Keys == null
-            || !_audioLoader.jsonSetting.CategoryAudioMap.Keys.Contains(category))
+        if (_audioLoader.announcerConfig.CategoryAudioMap.Keys == null
+            || !_audioLoader.announcerConfig.CategoryAudioMap.Keys.Contains(category))
         {
             return ValidationState.InvalidKey;
         }
@@ -161,7 +162,7 @@ public class AudioAnnouncer
         }
 
 
-        if (!_jsonSetting.CategoryAudioMap[category].Enabled)
+        if (!_announcerConfig.CategoryAudioMap[category].Enabled)
         {
             return ValidationState.DisabledByConfig;
         }
@@ -169,7 +170,7 @@ public class AudioAnnouncer
         return ValidationState.Success;
     }
 
-    private static AnnouncerMapping JsonInitialization(string jsonName, Dictionary<string, string> displayNameMapping)
+    private static AnnouncerConfig AnnouncerConfigInitialization(string jsonName, Dictionary<string, string> displayNameMapping)
     {
         if (File.Exists(PathManager.GetCurrentPluginPath(jsonName)) == false)
         {
@@ -181,9 +182,9 @@ public class AudioAnnouncer
                     AudioFiles = new List<string> { cat }
                 }
             );
-            var jsonSetting = new AnnouncerMapping { CategoryAudioMap = audioDict };
+            var jsonSetting = new AnnouncerConfig { CategoryAudioMap = audioDict };
             JsonManager.CreateJson(jsonName, jsonSetting);
         }
-        return JsonManager.ReadJson<AnnouncerMapping>(jsonName);
+        return JsonManager.ReadJson<AnnouncerConfig>(jsonName);
     }
 }
