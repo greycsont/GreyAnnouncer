@@ -36,7 +36,7 @@ public class Plugin : BaseUnityPlugin
 
     private void LoadOptionalModule()
     {
-        CheckPluginLoaded(PluginDependencies.PLUGINCONFIGURATOR_GUID, "greycsont.GreyAnnouncer.PluginConfiguratorEntry");
+        CheckPluginLoaded();
         RankAnnouncer.RankAnnouncer.Initialize();
     }
 
@@ -46,7 +46,7 @@ public class Plugin : BaseUnityPlugin
         _harmony.PatchAll();
     }
 
-    private void CheckPluginLoaded(string GUID, string assemblyName)
+    private void CheckPluginLoaded()
     {
         PluginDependencies.LoadIfPluginExists(
             PluginDependencies.PLUGINCONFIGURATOR_GUID,

@@ -29,12 +29,12 @@ public static class RegisterRankAnnouncerPagev2
             panel,
             "Audio Path",
             GuidPrefixAdder.AddPrefixToGUID("AudioPath", _title),
-            _announcer._jsonSetting.AudioPath
+            _announcer._announcerConfig.AudioPath
         );
         audioPathField.defaultValue = PathManager.GetCurrentPluginPath();
         audioPathField.onValueChange += e =>
         {
-            _announcer._jsonSetting.AudioPath = e.value;
+            _announcer._announcerConfig.AudioPath = e.value;
             SomethingAfterUpdateJson();
         };
 
@@ -42,23 +42,23 @@ public static class RegisterRankAnnouncerPagev2
             panel,
             "Randomize Audio On Play",
             GuidPrefixAdder.AddPrefixToGUID("RandomizeAudioOnPlay", _title),
-            _announcer._jsonSetting.RandomizeAudioOnPlay
+            _announcer._announcerConfig.RandomizeAudioOnPlay
         );
         randomizeAudioField.defaultValue = false;
         randomizeAudioField.onValueChange += e =>
         {
-            _announcer._jsonSetting.RandomizeAudioOnPlay = e.value;
+            _announcer._announcerConfig.RandomizeAudioOnPlay = e.value;
             SomethingAfterUpdateJson();
         };
 
 
-        foreach (var category in _announcer._jsonSetting.CategoryAudioMap)
+        foreach (var category in _announcer._announcerConfig.CategoryAudioMap)
         {
             var field = CreateEnabledField(
                 panel,
                 category.Value.DisplayName,
                 category.Key,
-                _announcer._jsonSetting,
+                _announcer._announcerConfig,
                 true
             );
         }
@@ -66,26 +66,26 @@ public static class RegisterRankAnnouncerPagev2
         ConfigHeader volumeHeader = new ConfigHeader(panel, "Volume Settings");
         volumeHeader.textColor = new UnityEngine.Color(0f, 1f, 1f, 1f);
 
-        foreach (var category in _announcer._jsonSetting.CategoryAudioMap)
+        foreach (var category in _announcer._announcerConfig.CategoryAudioMap)
         {
             var field = CreateVolumeField(
                 panel,
                 category.Value.DisplayName,
                 category.Key,
-                _announcer._jsonSetting,
+                _announcer._announcerConfig,
                 1
             );
         }
 
         ConfigHeader cooldownHeader = new ConfigHeader(panel, "Volume Settings");
         cooldownHeader.textColor = new UnityEngine.Color(0f, 1f, 1f, 1f);
-        foreach (var category in _announcer._jsonSetting.CategoryAudioMap)
+        foreach (var category in _announcer._announcerConfig.CategoryAudioMap)
         {
             var field = CreateCooldownField(
                 panel,
                 category.Value.DisplayName,
                 category.Key,
-                _announcer._jsonSetting,
+                _announcer._announcerConfig,
                 3.0f
             );
         } 
@@ -93,13 +93,13 @@ public static class RegisterRankAnnouncerPagev2
         ConfigHeader pitchMinHeader = new ConfigHeader(panel, "Pitch Min");
         pitchMinHeader.textColor = new UnityEngine.Color(1f, 0.6f, 0.2f, 1f);
         
-        foreach (var category in _announcer._jsonSetting.CategoryAudioMap)
+        foreach (var category in _announcer._announcerConfig.CategoryAudioMap)
         {
             var field = CreatePitchMinField(
                 panel,
                 category.Value.DisplayName,
                 category.Key,
-                _announcer._jsonSetting,
+                _announcer._announcerConfig,
                 1
             );
         } 
@@ -107,13 +107,13 @@ public static class RegisterRankAnnouncerPagev2
         ConfigHeader pitchMaxHeader = new ConfigHeader(panel, "Pitch Max");
         pitchMaxHeader.textColor = new UnityEngine.Color(1f, 0.6f, 0.2f, 1f);
         
-        foreach (var category in _announcer._jsonSetting.CategoryAudioMap)
+        foreach (var category in _announcer._announcerConfig.CategoryAudioMap)
         {
             var field = CreatePitchMaxField(
                 panel,
                 category.Value.DisplayName,
                 category.Key,
-                _announcer._jsonSetting,
+                _announcer._announcerConfig,
                 1
             );
         } 
@@ -122,7 +122,7 @@ public static class RegisterRankAnnouncerPagev2
     private static BoolField CreateEnabledField(ConfigPanel panel,
                                                 string label,
                                                 string guid,
-                                                AnnouncerMapping jsonSetting,
+                                                AnnouncerConfig jsonSetting,
                                                 bool defaultValue)
     {
         var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid, "Enabled");
@@ -145,7 +145,7 @@ public static class RegisterRankAnnouncerPagev2
     private static FloatField CreateVolumeField(ConfigPanel panel,
                                              string label,
                                              string guid,
-                                             AnnouncerMapping jsonSetting,
+                                             AnnouncerConfig jsonSetting,
                                              float defaultValue)
     {
         var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid, "VolumeMultiplier");
@@ -167,7 +167,7 @@ public static class RegisterRankAnnouncerPagev2
     private static FloatSliderField CreatePitchMinField(ConfigPanel panel,
                                                      string label,
                                                      string guid,
-                                                     AnnouncerMapping jsonSetting,
+                                                     AnnouncerConfig jsonSetting,
                                                      float defaultValue)
     {
         var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid, "PitchMin");
@@ -190,7 +190,7 @@ public static class RegisterRankAnnouncerPagev2
     private static FloatSliderField CreatePitchMaxField(ConfigPanel panel,
                                                      string label,
                                                      string guid,
-                                                     AnnouncerMapping jsonSetting,
+                                                     AnnouncerConfig jsonSetting,
                                                      float defaultValue)
     {
         var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid, "PitchMax");
@@ -213,7 +213,7 @@ public static class RegisterRankAnnouncerPagev2
     private static FloatSliderField CreateCooldownField(ConfigPanel panel,
                                                      string label,
                                                      string guid,
-                                                     AnnouncerMapping jsonSetting,
+                                                     AnnouncerConfig jsonSetting,
                                                      float defaultValue)
     {
         var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid, "Cooldown");
@@ -235,7 +235,7 @@ public static class RegisterRankAnnouncerPagev2
     
     private static void SomethingAfterUpdateJson()
     {
-        _announcer.UpdateJsonSetting(_announcer._jsonSetting);
+        _announcer.UpdateJsonSetting(_announcer._announcerConfig);
         LogManager.LogInfo($"Updated json setting for {_title}");
     }
 
