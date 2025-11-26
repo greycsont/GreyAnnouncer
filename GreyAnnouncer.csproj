@@ -98,12 +98,9 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <ManagedDir>E:\SteamLibrary\steamapps\common\ULTRAKILL\ULTRAKILL_Data\Managed</ManagedDir>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <!--<OutputPath>$(SolutionDir)BuildOutput\</OutputPath>-->
-    <OutputPath>E:\SteamLibrary\steamapps\common\ULTRAKILL\BepInEx\plugins\GreyAnnouncer</OutputPath>
+    <ULTRAKILLDir>E:\SteamLibrary\steamapps\common\ULTRAKILL</ULTRAKILLDir>
+    <ManagedDir>$(ULTRAKILLDir)\ULTRAKILL_Data\Managed</ManagedDir>
+    <OutputPath>$(ULTRAKILLDir)\BepInEx\plugins\GreyAnnouncer</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 	

@@ -22,7 +22,7 @@ public static class RankAnnouncer
 
     private static AudioAnnouncer _announcer;
     private static readonly string _jsonName = "RankAnnouncer.json";
-    private static readonly string _pageTitle = "Rank Announcer";
+    private static readonly string _title = "RankAnnouncer";
 
     public static void Initialize()
     {
@@ -30,11 +30,11 @@ public static class RankAnnouncer
             new AudioLoader(),
             new CooldownManager(_displayNameMapping.Keys.ToArray()),
             _displayNameMapping,
-            _jsonName
+            _jsonName,
+            _title
         );
 
         SubscribeAnnouncerManager();
-        PluginConfigPanelInitialization(_pageTitle, _announcer);
     }
 
     public static void PlayRankSound(int rank)
@@ -66,9 +66,4 @@ public static class RankAnnouncer
         _announcer.ClearAudioClipsCache();
     }
     #endregion
-
-    private static void PluginConfigPanelInitialization(string announcerName, AudioAnnouncer audioAnnouncer)
-    {
-        RegisterRankAnnouncerPagev2.Build(announcerName, audioAnnouncer);
-    }
 }

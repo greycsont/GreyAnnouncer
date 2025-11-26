@@ -3,7 +3,7 @@
 namespace GreyAnnouncer.Commands;
 
 
-public static class CommandExecutor
+public static class CommandPreset
 {
     public static void ExecuteCommand(params string[] args)
     {
