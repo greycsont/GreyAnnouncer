@@ -148,6 +148,11 @@ v1.1.0/v1.1.1 was licensed under AGPL+PostgreSQL.
 ---                     
 Copyleft (c) 2025 greycsont, all rights reserved
 
+## Shitpost collection
+- Pausing is cheating
+
+- In this world there's only two key sets, one is jack, another one is a bit tilted jack.
+
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 

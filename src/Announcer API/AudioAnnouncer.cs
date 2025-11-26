@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using GreyAnnouncer.AudioSourceComponent;
+using GreyAnnouncer.PluginConfiguratorGUI;
 using GreyAnnouncer;
 using GameConsole.pcon;
 
@@ -17,6 +18,7 @@ public class AudioAnnouncer
     public AnnouncerConfig _announcerConfig;
     private string _announcerConfigJsonName;
     private string _announcerConfigPathSetJsonName;
+    public string title;
     private    IAudioLoader            _audioLoader;
     private    ICooldownManager        _cooldownManager;
     private Dictionary<string, string> _displayNameMapping;
@@ -24,18 +26,25 @@ public class AudioAnnouncer
     public AudioAnnouncer(IAudioLoader audioLoader,
                            ICooldownManager cooldownManager,
                            Dictionary<string, string> displayNameMapping,
-                           string jsonName)
+                           string jsonName,
+                           string title)
     {
         LogManager.LogInfo($"Initializing AudioAnnouncer {jsonName}");
         this._audioLoader = audioLoader;
         this._cooldownManager = cooldownManager;
         this._displayNameMapping = displayNameMapping;
         this._announcerConfigJsonName = jsonName;
+        this.title = title;
+        
         this._announcerConfig = AnnouncerConfigInitialization(jsonName, _displayNameMapping);
 
         _audioLoader.UpdateAnnouncerConfig(_announcerConfig);
         LogManager.LogInfo("Starting to find available audio asynchronously.");
         _ = _audioLoader.FindAvailableAudioAsync();
+
+        AnnouncerManager.AddAnnouncer(this);
+
+        RegisterRankAnnouncerPagev2.Build(title, this);
 
     }
     
