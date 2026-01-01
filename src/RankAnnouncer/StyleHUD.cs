@@ -22,7 +22,7 @@ public static class StyleHUDPatcher
     }
 
     [HarmonyPostfix]
-    [HarmonyPatch(nameof(StyleHUD.ComboStart))] // For non-D ranks
+    [HarmonyPatch(nameof(StyleHUD.ComboStart))] // For D ranks
     public static void GetDrank(StyleHUD __instance)
     {
         var rank = __instance.rankIndex;
@@ -64,5 +64,5 @@ public static class StyleHUDUpdateMeter_Patch
     {
         return Traverse.Create(instance).Field("currentMeter").GetValue<float>();
     }
-}*/    
+}*/
 

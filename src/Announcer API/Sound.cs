@@ -19,11 +19,17 @@ public class Sound
         this.clip = clip;
         this.Volume = volume;
 
+        this.Pitch = new[] { pitch[0], pitch[1] };
+        if (this.Pitch[0] > this.Pitch[1])
+        {
+            float temp = this.Pitch[0];
+            this.Pitch[0] = this.Pitch[1];
+            this.Pitch[1] = temp;
+        }
         /* RIP fk float
          * pitch[0] ^= pitch[1];
          * pitch[1] ^= pitch[0];
          * pitch[0] ^= pitch[1]; 
          */
-        this.Pitch = new[] { Mathf.Min(pitch[0], pitch[1]), Mathf.Max(pitch[0], pitch[1]) };
     }
 }

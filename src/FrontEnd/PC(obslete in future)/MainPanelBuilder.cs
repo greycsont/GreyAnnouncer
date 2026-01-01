@@ -15,14 +15,14 @@ namespace GreyAnnouncer.PluginConfiguratorGUI;
 
 public static class MainPanelBuilder
 {
-    private static readonly Color               m_greyColour   = new UnityEngine.Color(0.85f, 0.85f, 0.85f, 1f);
-    private static readonly Color               m_CyanColour   = new UnityEngine.Color(0f, 1f, 1f, 1f);
-    private static readonly Color               m_OrangeColour = new UnityEngine.Color(1f, 0.6f, 0.2f, 1f);
-    private static readonly Color               m_RedColour    = new UnityEngine.Color(1f, 0f, 0f, 1f);
-    private static          PluginConfigurator  m_pluginConfigurator;
-    public static           ConfigHeader        logHeader;
+    private static readonly Color m_greyColour = new UnityEngine.Color(0.85f, 0.85f, 0.85f, 1f);
+    private static readonly Color m_CyanColour = new UnityEngine.Color(0f, 1f, 1f, 1f);
+    private static readonly Color m_OrangeColour = new UnityEngine.Color(1f, 0.6f, 0.2f, 1f);
+    private static readonly Color m_RedColour = new UnityEngine.Color(1f, 0f, 0f, 1f);
+    private static PluginConfigurator m_pluginConfigurator;
+    public static ConfigHeader logHeader;
 
-    private static          ConfigPanel         advancedPanel;
+    private static ConfigPanel advancedPanel;
 
     public static void Build(PluginConfigurator config)
     {
@@ -34,12 +34,6 @@ public static class MainPanelBuilder
         CreateAnnouncerSection();
 
         CreateDelegateTextFromBackEnd();
-
-        var testButton = new ButtonField(m_pluginConfigurator.rootPanel, "testButton", "testButton");
-        testButton.onClick += () =>
-        {
-            AssetBundleUI.CreateUI();
-        };
     }
 
     private static void CreateMainSettingSectionTitle()
@@ -57,7 +51,7 @@ public static class MainPanelBuilder
 
         var volumeSlider = new FloatSliderField(
             m_pluginConfigurator.rootPanel,
-            "Audio Volume",
+            "Master Volume",
             "Audio_Volume",
             Tuple.Create(0f, 1f),
             BepInExConfig.audioSourceVolume.Value,
