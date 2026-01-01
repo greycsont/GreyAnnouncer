@@ -1,4 +1,6 @@
 using System;
+using System.Reflection;
+using UnityEngine;
 
 public struct AudioSourceSetting
 {
@@ -17,4 +19,3 @@ public struct AudioSourceSetting
         Tags         = Array.Empty<string>()
     };
 }
-   

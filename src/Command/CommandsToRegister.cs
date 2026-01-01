@@ -15,16 +15,11 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
 
     public override Branch BuildTree(Console con)
     {
-        var mainSettingBranches = GetMainSettingBranches();
-
-        var utilBranches = GetUtilBranches();
-
-        var announcerBranches = GetAnnouncerBranches();
-
         return Branch(Name,
-                      mainSettingBranches,
-                      utilBranches,
-                      announcerBranches
+                      GetMainSettingBranches(),
+                      GetUtilBranches(),
+                      GetAnnouncerBranches(),
+                      GetTestBranches()
                       );
     }
 
@@ -88,6 +83,13 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
         return Branch("util",
                       Leaf("reloadannouncers", () => AnnouncerManager.ReloadAllAnnouncers()),
                       Leaf("stopallaudiosources", () => AudioSourceManager.StopAllAudioSource())
+                      );
+    }
+
+    private Branch GetTestBranches()
+    {
+        return Branch("test",
+                      Leaf("opennewui", () => AssetBundleUI.CreateUI())
                       );
     }
 

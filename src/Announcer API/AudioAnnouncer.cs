@@ -4,12 +4,9 @@ using System.Linq;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using UnityEngine;
 
 using GreyAnnouncer.AudioSourceComponent;
 using GreyAnnouncer.PluginConfiguratorGUI;
-using GreyAnnouncer;
-using GameConsole.pcon;
 
 namespace GreyAnnouncer.AnnouncerAPI;
 
@@ -19,8 +16,8 @@ public class AudioAnnouncer
     private string _announcerConfigJsonName;
     private string _announcerConfigPathSetJsonName;
     public string title;
-    private    IAudioLoader            _audioLoader;
-    private    ICooldownManager        _cooldownManager;
+    private IAudioLoader _audioLoader;
+    private ICooldownManager _cooldownManager;
     private Dictionary<string, string> _displayNameMapping;
 
     public AudioAnnouncer(IAudioLoader audioLoader,
@@ -35,22 +32,22 @@ public class AudioAnnouncer
         this._displayNameMapping = displayNameMapping;
         this._announcerConfigJsonName = jsonName;
         this.title = title;
-        
+
         this._announcerConfig = AnnouncerConfigInitialization(jsonName, _displayNameMapping);
 
         _audioLoader.UpdateAnnouncerConfig(_announcerConfig);
         LogManager.LogInfo("Starting to find available audio asynchronously.");
         _ = _audioLoader.FindAvailableAudioAsync();
 
-        AnnouncerManager.AddAnnouncer(this);
+        SubscribeAnnouncerManager();
 
         RegisterRankAnnouncerPagev2.Build(title, this);
 
     }
-    
+
     [Description("Parry balls of Maurice -> Hit Maurice -> AscendingRank() -> Postfix() -> PlaySound() -> CheckPlayValidation(), " +
                  "This error will skip all the function before CheckPlayValidation(), That's why try-catch has implemented in the fucntion")]
-                 
+
     /// <summary>Will Play a random audio in the belong category</summary>
     public async Task PlayAudioViaCategory(string category)
     {
@@ -59,7 +56,7 @@ public class AudioAnnouncer
         {
             if (!ValidateAndLogPlayback(category))
                 return;
-                
+
             if (await PlayAudioClip(category, BepInExConfig.audioPlayOptions.Value))
                 SetCooldown(category, _announcerConfig.CategoryAudioMap[category].Cooldown);
         }
@@ -195,5 +192,19 @@ public class AudioAnnouncer
             JsonManager.CreateJson(jsonName, jsonSetting);
         }
         return JsonManager.ReadJson<AnnouncerConfig>(jsonName);
+    }
+
+    private void SubscribeAnnouncerManager()
+    {
+        AnnouncerManager.reloadAnnouncer += ReloadAudio;
+        AnnouncerManager.resetCooldown += ResetCooldown;
+        AnnouncerManager.clearAudioClipCache += ClearAudioClipsCache;
+
+        AnnouncerManager.AddAnnouncer(this);
+    }
+
+    public void ChangeAnnouncerConfig(int index)
+    {
+
     }
 }

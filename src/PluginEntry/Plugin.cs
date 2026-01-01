@@ -4,6 +4,7 @@ using HarmonyLib;
 
 using GreyAnnouncer.RankAnnouncer;
 using GreyAnnouncer.Commands;
+using System;
 
 
 /* The StyleHUD.cs in the HarmonyPatches folder is the starting point of the whole sequence of announcer 
@@ -44,6 +45,7 @@ public class Plugin : BaseUnityPlugin
     {
         _harmony = new Harmony(PluginInfo.PLUGIN_GUID + ".harmony");
         _harmony.PatchAll();
+
     }
 
     private void CheckPluginLoaded()
