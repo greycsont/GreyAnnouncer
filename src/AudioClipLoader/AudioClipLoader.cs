@@ -2,8 +2,6 @@ using System.IO;
 using UnityEngine;
 using System;
 using System.Threading.Tasks;
-using UnityEngine.Networking;
-using System.Diagnostics;
 
 using GreyAnnouncer.Setting;
 

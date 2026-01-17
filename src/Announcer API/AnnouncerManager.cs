@@ -6,10 +6,15 @@ namespace GreyAnnouncer.AnnouncerAPI;
 public static class AnnouncerManager
 {
     public static List<AudioAnnouncer> announcers = new List<AudioAnnouncer>();
-    public  static Action reloadAnnouncer;
-    public  static Action resetCooldown;
-    public  static Action clearAudioClipCache;            
-    public  static long   playRequestId  = 0;
+
+    public static Action reloadAnnouncer;
+
+    public static Action resetCooldown;
+
+    public static Action clearAudioClipCache;      
+
+    public static long playRequestId  = 0;
+
 
     #region Public Methods
     public static List<AudioAnnouncer> GetAllAnnouncers()

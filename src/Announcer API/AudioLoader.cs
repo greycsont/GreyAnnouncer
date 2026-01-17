@@ -24,7 +24,7 @@ namespace GreyAnnouncer.AnnouncerAPI;
 
 public class AudioLoader : IAudioLoader
 {
-    public        AnnouncerConfig                announcerConfig           { get; set; }
+    public        AnnouncerConfig                     announcerConfig           { get; set; }
     public        HashSet<string>                     categoryFailedLoading { get; private set; } = new HashSet<string>();
     private       Dictionary<string, List<AudioClip>> _audioClips                                 = new Dictionary<string, List<AudioClip>>();
     public static Action<string>                      onPluginConfiguratorLogUpdated;
@@ -74,7 +74,7 @@ public class AudioLoader : IAudioLoader
             return null;
         }
 
-        Sound sound = new Sound(category, clip, announcerConfig.CategoryAudioMap[category].VolumeMultiplier, announcerConfig.CategoryAudioMap[category].Pitch);
+        Sound sound = new Sound(category, clip, announcerConfig.CategoryAudioMap[category].VolumeMultiplier);
 
         return sound;
     }

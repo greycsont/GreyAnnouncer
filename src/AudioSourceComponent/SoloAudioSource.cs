@@ -54,7 +54,6 @@ public sealed class SoloAudioSource : MonoBehaviour
         audioSource.spatialBlend = sound.SpatialBlend;
         audioSource.priority = sound.Priority;
         audioSource.volume = Mathf.Clamp01(BepInExConfig.audioSourceVolume.Value * sound.Volume);
-        audioSource.pitch = UnityEngine.Random.Range(sound.Pitch[0], sound.Pitch[1]);
         audioSource.clip = sound.clip;
         audioSource = UnderwaterController_inWater_Instance.GetAudioSourceWithLowPassFilter(_audioSource);
 

@@ -1,8 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using GreyAnnouncer.AudioSourceComponent;
-
-using GreyAnnouncer.AnnouncerAPI;
 
 namespace GreyAnnouncer.AudioSourceComponent;
 
@@ -14,7 +11,6 @@ public static class AudioSourceManager
         audioSource.spatialBlend = sound.SpatialBlend;
         audioSource.priority     = sound.Priority;
         audioSource.volume       = sound.Volume < 1f ? sound.Volume : 1f;
-        audioSource.pitch        = UnityEngine.Random.Range(sound.Pitch[0], sound.Pitch[1]);
         audioSource.clip         = sound.clip;
         //audioSource.outputAudioMixerGroup = null;
         return audioSource;

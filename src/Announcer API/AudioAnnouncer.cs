@@ -14,11 +14,17 @@ namespace GreyAnnouncer.AnnouncerAPI;
 public class AudioAnnouncer
 {
     public AnnouncerConfig _announcerConfig;
+
     private string _announcerConfigJsonName;
+
     public string title;
+
     private IAudioLoader _audioLoader;
+
     private ICooldownManager _cooldownManager;
+
     private Dictionary<string, string> _displayNameMapping;
+    
 
     public AudioAnnouncer(IAudioLoader audioLoader,
                            ICooldownManager cooldownManager,
@@ -131,9 +137,9 @@ public class AudioAnnouncer
             return false;
         }
 
-        LogManager.LogDebug($"category : {sound.category}, Pitch : {sound.Pitch[0]}, {sound.Pitch[1]}, Cooldown : {_announcerConfig.CategoryAudioMap[category].Cooldown}");
+        LogManager.LogDebug($"category : {sound.category}, Cooldown : {_announcerConfig.CategoryAudioMap[category].Cooldown}");
 
-        AudioDispatcher.SendClipToAudioSource(sound, audioPlayOptions);
+        SoundDispatcher.SendClipToAudioSource(sound, audioPlayOptions);
 
         return true;
 

@@ -4,7 +4,7 @@ using GreyAnnouncer.AnnouncerAPI;
 
 namespace GreyAnnouncer.AudioSourceComponent;
 
-public static class AudioDispatcher
+public static class SoundDispatcher
 {
     public static void SendClipToAudioSource(Sound sound,
                                              int flag)
