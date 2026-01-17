@@ -148,7 +148,7 @@ public static class RegisterRankAnnouncerPagev2
     private static void SomethingAfterUpdateJson()
     {
         _announcer.UpdateJsonSetting(_announcer._announcerConfig);
-        LogManager.LogInfo($"Updated json setting for {_title}");
+        LogManager.LogInfo($"Updated announcer config for {_title}");
     }
 
     private static readonly Color HeaderColor = new Color(0.85f, 0.85f, 0.85f, 1f);

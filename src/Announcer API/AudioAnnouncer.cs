@@ -16,8 +16,6 @@ public class AudioAnnouncer
 {
     public AnnouncerConfig _announcerConfig;
 
-    private string _announcerConfigJsonName = "RankAnnouncer.json";
-
     public string title;
 
     private IAudioLoader _audioLoader;
@@ -26,7 +24,7 @@ public class AudioAnnouncer
 
     private List<string> category;
 
-    private string iniPath = PathManager.GetCurrentPluginPath("announcer.ini");
+    private string iniPath = PathManager.GetCurrentPluginPath("config.ini");
 
 
     public AudioAnnouncer(IAudioLoader audioLoader,
@@ -39,13 +37,9 @@ public class AudioAnnouncer
         this.category = displayNameMapping;
         this.title = title;
 
-        this._announcerConfig = AnnouncerConfigInitialization(category);
+        this._announcerConfig = AnnouncerConfigIniInitialization(category);
 
         _audioLoader.UpdateAnnouncerConfig(_announcerConfig);
-
-        WriteConfigToIni();
-
-        ReadConfigFromIni();
 
         LogManager.LogInfo("Starting to find available audio asynchronously.");
         _ = _audioLoader.FindAvailableAudioAsync();
@@ -86,7 +80,7 @@ public class AudioAnnouncer
     /// <summary>Reload Audio, only works when using Preload and Play options</summary>
     public void ReloadAudio()
     {
-        this._announcerConfig = AnnouncerConfigInitialization(category);
+        this._announcerConfig = AnnouncerConfigIniInitialization(category);
         _audioLoader.UpdateAnnouncerConfig(_announcerConfig);
         _ = _audioLoader.FindAvailableAudioAsync();
     }
@@ -100,7 +94,7 @@ public class AudioAnnouncer
     {
         _announcerConfig = newSetting;
         _audioLoader.UpdateAnnouncerConfig(_announcerConfig);
-        JsonManager.WriteJson(_announcerConfigJsonName, _announcerConfig);
+        WriteConfigToIni(_announcerConfig);
     }
 
     /// <summary>Clear audioclip in audioloader, only works when using Preload and Play options</summary>
@@ -180,23 +174,6 @@ public class AudioAnnouncer
         return ValidationState.Success;
     }
 
-    private AnnouncerConfig AnnouncerConfigInitialization(List<string> category)
-    {
-        if (File.Exists(PathManager.GetCurrentPluginPath(_announcerConfigJsonName)) == false)
-        {
-            var audioDict = category.ToDictionary(
-                cat => cat,
-                cat => new CategorySetting
-                {
-                    AudioFiles = new List<string> { cat }
-                }
-            );
-            var jsonSetting = new AnnouncerConfig { CategoryAudioMap = audioDict };
-            JsonManager.CreateJson(_announcerConfigJsonName, jsonSetting);
-        }
-        return JsonManager.ReadJson<AnnouncerConfig>(_announcerConfigJsonName);
-    }
-
     private void SubscribeAnnouncerManager()
     {
         AnnouncerManager.reloadAnnouncer += ReloadAudio;
@@ -206,22 +183,40 @@ public class AudioAnnouncer
         AnnouncerManager.AddAnnouncer(this);
     }
 
-    private void WriteConfigToIni()
+    private AnnouncerConfig AnnouncerConfigIniInitialization(List<string> category)
+    {
+        if (File.Exists(iniPath) == false)
+        {
+            var audioDict = category.ToDictionary(
+                cat => cat,
+                cat => new CategorySetting
+                {
+                    AudioFiles = new List<string> { cat }
+                }
+            );
+            var announcerConfig = new AnnouncerConfig { CategoryAudioMap = audioDict };
+            WriteConfigToIni(announcerConfig);
+        }
+
+        return ReadConfigFromIni();
+    }
+
+    private void WriteConfigToIni(AnnouncerConfig announcerConfig)
     {
         var doc = new IniDocument();
-        doc = IniMapper.ToIni(doc, _announcerConfig, "General"); // 写 General
-        foreach (var pair in _announcerConfig.CategoryAudioMap)
+        doc = IniMapper.ToIni(doc, announcerConfig, "General"); // 写 General
+        foreach (var pair in announcerConfig.CategoryAudioMap)
         {
             doc = IniMapper.ToIni(doc, pair.Value, $"Category:{pair.Key}");
         }
         IniWriter.Write(iniPath, doc);
     }
 
-    private void ReadConfigFromIni()
+    private AnnouncerConfig ReadConfigFromIni()
     {
         var announcerConfig = new AnnouncerConfig();
         if (!File.Exists(iniPath))
-            return;
+            return null;
         var doc = IniReader.Read(iniPath); // 假设你有 IniReader.Read 返回 IniDocument
 
         // 读取 General
@@ -235,14 +230,6 @@ public class AudioAnnouncer
             var categoryConfig = IniMapper.FromIni<CategorySetting>(doc, key);
             announcerConfig.CategoryAudioMap[categoryName] = categoryConfig;
         }
-
-        ObjectTreePrinter.GetTreeString(announcerConfig);
-
-    }
-
-
-    public void ChangeAnnouncerConfig(int index)
-    {
-
+        return announcerConfig;
     }
 }

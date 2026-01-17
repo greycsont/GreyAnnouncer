@@ -160,8 +160,8 @@ public class AudioLoader : IAudioLoader
     #region Public API
     public async Task FindAvailableAudioAsync()
     {
-        if (BepInExConfig.audioLoadingOptions.Value == 0) return;
         ClearCache();
+        if (BepInExConfig.audioLoadingOptions.Value == 0) return;
         FileSystemUtil.ValidateAndPrepareDirectory(announcerConfig.AudioPath);
         await LoadAllCategoriesAsync();
         LogLoadingResults();
@@ -170,6 +170,7 @@ public class AudioLoader : IAudioLoader
     public void UpdateAnnouncerConfig(AnnouncerConfig newAnnouncerConfig)
     {
         this.announcerConfig = newAnnouncerConfig;
+        _ = FindAvailableAudioAsync();
     }
 
     public void ClearCache()
