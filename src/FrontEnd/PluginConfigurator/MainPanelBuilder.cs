@@ -112,9 +112,9 @@ public static class MainPanelBuilder
         var audioButtonArray = new ButtonArrayField(
             m_pluginConfigurator.rootPanel,
             "audio_button_array",
-            3,
+            2,
             new float[] { 0.5f, 0.5f },
-            new string[] { "Open Audio Folder", "Reload", "Advance" }
+            new string[] { "Reload", "Advance" }
         );
         audioButtonArray.OnClickEventHandler(0).onClick += () 
             => AnnouncerManager.ReloadAllAnnouncers();

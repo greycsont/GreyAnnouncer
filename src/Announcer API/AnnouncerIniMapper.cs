@@ -11,7 +11,7 @@ public static class AnnouncerIniMapper
     {
         var config = new AnnouncerConfig
         {
-            CategoryAudioMap = new Dictionary<string, CategoryAudioSetting>()
+            CategoryAudioMap = new Dictionary<string, CategorySetting>()
         };
 
         // -------- General --------
@@ -34,7 +34,7 @@ public static class AnnouncerIniMapper
             if (key.Length == 0)
                 continue;
 
-            var cat = new CategoryAudioSetting
+            var cat = new CategorySetting
             {
                 Enabled = GetBool(section, "Enabled", true),
                 VolumeMultiplier = GetFloat(section, "VolumeMultiplier", 1.0f),

@@ -12,11 +12,11 @@ public class AnnouncerConfig
     [IniKey("RandomizeAudioOnPlay")]
     public bool RandomizeAudioOnPlay { get; set; } = false;
 
-    public Dictionary<string, CategoryAudioSetting> CategoryAudioMap { get; set; }
+    public Dictionary<string, CategorySetting> CategoryAudioMap { get; set; } = new Dictionary<string, CategorySetting>();
 
 }
 
-public class CategoryAudioSetting
+public class CategorySetting
 {
     [IniKey("Enabled")]
     public bool Enabled { get; set; } = true;

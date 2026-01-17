@@ -1,5 +1,7 @@
-using System.IO;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace GreyAnnouncer.Util.Ini;
 
@@ -13,25 +15,17 @@ public static class IniReader
             return doc;
 
         IniSection currentSection = null;
-        string currentListKey = null;
 
         foreach (var rawLine in File.ReadLines(path))
         {
-            // 不 TrimStart：我们需要缩进判断
-            var line = rawLine.TrimEnd();
-
+            var line = rawLine.Trim();
             if (string.IsNullOrWhiteSpace(line))
-            {
-                currentListKey = null;
                 continue;
-            }
 
-            var trimmed = line.Trim();
-
-            // -------- Section --------
-            if (trimmed.StartsWith("[") && trimmed.EndsWith("]"))
+            // Section: [SectionName]
+            if (line.StartsWith("[") && line.EndsWith("]"))
             {
-                var sectionName = trimmed.Substring(1, trimmed.Length - 2).Trim();
+                var sectionName = line.Substring(1, line.Length - 2).Trim();
                 if (sectionName.Length == 0)
                     continue;
 
@@ -41,30 +35,23 @@ public static class IniReader
                     doc.Sections[sectionName] = currentSection;
                 }
 
-                currentListKey = null;
                 continue;
             }
 
-            // 没 section，忽略
-            if (currentSection is null)
+            // 如果还没 section，就忽略
+            if (currentSection == null)
                 continue;
 
-            // -------- List continuation --------
-            if (currentListKey != null && IsIndented(rawLine))
-            {
-                currentSection.Values[currentListKey].Add(trimmed);
-                continue;
-            }
+            // Key: Value 或 Key=Value
+            int separatorIndex = line.IndexOf(':');
+            if (separatorIndex < 0)
+                separatorIndex = line.IndexOf('=');
 
-            currentListKey = null;
-
-            // -------- Key: Value --------
-            int colonIndex = trimmed.IndexOf(':');
-            if (colonIndex <= 0)
+            if (separatorIndex <= 0)
                 continue;
 
-            var key = trimmed.Substring(0, colonIndex).Trim();
-            var value = trimmed.Substring(colonIndex + 1).Trim();
+            var key = line.Substring(0, separatorIndex).Trim();
+            var value = line.Substring(separatorIndex + 1).Trim();
 
             if (key.Length == 0)
                 continue;
@@ -75,20 +62,17 @@ public static class IniReader
                 currentSection.Values[key] = list;
             }
 
-            // 空 value → 可能是 list 起始
             if (value.Length == 0)
-            {
-                currentListKey = key;
-            }
-            else
-            {
-                list.Add(value);
-            }
+                continue;
+
+            // 用逗号拆分成多值
+            var parts = value.Split(',')
+                             .Select(x => x.Trim())
+                             .Where(x => x.Length > 0);
+
+            list.AddRange(parts);
         }
 
         return doc;
     }
-
-    private static bool IsIndented(string line)
-        => line.Length > 0 && (line[0] == ' ' || line[0] == '\t');
 }

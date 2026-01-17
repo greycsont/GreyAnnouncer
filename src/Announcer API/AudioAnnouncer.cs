@@ -26,6 +26,8 @@ public class AudioAnnouncer
 
     private List<string> category;
 
+    private string iniPath = PathManager.GetCurrentPluginPath("announcer.ini");
+
 
     public AudioAnnouncer(IAudioLoader audioLoader,
                            ICooldownManager cooldownManager,
@@ -40,15 +42,17 @@ public class AudioAnnouncer
         this._announcerConfig = AnnouncerConfigInitialization(category);
 
         _audioLoader.UpdateAnnouncerConfig(_announcerConfig);
+
+        WriteConfigToIni();
+
+        ReadConfigFromIni();
+
         LogManager.LogInfo("Starting to find available audio asynchronously.");
         _ = _audioLoader.FindAvailableAudioAsync();
 
         SubscribeAnnouncerManager();
 
         RegisterRankAnnouncerPagev2.Build(title, this);
-
-        WriteConfigToIni();
-
     }
 
     [Description("Parry balls of Maurice -> Hit Maurice -> AscendingRank() -> Postfix() -> PlaySound() -> CheckPlayValidation(), " +
@@ -182,7 +186,7 @@ public class AudioAnnouncer
         {
             var audioDict = category.ToDictionary(
                 cat => cat,
-                cat => new CategoryAudioSetting
+                cat => new CategorySetting
                 {
                     AudioFiles = new List<string> { cat }
                 }
@@ -210,8 +214,32 @@ public class AudioAnnouncer
         {
             doc = IniMapper.ToIni(doc, pair.Value, $"Category:{pair.Key}");
         }
-        IniWriter.Write(PathManager.GetCurrentPluginPath("announcer.ini"), doc);
+        IniWriter.Write(iniPath, doc);
     }
+
+    private void ReadConfigFromIni()
+    {
+        var announcerConfig = new AnnouncerConfig();
+        if (!File.Exists(iniPath))
+            return;
+        var doc = IniReader.Read(iniPath); // 假设你有 IniReader.Read 返回 IniDocument
+
+        // 读取 General
+        announcerConfig = IniMapper.FromIni<AnnouncerConfig>(doc, "General");
+
+        // 读取所有 Category: 开头的 section
+        announcerConfig.CategoryAudioMap.Clear();
+        foreach (var key in doc.Sections.Keys.Where(k => k.StartsWith("Category:")))
+        {
+            var categoryName = key.Substring("Category:".Length);
+            var categoryConfig = IniMapper.FromIni<CategorySetting>(doc, key);
+            announcerConfig.CategoryAudioMap[categoryName] = categoryConfig;
+        }
+
+        ObjectTreePrinter.GetTreeString(announcerConfig);
+
+    }
+
 
     public void ChangeAnnouncerConfig(int index)
     {
