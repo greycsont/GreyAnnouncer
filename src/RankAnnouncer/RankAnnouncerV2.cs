@@ -33,37 +33,10 @@ public static class RankAnnouncer
             _jsonName,
             _title
         );
-
-        SubscribeAnnouncerManager();
     }
 
     public static void PlayRankSound(int rank)
     {
         _ = _announcer.PlayAudioViaIndex(rank);
     }
-
-    private static void SubscribeAnnouncerManager()
-    {
-        AnnouncerManager.reloadAnnouncer     += ReloadAnnouncer;
-        AnnouncerManager.resetCooldown       += ResetCooldowns;
-        AnnouncerManager.clearAudioClipCache += ClearAudioClipCache;
-    }
-
- 
-    #region Subscription
-    private static void ReloadAnnouncer()
-    {
-        _announcer.ReloadAudio();
-    }
-
-    private static void ResetCooldowns()
-    {
-        _announcer.ResetCooldown();
-    }
-
-    private static void ClearAudioClipCache()
-    {
-        _announcer.ClearAudioClipsCache();
-    }
-    #endregion
 }
