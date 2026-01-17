@@ -54,7 +54,7 @@ public static class RegisterRankAnnouncerPagev2
 
         foreach (var category in _announcer._announcerConfig.CategoryAudioMap)
         {
-            ConfigHeader header = new ConfigHeader(panel, category.Value.DisplayName);
+            ConfigHeader header = new ConfigHeader(panel, category.Key);
             header.textColor = new Color(0,1,1);
 
             var Afield = CreateEnabledField(

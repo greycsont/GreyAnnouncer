@@ -61,7 +61,6 @@ public static class PathManager
     public static string GetFileWithExtension(string filePath, string fileName)
     {
         string searchPattern = fileName + ".*";
-        LogManager.LogDebug($"Pattern : {searchPattern}");
         string[] files = Directory.GetFiles(filePath, searchPattern);
         
         if (files.Length > 0)

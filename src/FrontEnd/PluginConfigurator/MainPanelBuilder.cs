@@ -68,7 +68,7 @@ public static class MainPanelBuilder
         volumeSlider.defaultValue = BepInExConfig.DEFAULT_AUDIO_SOURCE_VOLUME;
         volumeSlider.onValueChange += e =>
         {
-            CommandPreset.SetVolume(e.newValue);
+            BepInExConfig.audioSourceVolume.Value = e.newValue;
             SoloAudioSource.Instance.UpdateSoloAudioSourceVolume(e.newValue);
         };
 
@@ -113,16 +113,13 @@ public static class MainPanelBuilder
             m_pluginConfigurator.rootPanel,
             "audio_button_array",
             3,
-            new float[] { 0.4f, 0.4f, 0.2f },
+            new float[] { 0.5f, 0.5f },
             new string[] { "Open Audio Folder", "Reload", "Advance" }
         );
         audioButtonArray.OnClickEventHandler(0).onClick += () 
-            => CommandPreset.OpenAudioFolder();
+            => AnnouncerManager.ReloadAllAnnouncers();
 
         audioButtonArray.OnClickEventHandler(1).onClick += () 
-            => CommandPreset.ReloadAnnouncers();
-
-        audioButtonArray.OnClickEventHandler(2).onClick += () 
             => advancedPanel.OpenPanel();
 
 
@@ -143,7 +140,7 @@ public static class MainPanelBuilder
         lowpassToggle.defaultValue = true;
         lowpassToggle.onValueChange += (e) =>
         {
-            CommandPreset.EnableLowPassFilter(e.value);
+            BepInExConfig.isLowPassFilterEnabled.Value = e.value;
             UnderwaterController_inWater_Instance.CheckIsInWater();
         };
 
@@ -156,7 +153,7 @@ public static class MainPanelBuilder
         ffmpegToggle.defaultValue = false;
         ffmpegToggle.onValueChange += (e) =>
         {
-            CommandPreset.EnableFFmpegSupport(e.value);
+            BepInExConfig.isFFmpegSupportEnabled.Value = e.value;
             LogManager.LogInfo($"Switched FFmpeg support : {e.value}");
         };
 

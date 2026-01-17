@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using GreyAnnouncer.AudioSourceComponent;
 using GreyAnnouncer.Config;
 using GreyAnnouncer.FrontEnd;
+using GreyAnnouncer.Util.Ini;
 
 namespace GreyAnnouncer.AnnouncerAPI;
 
@@ -45,6 +46,8 @@ public class AudioAnnouncer
         SubscribeAnnouncerManager();
 
         RegisterRankAnnouncerPagev2.Build(title, this);
+
+        WriteConfigToIni();
 
     }
 
@@ -197,6 +200,17 @@ public class AudioAnnouncer
         AnnouncerManager.clearAudioClipCache += ClearAudioClipsCache;
 
         AnnouncerManager.AddAnnouncer(this);
+    }
+
+    private void WriteConfigToIni()
+    {
+        var doc = new IniDocument();
+        doc = IniMapper.ToIni(doc, _announcerConfig, "General"); // 写 General
+        foreach (var pair in _announcerConfig.CategoryAudioMap)
+        {
+            doc = IniMapper.ToIni(doc, pair.Value, $"Category:{pair.Key}");
+        }
+        IniWriter.Write(PathManager.GetCurrentPluginPath("announcer.ini"), doc);
     }
 
     public void ChangeAnnouncerConfig(int index)
