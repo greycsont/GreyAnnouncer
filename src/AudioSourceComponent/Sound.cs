@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Audio;
 
-namespace GreyAnnouncer.AnnouncerAPI;
+namespace GreyAnnouncer.AudioSourceComponent;
 
 public class Sound
 {

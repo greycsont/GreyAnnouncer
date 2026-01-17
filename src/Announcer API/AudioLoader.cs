@@ -17,6 +17,7 @@ using System.ComponentModel;
 
 using GreyAnnouncer.AudioLoading;
 using GreyAnnouncer.Setting;
+using GreyAnnouncer.AudioSourceComponent;
 
 namespace GreyAnnouncer.AnnouncerAPI;
 

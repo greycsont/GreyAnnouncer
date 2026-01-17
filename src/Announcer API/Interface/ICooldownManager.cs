@@ -1,3 +1,6 @@
+
+namespace GreyAnnouncer.AnnouncerAPI;
+
 public interface ICooldownManager
 {
     public bool IsIndividualCooldownActive(string category);

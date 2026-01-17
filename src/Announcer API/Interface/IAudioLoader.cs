@@ -1,7 +1,8 @@
 using System.Threading.Tasks;
-using GreyAnnouncer.AnnouncerAPI;
-using UnityEngine;
 
+using GreyAnnouncer.AudioSourceComponent;
+
+namespace GreyAnnouncer.AnnouncerAPI;
 public interface IAudioLoader
 {
     public AnnouncerConfig announcerConfig  { get; set; }
