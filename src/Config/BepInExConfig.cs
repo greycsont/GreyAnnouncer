@@ -1,15 +1,20 @@
 using System.Collections.Generic;
 using BepInEx.Configuration;
 
-namespace GreyAnnouncer.Setting;
+namespace GreyAnnouncer.Config;
 
 public static class BepInExConfig
 {
-    public static          ConfigEntry<float>                    audioSourceVolume; // Range : 0f ~ 1f
-    public static          ConfigEntry<bool>                     isLowPassFilterEnabled;
-    public static          ConfigEntry<int>                      audioPlayOptions;
-    public static          ConfigEntry<int>                      audioLoadingOptions;
-    public static          ConfigEntry<bool>                     isFFmpegSupportEnabled;
+    public static ConfigEntry<float> audioSourceVolume; // Range : 0f ~ 1f
+
+    public static ConfigEntry<bool> isLowPassFilterEnabled;
+
+    public static ConfigEntry<int> audioPlayOptions;
+
+    public static ConfigEntry<int> audioLoadingOptions;
+
+    public static ConfigEntry<bool> isFFmpegSupportEnabled;
+    
 
     public static readonly Dictionary<string, (string section, string name, object defaultValue, string description)> ConfigEntries = new()
     {

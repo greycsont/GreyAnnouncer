@@ -3,7 +3,7 @@ using UnityEngine;
 using System;
 using System.Threading.Tasks;
 
-using GreyAnnouncer.Setting;
+using GreyAnnouncer.Config;
 
 namespace GreyAnnouncer.AudioLoading;
 

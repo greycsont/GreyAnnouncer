@@ -15,39 +15,25 @@ public static class CommandPreset
     }
 
     private static void ProcessInput(string input)
-    {
-        GameConsole.Console.Instance.ProcessInput(input);
-    }
+        => GameConsole.Console.Instance.ProcessInput(input);
 
     #region Presets
     public static void SetVolume(float volume)
-    {
-        ExecuteCommand("grey", "set", "audiosourcevolume", volume.ToString());
-    }
+        => ExecuteCommand("grey", "set", "audiosourcevolume", volume.ToString());
 
     public static void SetAudioFolderPath(string path)
-    {
-        ExecuteCommand("grey", "set", "audiofolderpath", path);
-    }
+        => ExecuteCommand("grey", "set", "audiofolderpath", path);
 
     public static void EnableFFmpegSupport(bool enabled)
-    {
-        ExecuteCommand("grey", "set", "ffmpegenabled", enabled.ToString());
-    }
+        => ExecuteCommand("grey", "set", "ffmpegenabled", enabled.ToString());
 
     public static void EnableLowPassFilter(bool enabled)
-    {
-        ExecuteCommand("grey", "set", "lowpassenabled", enabled.ToString());
-    }
+        => ExecuteCommand("grey", "set", "lowpassenabled", enabled.ToString());
 
     public static void OpenAudioFolder()
-    {
-        ExecuteCommand("grey", "util", "openaudiofolder");
-    }
+        => ExecuteCommand("grey", "util", "openaudiofolder");
 
     public static void ReloadAnnouncers()
-    {
-        ExecuteCommand("grey", "util", "reloadannouncers");
-    }
+        => ExecuteCommand("grey", "util", "reloadannouncers");
     #endregion
 }

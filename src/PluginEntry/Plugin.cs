@@ -3,7 +3,7 @@ using BepInEx.Logging;
 using HarmonyLib;
 
 
-using GreyAnnouncer.Setting;
+using GreyAnnouncer.Config;
 
 /* The StyleHUD.cs in the HarmonyPatches folder is the starting point of the whole sequence of announcer 
    But for the initialize of the program like loading audio or something, you should start from here */
@@ -51,7 +51,7 @@ public class Plugin : BaseUnityPlugin
         PluginDependencies.LoadIfPluginExists(
             PluginDependencies.PLUGINCONFIGURATOR_GUID,
             "PluginConfiguratorEntry",
-            () => ReflectionManager.LoadByReflection("GreyAnnouncer.PluginConfiguratorGUI.PluginConfiguratorEntry", "Initialize")
+            () => ReflectionManager.LoadByReflection("GreyAnnouncer.FrontEnd.PluginConfiguratorEntry", "Initialize")
         );
     }
 }

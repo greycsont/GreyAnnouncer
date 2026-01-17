@@ -2,7 +2,7 @@ using System.ComponentModel;
 using HarmonyLib;
 using UnityEngine;
 
-using GreyAnnouncer.Setting;
+using GreyAnnouncer.Config;
 
 
 namespace GreyAnnouncer.AudioSourceComponent;
@@ -49,14 +49,10 @@ public static class UnderwaterController_inWater_Instance
     }
 
     private static void RemoveAudioLowPassFilterFromAllAudioSource()
-    {
-        SoloAudioSource.Instance.RemoveAudioLowPassFilter();
-    }
+        => SoloAudioSource.Instance.RemoveAudioLowPassFilter();
 
     private static void AddAudioLowPassFilterToAllAudioSource()
-    {
-        SoloAudioSource.Instance.AddAudioLowPassFilter();
-    }
+        => SoloAudioSource.Instance.AddAudioLowPassFilter();
 }
 
 [Description("Q : Why? A : Prevent when audio is playing and enter/out of the water")]
@@ -66,14 +62,10 @@ public class UnderwaterPatcher
     [HarmonyPostfix]
     [HarmonyPatch(nameof(UnderwaterController.EnterWater))]
     public static void EnterWater()
-    {
-        UnderwaterController_inWater_Instance.CheckIsInWater();
-    }
+        => UnderwaterController_inWater_Instance.CheckIsInWater();
 
     [HarmonyPostfix]
     [HarmonyPatch(nameof(UnderwaterController.OutWater))]
     public static void OutWater()
-    {
-        UnderwaterController_inWater_Instance.CheckIsInWater();
-    }
+        => UnderwaterController_inWater_Instance.CheckIsInWater();
 }

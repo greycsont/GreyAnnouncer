@@ -10,7 +10,7 @@ namespace GreyAnnouncer.RankAnnouncer;
 [HarmonyPatch(typeof(StyleHUD))]
 public static class StyleHUDPatcher
 {
-    [HarmonyPrefix]
+    [HarmonyPostfix]
     [HarmonyPatch(nameof(StyleHUD.AscendRank))]  // For non-D ranks
     public static void GetNonDrankAscend(StyleHUD __instance)
     {

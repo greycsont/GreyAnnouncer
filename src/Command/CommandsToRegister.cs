@@ -4,7 +4,7 @@ using plog;
 using System.Linq;
 
 using GreyAnnouncer.AnnouncerAPI;
-using GreyAnnouncer.Setting;
+using GreyAnnouncer.Config;
 using GreyAnnouncer.AudioSourceComponent;
 
 namespace GreyAnnouncer.Commands;
@@ -16,18 +16,15 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
     public override string Description => "tons of setting";
 
     public override Branch BuildTree(Console con)
-    {
-        return Branch(Name,
+        => Branch(Name,
                       GetMainSettingBranches(),
                       GetUtilBranches(),
                       GetAnnouncerBranches(),
                       GetTestBranches()
                       );
-    }
 
     private Branch GetMainSettingBranches()
-    {
-        return Branch("mainsetting",
+        => Branch("mainsetting",
                       Branch("set",
                              Leaf<float>("audiosourcevolume", vol => BepInExConfig.audioSourceVolume.Value = vol),
                              Leaf<bool>("ffmpegenabled", enabled => BepInExConfig.isFFmpegSupportEnabled.Value = enabled),
@@ -39,7 +36,6 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
                              Leaf("lowpassenabled", () => Log.Info($"Under Water Low Pass Filter Enabled: {BepInExConfig.isLowPassFilterEnabled.Value}"))
                              )
                       );
-    }
 
     private Branch GetAnnouncerBranches()
     {
@@ -79,17 +75,13 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
     }
 
     public Branch GetUtilBranches()
-    {
-        return Branch("util",
+        => Branch("util",
                       Leaf("reloadannouncers", () => AnnouncerManager.ReloadAllAnnouncers()),
                       Leaf("stopallaudiosources", () => AudioSourceManager.StopAllAudioSource())
                       );
-    }
 
     private Branch GetTestBranches()
-    {
-        return null;
-    }
+        => null;
 
     public Logger Log { get; } = new("grey");
 }

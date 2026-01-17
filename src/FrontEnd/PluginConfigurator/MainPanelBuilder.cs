@@ -11,7 +11,7 @@ using GreyAnnouncer.AudioSourceComponent;
 
 using GreyAnnouncer.Commands;
 
-using GreyAnnouncer.Setting;
+using GreyAnnouncer.Config;
 
 namespace GreyAnnouncer.FrontEnd;
 
@@ -30,7 +30,7 @@ public static class MainPanelBuilder
     public static ConfigHeader logHeader;
 
     private static ConfigPanel advancedPanel;
-    
+
 
     public static void Build(PluginConfigurator config)
     {
@@ -116,18 +116,15 @@ public static class MainPanelBuilder
             new float[] { 0.4f, 0.4f, 0.2f },
             new string[] { "Open Audio Folder", "Reload", "Advance" }
         );
-        audioButtonArray.OnClickEventHandler(0).onClick += () =>
-        {
-            CommandPreset.OpenAudioFolder();
-        };
-        audioButtonArray.OnClickEventHandler(1).onClick += () =>
-        {
-            CommandPreset.ReloadAnnouncers();
-        };
-        audioButtonArray.OnClickEventHandler(2).onClick += () =>
-        {
-            advancedPanel.OpenPanel();
-        };
+        audioButtonArray.OnClickEventHandler(0).onClick += () 
+            => CommandPreset.OpenAudioFolder();
+
+        audioButtonArray.OnClickEventHandler(1).onClick += () 
+            => CommandPreset.ReloadAnnouncers();
+
+        audioButtonArray.OnClickEventHandler(2).onClick += () 
+            => advancedPanel.OpenPanel();
+
 
     }
 
@@ -167,10 +164,8 @@ public static class MainPanelBuilder
         emergencyHeader.textColor = m_RedColour;
 
         var stopAudioSourceButton = new ButtonField(advancedPanel, "Stop All Audio Source", "Stop_All_Audio_Source");
-        stopAudioSourceButton.onClick += () =>
-        {
-            AudioSourceManager.StopAllAudioSource();
-        };
+        stopAudioSourceButton.onClick += () 
+            => AudioSourceManager.StopAllAudioSource();
     }
 
     private static void CreateAnnouncerSection()

@@ -108,13 +108,9 @@ public static class ObjectTreePrinter
 
     // 辅助函数：生成缩进字符串
     private static string GetIndent(int depth)
-    {
-        return new string(' ', depth * 4);
-    }
+        => new string(' ', depth * 4);
     
     // 辅助函数：判断是否为可枚举类型（排除字符串）
     private static bool IsEnumerable(Type type)
-    {
-        return type != typeof(string) && typeof(IEnumerable).IsAssignableFrom(type);
-    }
+        => type != typeof(string) && typeof(IEnumerable).IsAssignableFrom(type);
 }

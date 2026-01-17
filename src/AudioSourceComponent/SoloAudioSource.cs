@@ -1,15 +1,13 @@
 using UnityEngine;
 
 using GreyAnnouncer.AnnouncerAPI;
-using GreyAnnouncer.Setting;
+using GreyAnnouncer.Config;
 
 namespace GreyAnnouncer.AudioSourceComponent;
 
 public sealed class SoloAudioSource : MonoBehaviour
 {
     private AudioSource _audioSource;
-    private AudioSource _backgroundAudioSource;
-    private AudioSource _sfxAudioSource;
     private static SoloAudioSource _instance;
 
     #region Constructor
@@ -67,20 +65,11 @@ public sealed class SoloAudioSource : MonoBehaviour
         audioSource.PlayOneShot(sound.clip, sound.Volume);
     }
 
-    private AudioSource GetAudioSource(Sound sound)
-    {
-        return _sfxAudioSource;
-    }
-
     public void AddAudioLowPassFilter()
-    {
-        _audioSource = AudioSourceManager.AddLowPassFilter(_audioSource);
-    }
+        => _audioSource = AudioSourceManager.AddLowPassFilter(_audioSource);
 
     public void RemoveAudioLowPassFilter()
-    {
-        _audioSource = AudioSourceManager.RemoveLowPassFilter(_audioSource);
-    }
+        => _audioSource = AudioSourceManager.RemoveLowPassFilter(_audioSource);
 
     public void UpdateSoloAudioSourceVolume(float targetVolume, float duration = 0.35f)
     {

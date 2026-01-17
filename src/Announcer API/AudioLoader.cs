@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 
 using GreyAnnouncer.AudioLoading;
-using GreyAnnouncer.Setting;
+using GreyAnnouncer.Config;
 using GreyAnnouncer.AudioSourceComponent;
 
 namespace GreyAnnouncer.AnnouncerAPI;
@@ -31,7 +31,7 @@ public class AudioLoader : IAudioLoader
     private Dictionary<string, List<AudioClip>> _audioClips = new Dictionary<string, List<AudioClip>>();
 
     public static Action<string> onPluginConfiguratorLogUpdated;
-    
+
 
     [Description("Q : Why do you using whole AnnouncerJsonSetting as input instead only CategoryAudioMap?" +
                  "A : For future, what kinds of future? idk.")]

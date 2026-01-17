@@ -11,16 +11,10 @@ namespace GreyAnnouncer;
 public static class PathManager
 {
     public static string GetCurrentPluginPath(string filePath = null)
-    {
-        string pluginDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        return CleanPath(Path.Combine(pluginDirectory, filePath ?? string.Empty));
-    }
+        => CleanPath(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), filePath ?? string.Empty));
 
     public static string GetGamePath(string filePath)
-    {
-        string gameRoot = Paths.GameRootPath;
-        return CleanPath(Path.Combine(gameRoot, filePath));
-    }
+        => CleanPath(Path.Combine(Paths.GameRootPath, filePath));
 
     [Description("Reference : (因win程序员想偷懒! 竟在剪切板插入隐藏字符) https://www.bilibili.com/video/BV1ebLczjEWZ (Accessed in 24/4/2025)")]
     public static string CleanPath(string path)
@@ -67,6 +61,7 @@ public static class PathManager
     public static string GetFileWithExtension(string filePath, string fileName)
     {
         string searchPattern = fileName + ".*";
+        LogManager.LogDebug($"Pattern : {searchPattern}");
         string[] files = Directory.GetFiles(filePath, searchPattern);
         
         if (files.Length > 0)

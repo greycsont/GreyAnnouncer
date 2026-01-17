@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using GreyAnnouncer.AudioSourceComponent;
-using GreyAnnouncer.Setting;
+using GreyAnnouncer.Config;
 using GreyAnnouncer.FrontEnd;
 
 namespace GreyAnnouncer.AnnouncerAPI;
@@ -15,7 +15,7 @@ public class AudioAnnouncer
 {
     public AnnouncerConfig _announcerConfig;
 
-    private string _announcerConfigJsonName;
+    private string _announcerConfigJsonName = "RankAnnouncer.json";
 
     public string title;
 
@@ -23,23 +23,20 @@ public class AudioAnnouncer
 
     private ICooldownManager _cooldownManager;
 
-    private Dictionary<string, string> _displayNameMapping;
-    
+    private List<string> category;
+
 
     public AudioAnnouncer(IAudioLoader audioLoader,
                            ICooldownManager cooldownManager,
-                           Dictionary<string, string> displayNameMapping,
-                           string jsonName,
+                           List<string> displayNameMapping,
                            string title)
     {
-        LogManager.LogInfo($"Initializing AudioAnnouncer {jsonName}");
         this._audioLoader = audioLoader;
         this._cooldownManager = cooldownManager;
-        this._displayNameMapping = displayNameMapping;
-        this._announcerConfigJsonName = jsonName;
+        this.category = displayNameMapping;
         this.title = title;
 
-        this._announcerConfig = AnnouncerConfigInitialization(jsonName, _displayNameMapping);
+        this._announcerConfig = AnnouncerConfigInitialization(category);
 
         _audioLoader.UpdateAnnouncerConfig(_announcerConfig);
         LogManager.LogInfo("Starting to find available audio asynchronously.");
@@ -75,13 +72,14 @@ public class AudioAnnouncer
     /// <summary>Will Play a random audio in the belong category by jsonSetting mapping via index</summary>
     public async Task PlayAudioViaIndex(int index)
     {
+        LogManager.LogInfo($"{index}");
         await PlayAudioViaCategory(_announcerConfig.CategoryAudioMap.Keys.ToArray()[index]);
     }
 
     /// <summary>Reload Audio, only works when using Preload and Play options</summary>
     public void ReloadAudio()
     {
-        this._announcerConfig = AnnouncerConfigInitialization(_announcerConfigJsonName, _displayNameMapping);
+        this._announcerConfig = AnnouncerConfigInitialization(category);
         _audioLoader.UpdateAnnouncerConfig(_announcerConfig);
         _ = _audioLoader.FindAvailableAudioAsync();
     }
@@ -89,9 +87,7 @@ public class AudioAnnouncer
 
     /// <summary>Resets the announcer's cooldown</summary>
     public void ResetCooldown()
-    {
-        _cooldownManager.ResetCooldowns();
-    }
+        => _cooldownManager.ResetCooldowns();
 
     public void UpdateJsonSetting(AnnouncerConfig newSetting)
     {
@@ -102,16 +98,11 @@ public class AudioAnnouncer
 
     /// <summary>Clear audioclip in audioloader, only works when using Preload and Play options</summary>
     public void ClearAudioClipsCache()
-    {
-        _audioLoader.ClearCache();
-    }
+        => _audioLoader.ClearCache();
 
-    #region Cooldown related
+
     private void SetCooldown(string category, float cooldown)
-    {
-        _cooldownManager.StartCooldowns(category, cooldown);
-    }
-    #endregion
+        => _cooldownManager.StartCooldowns(category, cooldown);
 
 
     #region Play Audio related
@@ -182,22 +173,21 @@ public class AudioAnnouncer
         return ValidationState.Success;
     }
 
-    private static AnnouncerConfig AnnouncerConfigInitialization(string jsonName, Dictionary<string, string> displayNameMapping)
+    private AnnouncerConfig AnnouncerConfigInitialization(List<string> category)
     {
-        if (File.Exists(PathManager.GetCurrentPluginPath(jsonName)) == false)
+        if (File.Exists(PathManager.GetCurrentPluginPath(_announcerConfigJsonName)) == false)
         {
-            var audioDict = displayNameMapping.Keys.ToDictionary(
+            var audioDict = category.ToDictionary(
                 cat => cat,
                 cat => new CategoryAudioSetting
                 {
-                    DisplayName = displayNameMapping.TryGetValue(cat, out var name) ? name : cat,
                     AudioFiles = new List<string> { cat }
                 }
             );
             var jsonSetting = new AnnouncerConfig { CategoryAudioMap = audioDict };
-            JsonManager.CreateJson(jsonName, jsonSetting);
+            JsonManager.CreateJson(_announcerConfigJsonName, jsonSetting);
         }
-        return JsonManager.ReadJson<AnnouncerConfig>(jsonName);
+        return JsonManager.ReadJson<AnnouncerConfig>(_announcerConfigJsonName);
     }
 
     private void SubscribeAnnouncerManager()

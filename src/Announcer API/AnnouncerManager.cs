@@ -18,27 +18,20 @@ public static class AnnouncerManager
 
     #region Public Methods
     public static List<AudioAnnouncer> GetAllAnnouncers()
-    {
-        return announcers; // Placeholder for future implementation
-    }
+        => announcers; // Placeholder for future implementation
+
     public static void AddAnnouncer(AudioAnnouncer announcer)
-    {
-        announcers.Add(announcer);
-    }
+        => announcers.Add(announcer);
+
     public static void ReloadAllAnnouncers()
-    {
-        reloadAnnouncer?.Invoke();
-    }
+        => reloadAnnouncer?.Invoke();
 
     public static void ResetCooldown()
-    {
-        resetCooldown?.Invoke();
-    }
+        => resetCooldown?.Invoke();
 
     public static void ClearAudioClipsCache()
-    {
-        clearAudioClipCache?.Invoke();
-    }
+        => clearAudioClipCache?.Invoke();
+
     #endregion
     
 }
