@@ -15,7 +15,6 @@ public class AudioAnnouncer
 {
     public AnnouncerConfig _announcerConfig;
     private string _announcerConfigJsonName;
-    private string _announcerConfigPathSetJsonName;
     public string title;
     private IAudioLoader _audioLoader;
     private ICooldownManager _cooldownManager;
