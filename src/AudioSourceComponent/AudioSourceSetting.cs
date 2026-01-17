@@ -2,6 +2,8 @@ using System;
 using System.Reflection;
 using UnityEngine;
 
+namespace GreyAnnouncer.AudioSourceComponent;
+
 public struct AudioSourceSetting
 {
     public float    SpatialBlend { get; set; }

@@ -2,8 +2,9 @@ using UnityEngine;
 using System.Collections;
 using GreyAnnouncer.AudioSourceComponent;
 
+using GreyAnnouncer.AnnouncerAPI;
 
-namespace GreyAnnouncer;
+namespace GreyAnnouncer.AudioSourceComponent;
 
 public static class AudioSourceManager
 {

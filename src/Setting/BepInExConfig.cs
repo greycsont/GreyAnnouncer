@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using BepInEx.Configuration;
 
-namespace GreyAnnouncer;
+namespace GreyAnnouncer.Setting;
 
 public static class BepInExConfig
 {

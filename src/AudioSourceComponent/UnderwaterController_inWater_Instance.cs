@@ -2,6 +2,8 @@ using System.ComponentModel;
 using HarmonyLib;
 using UnityEngine;
 
+using GreyAnnouncer.Setting;
+
 
 namespace GreyAnnouncer.AudioSourceComponent;
 

@@ -1,5 +1,8 @@
 using UnityEngine;
 
+using GreyAnnouncer.AnnouncerAPI;
+using GreyAnnouncer.Setting;
+
 namespace GreyAnnouncer.AudioSourceComponent;
 
 public sealed class SoloAudioSource : MonoBehaviour

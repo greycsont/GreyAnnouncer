@@ -6,7 +6,7 @@ using UnityEngine;
 
 using GreyAnnouncer.AnnouncerAPI;
 
-namespace GreyAnnouncer.PluginConfiguratorGUI;
+namespace GreyAnnouncer.FrontEnd;
 
 public static class RegisterRankAnnouncerPagev2
 {

@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.Audio;
 
+namespace GreyAnnouncer.AnnouncerAPI;
+
 public class Sound
 {
     public string category;

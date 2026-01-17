@@ -2,7 +2,7 @@ using PluginConfig.API;
 using System.ComponentModel;
 
 
-namespace GreyAnnouncer.PluginConfiguratorGUI;
+namespace GreyAnnouncer.FrontEnd;
 
 
 [Description("This object is loaded via reflection from Plugin.cs")]

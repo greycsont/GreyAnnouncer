@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using GreyAnnouncer.AudioSourceComponent;
-using GreyAnnouncer.PluginConfiguratorGUI;
+using GreyAnnouncer.Setting;
+using GreyAnnouncer.FrontEnd;
 
 namespace GreyAnnouncer.AnnouncerAPI;
 

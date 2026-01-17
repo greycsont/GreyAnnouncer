@@ -4,6 +4,8 @@ using plog;
 using System.Linq;
 
 using GreyAnnouncer.AnnouncerAPI;
+using GreyAnnouncer.Setting;
+using GreyAnnouncer.AudioSourceComponent;
 
 namespace GreyAnnouncer.Commands;
 
@@ -88,9 +90,7 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
 
     private Branch GetTestBranches()
     {
-        return Branch("test",
-                      Leaf("opennewui", () => AssetBundleUI.CreateUI())
-                      );
+        return null;
     }
 
     public Logger Log { get; } = new("grey");

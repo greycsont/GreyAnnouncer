@@ -11,7 +11,9 @@ using GreyAnnouncer.AudioSourceComponent;
 
 using GreyAnnouncer.Commands;
 
-namespace GreyAnnouncer.PluginConfiguratorGUI;
+using GreyAnnouncer.Setting;
+
+namespace GreyAnnouncer.FrontEnd;
 
 public static class MainPanelBuilder
 {

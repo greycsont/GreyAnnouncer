@@ -1,5 +1,7 @@
 using UnityEngine;
 
+using GreyAnnouncer.AnnouncerAPI;
+
 namespace GreyAnnouncer.AudioSourceComponent;
 
 public static class AudioDispatcher

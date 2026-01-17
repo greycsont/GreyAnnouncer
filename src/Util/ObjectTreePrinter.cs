@@ -35,7 +35,7 @@ public static class ObjectTreePrinter
     {
         if (obj == null)
         {
-            sb.AppendLine($"{GetIndent(depth)}├── {name}: null");
+            sb.AppendLine($"{GetIndent(depth)}└─ {name}: null");
             return;
         }
 
@@ -45,14 +45,14 @@ public static class ObjectTreePrinter
         // --- 1. 处理基本类型和字符串 ---
         if (type.IsPrimitive || type == typeof(string) || type.IsValueType && !IsEnumerable(type))
         {
-            sb.AppendLine($"{indent}├── {name} ({type.Name}): {obj}");
+            sb.AppendLine($"{indent}└─ {name} ({type.Name}): {obj}");
             return;
         }
 
         // --- 2. 处理循环引用 ---
         if (!type.IsValueType && _visitedObjects.Contains(obj))
         {
-            sb.AppendLine($"{indent}├── {name} ({type.Name}): {{... Loop Detected ...}}");
+            sb.AppendLine($"{indent}└─ {name} ({type.Name}): {{... Loop Detected ...}}");
             return;
         }
         _visitedObjects.Add(obj);
@@ -60,7 +60,7 @@ public static class ObjectTreePrinter
         // ⭐️ 新增/修改：处理字典类型 (IDictionary)
         if (obj is IDictionary dictionary)
         {
-            sb.AppendLine($"{indent}├── {name} ({type.Name}[{dictionary.Count}])");
+            sb.AppendLine($"{indent}└─ {name} ({type.Name}[{dictionary.Count}])");
             
             // 遍历字典中的每一个键值对
             foreach (DictionaryEntry entry in dictionary)
@@ -77,7 +77,7 @@ public static class ObjectTreePrinter
         if (obj is IEnumerable enumerable)
         {
             int count = (obj is ICollection collection) ? collection.Count : 0;
-            sb.AppendLine($"{indent}├── {name} ({type.Name}[{count}])");
+            sb.AppendLine($"{indent}└─ {name} ({type.Name}[{count}])");
 
             int index = 0;
             foreach (var item in enumerable)
@@ -88,7 +88,7 @@ public static class ObjectTreePrinter
         }
 
         // --- 4. 处理自定义类或复杂对象 (使用反射) ---
-        sb.AppendLine($"{indent}├── {name} ({type.Name})");
+        sb.AppendLine($"{indent}└─ {name} ({type.Name})");
 
         PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
@@ -101,7 +101,7 @@ public static class ObjectTreePrinter
             }
             catch (Exception ex)
             {
-                sb.AppendLine($"{indent}│   ├── {prop.Name}: <Error: {ex.Message}>");
+                sb.AppendLine($"{indent}│   └─ {prop.Name}: <Error: {ex.Message}>");
             }
         }
     }

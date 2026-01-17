@@ -2,7 +2,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.Video;
 
-namespace GreyAnnouncer;
+namespace GreyAnnouncer.FrontEnd;
 
 public static class AssetBundleUI
 {
