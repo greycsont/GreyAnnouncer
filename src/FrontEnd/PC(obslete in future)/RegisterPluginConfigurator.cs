@@ -77,21 +77,6 @@ public static class RegisterRankAnnouncerPagev2
                 _announcer._announcerConfig,
                 3.0f
             );
-
-            var Dfield = CreatePitchMinField(
-                panel,
-                category.Key,
-                _announcer._announcerConfig,
-                1
-            );
-
-            var Efield = CreatePitchMaxField(
-                panel,
-                category.Key,
-                _announcer._announcerConfig,
-                1
-            );
-            
         }
     }
 
@@ -133,50 +118,6 @@ public static class RegisterRankAnnouncerPagev2
             }
 
             SomethingAfterUpdateJson();
-        };
-
-        return field;
-    }
-
-    private static FloatSliderField CreatePitchMinField(ConfigPanel panel,
-                                                     string guid,
-                                                     AnnouncerConfig jsonSetting,
-                                                     float defaultValue)
-    {
-        var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid, "PitchMin");
-        var field = new FloatSliderField(panel, "Pitch Min", fullGuid, Tuple.Create(0.2f, 2f), jsonSetting.CategoryAudioMap[guid].Pitch[0], 2);
-        field.defaultValue = defaultValue;
-        field.onValueChange += e =>
-        {
-            if (jsonSetting.CategoryAudioMap.ContainsKey(guid))
-            {
-                jsonSetting.CategoryAudioMap[guid].Pitch[0] = e.newValue;
-            }
-
-            SomethingAfterUpdateJson();
-
-        };
-
-        return field;
-    }
-
-    private static FloatSliderField CreatePitchMaxField(ConfigPanel panel,
-                                                     string guid,
-                                                     AnnouncerConfig jsonSetting,
-                                                     float defaultValue)
-    {
-        var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid, "PitchMax");
-        var field = new FloatSliderField(panel, "Pitch Max", fullGuid, Tuple.Create(0.2f, 2f), jsonSetting.CategoryAudioMap[guid].Pitch[1], 2);
-        field.defaultValue = defaultValue;
-        field.onValueChange += e =>
-        {
-            if (jsonSetting.CategoryAudioMap.ContainsKey(guid))
-            {
-                jsonSetting.CategoryAudioMap[guid].Pitch[1] = e.newValue;
-            }
-
-            SomethingAfterUpdateJson();
-
         };
 
         return field;

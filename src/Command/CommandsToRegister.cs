@@ -56,9 +56,7 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
                         return Branch(categoryName,
                                       Leaf<bool>("enabled", enabled => categoryAudio.Enabled = enabled),
                                       Leaf<float>("volume", vol => categoryAudio.VolumeMultiplier = vol),
-                                      Leaf<float>("cooldown", cd => categoryAudio.Cooldown = cd),
-                                      Leaf<float>("pitchmin", pitch => categoryAudio.Pitch[0] = pitch),
-                                      Leaf<float>("pitchmax", pitch => categoryAudio.Pitch[1] = pitch)
+                                      Leaf<float>("cooldown", cd => categoryAudio.Cooldown = cd)
                                     );
                     })
                     .ToArray();

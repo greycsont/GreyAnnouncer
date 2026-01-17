@@ -24,10 +24,14 @@ namespace GreyAnnouncer.AnnouncerAPI;
 
 public class AudioLoader : IAudioLoader
 {
-    public        AnnouncerConfig                     announcerConfig           { get; set; }
-    public        HashSet<string>                     categoryFailedLoading { get; private set; } = new HashSet<string>();
-    private       Dictionary<string, List<AudioClip>> _audioClips                                 = new Dictionary<string, List<AudioClip>>();
-    public static Action<string>                      onPluginConfiguratorLogUpdated;
+    public  AnnouncerConfig announcerConfig { get; set; }
+
+    public  HashSet<string> categoryFailedLoading { get; private set; } = new HashSet<string>();
+
+    private Dictionary<string, List<AudioClip>> _audioClips = new Dictionary<string, List<AudioClip>>();
+
+    public static Action<string> onPluginConfiguratorLogUpdated;
+    
 
     [Description("Q : Why do you using whole AnnouncerJsonSetting as input instead only CategoryAudioMap?" +
                  "A : For future, what kinds of future? idk.")]
