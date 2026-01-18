@@ -80,9 +80,9 @@ public class AudioAnnouncer
     /// <summary>Reload Audio, only works when using Preload and Play options</summary>
     public void ReloadAudio()
     {
+        // it will automatically reload
         this._announcerConfig = AnnouncerConfigIniInitialization(category);
         _audioLoader.UpdateAnnouncerConfig(_announcerConfig);
-        _ = _audioLoader.FindAvailableAudioAsync();
     }
 
 
@@ -189,10 +189,7 @@ public class AudioAnnouncer
         {
             var audioDict = category.ToDictionary(
                 cat => cat,
-                cat => new CategorySetting
-                {
-                    AudioFiles = new List<string> { cat }
-                }
+                cat => new CategorySetting{}
             );
             var announcerConfig = new AnnouncerConfig { CategoryAudioMap = audioDict };
             WriteConfigToIni(announcerConfig);

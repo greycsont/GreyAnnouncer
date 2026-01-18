@@ -58,10 +58,9 @@ public static class PathManager
     }
 
     
-    public static string GetFileWithExtension(string filePath, string fileName)
+    public static string GetFile(string filePath, string fileName)
     {
-        string searchPattern = fileName + ".*";
-        string[] files = Directory.GetFiles(filePath, searchPattern);
+        string[] files = Directory.GetFiles(filePath, fileName);
         
         if (files.Length > 0)
             return files[0];

@@ -293,7 +293,7 @@ public class AudioLoader : IAudioLoader
 
         var fileNames = categorySetting.AudioFiles;
         validFiles = fileNames
-            .Select(name => PathManager.GetFileWithExtension(announcerConfig.AudioPath, name))
+            .Select(name => PathManager.GetFile(announcerConfig.AudioPath, name))
             .Where(File.Exists)
             .ToList();
 
