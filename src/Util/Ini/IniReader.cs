@@ -22,6 +22,10 @@ public static class IniReader
             if (string.IsNullOrWhiteSpace(line))
                 continue;
 
+            // ---- 跳过注释行 ----
+            if (line.StartsWith("//"))
+                continue;
+
             // Section: [SectionName]
             if (line.StartsWith("[") && line.EndsWith("]"))
             {

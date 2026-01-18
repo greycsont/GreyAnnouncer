@@ -5,29 +5,9 @@
 
 [![Static Badge](https://img.shields.io/badge/There's-Repository-blue)](https://github.com/greycsont/GreyAnnouncer) [![Static Badge](https://img.shields.io/badge/Ask-Deepwiki-blue)](https://deepwiki.com/greycsont/GreyAnnouncer) 
 
-#### WIP
-| Feature      | Supported |                 
-|-------------|-----------|
-| `ffmpeg`    | ✅        |       
-| `new UI`      |  ❌      |
-| `new AudiosourceManagement`      |  ❌      |
-| `swapperable announcer config`      |  WIP      |
-
-
-##### Supported Audio Formats
-
-| Format      | Supported |                 
-|-------------|-----------|
-| `.mp3`      | ✅        |       
-| `.wav`      | ✅        |
-
-`aac, ogg, aiff/aif not tested yet`
-
 
 ## Mod description
-The mod itselfs it's like the *Simple Spear* in [魔法少女ノ魔女裁判](https://store.steampowered.com/app/3101040)
-
-Basically WHY I'M DOING BY THIS WAY AND WHY IT'S FUCKING WORKING
+A Announcer for style rank increase
 
 ## How to install it
 1. [r2modman](https://thunderstore.io/c/ultrakill/p/ebkr/r2modman/)
@@ -88,6 +68,22 @@ The default audio name given in the below:
 Make sure when you edit it and the game is running, click `Reload` button [in the right of Open Audio Folder button](#how-to-add-the-audio) after you change the .json
 `Or the game will be overwritten your setting`
 
+#### WIP
+| Feature      | Supported |                 
+|-------------|-----------|
+| `ffmpeg`    | ✅        |       
+| `swapperable announcer config`      |  WIP      |
+
+
+##### Supported Audio Formats
+
+| Format      | Supported |                 
+|-------------|-----------|
+| `.mp3`      | ✅        |       
+| `.wav`      | ✅        |
+
+`aac, ogg, aiff/aif not tested yet`
+
 ## How to customize other setting
 - Download and Using [PluginConfigurator](https://thunderstore.io/c/ultrakill/p/EternalsTeam/PluginConfigurator/) to edit in-game.
 
@@ -144,9 +140,6 @@ Starting from version 1.2.0, this project is licensed under
 SPDX-License-Identifier: AGPL-3.0-or-later
 
 v1.1.0/v1.1.1 was licensed under AGPL+PostgreSQL.
-
----                     
-Copyleft (c) 2025 greycsont, all rights reserved
 
 ## Shitpost collection
 - Pausing is cheating

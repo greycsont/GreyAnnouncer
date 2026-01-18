@@ -74,7 +74,7 @@ public sealed class SoloAudioSource : MonoBehaviour
     public void UpdateSoloAudioSourceVolume(float targetVolume, float duration = 0.35f)
     {
         if (_audioSource != null)
-            StartCoroutine(AudioSourceManager.FadeVolume(_audioSource, targetVolume, duration));
+            StartCoroutine(AudioSourceManager.FadeVolume(_audioSource, duration, targetVolume));
     }
 
     public void StopAudioSource()

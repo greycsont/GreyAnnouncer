@@ -69,10 +69,7 @@ public class AudioAnnouncer
 
     /// <summary>Will Play a random audio in the belong category by jsonSetting mapping via index</summary>
     public async Task PlayAudioViaIndex(int index)
-    {
-        LogManager.LogInfo($"{index}");
-        await PlayAudioViaCategory(_announcerConfig.CategoryAudioMap.Keys.ToArray()[index]);
-    }
+        => await PlayAudioViaCategory(_announcerConfig.CategoryAudioMap.Keys.ToArray()[index]);
 
     /// <summary>Reload Audio, only works when using Preload and Play options</summary>
     public void ReloadAudio()
