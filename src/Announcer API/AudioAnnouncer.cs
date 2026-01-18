@@ -41,9 +41,6 @@ public class AudioAnnouncer
 
         _audioLoader.UpdateAnnouncerConfig(_announcerConfig);
 
-        LogManager.LogInfo("Starting to find available audio asynchronously.");
-        _ = _audioLoader.FindAvailableAudioAsync();
-
         SubscribeAnnouncerManager();
 
         RegisterRankAnnouncerPagev2.Build(title, this);

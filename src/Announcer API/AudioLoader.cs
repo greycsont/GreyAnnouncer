@@ -160,6 +160,7 @@ public class AudioLoader : IAudioLoader
     #region Public API
     public async Task FindAvailableAudioAsync()
     {
+        LogManager.LogInfo("Starting to find available audio asynchronously.");
         ClearCache();
         if (BepInExConfig.audioLoadingOptions.Value == 0) return;
         FileSystemUtil.ValidateAndPrepareDirectory(announcerConfig.AudioPath);
