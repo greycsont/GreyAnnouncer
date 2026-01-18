@@ -29,22 +29,29 @@ public static class IniMapper
             if (section == null)
                 continue;
 
-            var valueStr = section.GetLastValue(attr.KeyName);
-            if (valueStr == null)
-                continue;
-
             object val = null;
 
-            if (prop.PropertyType == typeof(string))
-                val = valueStr;
-            else if (prop.PropertyType == typeof(bool))
-                val = bool.TryParse(valueStr, out var b) ? b : false;
-            else if (prop.PropertyType == typeof(float))
-                val = float.TryParse(valueStr, System.Globalization.NumberStyles.Float,
-                    System.Globalization.CultureInfo.InvariantCulture, out var f) ? f : 0f;
-            else if (prop.PropertyType == typeof(List<string>))
+            var allValues = section.GetValues(attr.KeyName)
+                       .SelectMany(v => v.Split(',').Select(s => s.Trim()).Where(s => s.Length > 0))
+                       .ToList();
+                       
+            if (prop.PropertyType == typeof(List<string>))
             {
-                val = valueStr.Split(',').Select(x => x.Trim()).Where(x => x.Length > 0).ToList();
+                val = allValues;
+            }
+            else
+            {
+                var valueStr = allValues.LastOrDefault(); // 普通单值用最后一个
+                if (valueStr == null)
+                    continue;
+
+                if (prop.PropertyType == typeof(string))
+                    val = valueStr;
+                else if (prop.PropertyType == typeof(bool))
+                    val = bool.TryParse(valueStr, out var b) ? b : false;
+                else if (prop.PropertyType == typeof(float))
+                    val = float.TryParse(valueStr, System.Globalization.NumberStyles.Float,
+                                        System.Globalization.CultureInfo.InvariantCulture, out var f) ? f : 0f;
             }
 
             if (val != null)
