@@ -7,10 +7,15 @@
 
 
 ## Mod description
-A Announcer for style rank increase
+A Announcer for when StyleHUD.rankIndex increase
+
+`Note: This mod are not include another assets(audios etc), try to make your own announcer`
 
 ## How to install it
 1. [r2modman](https://thunderstore.io/c/ultrakill/p/ebkr/r2modman/)
+   - IDK I never used it but I think just click download and that's it
+   
+<br>
 
 2. [BepInEx](https://thunderstore.io/c/ultrakill/p/BepInEx/BepInExPack/) (Manual Installation)
    - Extract all contents from the `.zip` file into the **ULTRAKILL\BepInEx\plugin** folder.
@@ -87,6 +92,10 @@ Make sure when you edit it and the game is running, click `Reload` button [in th
 ## How to customize other setting
 - Download and Using [PluginConfigurator](https://thunderstore.io/c/ultrakill/p/EternalsTeam/PluginConfigurator/) to edit in-game.
 
+- There's a button in pluginConfigurator allows you to `Edit externally (yeah a Lazer feat)`
+
+- Commands
+
 ## Bugs & Suggestions
 if you have any throuble or suggestion with the mod, feel free to ask in 
 - [Github issue](https://github.com/greycsont/GreyAnnouncer/issues)
@@ -104,29 +113,17 @@ if you have any throuble or suggestion with the mod, feel free to ask in
   
 ## Credit
 Thanks:
-- [Artless Games](https://space.bilibili.com/1237125233)
-- [Announcer Mod](https://www.nexusmods.com/ultrakill/mods/54)
-- [PluginConfigurator doc](https://github.com/eternalUnion/UKPluginConfigurator/wiki)
-- [Maxwell's puzzling demon](https://store.steampowered.com/app/2770160/)
+- [OSU!](https://osu.ppy.sh/) some UX are copied from lazer, use .ini as config cuz `skin.ini` is pretty easy to edit
+- [Artless Games](https://space.bilibili.com/1237125233) 14 Minesweeper variants
+- [Announcer Mod](https://www.nexusmods.com/ultrakill/mods/54) I create this mod just because the mod isn't update after ULTRAKILL's update
+- [PluginConfigurator doc](https://github.com/eternalUnion/UKPluginConfigurator/wiki) Easy to use tbh
+- [Maxwell's puzzling demon](https://store.steampowered.com/app/2770160/) Fun puzzle game
 - [Everything](https://www.voidtools.com/) Why vscode always auto pull and merge the source from the github.
 - 快乐萨卡兹厨, jamcame, 夕柱.
 
 - Everyone who used this mod.
 
-- Except me, The only thing I did is just collect idea from others and fix bugs in a worst way ever.
-
-Some inspiration of the mod :
-
-**Warning : It's non-english website, don't wear earphone and lower the volume down to nearly 0, I takes 0 responsbilities of any damage/hurt caused by these videos**
-
-https://www.bilibili.com/video/BV1gk5kzREen
-
-~~https://www.bilibili.com/video/BV1CmLdzQEPB~~
-
-~~https://www.bilibili.com/video/BV1P4pqe8Eyu~~
-
-~~https://www.bilibili.com/video/BV1rrFyeXE1D~~
-
+Except me, The only thing I did is just collect idea from others and fix bugs in a worst way ever.
 
 ## License
 - The file(s) in the **Lib/** folder are third-party and not authored by me. They are not covered by the License of this project. Please refer to the respective license(s) of those files.
@@ -141,10 +138,11 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 v1.1.0/v1.1.1 was licensed under AGPL+PostgreSQL.
 
-## Shitpost collection
-- Pausing is cheating
+## Shitpost
+Turn up the bass!
+THWWWWOOOOOMPPPP DHGDHGDHGDHGDHGDHG BWOBWOBWOBWOB BWOBWOBWOBWOB BWOBWOBWOBWOBWOB BWAHH BWAHH BWAHH HMRMRMRMRMRMRMRMMR WOH WOH WOH- H H H HHHHH THWWOOMPPPP DHGDHGDHGDHGDHGDHG BWOBWOBWOBWOB.. BWOBWOBWOBWOB.. BWOBWOBWOBWOBWOB.... HRMMMMMMMMMMMMMMMMRRR- HRRRRRRR HRRRRRRRR HRRRRRR HRRRRRRRR HRRR HR-YOOOH!!!!!!
 
-- In this world there's only two key sets, one is jack, another one is a bit tilted jack.
+`- shadow of cats`
 
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 

@@ -8,6 +8,8 @@ public static class IniWriter
 {
     public static void Write(string path, IniDocument doc)
     {
+        PathManager.EnsureDirectoryExists(path);
+        
         using var writer = new StreamWriter(path, false);
 
         foreach (var sectionPair in doc.Sections)

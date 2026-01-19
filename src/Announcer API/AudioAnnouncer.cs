@@ -23,8 +23,18 @@ public class AudioAnnouncer
     private ICooldownManager _cooldownManager;
 
     private List<string> category;
+    private string _announcerPath;
+    private string announcerPath
+    {
+        get => _announcerPath;
+        set
+        {
+            _announcerPath = value;
+            iniPath = Path.Combine(value, "config.ini");
+        }
+    }
 
-    private string iniPath = PathManager.GetCurrentPluginPath("config.ini");
+    private string iniPath;
 
 
     public AudioAnnouncer(IAudioLoader audioLoader,
@@ -37,9 +47,11 @@ public class AudioAnnouncer
         this.category = displayNameMapping;
         this.title = title;
 
+        announcerPath = AnnouncerIndex.Get(this.title);
+
         this._announcerConfig = AnnouncerConfigIniInitialization(category);
 
-        _audioLoader.UpdateAnnouncerConfig(_announcerConfig);
+        _audioLoader.UpdateSetting(_announcerConfig, announcerPath);
 
         SubscribeAnnouncerManager();
 
@@ -76,7 +88,8 @@ public class AudioAnnouncer
     {
         // it will automatically reload
         this._announcerConfig = AnnouncerConfigIniInitialization(category);
-        _audioLoader.UpdateAnnouncerConfig(_announcerConfig);
+        _audioLoader.UpdateSetting(_announcerConfig, announcerPath);
+        RegisterRankAnnouncerPagev2.ApplyConfigToUI(_announcerConfig);
     }
 
 
@@ -84,10 +97,10 @@ public class AudioAnnouncer
     public void ResetCooldown()
         => _cooldownManager.ResetCooldowns();
 
-    public void UpdateJsonSetting(AnnouncerConfig newSetting)
+    public void UpdateAnnouncerConfig(AnnouncerConfig newSetting)
     {
-        _announcerConfig = newSetting;
-        _audioLoader.UpdateAnnouncerConfig(_announcerConfig);
+        this._announcerConfig = newSetting;
+        _audioLoader.UpdateSetting(_announcerConfig, announcerPath);
         WriteConfigToIni(_announcerConfig);
     }
 
@@ -179,6 +192,7 @@ public class AudioAnnouncer
 
     private AnnouncerConfig AnnouncerConfigIniInitialization(List<string> category)
     {
+        LogManager.LogDebug($"current iniPath for {title}: {iniPath}");
         if (File.Exists(iniPath) == false)
         {
             var audioDict = category.ToDictionary(

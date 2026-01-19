@@ -17,7 +17,6 @@ public static class AnnouncerIniMapper
         // -------- General --------
         if (doc.TryGetSection("General", out var general))
         {
-            config.AudioPath = general.GetLastValue("AudioPath") ?? config.AudioPath;
             config.RandomizeAudioOnPlay = GetBool(general, "RandomizeAudioOnPlay", false);
         }
 

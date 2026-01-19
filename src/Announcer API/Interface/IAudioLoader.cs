@@ -13,6 +13,6 @@ public interface IAudioLoader
 
     public void ClearCache();
 
-    public void UpdateAnnouncerConfig(AnnouncerConfig jsonSetting);
+    public void UpdateSetting(AnnouncerConfig jsonSetting, string announcerPath);
     
 }

@@ -10,26 +10,47 @@ public static class JsonManager
     public static T ReadJson<T>(string jsonName) where T : class
     {
         ValidateJsonName(jsonName);
+        
+        PathManager.EnsureDirectoryExists(PathManager.GetCurrentPluginPath()); 
+
         var jsonFilePath = PathManager.GetCurrentPluginPath(jsonName);
-        ValidateFileExists(jsonFilePath, jsonName);
+
+        var dir = Path.GetDirectoryName(jsonFilePath);
+        if (!Directory.Exists(dir))
+        {
+            LogManager.LogError($"JSON '{jsonName}' not found at path: {dir}");
+            return null;
+        }
         
         return DeserializeJson<T>(jsonFilePath, jsonName);
     }
 
-    public static T CreateJson<T>(string jsonName, T data) where T : class
-    {
-        ValidateJsonName(jsonName);
+    public static T CreateJson<T>(string jsonName, T data) where T : class 
+    { 
+        ValidateJsonName(jsonName); 
+
+        PathManager.EnsureDirectoryExists(PathManager.GetCurrentPluginPath()); 
+
         var jsonFilePath = PathManager.GetCurrentPluginPath(jsonName);
-        ValidateFileDoesNotExist(jsonFilePath, jsonName);
-        
-        return SerializeAndSaveJson(jsonFilePath, jsonName, data);
+
+        var dir = Path.GetDirectoryName(jsonFilePath);
+        if (Directory.Exists(dir))
+        {
+            LogManager.LogError($"JSON '{jsonName}' already exists at path: {dir}");
+            return null;
+        }
+
+        return SerializeAndSaveJson(jsonFilePath, jsonName, data); 
     }
 
     public static T WriteJson<T>(string jsonName, T data) where T : class
     {
         ValidateJsonName(jsonName);
         var jsonFilePath = PathManager.GetCurrentPluginPath(jsonName);
-        ValidateFileExists(jsonFilePath, jsonName);
+        
+        var dir = Path.GetDirectoryName(jsonFilePath);
+        if (!Directory.Exists(dir))
+            Directory.CreateDirectory(dir);
         
         return SerializeAndSaveJson(jsonFilePath, jsonName, data);
     }
@@ -42,22 +63,6 @@ public static class JsonManager
         if (string.IsNullOrEmpty(jsonName))
         {
             throw new ArgumentException("JSON file name cannot be null or empty");
-        }
-    }
-
-    private static void ValidateFileExists(string path, string name)
-    {
-        if (!File.Exists(path))
-        {
-            throw new FileNotFoundException($"JSON file '{name}' not found at path: {path}");
-        }
-    }
-
-    private static void ValidateFileDoesNotExist(string path, string name)
-    {
-        if (File.Exists(path))
-        {
-            throw new InvalidOperationException($"JSON file '{name}' already exists at path: {path}");
         }
     }
 

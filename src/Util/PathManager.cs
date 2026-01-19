@@ -10,8 +10,16 @@ namespace GreyAnnouncer;
 
 public static class PathManager
 {
-    public static string GetCurrentPluginPath(string filePath = null)
-        => CleanPath(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), filePath ?? string.Empty));
+    public static string GetCurrentPluginPath(params string[] paths)
+    {
+        var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+
+        return CleanPath(
+            paths == null || paths.Length == 0
+                ? baseDir
+                : Path.Combine(baseDir, Path.Combine(paths))
+        );
+    }
 
     public static string GetGamePath(string filePath)
         => CleanPath(Path.Combine(Paths.GameRootPath, filePath));
@@ -33,6 +41,8 @@ public static class PathManager
         return cleanedPath;
         /* 我恨你， 当我用GPT-SOTIVS都是因为这个破东西导致一直说没找到路径,摸摸灰喉（ */
     }
+
+    
 
     /*
      * Unity 什么时候支持 .NET Core?
@@ -60,11 +70,11 @@ public static class PathManager
     
     public static string GetFile(string filePath, string fileName)
     {
-        string[] files = Directory.GetFiles(filePath, fileName);
-        
-        if (files.Length > 0)
-            return files[0];
+        string combinedPath = Path.Combine(filePath, fileName);
 
+        if (File.Exists(combinedPath))
+            return combinedPath;
+            
         return null;
     }
 
@@ -100,5 +110,13 @@ public static class PathManager
             return fallbackPath;
 
         return null;
+    }
+
+
+    public static void EnsureDirectoryExists(string filePath)
+    {
+        var dir = Path.GetDirectoryName(filePath);
+        if (!Directory.Exists(dir))
+            Directory.CreateDirectory(dir);
     }
 }

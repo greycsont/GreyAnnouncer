@@ -11,7 +11,7 @@ public static class BepInExConfig
 
     public static ConfigEntry<int> audioPlayOptions;
 
-    public static ConfigEntry<int> audioLoadingOptions;
+    public static ConfigEntry<int> audioLoadingStategy;
 
     public static ConfigEntry<bool> isFFmpegSupportEnabled;
     
@@ -96,7 +96,7 @@ public static class BepInExConfig
                 description
             );
             if      (name == "Audio_Play_Option")    audioPlayOptions    = configEntry;
-            else if (name == "Audio_Loading_Option") audioLoadingOptions = configEntry;
+            else if (name == "Audio_Loading_Option") audioLoadingStategy = configEntry;
         }
         else
         {

@@ -11,10 +11,6 @@
     <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <LangVersion>12.0</LangVersion>
-  </PropertyGroup>
-
   
 
   <!-- Game's instruction set -->

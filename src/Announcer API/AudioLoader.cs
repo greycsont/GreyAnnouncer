@@ -32,6 +32,8 @@ public class AudioLoader : IAudioLoader
 
     public static Action<string> onPluginConfiguratorLogUpdated;
 
+    public string announcerPath;
+
 
     [Description("Q : Why do you using whole AnnouncerJsonSetting as input instead only CategoryAudioMap?" +
                  "A : For future, what kinds of future? idk.")]
@@ -43,7 +45,7 @@ public class AudioLoader : IAudioLoader
     {
         AudioClip clip;
 
-        if (BepInExConfig.audioLoadingOptions.Value == 0)
+        if (BepInExConfig.audioLoadingStategy.Value == 0)
         {
             var currentRequestId = ++AnnouncerManager.playRequestId;
 
@@ -74,7 +76,7 @@ public class AudioLoader : IAudioLoader
 
         if (clip == null)
         {
-            LogCategoryFailure(category, "No audio clip available to play");
+            LogCategoryFailure(category, $"No audio clip available to play, current loading strategy: {BepInExConfig.audioLoadingStategy.Value}");
             return null;
         }
 
@@ -88,14 +90,18 @@ public class AudioLoader : IAudioLoader
     #region Preload_and_Play API
     public AudioClip GetClipFromCache(string category)
     {
-        if (categoryFailedLoading.Contains(category)) return null;
-
-
-        if (announcerConfig.CategoryAudioMap.Keys.Contains(category) == false) return null;
-
-
-        if (!_audioClips.TryGetValue(category, out var clips) || clips.Count == 0) return null;
-
+        if (categoryFailedLoading.Contains(category)) {
+            LogManager.LogError("categoryfailedloading");
+            return null;
+        }
+        if (announcerConfig.CategoryAudioMap.Keys.Contains(category) == false) {
+            LogManager.LogError("contains category = false");
+            return null;
+        }
+        if (!_audioClips.TryGetValue(category, out var clips) || clips.Count == 0){
+            LogManager.LogError("no clip in cache"); 
+            return null;
+        }
         int randomIndex = UnityEngine.Random.Range(0, clips.Count);
 
         var clip = clips[randomIndex];
@@ -162,14 +168,14 @@ public class AudioLoader : IAudioLoader
     {
         LogManager.LogInfo("Starting to find available audio asynchronously.");
         ClearCache();
-        if (BepInExConfig.audioLoadingOptions.Value == 0) return;
-        FileSystemUtil.ValidateAndPrepareDirectory(announcerConfig.AudioPath);
+        if (BepInExConfig.audioLoadingStategy.Value == 0) return;
         await LoadAllCategoriesAsync();
         LogLoadingResults();
     }
 
-    public void UpdateAnnouncerConfig(AnnouncerConfig newAnnouncerConfig)
+    public void UpdateSetting(AnnouncerConfig newAnnouncerConfig, string announcerPath)
     {
+        this.announcerPath = announcerPath;
         this.announcerConfig = newAnnouncerConfig;
         _ = FindAvailableAudioAsync();
     }
@@ -271,7 +277,7 @@ public class AudioLoader : IAudioLoader
 
     private void LogLoadingResults()
     {
-        LogManager.LogDebug("Loading directory: " + announcerConfig.AudioPath);
+        LogManager.LogDebug("Loading directory: " + announcerPath);
         if (categoryFailedLoading.Count == 0)
             LogManager.LogInfo("All audio categories successfully loaded");
         else
@@ -282,6 +288,7 @@ public class AudioLoader : IAudioLoader
     #region Utility Methods
     private bool TryGetValidAudioFiles(string category, out List<string> validFiles)
     {
+        LogManager.LogDebug($"Loading category: {category}");
         validFiles = null;
 
         if (!announcerConfig.CategoryAudioMap.TryGetValue(category, out var categorySetting)
@@ -294,9 +301,15 @@ public class AudioLoader : IAudioLoader
 
         var fileNames = categorySetting.AudioFiles;
         validFiles = fileNames
-            .Select(name => PathManager.GetFile(announcerConfig.AudioPath, name))
+            .Select(name => PathManager.GetFile(announcerPath, name))
             .Where(File.Exists)
             .ToList();
+
+        foreach (var name in fileNames)
+        {
+            string path = PathManager.GetFile(announcerPath, name);
+            LogManager.LogDebug($"Checking file path: {path}, Exists: {File.Exists(path)}");
+        }
 
         if (validFiles.Count == 0)
         {

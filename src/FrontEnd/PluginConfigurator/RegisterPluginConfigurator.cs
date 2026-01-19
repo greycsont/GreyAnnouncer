@@ -5,14 +5,21 @@ using System;
 using UnityEngine;
 
 using GreyAnnouncer.AnnouncerAPI;
+using System.Collections.Generic;
 
 namespace GreyAnnouncer.FrontEnd;
 
 public static class RegisterRankAnnouncerPagev2
 {
     private static PluginConfigurator _pluginConfigurator;
+
     private static string _title;
+
     private static AudioAnnouncer _announcer;
+
+    private static readonly Dictionary<string, CategoryFields> _categoryFields
+        = new Dictionary<string, CategoryFields>();
+        
     public static void Build(string title, AudioAnnouncer announcer)
     {
         _pluginConfigurator = PluginConfiguratorEntry.config;
@@ -24,19 +31,6 @@ public static class RegisterRankAnnouncerPagev2
 
         ConfigHeader titleHeader = new ConfigHeader(panel, _title);
         titleHeader.textColor = HeaderColor;
-
-        var audioPathField = new StringField(
-            panel,
-            "Audio Path",
-            GuidPrefixAdder.AddPrefixToGUID("AudioPath", _title),
-            _announcer._announcerConfig.AudioPath
-        );
-        audioPathField.defaultValue = PathManager.GetCurrentPluginPath();
-        audioPathField.onValueChange += e =>
-        {
-            _announcer._announcerConfig.AudioPath = e.value;
-            SomethingAfterUpdateJson();
-        };
 
         var randomizeAudioField = new BoolField(
             panel,
@@ -54,31 +48,38 @@ public static class RegisterRankAnnouncerPagev2
 
         foreach (var category in _announcer._announcerConfig.CategoryAudioMap)
         {
+            string key = category.Key;
+
             ConfigHeader header = new ConfigHeader(panel, category.Key);
             header.textColor = new Color(0,1,1);
 
-            var Afield = CreateEnabledField(
-                panel,
-                category.Key,
-                _announcer._announcerConfig,
-                true
-            );
+            var fields = new CategoryFields
+            {
+                Enabled = CreateEnabledField(panel, key, _announcer._announcerConfig, true),
+                Volume  = CreateVolumeField(panel, key, _announcer._announcerConfig, 1f),
+                Cooldown = CreateCooldownField(panel, key, _announcer._announcerConfig, 3.0f)
+            };
 
-            var Bfield = CreateVolumeField(
-                panel,
-                category.Key,
-                _announcer._announcerConfig,
-                1
-            );
-
-            var Cfield = CreateCooldownField(
-                panel,
-                category.Key,
-                _announcer._announcerConfig,
-                3.0f
-            );
+            _categoryFields[key] = fields;
         }
     }
+
+    public static void ApplyConfigToUI(AnnouncerConfig config)
+    {
+        foreach (KeyValuePair<string, CategoryFields> kv in _categoryFields)
+        {
+            var category = kv.Key;
+            var fields   = kv.Value;
+
+            if (!config.CategoryAudioMap.TryGetValue(category, out var data))
+                continue;
+
+            fields.Enabled.value  = data.Enabled;
+            fields.Volume.value   = data.VolumeMultiplier;
+            fields.Cooldown.value = data.Cooldown;
+        }
+    }
+
 
     private static BoolField CreateEnabledField(ConfigPanel panel,
                                                 string guid,
@@ -147,9 +148,16 @@ public static class RegisterRankAnnouncerPagev2
 
     private static void SomethingAfterUpdateJson()
     {
-        _announcer.UpdateJsonSetting(_announcer._announcerConfig);
+        _announcer.UpdateAnnouncerConfig(_announcer._announcerConfig);
         LogManager.LogInfo($"Updated announcer config for {_title}");
     }
 
     private static readonly Color HeaderColor = new Color(0.85f, 0.85f, 0.85f, 1f);
+}
+
+public class CategoryFields
+{
+    public BoolField Enabled;
+    public FloatField Volume;
+    public FloatSliderField Cooldown;
 }

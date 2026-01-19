@@ -89,14 +89,14 @@ public static class MainPanelBuilder
 
         var loadingOption = new EnumField<audioLoadingOptions>(
             m_pluginConfigurator.rootPanel,
-            "Audio Loading Option",
-            "Audio_Loading_Option",
-            (audioLoadingOptions)BepInExConfig.audioLoadingOptions.Value
+            "Audio Loading Strategy",
+            "Audio_Loading_Strategy",
+            (audioLoadingOptions)BepInExConfig.audioLoadingStategy.Value
         );
         loadingOption.defaultValue = (audioLoadingOptions)BepInExConfig.DEFAULT_AUDIO_LOADING_OPTIONS;
         loadingOption.onValueChange += e =>
         {
-            BepInExConfig.audioLoadingOptions.Value = (int)e.value;
+            BepInExConfig.audioLoadingStategy.Value = (int)e.value;
             if (e.value.Equals((audioLoadingOptions.Load_then_Play)))
             {
                 LogManager.LogInfo("Clear audio clip cache");

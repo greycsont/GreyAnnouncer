@@ -34,5 +34,5 @@ public static class RankAnnouncer
     }
 
     public static void PlayRankSound(int rank)
-       => _ = _announcer.PlayAudioViaIndex(rank);
+       => _ = _announcer.PlayAudioViaCategory(category[rank]);
 }

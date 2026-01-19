@@ -62,7 +62,6 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
                               Leaf("getsetting", () => ObjectTreePrinter.GetTreeString(a._announcerConfig)),
                               //Leaf("enable", () => a.Enable()),
                               //Leaf("disable", () => a.Disable()),
-                              Leaf<string>("audiopath", path => a._announcerConfig.AudioPath = path),
                               Leaf<bool>("randomize", enabled => a._announcerConfig.RandomizeAudioOnPlay = enabled),
                               Branch("category", categoryBranches)
                 );
