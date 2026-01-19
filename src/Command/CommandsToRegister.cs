@@ -43,7 +43,7 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
             .Select(a => 
             {
                 // 生成 category 分支
-                var categoryBranches = a._announcerConfig.CategoryAudioMap
+                var categoryBranches = a.announcerConfig.CategoryAudioMap
                     .Select(kvp => 
                     {
                         string categoryName = kvp.Key;
@@ -59,10 +59,10 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
 
                 return Branch(a.title,
                               Leaf("reload", () => a.ReloadAudio()),
-                              Leaf("getsetting", () => ObjectTreePrinter.GetTreeString(a._announcerConfig)),
+                              Leaf("getsetting", () => ObjectTreePrinter.GetTreeString(a.announcerConfig)),
                               //Leaf("enable", () => a.Enable()),
                               //Leaf("disable", () => a.Disable()),
-                              Leaf<bool>("randomize", enabled => a._announcerConfig.RandomizeAudioOnPlay = enabled),
+                              Leaf<bool>("randomize", enabled => a.announcerConfig.RandomizeAudioOnPlay = enabled),
                               Branch("category", categoryBranches)
                 );
             })

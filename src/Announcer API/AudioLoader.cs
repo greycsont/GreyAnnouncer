@@ -43,16 +43,16 @@ public class AudioLoader : IAudioLoader
 
     public async Task<Sound> LoadAudioClip(string category)
     {
-        AudioClip clip;
+        (string, AudioClip) clipWithCategory;
 
         if (BepInExConfig.audioLoadingStategy.Value == 0)
         {
             var currentRequestId = ++AnnouncerManager.playRequestId;
 
             if (announcerConfig.RandomizeAudioOnPlay == false)
-                clip = await LoadAndGetSingleAudioClipAsync(category);
+                clipWithCategory = await LoadAndGetSingleAudioClipAsync(category);
             else
-                clip = await GetRandomClipFromAllAvailableFiles();
+                clipWithCategory = await GetRandomClipFromAllAvailableFiles();
 
             if (
                 currentRequestId != AnnouncerManager.playRequestId
@@ -66,77 +66,80 @@ public class AudioLoader : IAudioLoader
         {
             if (announcerConfig.RandomizeAudioOnPlay == false)
             {
-                clip = GetClipFromCache(category);
+                clipWithCategory = GetClipFromCache(category);
             }
             else
             {
-                clip = GetRandomClipFromAudioClips();
+                clipWithCategory = GetRandomClipFromAudioClips();
             }
         }
 
-        if (clip == null)
+        if (clipWithCategory == (null, null))
         {
             LogCategoryFailure(category, $"No audio clip available to play, current loading strategy: {BepInExConfig.audioLoadingStategy.Value}");
             return null;
         }
 
-        Sound sound = new Sound(category, clip, announcerConfig.CategoryAudioMap[category].VolumeMultiplier);
-
-        return sound;
+        return new Sound(clipWithCategory.Item1, clipWithCategory.Item2, announcerConfig.CategoryAudioMap[clipWithCategory.Item1].VolumeMultiplier);
     }
 
 
 
     #region Preload_and_Play API
-    public AudioClip GetClipFromCache(string category)
+    public (string category, AudioClip clip) GetClipFromCache(string category)
     {
         if (categoryFailedLoading.Contains(category)) {
             LogManager.LogError("categoryfailedloading");
-            return null;
+            return (null, null);
         }
         if (announcerConfig.CategoryAudioMap.Keys.Contains(category) == false) {
             LogManager.LogError("contains category = false");
-            return null;
+            return (null, null);
         }
         if (!_audioClips.TryGetValue(category, out var clips) || clips.Count == 0){
             LogManager.LogError("no clip in cache"); 
-            return null;
+            return (null, null);
         }
         int randomIndex = UnityEngine.Random.Range(0, clips.Count);
 
         var clip = clips[randomIndex];
 
-        return clip;
+        return (category, clip);
     }
 
-    public AudioClip GetRandomClipFromAudioClips()
+    public (string category, AudioClip clip) GetRandomClipFromAudioClips()
     {
         var validEntries = _audioClips
-            .SelectMany(kvp => kvp.Value.Select(clip => clip))
+        .Where(kvp => announcerConfig.CategoryAudioMap.TryGetValue(kvp.Key, out var data) && data.Enabled)
+        .SelectMany(kvp => kvp.Value
             .Where(clip => clip != null)
-            .ToList();
+            .Select(clip => (kvp.Key, clip)))  // 这里保留 key
+        .ToList();
 
-        if (validEntries.Count == 0) return null;
-        
-        return validEntries[UnityEngine.Random.Range(0, validEntries.Count)];
+        if (validEntries.Count == 0) 
+            return (null, null);
+
+        var (category, clip) = validEntries[UnityEngine.Random.Range(0, validEntries.Count)];
+
+        return (category, clip);
     }
 
 
     #endregion
 
     #region Load_then_Play API
-    public async Task<AudioClip> LoadAndGetSingleAudioClipAsync(string category)
+    public async Task<(string category, AudioClip clip)> LoadAndGetSingleAudioClipAsync(string category)
     {
-        if (!TryGetValidAudioFiles(category, out var validFiles)) return null;
+        if (!TryGetValidAudioFiles(category, out var validFiles)) return (null, null);
 
         string selectedPath = validFiles[UnityEngine.Random.Range(0, validFiles.Count)];
         var clip = await AudioClipLoader.LoadAudioClipAsync(selectedPath);
 
         if (clip == null) LogCategoryFailure(category, "Selected file failed to load");
 
-        return clip;
+        return (category, clip);
     }
-    public async Task<AudioClip> GetRandomClipFromAllAvailableFiles()
+    public async Task<(string category, AudioClip clip)> GetRandomClipFromAllAvailableFiles()
     {
         var allValidFiles = new List<(string category, string path)>();
         
@@ -148,7 +151,7 @@ public class AudioLoader : IAudioLoader
             }
         }
         
-        if (allValidFiles.Count == 0) return null;
+        if (allValidFiles.Count == 0) return (null, null);
         
         var selected = allValidFiles[UnityEngine.Random.Range(0, allValidFiles.Count)];
         var clip = await AudioClipLoader.LoadAudioClipAsync(selected.path);
@@ -156,10 +159,10 @@ public class AudioLoader : IAudioLoader
         if (clip == null)
         {
             LogCategoryFailure(selected.category, "Selected file failed to load");
-            return null;
+            return (null, null);
         }
         
-        return clip;
+        return (selected.category, clip);
     }
     #endregion
 
@@ -290,6 +293,11 @@ public class AudioLoader : IAudioLoader
     {
         LogManager.LogDebug($"Loaded category: {category}");
         validFiles = null;
+
+        if (!announcerConfig.CategoryAudioMap[category].Enabled)
+        {
+            LogCategoryFailure(category, "Stopped by Config");
+        }
 
         if (!announcerConfig.CategoryAudioMap.TryGetValue(category, out var categorySetting)
             || categorySetting.AudioFiles == null

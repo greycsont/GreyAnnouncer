@@ -40,7 +40,7 @@ public class AudioAnnouncer
         }
     }
 
-    public AnnouncerConfig _announcerConfig;
+    private AnnouncerConfig _announcerConfig;
     public AnnouncerConfig announcerConfig
     {
         get => _announcerConfig;
@@ -69,9 +69,9 @@ public class AudioAnnouncer
 
     private void ApplyAnnouncerConfig()
     {
-        _audioLoader.UpdateSetting(_announcerConfig, announcerPath);
-        WriteConfigToIni(_announcerConfig);
-        RegisterAnnouncerPage.ApplyConfigToUI(_announcerConfig);
+        _audioLoader.UpdateSetting(announcerConfig, announcerPath);
+        WriteConfigToIni(announcerConfig);
+        RegisterAnnouncerPage.ApplyConfigToUI(announcerConfig);
     }
 
 
@@ -107,8 +107,7 @@ public class AudioAnnouncer
             if (!ValidateAndLogPlayback(category))
                 return;
 
-            if (await PlayAudioClip(category, BepInExConfig.audioPlayOptions.Value))
-                SetCooldown(category, announcerConfig.CategoryAudioMap[category].Cooldown);
+            await PlayAudioClip(category, BepInExConfig.audioPlayOptions.Value);
         }
         catch (Exception ex)
         {
@@ -147,29 +146,28 @@ public class AudioAnnouncer
         var validationState = GetPlayValidationState(category);
         if (validationState != ValidationState.Success)
         {
-            //LogManager.LogInfo($"PlayValidationState: {category}, {validationState}");
+            LogManager.LogInfo($"PlayValidationState: {category}, {validationState}");
             return false;
         }
         return true;
     }
 
-    private async Task<bool> PlayAudioClip(string category, int audioPlayOptions = 0)
+    private async Task PlayAudioClip(string category, int audioPlayOptions = 0)
     {
         LogManager.LogInfo($"Attempting to play audio for category: {category}");
         Sound sound = await _audioLoader.LoadAudioClip(category);
 
         if (sound == null)
         {
-            LogManager.LogError($"Failed to load audio clip for category: {category}");
-            return false;
+            LogManager.LogError($"Failed to load audio clip may for this category: {category}");
+            return;
         }
 
-        LogManager.LogDebug($"category : {sound.category}, Cooldown : {_announcerConfig.CategoryAudioMap[category].Cooldown}");
+        LogManager.LogDebug($"category : {sound.category}, Cooldown : {announcerConfig.CategoryAudioMap[sound.category].Cooldown}");
 
         SoundDispatcher.SendClipToAudioSource(sound, audioPlayOptions);
 
-        return true;
-
+        SetCooldown(sound.category, announcerConfig.CategoryAudioMap[sound.category].Cooldown);
     }
 
     private void LogPlaybackError(Exception ex)
@@ -180,28 +178,17 @@ public class AudioAnnouncer
     private ValidationState GetPlayValidationState(string category)
     {
         if (_cooldownManager == null || _audioLoader == null)
-        {
             return ValidationState.ComponentsNotInitialized;
-        }
-
 
         if (_audioLoader.announcerConfig.CategoryAudioMap.Keys == null
             || !_audioLoader.announcerConfig.CategoryAudioMap.Keys.Contains(category))
-        {
             return ValidationState.InvalidKey;
-        }
-
 
         if (_cooldownManager.IsIndividualCooldownActive(category))
-        {
             return ValidationState.IndividualCooldown;
-        }
 
-
-        if (!_announcerConfig.CategoryAudioMap[category].Enabled)
-        {
+        if (!announcerConfig.CategoryAudioMap[category].Enabled && announcerConfig.RandomizeAudioOnPlay == false)
             return ValidationState.DisabledByConfig;
-        }
 
         return ValidationState.Success;
     }
