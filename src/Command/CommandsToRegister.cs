@@ -43,7 +43,7 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
             .Select(a => 
             {
                 // 生成 category 分支
-                var categoryBranches = a.announcerConfig.CategoryAudioMap
+                var categoryBranches = a.announcerConfig.CategorySetting
                     .Select(kvp => 
                     {
                         string categoryName = kvp.Key;

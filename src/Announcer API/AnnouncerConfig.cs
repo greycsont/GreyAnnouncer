@@ -16,7 +16,7 @@ public class AnnouncerConfig : NotifyBase
         set => SetField(ref _randomizeAudioOnPlay, value);
     }
 
-    public Dictionary<string, CategorySetting> CategoryAudioMap { get; } = new();
+    public Dictionary<string, CategorySetting> CategorySetting { get; } = new();
 
     public AnnouncerConfig()
     {
@@ -33,9 +33,9 @@ public class AnnouncerConfig : NotifyBase
     /// <param name="setting"></param>
     public void AddCategory(string key, CategorySetting setting)
     {
-        CategoryAudioMap[key] = setting;
+        CategorySetting[key] = setting;
         setting.PropertyChanged += OnCategoryChanged;
-        RaiseChanged(nameof(CategoryAudioMap));
+        RaiseChanged(nameof(CategorySetting));
     }
 
 
@@ -46,7 +46,7 @@ public class AnnouncerConfig : NotifyBase
     /// <returns></returns>
     public AnnouncerConfig SetCategorySettingMap(Dictionary<string, CategorySetting> map)
     {
-        CategoryAudioMap.Clear();
+        CategorySetting.Clear();
 
         foreach (var kv in map)
             AddCategory(kv.Key, kv.Value);

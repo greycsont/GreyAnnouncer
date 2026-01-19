@@ -11,20 +11,20 @@ using System.Collections.Generic;
 
 namespace GreyAnnouncer.FrontEnd;
 
-public static class RegisterAnnouncerPage
+public class RegistedAnnouncerPage
 {
-    private static PluginConfigurator _pluginConfigurator;
+    private PluginConfigurator _pluginConfigurator;
 
-    private static string _title;
+    private string _title;
 
-    private static AudioAnnouncer _audioAnnouncer;
+    private AudioAnnouncer _audioAnnouncer;
     
-    private static AnnouncerConfigFields _fields = new AnnouncerConfigFields
+    private AnnouncerConfigFields _fields = new AnnouncerConfigFields
     {
         CategoryFields = new Dictionary<string, CategoryFields>()
     };
         
-    public static void Build(string title, AudioAnnouncer audioAnnouncer)
+    public void Build(string title, AudioAnnouncer audioAnnouncer)
     {
         _pluginConfigurator = PluginConfiguratorEntry.config;
         _title = title;
@@ -66,7 +66,7 @@ public static class RegisterAnnouncerPage
             _audioAnnouncer.announcerConfig.RandomizeAudioOnPlay = e.value;
         };
         
-        foreach (var category in _audioAnnouncer.announcerConfig.CategoryAudioMap)
+        foreach (var category in _audioAnnouncer.announcerConfig.CategorySetting)
         {
             string key = category.Key;
 
@@ -84,19 +84,19 @@ public static class RegisterAnnouncerPage
         }
     }
 
-    private static BoolField CreateEnabledField(ConfigPanel panel,
+    private BoolField CreateEnabledField(ConfigPanel panel,
                                                 string guid,
                                                 AnnouncerConfig AnnouncerConfig,
                                                 bool defaultValue)
     {
         var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid, "Enabled");
-        var field = new BoolField(panel, "Enabled", fullGuid, AnnouncerConfig.CategoryAudioMap[guid].Enabled);
+        var field = new BoolField(panel, "Enabled", fullGuid, AnnouncerConfig.CategorySetting[guid].Enabled);
         field.defaultValue = defaultValue;
         field.onValueChange += e =>
         {
-            if (AnnouncerConfig.CategoryAudioMap.ContainsKey(guid))
+            if (AnnouncerConfig.CategorySetting.ContainsKey(guid))
             {
-                AnnouncerConfig.CategoryAudioMap[guid].Enabled = e.value;
+                AnnouncerConfig.CategorySetting[guid].Enabled = e.value;
             }
         };
 
@@ -104,38 +104,38 @@ public static class RegisterAnnouncerPage
     }
 
 
-    private static FloatField CreateVolumeField(ConfigPanel panel,
+    private FloatField CreateVolumeField(ConfigPanel panel,
                                              string guid,
                                              AnnouncerConfig AnnouncerConfig,
                                              float defaultValue)
     {
         var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid, "VolumeMultiplier");
-        var field = new FloatField(panel, "Volume", fullGuid, AnnouncerConfig.CategoryAudioMap[guid].VolumeMultiplier);
+        var field = new FloatField(panel, "Volume", fullGuid, AnnouncerConfig.CategorySetting[guid].VolumeMultiplier);
         field.defaultValue = defaultValue;
         field.onValueChange += e =>
         {
-            if (AnnouncerConfig.CategoryAudioMap.ContainsKey(guid))
+            if (AnnouncerConfig.CategorySetting.ContainsKey(guid))
             {
-                AnnouncerConfig.CategoryAudioMap[guid].VolumeMultiplier = e.value;
+                AnnouncerConfig.CategorySetting[guid].VolumeMultiplier = e.value;
             }
         };
 
         return field;
     }
 
-    private static FloatSliderField CreateCooldownField(ConfigPanel panel,
+    private FloatSliderField CreateCooldownField(ConfigPanel panel,
                                                      string guid,
                                                      AnnouncerConfig AnnouncerConfig,
                                                      float defaultValue)
     {
         var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid, "Cooldown");
-        var field = new FloatSliderField(panel, "Cooldown", fullGuid, Tuple.Create(0.2f, 6f), AnnouncerConfig.CategoryAudioMap[guid].Cooldown, 1);
+        var field = new FloatSliderField(panel, "Cooldown", fullGuid, Tuple.Create(0.2f, 6f), AnnouncerConfig.CategorySetting[guid].Cooldown, 1);
         field.defaultValue = defaultValue;
         field.onValueChange += e =>
         {
-            if (AnnouncerConfig.CategoryAudioMap.ContainsKey(guid))
+            if (AnnouncerConfig.CategorySetting.ContainsKey(guid))
             {
-                AnnouncerConfig.CategoryAudioMap[guid].Cooldown = e.newValue;
+                AnnouncerConfig.CategorySetting[guid].Cooldown = e.newValue;
             }
 
         };
@@ -143,7 +143,7 @@ public static class RegisterAnnouncerPage
         return field;
     }
 
-    public static void ApplyConfigToUI(AnnouncerConfig config)
+    public void ApplyConfigToUI(AnnouncerConfig config)
     {
         LogManager.LogDebug($"ApplyConfigToUI called");
 
@@ -155,7 +155,7 @@ public static class RegisterAnnouncerPage
             var category = kv.Key;
             var fields   = kv.Value;
 
-            if (!config.CategoryAudioMap.TryGetValue(category, out var data))
+            if (!config.CategorySetting.TryGetValue(category, out var data))
                 continue;
 
             if (fields.Enabled.value != data.Enabled)

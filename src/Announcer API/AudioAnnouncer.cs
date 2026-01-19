@@ -71,7 +71,7 @@ public class AudioAnnouncer
     {
         _audioLoader.UpdateSetting(announcerConfig, announcerPath);
         WriteConfigToIni(announcerConfig);
-        RegisterAnnouncerPage.ApplyConfigToUI(announcerConfig);
+        page.ApplyConfigToUI(announcerConfig);
     }
 
 
@@ -92,8 +92,10 @@ public class AudioAnnouncer
 
         SubscribeAnnouncerManager();
 
-        RegisterAnnouncerPage.Build(title, this);
+        page.Build(title, this);
     }
+
+    private RegistedAnnouncerPage page = new RegistedAnnouncerPage();
 
     [Description("Parry balls of Maurice -> Hit Maurice -> AscendingRank() -> Postfix() -> PlaySound() -> CheckPlayValidation(), " +
                  "This error will skip all the function before CheckPlayValidation(), That's why try-catch has implemented in the fucntion")]
@@ -117,7 +119,7 @@ public class AudioAnnouncer
 
     /// <summary>Will Play a random audio in the belong category by jsonSetting mapping via index</summary>
     public async Task PlayAudioViaIndex(int index)
-        => await PlayAudioViaCategory(announcerConfig.CategoryAudioMap.Keys.ToArray()[index]);
+        => await PlayAudioViaCategory(announcerConfig.CategorySetting.Keys.ToArray()[index]);
 
     /// <summary>Reload Audio, only works when using Preload and Play options</summary>
     public void ReloadAudio()
@@ -163,11 +165,11 @@ public class AudioAnnouncer
             return;
         }
 
-        LogManager.LogDebug($"category : {sound.category}, Cooldown : {announcerConfig.CategoryAudioMap[sound.category].Cooldown}");
+        LogManager.LogDebug($"category : {sound.category}, Cooldown : {announcerConfig.CategorySetting[sound.category].Cooldown}");
 
         SoundDispatcher.SendClipToAudioSource(sound, audioPlayOptions);
 
-        SetCooldown(sound.category, announcerConfig.CategoryAudioMap[sound.category].Cooldown);
+        SetCooldown(sound.category, announcerConfig.CategorySetting[sound.category].Cooldown);
     }
 
     private void LogPlaybackError(Exception ex)
@@ -180,14 +182,14 @@ public class AudioAnnouncer
         if (_cooldownManager == null || _audioLoader == null)
             return ValidationState.ComponentsNotInitialized;
 
-        if (_audioLoader.announcerConfig.CategoryAudioMap.Keys == null
-            || !_audioLoader.announcerConfig.CategoryAudioMap.Keys.Contains(category))
+        if (_audioLoader.announcerConfig.CategorySetting.Keys == null
+            || !_audioLoader.announcerConfig.CategorySetting.Keys.Contains(category))
             return ValidationState.InvalidKey;
 
         if (_cooldownManager.IsIndividualCooldownActive(category))
             return ValidationState.IndividualCooldown;
 
-        if (!announcerConfig.CategoryAudioMap[category].Enabled && announcerConfig.RandomizeAudioOnPlay == false)
+        if (!announcerConfig.CategorySetting[category].Enabled && announcerConfig.RandomizeAudioOnPlay == false)
             return ValidationState.DisabledByConfig;
 
         return ValidationState.Success;
@@ -223,7 +225,7 @@ public class AudioAnnouncer
     {
         var doc = new IniDocument();
         doc = IniMapper.ToIni(doc, announcerConfig, "General"); // 写 General
-        foreach (var pair in announcerConfig.CategoryAudioMap)
+        foreach (var pair in announcerConfig.CategorySetting)
         {
             doc = IniMapper.ToIni(doc, pair.Value, $"Category:{pair.Key}");
         }
@@ -241,7 +243,7 @@ public class AudioAnnouncer
         announcerConfig = IniMapper.FromIni<AnnouncerConfig>(doc, "General");
 
         // 读取所有 Category: 开头的 section
-        announcerConfig.CategoryAudioMap.Clear();
+        announcerConfig.CategorySetting.Clear();
         foreach (var key in doc.Sections.Keys.Where(k => k.StartsWith("Category:")))
         {
             var categoryName = key.Substring("Category:".Length);

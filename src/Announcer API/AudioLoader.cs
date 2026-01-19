@@ -80,7 +80,7 @@ public class AudioLoader : IAudioLoader
             return null;
         }
 
-        return new Sound(clipWithCategory.Item1, clipWithCategory.Item2, announcerConfig.CategoryAudioMap[clipWithCategory.Item1].VolumeMultiplier);
+        return new Sound(clipWithCategory.Item1, clipWithCategory.Item2, announcerConfig.CategorySetting[clipWithCategory.Item1].VolumeMultiplier);
     }
 
 
@@ -92,7 +92,7 @@ public class AudioLoader : IAudioLoader
             LogManager.LogError("categoryfailedloading");
             return (null, null);
         }
-        if (announcerConfig.CategoryAudioMap.Keys.Contains(category) == false) {
+        if (announcerConfig.CategorySetting.Keys.Contains(category) == false) {
             LogManager.LogError("contains category = false");
             return (null, null);
         }
@@ -110,7 +110,7 @@ public class AudioLoader : IAudioLoader
     public (string category, AudioClip clip) GetRandomClipFromAudioClips()
     {
         var validEntries = _audioClips
-        .Where(kvp => announcerConfig.CategoryAudioMap.TryGetValue(kvp.Key, out var data) && data.Enabled)
+        .Where(kvp => announcerConfig.CategorySetting.TryGetValue(kvp.Key, out var data) && data.Enabled)
         .SelectMany(kvp => kvp.Value
             .Where(clip => clip != null)
             .Select(clip => (kvp.Key, clip)))  // 这里保留 key
@@ -143,7 +143,7 @@ public class AudioLoader : IAudioLoader
     {
         var allValidFiles = new List<(string category, string path)>();
         
-        foreach (var category in announcerConfig.CategoryAudioMap.Keys)
+        foreach (var category in announcerConfig.CategorySetting.Keys)
         {
             if (TryGetValidAudioFiles(category, out var validFiles))
             {
@@ -196,7 +196,7 @@ public class AudioLoader : IAudioLoader
     {
         var loadingTasks = new List<Task<(string category, List<AudioClip> clips)>>();
 
-        foreach (var category in announcerConfig.CategoryAudioMap.Keys)
+        foreach (var category in announcerConfig.CategorySetting.Keys)
         {
             loadingTasks.Add(LoadCategoryAsync(category).ContinueWith(task => (category, task.Result)));
         }
@@ -294,12 +294,12 @@ public class AudioLoader : IAudioLoader
         LogManager.LogDebug($"Loaded category: {category}");
         validFiles = null;
 
-        if (!announcerConfig.CategoryAudioMap[category].Enabled)
+        if (!announcerConfig.CategorySetting[category].Enabled)
         {
             LogCategoryFailure(category, "Stopped by Config");
         }
 
-        if (!announcerConfig.CategoryAudioMap.TryGetValue(category, out var categorySetting)
+        if (!announcerConfig.CategorySetting.TryGetValue(category, out var categorySetting)
             || categorySetting.AudioFiles == null
             || categorySetting.AudioFiles.Count == 0)
         {
