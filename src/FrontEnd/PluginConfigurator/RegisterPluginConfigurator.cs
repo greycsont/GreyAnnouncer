@@ -44,7 +44,6 @@ public static class RegisterRankAnnouncerPagev2
         randomizeAudioField.onValueChange += e =>
         {
             _announcer.announcerConfig.RandomizeAudioOnPlay = e.value;
-            SomethingAfterUpdateJson();
         };
 
         var announcers = Directory.GetDirectories(AnnouncerIndex.announcersPath)
@@ -114,8 +113,6 @@ public static class RegisterRankAnnouncerPagev2
             {
                 AnnouncerConfig.CategoryAudioMap[guid].Enabled = e.value;
             }
-
-            SomethingAfterUpdateJson();
         };
 
         return field;
@@ -136,8 +133,6 @@ public static class RegisterRankAnnouncerPagev2
             {
                 AnnouncerConfig.CategoryAudioMap[guid].VolumeMultiplier = e.value;
             }
-
-            SomethingAfterUpdateJson();
         };
 
         return field;
@@ -158,19 +153,10 @@ public static class RegisterRankAnnouncerPagev2
                 AnnouncerConfig.CategoryAudioMap[guid].Cooldown = e.newValue;
             }
 
-            SomethingAfterUpdateJson();
-
         };
 
         return field;
     }
-
-    private static void SomethingAfterUpdateJson()
-    {
-        _announcer.UpdateAnnouncerConfig(_announcer.announcerConfig);
-        LogManager.LogInfo($"Updated announcer config for {_title}");
-    }
-
     private static readonly Color HeaderColor = new Color(0.85f, 0.85f, 0.85f, 1f);
 }
 

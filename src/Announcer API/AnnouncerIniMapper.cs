@@ -9,11 +9,7 @@ public static class AnnouncerIniMapper
 {
     public static AnnouncerConfig FromIni(IniDocument doc)
     {
-        var config = new AnnouncerConfig
-        {
-            CategoryAudioMap = new Dictionary<string, CategorySetting>()
-        };
-
+        var config = new AnnouncerConfig();
         // -------- General --------
         if (doc.TryGetSection("General", out var general))
         {
@@ -51,7 +47,7 @@ public static class AnnouncerIniMapper
                         cat.AudioFiles.Add(file);
                 }
             }
-            config.CategoryAudioMap[key] = cat;
+            config.AddCategory(key, cat);
         }
 
         return config;

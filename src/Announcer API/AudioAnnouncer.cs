@@ -44,13 +44,32 @@ public class AudioAnnouncer
         get => _announcerConfig;
         set
         {
-            LogManager.LogDebug($"announcerConfig changed at: {title}");
+            if (_announcerConfig == value)
+                return;
+
+            if (_announcerConfig != null)
+                _announcerConfig.PropertyChanged -= OnAnnouncerConfigChanged;
+
             _announcerConfig = value;
-            _audioLoader.UpdateSetting(value, announcerPath);
-            WriteConfigToIni(_announcerConfig);
-            // It may not be a goddam loop isn't it
-            RegisterRankAnnouncerPagev2.ApplyConfigToUI(value);
+
+            if (_announcerConfig != null)
+                _announcerConfig.PropertyChanged += OnAnnouncerConfigChanged;
+
+            ApplyAnnouncerConfig();
         }
+    }
+
+    private void OnAnnouncerConfigChanged(object sender, PropertyChangedEventArgs e)
+    {
+        LogManager.LogDebug($"AnnouncerConfig changed: {e.PropertyName}");
+        ApplyAnnouncerConfig();
+    }
+
+    private void ApplyAnnouncerConfig()
+    {
+        _audioLoader.UpdateSetting(_announcerConfig, announcerPath);
+        WriteConfigToIni(_announcerConfig);
+        RegisterRankAnnouncerPagev2.ApplyConfigToUI(_announcerConfig);
     }
 
 
@@ -202,11 +221,12 @@ public class AudioAnnouncer
         LogManager.LogDebug($"current iniPath for {title}: {iniPath}");
         if (File.Exists(iniPath) == false)
         {
+            LogManager.LogDebug($"Initialize new config.ini in: {iniPath}");
             var audioDict = category.ToDictionary(
                 cat => cat,
                 cat => new CategorySetting{}
             );
-            var announcerConfig = new AnnouncerConfig { CategoryAudioMap = audioDict };
+            var announcerConfig = new AnnouncerConfig().SetCategoryAudioMap(audioDict);
             WriteConfigToIni(announcerConfig);
         }
 

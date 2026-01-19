@@ -305,16 +305,15 @@ public class AudioLoader : IAudioLoader
             .Where(File.Exists)
             .ToList();
 
-        foreach (var name in fileNames)
-        {
-            string path = PathManager.GetFile(announcerPath, name);
-            LogManager.LogDebug($"Checking file path: {path}, Exists: {File.Exists(path)}");
-        }
-
         if (validFiles.Count == 0)
         {
             LogCategoryFailure(category, "No valid files found :" + string.Join(", ", fileNames));
             return false;
+        }
+
+        if (validFiles.Count != fileNames.Count)
+        {
+            LogManager.LogWarning($"{category} not loaded in audioFiles: {string.Join(", ", fileNames.Except(validFiles.Select(p => System.IO.Path.GetFileName(p)).ToList()))}");
         }
 
         return true;
