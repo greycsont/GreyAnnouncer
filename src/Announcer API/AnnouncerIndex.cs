@@ -9,7 +9,30 @@ public static class AnnouncerIndex
 {
     private static string indexPath = PathManager.GetCurrentPluginPath("index.json");
     private static readonly Dictionary<string, string> _data = Read();
-    private static readonly string defaultAnnouncerPath = PathManager.GetCurrentPluginPath("announcers", "greythroat");
+
+    private static string _announcersPath;
+
+    public static string announcersPath
+    {
+        get
+        {
+            if (_announcersPath == null)
+            {
+                _announcersPath = PathManager.GetCurrentPluginPath("announcers");
+            }
+            return _announcersPath;
+        }
+        set
+        {
+            _announcersPath = value;
+        }
+    }
+
+    // 后续修改announcersPath时需要同时变更这个
+    private static string defaultAnnouncerPath
+    {
+        get => Path.Combine(announcersPath, "greythroat");
+    }
 
     public static void Set(string guid, string path)
     {
