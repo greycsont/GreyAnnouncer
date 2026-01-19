@@ -2,6 +2,8 @@ using PluginConfig.API;
 using PluginConfig.API.Fields;
 using PluginConfig.API.Decorators;
 using System;
+using System.IO;
+using System.Linq;
 using UnityEngine;
 
 using GreyAnnouncer.AnnouncerAPI;
@@ -36,17 +38,34 @@ public static class RegisterRankAnnouncerPagev2
             panel,
             "Randomize Audio On Play",
             GuidPrefixAdder.AddPrefixToGUID("RandomizeAudioOnPlay", _title),
-            _announcer._announcerConfig.RandomizeAudioOnPlay
+            _announcer.announcerConfig.RandomizeAudioOnPlay
         );
         randomizeAudioField.defaultValue = false;
         randomizeAudioField.onValueChange += e =>
         {
-            _announcer._announcerConfig.RandomizeAudioOnPlay = e.value;
+            _announcer.announcerConfig.RandomizeAudioOnPlay = e.value;
             SomethingAfterUpdateJson();
         };
 
+        var announcers = Directory.GetDirectories(AnnouncerIndex.announcersPath)
+                          .Select(Path.GetFileName)
+                          .ToList();
 
-        foreach (var category in _announcer._announcerConfig.CategoryAudioMap)
+
+        var announcerField = new StringListField(
+            panel,                     // 父 Panel
+            "Announcer",               // 显示名
+            "Selected_Announcer",      // GUID
+            announcers,                // 值列表
+            announcers.FirstOrDefault() ?? "default"
+        );
+
+        announcerField.onValueChange += e =>
+        {
+            
+        };
+        
+        foreach (var category in _announcer.announcerConfig.CategoryAudioMap)
         {
             string key = category.Key;
 
@@ -55,9 +74,9 @@ public static class RegisterRankAnnouncerPagev2
 
             var fields = new CategoryFields
             {
-                Enabled = CreateEnabledField(panel, key, _announcer._announcerConfig, true),
-                Volume  = CreateVolumeField(panel, key, _announcer._announcerConfig, 1f),
-                Cooldown = CreateCooldownField(panel, key, _announcer._announcerConfig, 3.0f)
+                Enabled = CreateEnabledField(panel, key, _announcer.announcerConfig, true),
+                Volume  = CreateVolumeField(panel, key, _announcer.announcerConfig, 1f),
+                Cooldown = CreateCooldownField(panel, key, _announcer.announcerConfig, 3.0f)
             };
 
             _categoryFields[key] = fields;
@@ -83,17 +102,17 @@ public static class RegisterRankAnnouncerPagev2
 
     private static BoolField CreateEnabledField(ConfigPanel panel,
                                                 string guid,
-                                                AnnouncerConfig jsonSetting,
+                                                AnnouncerConfig AnnouncerConfig,
                                                 bool defaultValue)
     {
         var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid, "Enabled");
-        var field = new BoolField(panel, "Enabled", fullGuid, jsonSetting.CategoryAudioMap[guid].Enabled);
+        var field = new BoolField(panel, "Enabled", fullGuid, AnnouncerConfig.CategoryAudioMap[guid].Enabled);
         field.defaultValue = defaultValue;
         field.onValueChange += e =>
         {
-            if (jsonSetting.CategoryAudioMap.ContainsKey(guid))
+            if (AnnouncerConfig.CategoryAudioMap.ContainsKey(guid))
             {
-                jsonSetting.CategoryAudioMap[guid].Enabled = e.value;
+                AnnouncerConfig.CategoryAudioMap[guid].Enabled = e.value;
             }
 
             SomethingAfterUpdateJson();
@@ -105,17 +124,17 @@ public static class RegisterRankAnnouncerPagev2
 
     private static FloatField CreateVolumeField(ConfigPanel panel,
                                              string guid,
-                                             AnnouncerConfig jsonSetting,
+                                             AnnouncerConfig AnnouncerConfig,
                                              float defaultValue)
     {
         var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid, "VolumeMultiplier");
-        var field = new FloatField(panel, "Volume", fullGuid, jsonSetting.CategoryAudioMap[guid].VolumeMultiplier);
+        var field = new FloatField(panel, "Volume", fullGuid, AnnouncerConfig.CategoryAudioMap[guid].VolumeMultiplier);
         field.defaultValue = defaultValue;
         field.onValueChange += e =>
         {
-            if (jsonSetting.CategoryAudioMap.ContainsKey(guid))
+            if (AnnouncerConfig.CategoryAudioMap.ContainsKey(guid))
             {
-                jsonSetting.CategoryAudioMap[guid].VolumeMultiplier = e.value;
+                AnnouncerConfig.CategoryAudioMap[guid].VolumeMultiplier = e.value;
             }
 
             SomethingAfterUpdateJson();
@@ -126,17 +145,17 @@ public static class RegisterRankAnnouncerPagev2
 
     private static FloatSliderField CreateCooldownField(ConfigPanel panel,
                                                      string guid,
-                                                     AnnouncerConfig jsonSetting,
+                                                     AnnouncerConfig AnnouncerConfig,
                                                      float defaultValue)
     {
         var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid, "Cooldown");
-        var field = new FloatSliderField(panel, "Cooldown", fullGuid, Tuple.Create(0.2f, 6f), jsonSetting.CategoryAudioMap[guid].Cooldown, 1);
+        var field = new FloatSliderField(panel, "Cooldown", fullGuid, Tuple.Create(0.2f, 6f), AnnouncerConfig.CategoryAudioMap[guid].Cooldown, 1);
         field.defaultValue = defaultValue;
         field.onValueChange += e =>
         {
-            if (jsonSetting.CategoryAudioMap.ContainsKey(guid))
+            if (AnnouncerConfig.CategoryAudioMap.ContainsKey(guid))
             {
-                jsonSetting.CategoryAudioMap[guid].Cooldown = e.newValue;
+                AnnouncerConfig.CategoryAudioMap[guid].Cooldown = e.newValue;
             }
 
             SomethingAfterUpdateJson();
@@ -148,7 +167,7 @@ public static class RegisterRankAnnouncerPagev2
 
     private static void SomethingAfterUpdateJson()
     {
-        _announcer.UpdateAnnouncerConfig(_announcer._announcerConfig);
+        _announcer.UpdateAnnouncerConfig(_announcer.announcerConfig);
         LogManager.LogInfo($"Updated announcer config for {_title}");
     }
 

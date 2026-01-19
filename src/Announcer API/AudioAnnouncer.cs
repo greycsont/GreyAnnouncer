@@ -14,8 +14,6 @@ namespace GreyAnnouncer.AnnouncerAPI;
 
 public class AudioAnnouncer
 {
-    public AnnouncerConfig _announcerConfig;
-
     public string title;
 
     private IAudioLoader _audioLoader;
@@ -23,7 +21,12 @@ public class AudioAnnouncer
     private ICooldownManager _cooldownManager;
 
     private List<string> category;
+
     private string _announcerPath;
+
+    /// <summary>
+    /// When announcerPath changes, it will automatically reload relative configs.
+    /// </summary>
     private string announcerPath
     {
         get => _announcerPath;
@@ -31,8 +34,25 @@ public class AudioAnnouncer
         {
             _announcerPath = value;
             iniPath = Path.Combine(value, "config.ini");
+            ReloadAudio();
         }
     }
+
+    public AnnouncerConfig _announcerConfig;
+    public AnnouncerConfig announcerConfig
+    {
+        get => _announcerConfig;
+        set
+        {
+            LogManager.LogDebug($"announcerConfig changed at: {title}");
+            _announcerConfig = value;
+            _audioLoader.UpdateSetting(value, announcerPath);
+            WriteConfigToIni(_announcerConfig);
+            // It may not be a goddam loop isn't it
+            RegisterRankAnnouncerPagev2.ApplyConfigToUI(value);
+        }
+    }
+
 
     private string iniPath;
 
@@ -48,10 +68,6 @@ public class AudioAnnouncer
         this.title = title;
 
         announcerPath = AnnouncerIndex.Get(this.title);
-
-        this._announcerConfig = AnnouncerConfigIniInitialization(category);
-
-        _audioLoader.UpdateSetting(_announcerConfig, announcerPath);
 
         SubscribeAnnouncerManager();
 
@@ -71,7 +87,7 @@ public class AudioAnnouncer
                 return;
 
             if (await PlayAudioClip(category, BepInExConfig.audioPlayOptions.Value))
-                SetCooldown(category, _announcerConfig.CategoryAudioMap[category].Cooldown);
+                SetCooldown(category, announcerConfig.CategoryAudioMap[category].Cooldown);
         }
         catch (Exception ex)
         {
@@ -81,16 +97,11 @@ public class AudioAnnouncer
 
     /// <summary>Will Play a random audio in the belong category by jsonSetting mapping via index</summary>
     public async Task PlayAudioViaIndex(int index)
-        => await PlayAudioViaCategory(_announcerConfig.CategoryAudioMap.Keys.ToArray()[index]);
+        => await PlayAudioViaCategory(announcerConfig.CategoryAudioMap.Keys.ToArray()[index]);
 
     /// <summary>Reload Audio, only works when using Preload and Play options</summary>
     public void ReloadAudio()
-    {
-        // it will automatically reload
-        this._announcerConfig = AnnouncerConfigIniInitialization(category);
-        _audioLoader.UpdateSetting(_announcerConfig, announcerPath);
-        RegisterRankAnnouncerPagev2.ApplyConfigToUI(_announcerConfig);
-    }
+        => announcerConfig = AnnouncerConfigIniInitialization(category);
 
 
     /// <summary>Resets the announcer's cooldown</summary>
@@ -98,16 +109,12 @@ public class AudioAnnouncer
         => _cooldownManager.ResetCooldowns();
 
     public void UpdateAnnouncerConfig(AnnouncerConfig newSetting)
-    {
-        this._announcerConfig = newSetting;
-        _audioLoader.UpdateSetting(_announcerConfig, announcerPath);
-        WriteConfigToIni(_announcerConfig);
-    }
+        => announcerConfig = newSetting;
+
 
     /// <summary>Clear audioclip in audioloader, only works when using Preload and Play options</summary>
     public void ClearAudioClipsCache()
         => _audioLoader.ClearCache();
-
 
     private void SetCooldown(string category, float cooldown)
         => _cooldownManager.StartCooldowns(category, cooldown);
