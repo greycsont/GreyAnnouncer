@@ -19,14 +19,10 @@ public class CooldownManager : ICooldownManager
     }
 
     public bool IsIndividualCooldownActive(string category)
-    {
-        return _individualCooldowns[category] > 0f;
-    }
+        => _individualCooldowns[category] > 0f;
 
     public void StartCooldowns(string category, float duration)
-    {
-        StartIndividualCooldown(category, duration);
-    }
+        => StartIndividualCooldown(category, duration);
 
     public void ResetCooldowns()
     {
@@ -38,11 +34,9 @@ public class CooldownManager : ICooldownManager
     }
 
     private void StartIndividualCooldown(string category, float duration)
-    {
-        CoroutineRunner.Instance.StartCoroutine(
-            CooldownCoroutine(value => _individualCooldowns[category] = value, 
-            duration));
-    }
+        => CoroutineRunner.Instance.StartCoroutine(
+               CooldownCoroutine(value => _individualCooldowns[category] = value, 
+               duration));
 
 
     private IEnumerator CooldownCoroutine(Action<float> setCooldown, float initialCooldown)

@@ -33,7 +33,6 @@ public class AnnouncerConfig : NotifyBase
     /// <param name="setting"></param>
     public void AddCategory(string key, CategorySetting setting)
     {
-        LogManager.LogDebug($"add category {key}");
         CategoryAudioMap[key] = setting;
         setting.PropertyChanged += OnCategoryChanged;
         RaiseChanged(nameof(CategoryAudioMap));
@@ -58,7 +57,8 @@ public class AnnouncerConfig : NotifyBase
     private void OnCategoryChanged(object sender, PropertyChangedEventArgs e)
     {
         LogManager.LogDebug($"Triggerd OnCategoryChanged");
-        RaiseChanged($"Category.{e.PropertyName}");
+        RaiseChanged(nameof(AnnouncerConfig));
+        //RaiseChanged($"Category.{e.PropertyName}");
     }
 }
 

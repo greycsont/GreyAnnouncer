@@ -11,22 +11,24 @@ using System.Collections.Generic;
 
 namespace GreyAnnouncer.FrontEnd;
 
-public static class RegisterRankAnnouncerPagev2
+public static class RegisterAnnouncerPage
 {
     private static PluginConfigurator _pluginConfigurator;
 
     private static string _title;
 
-    private static AudioAnnouncer _announcer;
-
-    private static readonly Dictionary<string, CategoryFields> _categoryFields
-        = new Dictionary<string, CategoryFields>();
+    private static AudioAnnouncer _audioAnnouncer;
+    
+    private static AnnouncerConfigFields _fields = new AnnouncerConfigFields
+    {
+        CategoryFields = new Dictionary<string, CategoryFields>()
+    };
         
-    public static void Build(string title, AudioAnnouncer announcer)
+    public static void Build(string title, AudioAnnouncer audioAnnouncer)
     {
         _pluginConfigurator = PluginConfiguratorEntry.config;
         _title = title;
-        _announcer = announcer;
+        _audioAnnouncer = audioAnnouncer;
 
         ConfigPanel panel = new ConfigPanel(_pluginConfigurator.rootPanel, _title, _title);
         new ConfigSpace(panel, 15f);
@@ -34,37 +36,37 @@ public static class RegisterRankAnnouncerPagev2
         ConfigHeader titleHeader = new ConfigHeader(panel, _title);
         titleHeader.textColor = HeaderColor;
 
-        var randomizeAudioField = new BoolField(
-            panel,
-            "Randomize Audio On Play",
-            GuidPrefixAdder.AddPrefixToGUID("RandomizeAudioOnPlay", _title),
-            _announcer.announcerConfig.RandomizeAudioOnPlay
-        );
-        randomizeAudioField.defaultValue = false;
-        randomizeAudioField.onValueChange += e =>
-        {
-            _announcer.announcerConfig.RandomizeAudioOnPlay = e.value;
-        };
-
         var announcers = Directory.GetDirectories(AnnouncerIndex.announcersPath)
-                          .Select(Path.GetFileName)
-                          .ToList();
-
+                    .Select(Path.GetFileName)
+                    .ToList();
 
         var announcerField = new StringListField(
-            panel,                     // 父 Panel
-            "Announcer",               // 显示名
-            "Selected_Announcer",      // GUID
-            announcers,                // 值列表
+            panel,                     
+            "Selected Announcer",             
+            "Selected_Announcer",     
+            announcers,                
             announcers.FirstOrDefault() ?? "default"
         );
 
+        // WARNING: This will broken after I create a way to change AnnouncerIndex.announcersPath
         announcerField.onValueChange += e =>
         {
-            
+            audioAnnouncer.announcerPath = Path.Combine(AnnouncerIndex.announcersPath, e.value);
+        };
+
+        _fields.RandomizeAudioField = new BoolField(
+            panel,
+            "Randomize Audio On Play",
+            GuidPrefixAdder.AddPrefixToGUID("RandomizeAudioOnPlay", _title),
+            _audioAnnouncer.announcerConfig.RandomizeAudioOnPlay
+        );
+        _fields.RandomizeAudioField.defaultValue = false;
+        _fields.RandomizeAudioField.onValueChange += e =>
+        {
+            _audioAnnouncer.announcerConfig.RandomizeAudioOnPlay = e.value;
         };
         
-        foreach (var category in _announcer.announcerConfig.CategoryAudioMap)
+        foreach (var category in _audioAnnouncer.announcerConfig.CategoryAudioMap)
         {
             string key = category.Key;
 
@@ -73,31 +75,14 @@ public static class RegisterRankAnnouncerPagev2
 
             var fields = new CategoryFields
             {
-                Enabled = CreateEnabledField(panel, key, _announcer.announcerConfig, true),
-                Volume  = CreateVolumeField(panel, key, _announcer.announcerConfig, 1f),
-                Cooldown = CreateCooldownField(panel, key, _announcer.announcerConfig, 3.0f)
+                Enabled = CreateEnabledField(panel, key, _audioAnnouncer.announcerConfig, true),
+                Volume  = CreateVolumeField(panel, key, _audioAnnouncer.announcerConfig, 1f),
+                Cooldown = CreateCooldownField(panel, key, _audioAnnouncer.announcerConfig, 3.0f)
             };
 
-            _categoryFields[key] = fields;
+            _fields.CategoryFields[key] = fields;
         }
     }
-
-    public static void ApplyConfigToUI(AnnouncerConfig config)
-    {
-        foreach (KeyValuePair<string, CategoryFields> kv in _categoryFields)
-        {
-            var category = kv.Key;
-            var fields   = kv.Value;
-
-            if (!config.CategoryAudioMap.TryGetValue(category, out var data))
-                continue;
-
-            fields.Enabled.value  = data.Enabled;
-            fields.Volume.value   = data.VolumeMultiplier;
-            fields.Cooldown.value = data.Cooldown;
-        }
-    }
-
 
     private static BoolField CreateEnabledField(ConfigPanel panel,
                                                 string guid,
@@ -157,6 +142,42 @@ public static class RegisterRankAnnouncerPagev2
 
         return field;
     }
+
+    public static void ApplyConfigToUI(AnnouncerConfig config)
+    {
+        LogManager.LogDebug($"ApplyConfigToUI called");
+
+        if (_fields.RandomizeAudioField != null)
+            _fields.RandomizeAudioField.value = config.RandomizeAudioOnPlay;
+
+        foreach (KeyValuePair<string, CategoryFields> kv in _fields.CategoryFields)
+        {
+            var category = kv.Key;
+            var fields   = kv.Value;
+
+            if (!config.CategoryAudioMap.TryGetValue(category, out var data))
+                continue;
+
+            if (fields.Enabled.value != data.Enabled)
+                LogManager.LogDebug($"Category '{category}': Enabled changed from {fields.Enabled.value} -> {data.Enabled}");
+            else
+                LogManager.LogDebug($"Category '{category}': Enabled unchanged ({fields.Enabled.value})");
+
+            if (Math.Abs(fields.Volume.value - data.VolumeMultiplier) > 0.0001f)
+                LogManager.LogDebug($"Category '{category}': Volume changed from {fields.Volume.value} -> {data.VolumeMultiplier}");
+            else
+                LogManager.LogDebug($"Category '{category}': Volume unchanged ({fields.Volume.value})");
+
+            if (Math.Abs(fields.Cooldown.value - data.Cooldown) > 0.0001f)
+                LogManager.LogDebug($"Category '{category}': Cooldown changed from {fields.Cooldown.value} -> {data.Cooldown}");
+            else
+                LogManager.LogDebug($"Category '{category}': Cooldown unchanged ({fields.Cooldown.value})");
+
+            fields.Enabled.value  = data.Enabled;
+            fields.Volume.value   = data.VolumeMultiplier;
+            fields.Cooldown.value = data.Cooldown;
+        }
+    }
     private static readonly Color HeaderColor = new Color(0.85f, 0.85f, 0.85f, 1f);
 }
 
@@ -165,4 +186,11 @@ public class CategoryFields
     public BoolField Enabled;
     public FloatField Volume;
     public FloatSliderField Cooldown;
+}
+
+public class AnnouncerConfigFields
+{
+    public BoolField RandomizeAudioField;
+    public Dictionary<string, CategoryFields> CategoryFields;
+
 }

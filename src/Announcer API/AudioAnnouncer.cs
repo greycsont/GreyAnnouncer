@@ -27,7 +27,7 @@ public class AudioAnnouncer
     /// <summary>
     /// When announcerPath changes, it will automatically reload relative configs.
     /// </summary>
-    private string announcerPath
+    public string announcerPath
     {
         get => _announcerPath;
         set
@@ -35,6 +35,7 @@ public class AudioAnnouncer
             LogManager.LogDebug($"announcerPath seted");
             _announcerPath = value;
             iniPath = Path.Combine(value, "config.ini");
+            AnnouncerIndex.Set(title, value);
             ReloadAudio();
         }
     }
@@ -70,7 +71,7 @@ public class AudioAnnouncer
     {
         _audioLoader.UpdateSetting(_announcerConfig, announcerPath);
         WriteConfigToIni(_announcerConfig);
-        RegisterRankAnnouncerPagev2.ApplyConfigToUI(_announcerConfig);
+        RegisterAnnouncerPage.ApplyConfigToUI(_announcerConfig);
     }
 
 
@@ -91,7 +92,7 @@ public class AudioAnnouncer
 
         SubscribeAnnouncerManager();
 
-        RegisterRankAnnouncerPagev2.Build(title, this);
+        RegisterAnnouncerPage.Build(title, this);
     }
 
     [Description("Parry balls of Maurice -> Hit Maurice -> AscendingRank() -> Postfix() -> PlaySound() -> CheckPlayValidation(), " +
