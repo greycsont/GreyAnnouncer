@@ -8,13 +8,13 @@ public abstract class NotifyBase : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler PropertyChanged;
 
-    protected bool SetField<T>(ref T field, T value, [CallerMemberName] string name = null)
+    protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
     {
         if (EqualityComparer<T>.Default.Equals(field, value))
             return false;
-
+        LogManager.LogDebug($"Set Field Called by: {propertyName}");
         field = value;
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        RaiseChanged(propertyName);
         return true;
     }
 

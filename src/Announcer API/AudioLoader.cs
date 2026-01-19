@@ -288,7 +288,7 @@ public class AudioLoader : IAudioLoader
     #region Utility Methods
     private bool TryGetValidAudioFiles(string category, out List<string> validFiles)
     {
-        LogManager.LogDebug($"Loading category: {category}");
+        LogManager.LogDebug($"Loaded category: {category}");
         validFiles = null;
 
         if (!announcerConfig.CategoryAudioMap.TryGetValue(category, out var categorySetting)
@@ -312,9 +312,7 @@ public class AudioLoader : IAudioLoader
         }
 
         if (validFiles.Count != fileNames.Count)
-        {
             LogManager.LogWarning($"{category} not loaded in audioFiles: {string.Join(", ", fileNames.Except(validFiles.Select(p => System.IO.Path.GetFileName(p)).ToList()))}");
-        }
 
         return true;
     }

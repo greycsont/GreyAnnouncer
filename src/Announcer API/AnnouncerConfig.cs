@@ -20,17 +20,32 @@ public class AnnouncerConfig : NotifyBase
 
     public AnnouncerConfig()
     {
-        // 如果 Ini 反序列化后再填充，这里可以后处理
+        // 如果 Ini 反序列化后再填充，这里可以后处理 <- this is a vibe-coding product but I thought It's a useful note
     }
-
+    
+    /// <summary>
+    /// I strongly recommand using SetCategorySettingMap to create th dictionary of CategorySetting
+    /// If you really want to add a new CategorySetting in the Dictionary
+    /// PLEASE USE THIS METHOD
+    /// Otherwise the AnnouncerConfig can't track the value change on that CategorySetting and blow up whole program
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="setting"></param>
     public void AddCategory(string key, CategorySetting setting)
     {
+        LogManager.LogDebug($"add category {key}");
         CategoryAudioMap[key] = setting;
         setting.PropertyChanged += OnCategoryChanged;
         RaiseChanged(nameof(CategoryAudioMap));
     }
 
-    public AnnouncerConfig SetCategoryAudioMap(Dictionary<string, CategorySetting> map)
+
+    /// <summary>
+    /// Use this method if you want to initialize the dictionary
+    /// </summary>
+    /// <param name="map"></param>
+    /// <returns></returns>
+    public AnnouncerConfig SetCategorySettingMap(Dictionary<string, CategorySetting> map)
     {
         CategoryAudioMap.Clear();
 
@@ -42,6 +57,7 @@ public class AnnouncerConfig : NotifyBase
 
     private void OnCategoryChanged(object sender, PropertyChangedEventArgs e)
     {
+        LogManager.LogDebug($"Triggerd OnCategoryChanged");
         RaiseChanged($"Category.{e.PropertyName}");
     }
 }
@@ -72,6 +88,11 @@ public class CategorySetting : NotifyBase
         set => SetField(ref _cooldown, value);
     }
 
+    /// <summary>
+    /// This MF maybe just switch to use a single string to deal it
+    /// But I don't think
+    /// IT COULD CHANGE IN-GAME
+    /// </summary>
     private List<string> _audioFiles = new();
 
     [IniKey("AudioFiles")]

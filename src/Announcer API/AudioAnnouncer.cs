@@ -32,6 +32,7 @@ public class AudioAnnouncer
         get => _announcerPath;
         set
         {
+            LogManager.LogDebug($"announcerPath seted");
             _announcerPath = value;
             iniPath = Path.Combine(value, "config.ini");
             ReloadAudio();
@@ -171,10 +172,7 @@ public class AudioAnnouncer
     }
 
     private void LogPlaybackError(Exception ex)
-    {
-        LogManager.LogError($"An error occurred while playing sound: {ex.Message}");
-        LogManager.LogError(ex.StackTrace);
-    }
+        => LogManager.LogError($"An error occurred while playing sound: {ex.Message}\n{ex.StackTrace}");
     #endregion
 
 
@@ -226,7 +224,7 @@ public class AudioAnnouncer
                 cat => cat,
                 cat => new CategorySetting{}
             );
-            var announcerConfig = new AnnouncerConfig().SetCategoryAudioMap(audioDict);
+            var announcerConfig = new AnnouncerConfig().SetCategorySettingMap(audioDict);
             WriteConfigToIni(announcerConfig);
         }
 
@@ -260,7 +258,7 @@ public class AudioAnnouncer
         {
             var categoryName = key.Substring("Category:".Length);
             var categoryConfig = IniMapper.FromIni<CategorySetting>(doc, key);
-            announcerConfig.CategoryAudioMap[categoryName] = categoryConfig;
+            announcerConfig.AddCategory(categoryName, categoryConfig);
         }
         return announcerConfig;
     }
