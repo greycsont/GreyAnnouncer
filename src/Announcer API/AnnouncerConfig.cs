@@ -145,8 +145,6 @@ public class CategorySetting : NotifyBase
 
         AudioFiles.Clear();
         AudioFiles.AddRange(src.AudioFiles);
-
-        var files = AudioFiles.Where(e => e == "fileName").ToArray();
     }
 }
 
