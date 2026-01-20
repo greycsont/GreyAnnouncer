@@ -5,7 +5,6 @@
 - Refactored UI
 - Switchable AudioAnnouncer
 - Command Support
-- 
 
 ### v1.2.0
 - Added Pitch setting in .json
