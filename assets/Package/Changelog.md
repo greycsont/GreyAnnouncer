@@ -1,4 +1,8 @@
-### Known issue/TODO
+### v1.3.0
+- Switchable Config
+- Commands
+- UX redesign
+- More setting in announcerConfig
 
 ### v1.2.0
 - Removed PostgreSQL License
