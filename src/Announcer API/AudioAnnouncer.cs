@@ -9,6 +9,7 @@ using GreyAnnouncer.AudioSourceComponent;
 using GreyAnnouncer.Config;
 using GreyAnnouncer.FrontEnd;
 using GreyAnnouncer.Util.Ini;
+using GreyAnnouncer.Util;
 
 namespace GreyAnnouncer.AnnouncerAPI;
 
@@ -123,15 +124,20 @@ public class AudioAnnouncer
 
     /// <summary>Reload Audio, only works when using Preload and Play options</summary>
     public void ReloadAudio()
-        => announcerConfig = AnnouncerConfigIniInitialization(category);
+    {
+        if (announcerConfig == null)
+            announcerConfig = AnnouncerConfigIniInitialization(category);
+        else
+        {
+            announcerConfig.ApplyFrom(AnnouncerConfigIniInitialization(category));
+            ApplyAnnouncerConfig();
+        }
+    }
 
 
     /// <summary>Resets the announcer's cooldown</summary>
     public void ResetCooldown()
         => _cooldownManager.ResetCooldowns();
-
-    public void UpdateAnnouncerConfig(AnnouncerConfig newSetting)
-        => announcerConfig = newSetting;
 
 
     /// <summary>Clear audioclip in audioloader, only works when using Preload and Play options</summary>
@@ -164,6 +170,11 @@ public class AudioAnnouncer
             LogManager.LogError($"Failed to load audio clip may for this category: {category}");
             return;
         }
+        if (_cooldownManager.IsIndividualCooldownActive(sound.category))
+        {
+            LogManager.LogInfo($"The sound's category {sound.category} is still in cooldown");
+            return;
+        }
 
         LogManager.LogDebug($"category : {sound.category}, Cooldown : {announcerConfig.CategorySetting[sound.category].Cooldown}");
 
@@ -185,9 +196,6 @@ public class AudioAnnouncer
         if (_audioLoader.announcerConfig.CategorySetting.Keys == null
             || !_audioLoader.announcerConfig.CategorySetting.Keys.Contains(category))
             return ValidationState.InvalidKey;
-
-        if (_cooldownManager.IsIndividualCooldownActive(category))
-            return ValidationState.IndividualCooldown;
 
         if (!announcerConfig.CategorySetting[category].Enabled && announcerConfig.RandomizeAudioOnPlay == false)
             return ValidationState.DisabledByConfig;
@@ -224,32 +232,25 @@ public class AudioAnnouncer
     private void WriteConfigToIni(AnnouncerConfig announcerConfig)
     {
         var doc = new IniDocument();
-        doc = IniMapper.ToIni(doc, announcerConfig, "General"); // 写 General
-        foreach (var pair in announcerConfig.CategorySetting)
-        {
-            doc = IniMapper.ToIni(doc, pair.Value, $"Category:{pair.Key}");
-        }
+
+        doc = AnnouncerIniMapper.ToIni(doc, announcerConfig);
+
         IniWriter.Write(iniPath, doc);
     }
 
     private AnnouncerConfig ReadConfigFromIni()
     {
-        var announcerConfig = new AnnouncerConfig();
         if (!File.Exists(iniPath))
             return null;
-        var doc = IniReader.Read(iniPath); // 假设你有 IniReader.Read 返回 IniDocument
 
-        // 读取 General
-        announcerConfig = IniMapper.FromIni<AnnouncerConfig>(doc, "General");
+        var doc = IniReader.Read(iniPath);
 
-        // 读取所有 Category: 开头的 section
-        announcerConfig.CategorySetting.Clear();
-        foreach (var key in doc.Sections.Keys.Where(k => k.StartsWith("Category:")))
-        {
-            var categoryName = key.Substring("Category:".Length);
-            var categoryConfig = IniMapper.FromIni<CategorySetting>(doc, key);
-            announcerConfig.AddCategory(categoryName, categoryConfig);
-        }
+        var announcerConfig = AnnouncerIniMapper.FromIni(doc);
+
         return announcerConfig;
     }
+
+    public void EditExternally()
+        => PathManager.OpenDirectory(announcerPath);
+
 }

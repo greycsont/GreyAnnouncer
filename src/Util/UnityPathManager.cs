@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace GreyAnnouncer;
+namespace GreyAnnouncer.Util;
 
 public static class UnityPathManager
 {

@@ -1,7 +1,7 @@
 using System.IO;
 
 
-namespace GreyAnnouncer;
+namespace GreyAnnouncer.Util;
 
 public static class FileSystemUtil
 {

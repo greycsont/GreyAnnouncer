@@ -37,10 +37,10 @@ public static class AnnouncerIniMapper
             };
 
             // AudioFiles: a.wav, b.wav, c.wav
-            var audioLine = section.GetLastValue("AudioFiles");
-            if (!string.IsNullOrEmpty(audioLine))
+            var audioFiles = section.GetValues("AudioFiles");
+            foreach (var line in audioFiles)
             {
-                foreach (var part in audioLine.Split(','))
+                foreach (var part in line.Split(','))
                 {
                     var file = part.Trim();
                     if (file.Length > 0)
@@ -51,6 +51,52 @@ public static class AnnouncerIniMapper
         }
 
         return config;
+    }
+
+    public static IniDocument ToIni(IniDocument doc, AnnouncerConfig config)
+    {
+        // -------- General --------
+        if (!doc.Sections.TryGetValue("General", out var general))
+        {
+            general = new IniSection("General");
+            doc.Sections["General"] = general;
+        }
+        general.Values["RandomizeAudioOnPlay"] = new System.Collections.Generic.List<string>
+        {
+            config.RandomizeAudioOnPlay.ToString()
+        };
+
+        // -------- Categories --------
+        foreach (var kv in config.CategorySetting)
+        {
+            var sectionName = $"Category:{kv.Key}";
+            if (!doc.Sections.TryGetValue(sectionName, out var section))
+            {
+                section = new IniSection(sectionName);
+                doc.Sections[sectionName] = section;
+            }
+
+            var cat = kv.Value;
+            section.Values["Enabled"] = new System.Collections.Generic.List<string> { cat.Enabled.ToString() };
+            section.Values["VolumeMultiplier"] = new System.Collections.Generic.List<string>
+            {
+                cat.VolumeMultiplier.ToString(CultureInfo.InvariantCulture)
+            };
+            section.Values["Cooldown"] = new System.Collections.Generic.List<string>
+            {
+                cat.Cooldown.ToString(CultureInfo.InvariantCulture)
+            };
+
+            if (cat.AudioFiles != null && cat.AudioFiles.Count > 0)
+            {
+                section.Values["AudioFiles"] = new System.Collections.Generic.List<string>
+                {
+                    string.Join(",", cat.AudioFiles)
+                };
+            }
+        }
+
+        return doc;
     }
 
     // -------- helpers --------

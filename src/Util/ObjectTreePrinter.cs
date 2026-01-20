@@ -16,9 +16,9 @@ public static class ObjectTreePrinter
     /// </summary>
     /// <param name="obj">要分析的对象。</param>
     /// <returns>包含树状结构的字符串。</returns>
-    public static void GetTreeString(object obj)
+    public static string GetTreeString(object obj)
     {
-        if (obj == null) return;
+        if (obj == null) return null;
         
         _visitedObjects.Clear();
         var sb = new StringBuilder();
@@ -28,7 +28,7 @@ public static class ObjectTreePrinter
         // 调用递归方法，将 StringBuilder 传入
         AppendNode(sb, obj, 0, "ROOT");
 
-        LogManager.LogInfo(sb.ToString());
+        return sb.ToString();
     }
 
     private static void AppendNode(StringBuilder sb, object obj, int depth, string name)

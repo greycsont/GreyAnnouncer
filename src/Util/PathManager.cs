@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System;
 
 
-namespace GreyAnnouncer;
+namespace GreyAnnouncer.Util;
 
 public static class PathManager
 {

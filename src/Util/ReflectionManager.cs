@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 
-namespace GreyAnnouncer;
+namespace GreyAnnouncer.Util;
 
 public static class ReflectionManager
 {   

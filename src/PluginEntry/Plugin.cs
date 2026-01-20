@@ -2,7 +2,7 @@
 using BepInEx.Logging;
 using HarmonyLib;
 
-
+using GreyAnnouncer.Util;
 using GreyAnnouncer.Config;
 
 /* The StyleHUD.cs in the HarmonyPatches folder is the starting point of the whole sequence of announcer 

@@ -4,10 +4,14 @@ using PluginConfig.API.Decorators;
 using System;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 
+using PluginConfig.API.Functionals;
+
 using GreyAnnouncer.AnnouncerAPI;
-using System.Collections.Generic;
+using GreyAnnouncer.Util;
+
 
 namespace GreyAnnouncer.FrontEnd;
 
@@ -36,9 +40,10 @@ public class RegistedAnnouncerPage
         ConfigHeader titleHeader = new ConfigHeader(panel, _title);
         titleHeader.textColor = HeaderColor;
 
-        var announcers = Directory.GetDirectories(AnnouncerIndex.announcersPath)
-                    .Select(Path.GetFileName)
-                    .ToList();
+        var announcers = Directory
+                             .GetDirectories(AnnouncerIndex.announcersPath)
+                             .Select(Path.GetFileName)
+                             .ToList();
 
         var announcerField = new StringListField(
             panel,                     
@@ -47,6 +52,14 @@ public class RegistedAnnouncerPage
             announcers,                
             announcers.FirstOrDefault() ?? "default"
         );
+
+        var openDirectoryButtonField = new ButtonField(
+            panel,
+            "Edit Externally",
+            "Edit_Enternally"
+        );
+        openDirectoryButtonField.onClick += () 
+            => _audioAnnouncer.EditExternally();
 
         // WARNING: This will broken after I create a way to change AnnouncerIndex.announcersPath
         announcerField.onValueChange += e =>
@@ -95,9 +108,8 @@ public class RegistedAnnouncerPage
         field.onValueChange += e =>
         {
             if (AnnouncerConfig.CategorySetting.ContainsKey(guid))
-            {
                 AnnouncerConfig.CategorySetting[guid].Enabled = e.value;
-            }
+
         };
 
         return field;
@@ -115,9 +127,7 @@ public class RegistedAnnouncerPage
         field.onValueChange += e =>
         {
             if (AnnouncerConfig.CategorySetting.ContainsKey(guid))
-            {
                 AnnouncerConfig.CategorySetting[guid].VolumeMultiplier = e.value;
-            }
         };
 
         return field;
@@ -134,10 +144,7 @@ public class RegistedAnnouncerPage
         field.onValueChange += e =>
         {
             if (AnnouncerConfig.CategorySetting.ContainsKey(guid))
-            {
                 AnnouncerConfig.CategorySetting[guid].Cooldown = e.newValue;
-            }
-
         };
 
         return field;

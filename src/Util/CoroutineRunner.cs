@@ -1,7 +1,7 @@
 using UnityEngine;
 
 
-namespace GreyAnnouncer;
+namespace GreyAnnouncer.Util;
 
 /// <summary>
 /// A helper MonoBehaviour, used to start a coroutine to load audio

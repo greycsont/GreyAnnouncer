@@ -6,6 +6,7 @@ using System.Linq;
 using GreyAnnouncer.AnnouncerAPI;
 using GreyAnnouncer.Config;
 using GreyAnnouncer.AudioSourceComponent;
+using GreyAnnouncer.Util;
 
 namespace GreyAnnouncer.Commands;
 
@@ -25,53 +26,99 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
 
     private Branch GetMainSettingBranches()
         => Branch("mainsetting",
-                      Branch("set",
-                             Leaf<float>("audiosourcevolume", vol => BepInExConfig.audioSourceVolume.Value = vol),
-                             Leaf<bool>("ffmpegenabled", enabled => BepInExConfig.isFFmpegSupportEnabled.Value = enabled),
-                             Leaf<bool>("lowpassenabled", enabled => BepInExConfig.isLowPassFilterEnabled.Value = enabled)
-                             ),
-                      Branch("get",
-                             Leaf("audiosourcevolume", () => Log.Info($"Audio Source Volume: {BepInExConfig.audioSourceVolume.Value}")),
-                             Leaf("ffmpegenabled", () => Log.Info($"FFmpeg Support Enabled: {BepInExConfig.isFFmpegSupportEnabled.Value}")),
-                             Leaf("lowpassenabled", () => Log.Info($"Under Water Low Pass Filter Enabled: {BepInExConfig.isLowPassFilterEnabled.Value}"))
-                             )
-                      );
+            // audiosourcevolume
+            Branch("audiosourcevolume",
+                Branch("get", Leaf(() =>
+                    Log.Info($"Audio Source Volume: {BepInExConfig.audioSourceVolume.Value}"))
+                ),
+                Branch("set", Leaf<float>(val =>
+                {
+                    BepInExConfig.audioSourceVolume.Value = val;
+                    Log.Info($"Audio Source Volume set to {val}");
+                }))
+            ),
+
+            // ffmpegenabled
+            Branch("ffmpegenabled",
+                Branch("get", Leaf(() =>
+                    Log.Info($"FFmpeg Support Enabled: {BepInExConfig.isFFmpegSupportEnabled.Value}"))
+                ),
+                Branch("set", Leaf<bool>(val =>
+                {
+                    BepInExConfig.isFFmpegSupportEnabled.Value = val;
+                    Log.Info($"FFmpeg Support Enabled set to {val}");
+                }))
+            ),
+
+            // lowpassenabled
+            Branch("lowpassenabled",
+                Branch("get", Leaf(() =>
+                    Log.Info($"Under Water Low Pass Filter Enabled: {BepInExConfig.isLowPassFilterEnabled.Value}"))
+                ),
+                Branch("set", Leaf<bool>(val =>
+                {
+                    BepInExConfig.isLowPassFilterEnabled.Value = val;
+                    Log.Info($"Under Water Low Pass Filter Enabled set to {val}");
+                }))
+            )
+        );
+
 
     private Branch GetAnnouncerBranches()
     {
-        var AnnouncersBranches = AnnouncerManager.GetAllAnnouncers()
-            .Select(a => 
+        return Branch("announcers",
+            AnnouncerManager.GetAllAnnouncers().Select(a =>
             {
-                // 生成 category 分支
-                var categoryBranches = a.announcerConfig.CategorySetting
-                    .Select(kvp => 
-                    {
-                        string categoryName = kvp.Key;
-                        var categoryAudio = kvp.Value;
-                        
-                        return Branch(categoryName,
-                                      Leaf<bool>("enabled", enabled => categoryAudio.Enabled = enabled),
-                                      Leaf<float>("volume", vol => categoryAudio.VolumeMultiplier = vol),
-                                      Leaf<float>("cooldown", cd => categoryAudio.Cooldown = cd)
-                                    );
-                    })
-                    .ToArray();
-
                 return Branch(a.title,
-                              Leaf("reload", () => a.ReloadAudio()),
-                              Leaf("getsetting", () => ObjectTreePrinter.GetTreeString(a.announcerConfig)),
-                              //Leaf("enable", () => a.Enable()),
-                              //Leaf("disable", () => a.Disable()),
-                              Leaf<bool>("randomize", enabled => a.announcerConfig.RandomizeAudioOnPlay = enabled),
-                              Branch("category", categoryBranches)
-                );
-            })
-            .ToArray();
 
-            return Branch("announcers",
-                          AnnouncersBranches
-                          );
+                    Branch("randomize",
+                        Branch("get",
+                            Leaf(() => Log.Info($"RandomizeAudioOnPlay: {a.announcerConfig.RandomizeAudioOnPlay}"))
+                        ),
+                        Branch("set",
+                            Leaf<bool>(val =>
+                            {
+                                a.announcerConfig.RandomizeAudioOnPlay = val;
+                                Log.Info($"Set RandomizeAudioOnPlay to {val}");
+                            })
+                        )
+                    ),
+
+                    Branch("category",
+                        a.announcerConfig.CategorySetting.Select(kvp =>
+                        {
+                            var categoryName = kvp.Key;
+                            var category = kvp.Value;
+
+                            return Branch(categoryName,
+                                Branch("get",
+                                    Leaf("enabled", () => Log.Info($"Enabled: {category.Enabled}")),
+                                    Leaf("volume", () => Log.Info($"VolumeMultiplier: {category.VolumeMultiplier}")),
+                                    Leaf("cooldown", () => Log.Info($"Cooldown: {category.Cooldown}")),
+                                    Leaf("audiofiles", () => 
+                                        Log.Info($"AudioFiles: {string.Join(", ", category.AudioFiles)}"))
+                                ),
+                                Branch("set",
+                                    Leaf<bool>("enabled", val => category.Enabled = val),
+                                    Leaf<float>("volume", val => category.VolumeMultiplier = val),
+                                    Leaf<float>("cooldown", val => category.Cooldown = val),
+                                    Leaf<string[]>("audiofiles", files =>
+                                    {
+                                        category.AudioFiles.Clear();
+                                        category.AudioFiles.AddRange(files);
+                                        Log.Info($"AudioFiles set: {string.Join(", ", files)}");
+                                    })
+                                )
+                            );
+                        }).ToArray()
+                    ),
+                    Leaf("editexternal", () => a.EditExternally()),
+                    Leaf("reload", () => a.ReloadAudio())
+                );
+            }).ToArray()
+        );
     }
+
 
     public Branch GetUtilBranches()
         => Branch("util",

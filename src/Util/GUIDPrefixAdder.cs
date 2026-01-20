@@ -1,5 +1,7 @@
 using System;
 
+namespace GreyAnnouncer.Util;
+
 public static class GuidPrefixAdder
 {
     private const string Prefix = "GreyAnnouncer_";
