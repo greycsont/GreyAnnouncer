@@ -1,11 +1,3 @@
-<div align=center>
-<img src="https://github.com/greycsont/GreyAnnouncer/raw/main/docs/image/GreyAnnouncer_Icon_v4ver2.png" width="300" height="300">
-</div>
-<br>
-
-[![Static Badge](https://img.shields.io/badge/There's-Repository-blue)](https://github.com/greycsont/GreyAnnouncer) [![Static Badge](https://img.shields.io/badge/Ask-Deepwiki-blue)](https://deepwiki.com/greycsont/GreyAnnouncer) 
-
-
 ## Mod description
 A mod plays sound when `StyleHUD.AscendRank` and `StyleHUD.ComboStart` is called
 
