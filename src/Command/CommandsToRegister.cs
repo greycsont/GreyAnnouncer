@@ -113,7 +113,8 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
                         }).ToArray()
                     ),
                     Leaf("editexternal", () => a.EditExternally()),
-                    Leaf("reload", () => a.ReloadAudio())
+                    Leaf("reload", () => a.ReloadAudio()),
+                    Leaf("printstructure", () => Log.Info($"{ObjectTreePrinter.GetTreeString(a)}"))
                 );
             }).ToArray()
         );

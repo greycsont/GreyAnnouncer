@@ -13,7 +13,7 @@ public static class AnnouncerManager
 
     public static Action clearAudioClipCache;      
 
-    public static long playRequestId  = 0;
+    public static long playRequestId = 0;
 
 
     #region Public Methods

@@ -1,6 +1,11 @@
 ### Known issue/TODO
-- folder adjustment (.json goes to stm setting folder, ffmpeg goes to like lib\ffmpeg folder etc.)
-- .NET upgrade (fuck you unity)
+
+### v1.3.0
+- Removed Pitch setting in announcer Config
+- Refactored UI
+- Switchable AudioAnnouncer
+- Command Support
+- 
 
 ### v1.2.0
 - Added Pitch setting in .json

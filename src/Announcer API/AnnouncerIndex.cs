@@ -66,7 +66,6 @@ public static class AnnouncerIndex
 
     private static Dictionary<string,string> Read()
     {
-        // 尝试读取 JSON
         Dictionary<string, string> dict = null;
 
         try

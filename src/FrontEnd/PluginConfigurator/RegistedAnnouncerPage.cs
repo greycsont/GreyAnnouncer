@@ -37,7 +37,7 @@ public class RegistedAnnouncerPage
         ConfigPanel panel = new ConfigPanel(_pluginConfigurator.rootPanel, _title, _title);
         new ConfigSpace(panel, 15f);
 
-        ConfigHeader titleHeader = new ConfigHeader(panel, _title);
+        ConfigHeader titleHeader = new ConfigHeader(panel, _title, 30);
         titleHeader.textColor = HeaderColor;
 
         var announcers = Directory
@@ -55,8 +55,8 @@ public class RegistedAnnouncerPage
 
         var openDirectoryButtonField = new ButtonField(
             panel,
-            "Edit Externally",
-            "Edit_Enternally"
+            "Open Current Announcer Folder",
+            "Open_Current_Announcer_Folder"
         );
         openDirectoryButtonField.onClick += () 
             => _audioAnnouncer.EditExternally();
@@ -66,6 +66,10 @@ public class RegistedAnnouncerPage
         {
             audioAnnouncer.announcerPath = Path.Combine(AnnouncerIndex.announcersPath, e.value);
         };
+        
+        new ConfigSpace(panel, 15f);
+
+        ConfigHeader configHeader = new ConfigHeader(panel, "Configuration");
 
         _fields.RandomizeAudioField = new BoolField(
             panel,
