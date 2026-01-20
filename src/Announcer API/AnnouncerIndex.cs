@@ -1,4 +1,5 @@
 
+using System;
 using System.IO;
 using System.Collections.Generic;
 
@@ -31,29 +32,37 @@ public static class AnnouncerIndex
     }
 
     // 后续修改announcersPath时需要同时变更这个
-    private static string defaultAnnouncerPath
-    {
-        get => Path.Combine(announcersPath, "greythroat");
-    }
+    private static string defaultAnnouncerRelativePath => "greythroat";
 
-    public static void Set(string guid, string path)
+    public static void Set(string guid, string fullPath)
     {
-        _data[guid] = path;
+        string folder = announcersPath.EndsWith(Path.DirectorySeparatorChar.ToString()) 
+                    ? announcersPath 
+                    : announcersPath + Path.DirectorySeparatorChar;
+
+        Uri pathUri = new Uri(fullPath);
+        Uri folderUri = new Uri(folder);
+        
+        // 获取相对路径并转换为字符串
+        string relativePath = Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri).ToString())
+                                 .Replace('/', Path.DirectorySeparatorChar); // 统一斜杠
+
+        _data[guid] = relativePath;
         Save();
     }
 
     public static string Get(string guid)
     {
-        if (_data.TryGetValue(guid, out var path))
-            return path;
+        if (_data.TryGetValue(guid, out var relativePath))
+        {
+            return Path.Combine(announcersPath, relativePath);
+        }
 
-        // 第一次访问：使用 fallback
-        _data[guid] = defaultAnnouncerPath;
+        _data[guid] = defaultAnnouncerRelativePath;
         Save();
 
-        return defaultAnnouncerPath;
+        return Path.Combine(announcersPath, defaultAnnouncerRelativePath);
     }
-
     public static bool Remove(string guid)
     {
         if (_data.Remove(guid))
@@ -75,6 +84,7 @@ public static class AnnouncerIndex
         catch (FileNotFoundException)
         {
             JsonManager.WriteJson("index.json", new Dictionary<string,string>());
+            dict = JsonManager.ReadJson<Dictionary<string,string>>("index.json");
         }
 
         return dict;

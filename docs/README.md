@@ -7,7 +7,7 @@
 
 
 ## Mod description
-An Announcer for when `StyleHUD.AscendRank` and `StyleHUD.ComboStart` is called
+A mod plays sound when `StyleHUD.AscendRank` and `StyleHUD.ComboStart` is called
 
 `added two preset announcer greythroat & irene as template for editing`
 
