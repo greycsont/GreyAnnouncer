@@ -30,7 +30,7 @@ public static class UnitySupport
 
             if (www.result != UnityWebRequest.Result.Success)
             {
-                LogManager.LogError($"UnityRequest Failed to load audio: {www.error}");
+                LogHelper.LogError($"UnityRequest Failed to load audio: {www.error}");
                 return null;
             }
 

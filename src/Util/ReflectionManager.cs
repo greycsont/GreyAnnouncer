@@ -16,7 +16,7 @@ public static class ReflectionManager
         }
         catch (Exception ex)
         {
-            LogManager.LogError($"Failed to load {assemblyName}'s {methodName} by : {ex}");
+            LogHelper.LogError($"Failed to load {assemblyName}'s {methodName} by : {ex}");
         }
     }
 }

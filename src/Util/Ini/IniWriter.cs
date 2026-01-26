@@ -8,7 +8,7 @@ public static class IniWriter
 {
     public static void Write(string path, IniDocument doc)
     {
-        PathManager.EnsureDirectoryExists(path);
+        PathHelper.EnsureDirectoryExists(path);
         
         using var writer = new StreamWriter(path, false);
 

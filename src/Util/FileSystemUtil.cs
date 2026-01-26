@@ -9,7 +9,7 @@ public static class FileSystemUtil
     {
         if (!Directory.Exists(directoryPath))
         {
-            LogManager.LogWarning($"Directory not found: {directoryPath}");
+            LogHelper.LogWarning($"Directory not found: {directoryPath}");
             Directory.CreateDirectory(directoryPath);
         }
     }

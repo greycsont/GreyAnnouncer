@@ -156,7 +156,7 @@ public class RegistedAnnouncerPage
 
     public void ApplyConfigToUI(AnnouncerConfig config)
     {
-        LogManager.LogDebug($"ApplyConfigToUI called");
+        LogHelper.LogDebug($"ApplyConfigToUI called");
 
         if (_fields.RandomizeAudioField != null)
             _fields.RandomizeAudioField.value = config.RandomizeAudioOnPlay;
@@ -170,19 +170,19 @@ public class RegistedAnnouncerPage
                 continue;
 
             if (fields.Enabled.value != data.Enabled)
-                LogManager.LogDebug($"Category '{category}': Enabled changed from {fields.Enabled.value} -> {data.Enabled}");
+                LogHelper.LogDebug($"Category '{category}': Enabled changed from {fields.Enabled.value} -> {data.Enabled}");
             else
-                LogManager.LogDebug($"Category '{category}': Enabled unchanged ({fields.Enabled.value})");
+                LogHelper.LogDebug($"Category '{category}': Enabled unchanged ({fields.Enabled.value})");
 
             if (Math.Abs(fields.Volume.value - data.VolumeMultiplier) > 0.0001f)
-                LogManager.LogDebug($"Category '{category}': Volume changed from {fields.Volume.value} -> {data.VolumeMultiplier}");
+                LogHelper.LogDebug($"Category '{category}': Volume changed from {fields.Volume.value} -> {data.VolumeMultiplier}");
             else
-                LogManager.LogDebug($"Category '{category}': Volume unchanged ({fields.Volume.value})");
+                LogHelper.LogDebug($"Category '{category}': Volume unchanged ({fields.Volume.value})");
 
             if (Math.Abs(fields.Cooldown.value - data.Cooldown) > 0.0001f)
-                LogManager.LogDebug($"Category '{category}': Cooldown changed from {fields.Cooldown.value} -> {data.Cooldown}");
+                LogHelper.LogDebug($"Category '{category}': Cooldown changed from {fields.Cooldown.value} -> {data.Cooldown}");
             else
-                LogManager.LogDebug($"Category '{category}': Cooldown unchanged ({fields.Cooldown.value})");
+                LogHelper.LogDebug($"Category '{category}': Cooldown unchanged ({fields.Cooldown.value})");
 
             fields.Enabled.value  = data.Enabled;
             fields.Volume.value   = data.VolumeMultiplier;

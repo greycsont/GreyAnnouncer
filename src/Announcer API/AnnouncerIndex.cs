@@ -10,7 +10,7 @@ namespace GreyAnnouncer.AnnouncerAPI;
 
 public static class AnnouncerIndex
 {
-    private static string indexPath = PathManager.GetCurrentPluginPath("index.json");
+    private static string indexPath = PathHelper.GetCurrentPluginPath("index.json");
     
     private static readonly Dictionary<string, string> _data = Read();
 
@@ -22,7 +22,7 @@ public static class AnnouncerIndex
         {
             if (_announcersPath == null)
             {
-                _announcersPath = PathManager.GetCurrentPluginPath("announcers");
+                _announcersPath = PathHelper.GetCurrentPluginPath("announcers");
             }
             return _announcersPath;
         }

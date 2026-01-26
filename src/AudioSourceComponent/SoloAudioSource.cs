@@ -54,7 +54,7 @@ public sealed class SoloAudioSource : MonoBehaviour
         audioSource.clip = sound.clip;
         audioSource = UnderwaterController_inWater_Instance.GetAudioSourceWithLowPassFilter(_audioSource);
 
-        LogManager.LogDebug("Playing solo audio source: " +
+        LogHelper.LogDebug("Playing solo audio source: " +
                             $"Category={sound.category}, " +
                             $"Clip={sound.clip.name}, " +
                             $"Volume={audioSource.volume}, " +

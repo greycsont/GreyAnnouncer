@@ -11,14 +11,14 @@ public static class JsonManager
     {
         ValidateJsonName(jsonName);
         
-        PathManager.EnsureDirectoryExists(PathManager.GetCurrentPluginPath()); 
+        PathHelper.EnsureDirectoryExists(PathHelper.GetCurrentPluginPath()); 
 
-        var jsonFilePath = PathManager.GetCurrentPluginPath(jsonName);
+        var jsonFilePath = PathHelper.GetCurrentPluginPath(jsonName);
 
         var dir = Path.GetDirectoryName(jsonFilePath);
         if (!Directory.Exists(dir))
         {
-            LogManager.LogError($"JSON '{jsonName}' not found at path: {dir}");
+            LogHelper.LogError($"JSON '{jsonName}' not found at path: {dir}");
             return null;
         }
         
@@ -29,14 +29,14 @@ public static class JsonManager
     { 
         ValidateJsonName(jsonName); 
 
-        PathManager.EnsureDirectoryExists(PathManager.GetCurrentPluginPath()); 
+        PathHelper.EnsureDirectoryExists(PathHelper.GetCurrentPluginPath()); 
 
-        var jsonFilePath = PathManager.GetCurrentPluginPath(jsonName);
+        var jsonFilePath = PathHelper.GetCurrentPluginPath(jsonName);
 
         var dir = Path.GetDirectoryName(jsonFilePath);
         if (Directory.Exists(dir))
         {
-            LogManager.LogError($"JSON '{jsonName}' already exists at path: {dir}");
+            LogHelper.LogError($"JSON '{jsonName}' already exists at path: {dir}");
             return null;
         }
 
@@ -46,7 +46,7 @@ public static class JsonManager
     public static T WriteJson<T>(string jsonName, T data) where T : class
     {
         ValidateJsonName(jsonName);
-        var jsonFilePath = PathManager.GetCurrentPluginPath(jsonName);
+        var jsonFilePath = PathHelper.GetCurrentPluginPath(jsonName);
         
         var dir = Path.GetDirectoryName(jsonFilePath);
         if (!Directory.Exists(dir))
@@ -82,7 +82,7 @@ public static class JsonManager
         }
         catch (Exception ex)
         {
-            LogManager.LogError($"Error reading JSON file '{name}': {ex.Message}");
+            LogHelper.LogError($"Error reading JSON file '{name}': {ex.Message}");
             throw;
         }
     }
@@ -93,12 +93,12 @@ public static class JsonManager
         {
             string json = JsonConvert.SerializeObject(data, Formatting.Indented);
             File.WriteAllText(path, json);
-            LogManager.LogInfo($"Writed JSON file '{name}' at path: {path}");
+            LogHelper.LogInfo($"Writed JSON file '{name}' at path: {path}");
             return data;
         }
         catch (Exception ex)
         {
-            LogManager.LogError($"Error writing JSON file '{name}': {ex.Message}");
+            LogHelper.LogError($"Error writing JSON file '{name}': {ex.Message}");
             throw;
         }
     }

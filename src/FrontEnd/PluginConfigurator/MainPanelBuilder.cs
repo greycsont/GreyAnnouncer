@@ -1,18 +1,16 @@
+using UnityEngine;
+using System;
+using System.Text;
+
 using PluginConfig.API;
 using PluginConfig.API.Fields;
 using PluginConfig.API.Decorators;
 using PluginConfig.API.Functionals;
-using UnityEngine;
-using System;
 
 using GreyAnnouncer.AnnouncerAPI;
-
 using GreyAnnouncer.AudioSourceComponent;
-
-using GreyAnnouncer.Commands;
-
 using GreyAnnouncer.Config;
-using System.Text;
+
 
 namespace GreyAnnouncer.FrontEnd;
 
@@ -107,12 +105,12 @@ public static class MainPanelBuilder
             BepInExConfig.audioLoadingStategy.Value = (int)e.value;
             if (e.value.Equals((audioLoadingOptions.Load_then_Play)))
             {
-                LogManager.LogInfo("Clear audio clip cache");
+                LogHelper.LogInfo("Clear audio clip cache");
                 ClearAudioClipsCache();
             }
             if (e.value.Equals(audioLoadingOptions.Preload_and_Play))
             {
-                LogManager.LogInfo("Reloading all announcer audio");
+                LogHelper.LogInfo("Reloading all announcer audio");
                 ReloadAllAnnouncers();
             }
         };
@@ -167,7 +165,7 @@ public static class MainPanelBuilder
         ffmpegToggle.onValueChange += (e) =>
         {
             BepInExConfig.isFFmpegSupportEnabled.Value = e.value;
-            LogManager.LogInfo($"Switched FFmpeg support : {e.value}");
+            LogHelper.LogInfo($"Switched FFmpeg support : {e.value}");
         };
 
         var ffmpegLogHeader = new ConfigHeader(advancedPanel, "To Endabled this will try to load unknown audio/video to AudioClip via FFmpeg\n makesure there's a executable in environment path `ffmpeg` or `PATH`\n\n ");

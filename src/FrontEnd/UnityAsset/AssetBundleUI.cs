@@ -9,10 +9,10 @@ namespace GreyAnnouncer.FrontEnd;
 public static class AssetBundleUI
 {
     public static AssetBundle bundle;
-    public static string bundlePath = PathManager.GetCurrentPluginPath("ui");
+    public static string bundlePath = PathHelper.GetCurrentPluginPath("ui");
     public static void CreateUI()
     {   
-        LogManager.LogInfo("Loading");
+        LogHelper.LogInfo("Loading");
         if (bundle == null)
         {
             bundle = AssetBundle.LoadFromFile(bundlePath);
@@ -23,7 +23,7 @@ public static class AssetBundleUI
 
         if (uiPrefab == null)
         {
-            LogManager.LogError("Failed to load UI Prefab!");
+            LogHelper.LogError("Failed to load UI Prefab!");
             return;
         }
 
@@ -37,7 +37,7 @@ public static class AssetBundleUI
 
             uiObject.transform.SetAsLastSibling();
 
-            LogManager.LogInfo("UI Loaded!");
+            LogHelper.LogInfo("UI Loaded!");
 
             Transform videoPlayerTransform = uiObject.transform.Find("Mask/VideoPlayer");
 
@@ -47,17 +47,17 @@ public static class AssetBundleUI
 
                 if (vp == null)
                 {
-                    LogManager.LogInfo("Fuck VideoPlayer");
+                    LogHelper.LogInfo("Fuck VideoPlayer");
                     return;
                 }
                 vp.source = VideoSource.Url;
-                vp.url = PathManager.GetCurrentPluginPath("output_h264.mp4");
+                vp.url = PathHelper.GetCurrentPluginPath("output_h264.mp4");
                 vp.Play();
             }       
         }
         else
         {
-            LogManager.LogWarning("Canvas not found! UI may not display correctly.");
+            LogHelper.LogWarning("Canvas not found! UI may not display correctly.");
         }
 
     }

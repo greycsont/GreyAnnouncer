@@ -35,7 +35,7 @@ public class AudioAnnouncer
         get => _announcerPath;
         set
         {
-            LogManager.LogDebug($"announcerPath seted");
+            LogHelper.LogDebug($"announcerPath seted");
             _announcerPath = value;
             iniPath = Path.Combine(value, "config.ini");
             AnnouncerIndex.Set(title, value);
@@ -66,7 +66,7 @@ public class AudioAnnouncer
 
     private void OnAnnouncerConfigChanged(object sender, PropertyChangedEventArgs e)
     {
-        LogManager.LogDebug($"AnnouncerConfig changed: {e.PropertyName}");
+        LogHelper.LogDebug($"AnnouncerConfig changed: {e.PropertyName}");
         ApplyAnnouncerConfig();
     }
 
@@ -108,7 +108,7 @@ public class AudioAnnouncer
     /// <summary>Will Play a random audio in the belong category</summary>
     public async Task PlayAudioViaCategory(string category)
     {
-        LogManager.LogInfo($"Request to play audio for category: {category}");
+        LogHelper.LogInfo($"Request to play audio for category: {category}");
         try
         {
             if (!ValidateAndLogPlayback(category))
@@ -158,7 +158,7 @@ public class AudioAnnouncer
         var validationState = GetPlayValidationState(category);
         if (validationState != ValidationState.Success)
         {
-            LogManager.LogInfo($"PlayValidationState: {category}, {validationState}");
+            LogHelper.LogInfo($"PlayValidationState: {category}, {validationState}");
             return false;
         }
         return true;
@@ -166,21 +166,21 @@ public class AudioAnnouncer
 
     private async Task PlayAudioClip(string category, int audioPlayOptions = 0)
     {
-        LogManager.LogInfo($"Attempting to play audio for category: {category}");
+        LogHelper.LogInfo($"Attempting to play audio for category: {category}");
         Sound sound = await _audioLoader.LoadAudioClip(category);
 
         if (sound == null)
         {
-            LogManager.LogError($"Failed to load audio clip may for this category: {category}");
+            LogHelper.LogError($"Failed to load audio clip may for this category: {category}");
             return;
         }
         if (_cooldownManager.IsIndividualCooldownActive(sound.category))
         {
-            LogManager.LogInfo($"The sound's category {sound.category} is still in cooldown");
+            LogHelper.LogInfo($"The sound's category {sound.category} is still in cooldown");
             return;
         }
 
-        LogManager.LogDebug($"category : {sound.category}, Cooldown : {announcerConfig.CategorySetting[sound.category].Cooldown}");
+        LogHelper.LogDebug($"category : {sound.category}, Cooldown : {announcerConfig.CategorySetting[sound.category].Cooldown}");
 
         SoundDispatcher.SendClipToAudioSource(sound, audioPlayOptions);
 
@@ -188,7 +188,7 @@ public class AudioAnnouncer
     }
 
     private void LogPlaybackError(Exception ex)
-        => LogManager.LogError($"An error occurred while playing sound: {ex.Message}\n{ex.StackTrace}");
+        => LogHelper.LogError($"An error occurred while playing sound: {ex.Message}\n{ex.StackTrace}");
     #endregion
 
 
@@ -218,10 +218,10 @@ public class AudioAnnouncer
 
     private AnnouncerConfig AnnouncerConfigIniInitialization(List<string> category)
     {
-        LogManager.LogDebug($"current iniPath for {title}: {iniPath}");
+        LogHelper.LogDebug($"current iniPath for {title}: {iniPath}");
         if (File.Exists(iniPath) == false)
         {
-            LogManager.LogDebug($"Initialize new config.ini in: {iniPath}");
+            LogHelper.LogDebug($"Initialize new config.ini in: {iniPath}");
             var audioDict = category.ToDictionary(
                 cat => cat,
                 cat => new CategorySetting{}
@@ -255,6 +255,6 @@ public class AudioAnnouncer
     }
 
     public void EditExternally()
-        => PathManager.OpenDirectory(announcerPath);
+        => PathHelper.OpenDirectory(announcerPath);
 
 }

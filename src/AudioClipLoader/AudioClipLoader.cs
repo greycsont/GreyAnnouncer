@@ -23,7 +23,7 @@ public static class AudioClipLoader
                 clip = await FFmpegSupport.DecodeAndLoad(path);
                 
             } else {
-                LogManager.LogError($"Unsupported audio format: 「{extension}」 for {path}");
+                LogHelper.LogError($"Unsupported audio format: 「{extension}」 for {path}");
                 
             }
 
@@ -34,7 +34,7 @@ public static class AudioClipLoader
         }
         catch (Exception ex)
         {
-            LogManager.LogError($"Error while loading {path}: {ex.Message}\n{ex.StackTrace}");
+            LogHelper.LogError($"Error while loading {path}: {ex.Message}\n{ex.StackTrace}");
             return null;
         }
     }

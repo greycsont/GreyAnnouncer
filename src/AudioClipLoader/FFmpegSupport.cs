@@ -40,11 +40,11 @@ public static class FFmpegSupport
 
             int                 audioStreamIndex;
 
-            ffmpeg.RootPath = PathManager.FindExecutable("ffmpeg");
+            ffmpeg.RootPath = PathHelper.FindExecutable("ffmpeg");
 
-            LogManager.LogDebug($"ffmpeg path: {ffmpeg.RootPath}");
+            LogHelper.LogDebug($"ffmpeg path: {ffmpeg.RootPath}");
             
-            LogManager.LogDebug($"ffmpeg version: {ffmpeg.av_version_info()}");
+            LogHelper.LogDebug($"ffmpeg version: {ffmpeg.av_version_info()}");
 
             ffmpeg.avformat_network_init();
 

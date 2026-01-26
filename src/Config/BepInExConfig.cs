@@ -100,7 +100,7 @@ public static class BepInExConfig
         }
         else
         {
-            LogManager.LogError($"Unsupported type for config entry: {key}, Type: {defaultValue?.GetType()?.FullName ?? "null"}");
+            LogHelper.LogError($"Unsupported type for config entry: {key}, Type: {defaultValue?.GetType()?.FullName ?? "null"}");
         }
     }
                            

@@ -91,15 +91,15 @@ public class AudioLoader : IAudioLoader
     public (string category, AudioClip clip) GetClipFromCache(string category)
     {
         if (categoryFailedLoading.Contains(category)) {
-            LogManager.LogError("categoryfailedloading");
+            LogHelper.LogError("categoryfailedloading");
             return (null, null);
         }
         if (announcerConfig.CategorySetting.Keys.Contains(category) == false) {
-            LogManager.LogError("contains category = false");
+            LogHelper.LogError("contains category = false");
             return (null, null);
         }
         if (!_audioClips.TryGetValue(category, out var clips) || clips.Count == 0){
-            LogManager.LogError("no clip in cache"); 
+            LogHelper.LogError("no clip in cache"); 
             return (null, null);
         }
         int randomIndex = UnityEngine.Random.Range(0, clips.Count);
@@ -171,7 +171,7 @@ public class AudioLoader : IAudioLoader
     #region Public API
     public async Task FindAvailableAudioAsync()
     {
-        LogManager.LogInfo("Starting to find available audio asynchronously.");
+        LogHelper.LogInfo("Starting to find available audio asynchronously.");
         ClearCache();
         if (BepInExConfig.audioLoadingStategy.Value == 0) return;
         await LoadAllCategoriesAsync();
@@ -223,7 +223,7 @@ public class AudioLoader : IAudioLoader
             return null;
         }
 
-        LogManager.LogInfo($"Loading category {category} with {validFiles.Count} files");
+        LogHelper.LogInfo($"Loading category {category} with {validFiles.Count} files");
 
         var clipLoadingTasks = validFiles
             .Select(path => AudioClipLoader.LoadAudioClipAsync(path));
@@ -241,7 +241,7 @@ public class AudioLoader : IAudioLoader
 
             if (loadedClips.Count > 0)
             {
-                LogManager.LogInfo($"Successfully loaded {loadedClips.Count}/{validFiles.Count} clips for {category}");
+                LogHelper.LogInfo($"Successfully loaded {loadedClips.Count}/{validFiles.Count} clips for {category}");
                 return loadedClips;
             }
             else
@@ -277,23 +277,23 @@ public class AudioLoader : IAudioLoader
     private void LogCategoryFailure(string category, string reason)
     {
         categoryFailedLoading.Add(category);
-        LogManager.LogDebug($"Failed to load category 「{category}」: {reason}");
+        LogHelper.LogDebug($"Failed to load category 「{category}」: {reason}");
     }
 
     private void LogLoadingResults()
     {
-        LogManager.LogDebug("Loading directory: " + announcerPath);
+        LogHelper.LogDebug("Loading directory: " + announcerPath);
         if (categoryFailedLoading.Count == 0)
-            LogManager.LogInfo("All audio categories successfully loaded");
+            LogHelper.LogInfo("All audio categories successfully loaded");
         else
-            LogManager.LogWarning("Failed to load audio categories: " + string.Join(", ", categoryFailedLoading));
+            LogHelper.LogWarning("Failed to load audio categories: " + string.Join(", ", categoryFailedLoading));
     }
     #endregion
 
     #region Utility Methods
     private bool TryGetValidAudioFiles(string category, out List<string> validFiles)
     {
-        LogManager.LogDebug($"Loaded category: {category}");
+        LogHelper.LogDebug($"Loaded category: {category}");
         validFiles = null;
 
         if (!announcerConfig.CategorySetting[category].Enabled)
@@ -311,7 +311,7 @@ public class AudioLoader : IAudioLoader
 
         var fileNames = categorySetting.AudioFiles;
         validFiles = fileNames
-            .Select(name => PathManager.GetFile(announcerPath, name))
+            .Select(name => PathHelper.GetFile(announcerPath, name))
             .Where(File.Exists)
             .ToList();
 
@@ -322,7 +322,7 @@ public class AudioLoader : IAudioLoader
         }
 
         if (validFiles.Count != fileNames.Count)
-            LogManager.LogWarning($"{category} not loaded in audioFiles: {string.Join(", ", fileNames.Except(validFiles.Select(p => System.IO.Path.GetFileName(p)).ToList()))}");
+            LogHelper.LogWarning($"{category} not loaded in audioFiles: {string.Join(", ", fileNames.Except(validFiles.Select(p => System.IO.Path.GetFileName(p)).ToList()))}");
 
         return true;
     }
