@@ -81,10 +81,8 @@ public class ObservableDictionary<TKey, TValue> : IDictionary<TKey, TValue>, INo
     }
 
     private void OnItemPropertyChanged(object sender, PropertyChangedEventArgs e)
-    {
         // 内部属性变化，统一触发字典 PropertyChanged
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs($"Item.{e.PropertyName}"));
-    }
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs($"Item.{e.PropertyName}"));
 
     #region IDictionary & IEnumerable implementation
     public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => _dict.GetEnumerator();

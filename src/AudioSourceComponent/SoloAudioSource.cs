@@ -8,9 +8,9 @@ namespace GreyAnnouncer.AudioSourceComponent;
 public sealed class SoloAudioSource : MonoBehaviour
 {
     private AudioSource _audioSource;
+    
     private static SoloAudioSource _instance;
 
-    #region Constructor
     public static SoloAudioSource Instance
     {
         get
@@ -24,7 +24,6 @@ public sealed class SoloAudioSource : MonoBehaviour
             return _instance;
         }
     }
-    #endregion
 
 
     #region Public API

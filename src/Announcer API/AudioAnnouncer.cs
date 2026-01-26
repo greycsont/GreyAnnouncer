@@ -23,6 +23,8 @@ public class AudioAnnouncer
 
     private List<string> category;
 
+    private string _defaultAnnouncerConfigPath;
+
     private string _announcerPath;
 
     /// <summary>
@@ -82,14 +84,16 @@ public class AudioAnnouncer
     public AudioAnnouncer(IAudioLoader audioLoader,
                            ICooldownManager cooldownManager,
                            List<string> displayNameMapping,
-                           string title)
+                           string title,
+                           string defaultAnnouoncerConfigPath)
     {
         this._audioLoader = audioLoader;
         this._cooldownManager = cooldownManager;
         this.category = displayNameMapping;
         this.title = title;
+        this._defaultAnnouncerConfigPath = defaultAnnouoncerConfigPath;
 
-        announcerPath = AnnouncerIndex.Get(this.title);
+        announcerPath = AnnouncerIndex.Get(this.title, _defaultAnnouncerConfigPath);
 
         SubscribeAnnouncerManager();
 

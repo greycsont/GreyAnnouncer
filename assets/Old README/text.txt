@@ -1,0 +1,5 @@
+part 1:
+D1 have 26 network ports and 1 console port as same as ASw-1
+24 fastethernet ports and 2 gigaethernet ports
+fastethernet Bandwidth 100000 Kbit, gigaethernet 1000000 Kbit, but D1's port have Maximm Transmission Unit 1500 byte
+none of them are module design

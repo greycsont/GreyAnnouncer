@@ -61,7 +61,7 @@ public static class AnnouncerIniMapper
             general = new IniSection("General");
             doc.Sections["General"] = general;
         }
-        general.Values["RandomizeAudioOnPlay"] = new System.Collections.Generic.List<string>
+        general.Values["RandomizeAudioOnPlay"] = new List<string>
         {
             config.RandomizeAudioOnPlay.ToString()
         };
@@ -77,19 +77,19 @@ public static class AnnouncerIniMapper
             }
 
             var cat = kv.Value;
-            section.Values["Enabled"] = new System.Collections.Generic.List<string> { cat.Enabled.ToString() };
-            section.Values["VolumeMultiplier"] = new System.Collections.Generic.List<string>
+            section.Values["Enabled"] = new List<string> { cat.Enabled.ToString() };
+            section.Values["VolumeMultiplier"] = new List<string>
             {
                 cat.VolumeMultiplier.ToString(CultureInfo.InvariantCulture)
             };
-            section.Values["Cooldown"] = new System.Collections.Generic.List<string>
+            section.Values["Cooldown"] = new List<string>
             {
                 cat.Cooldown.ToString(CultureInfo.InvariantCulture)
             };
 
-            if (cat.AudioFiles != null && cat.AudioFiles.Count > 0)
+            if (cat.AudioFiles != null)
             {
-                section.Values["AudioFiles"] = new System.Collections.Generic.List<string>
+                section.Values["AudioFiles"] = new List<string>
                 {
                     string.Join(",", cat.AudioFiles)
                 };
