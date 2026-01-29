@@ -9,22 +9,22 @@ public class Sound
 
     public AudioClip clip;
 
-    public float SpatialBlend = 0f;
+    public float spatialBlend = 0f;
 
     [Range(0f, 1f)]
-    public float Volume = 1f;
+    public float volume = 1f;
 
-    public bool Loop = false;
+    public bool loop = false;
 
-    public int Priority = 0;
+    public int priority = 0;
 
-    public AudioMixerGroup audioMixerGroup;
+    public AudioMixerGroup AudioMixerGroup;
     
 
     public Sound(string category, AudioClip clip, float volume)
     {
         this.category = category;
         this.clip = clip;
-        this.Volume = volume;
+        this.volume = volume;
     }
 }

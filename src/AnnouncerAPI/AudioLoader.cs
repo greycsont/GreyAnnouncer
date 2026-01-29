@@ -26,7 +26,7 @@ namespace GreyAnnouncer.AnnouncerAPI;
 
 public class AudioLoader : IAudioLoader
 {
-    public  AnnouncerConfig announcerConfig { get; set; }
+    public AnnouncerConfig announcerConfig { get; set; }
 
     public  HashSet<string> categoryFailedLoading { get; private set; } = new HashSet<string>();
 

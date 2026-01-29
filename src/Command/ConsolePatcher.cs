@@ -10,8 +10,5 @@ public class ConsolePatcher
     [HarmonyPrefix]
     [HarmonyPatch("Awake")]
     public static void AddConsoleCommands(Console __instance)
-    {
-        var Command = new CommandsToRegister(__instance);
-        __instance.RegisterCommand(Command);
-    }
+        => __instance.RegisterCommand(new CommandsToRegister(__instance));
 }

@@ -1,6 +1,3 @@
-using UnityEngine;
-
-using GreyAnnouncer.AnnouncerAPI;
 
 namespace GreyAnnouncer.AudioSourceComponent;
 

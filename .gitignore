@@ -3,3 +3,4 @@ BuildOutput/
 .vs/
 Properties/
 obj/
+.idea/

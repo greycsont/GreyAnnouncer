@@ -9,9 +9,9 @@ public static class AudioSourceManager
     public static AudioSource ConfigureAudioSource(AudioSource audioSource, 
                                                    Sound sound)
     {
-        audioSource.spatialBlend = sound.SpatialBlend;
-        audioSource.priority     = sound.Priority;
-        audioSource.volume       = sound.Volume < 1f ? sound.Volume : 1f;
+        audioSource.spatialBlend = sound.spatialBlend;
+        audioSource.priority     = sound.priority;
+        audioSource.volume       = sound.volume < 1f ? sound.volume : 1f;
         audioSource.clip         = sound.clip;
         //audioSource.outputAudioMixerGroup = null;
         return audioSource;

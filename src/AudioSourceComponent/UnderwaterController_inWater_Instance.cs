@@ -14,11 +14,7 @@ public static class UnderwaterController_inWater_Instance
 {
     public static bool isInWater 
     {
-        get 
-        {
-            var controller = global::UnderwaterController.Instance;
-            return controller != null && controller.inWater;
-        }
+        get => global::UnderwaterController.Instance?.inWater ?? false;
     }
 
     public static void CheckIsInWater()

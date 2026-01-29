@@ -1,6 +1,5 @@
 using UnityEngine;
 
-using GreyAnnouncer.AnnouncerAPI;
 using GreyAnnouncer.Config;
 
 namespace GreyAnnouncer.AudioSourceComponent;
@@ -48,9 +47,9 @@ public sealed class SoloAudioSource : MonoBehaviour
 
     private void ConfigureAndPlayAudioSource(Sound sound, AudioSource audioSource)
     {
-        audioSource.spatialBlend = sound.SpatialBlend;
-        audioSource.priority = sound.Priority;
-        audioSource.volume = Mathf.Clamp01(BepInExConfig.audioSourceVolume.Value * sound.Volume);
+        audioSource.spatialBlend = sound.spatialBlend;
+        audioSource.priority = sound.priority;
+        audioSource.volume = Mathf.Clamp01(BepInExConfig.audioSourceVolume.Value * sound.volume);
         audioSource.clip = sound.clip;
         audioSource = UnderwaterController_inWater_Instance.GetAudioSourceWithLowPassFilter(_audioSource);
 
@@ -61,7 +60,7 @@ public sealed class SoloAudioSource : MonoBehaviour
                             $"Pitch={audioSource.pitch}, " +
                             $"SpatialBlend={audioSource.spatialBlend}, " +
                             $"Priority={audioSource.priority}");
-        audioSource.PlayOneShot(sound.clip, sound.Volume);
+        audioSource.PlayOneShot(sound.clip, sound.volume);
     }
 
     public void AddAudioLowPassFilter()
