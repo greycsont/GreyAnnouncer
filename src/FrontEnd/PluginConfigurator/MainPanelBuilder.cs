@@ -71,7 +71,7 @@ public static class MainPanelBuilder
             BepInExConfig.audioSourceVolume.Value,
             2   // 2nd decimal
         );
-        volumeSlider.defaultValue = BepInExConfig.DEFAULT_AUDIO_SOURCE_VOLUME;
+        volumeSlider.defaultValue = 1f;
         volumeSlider.onValueChange += e =>
         {
             BepInExConfig.audioSourceVolume.Value = e.newValue;
@@ -87,7 +87,7 @@ public static class MainPanelBuilder
             "Audio_Play_Strategy",
             (PlayOptions)BepInExConfig.audioPlayOptions.Value
         );
-        playOption.defaultValue = (PlayOptions)BepInExConfig.DEFAULT_AUDIO_PLAY_OPTIONS;
+        playOption.defaultValue = (PlayOptions)0;
         playOption.onValueChange += e =>
         {
             BepInExConfig.audioPlayOptions.Value = (int)e.value;
@@ -97,12 +97,12 @@ public static class MainPanelBuilder
             m_pluginConfigurator.rootPanel,
             "Audio Load Strategy",
             "Audio_Load_Strategy",
-            (audioLoadingOptions)BepInExConfig.audioLoadingStategy.Value
+            (audioLoadingOptions)BepInExConfig.audioLoadingStrategy.Value
         );
-        loadingOption.defaultValue = (audioLoadingOptions)BepInExConfig.DEFAULT_AUDIO_LOADING_OPTIONS;
+        loadingOption.defaultValue = (audioLoadingOptions)0;
         loadingOption.onValueChange += e =>
         {
-            BepInExConfig.audioLoadingStategy.Value = (int)e.value;
+            BepInExConfig.audioLoadingStrategy.Value = (int)e.value;
             if (e.value.Equals((audioLoadingOptions.Load_then_Play)))
             {
                 LogHelper.LogInfo("Clear audio clip cache");

@@ -14,7 +14,7 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
 {
 
     public override string Name => "grey";
-    public override string Description => "tons of setting";
+    public override string Description => "";
 
     public override Branch BuildTree(Console con)
         => Branch(Name,
@@ -59,6 +59,17 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
                 {
                     BepInExConfig.isLowPassFilterEnabled.Value = val;
                     Log.Info($"Under Water Low Pass Filter Enabled set to {val}");
+                }))
+            ),
+
+            Branch("announcerspath",
+                Branch("get", Leaf(() =>
+                    Log.Info($"Current Announcers Path: {AnnouncerIndex.announcersPath}"))
+                ),
+                Branch("set", Leaf<string>(val =>
+                {
+                    AnnouncerIndex.announcersPath = val;
+                    Log.Info($"Announcers Path set to {val}");
                 }))
             )
         );

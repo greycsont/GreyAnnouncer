@@ -20,7 +20,7 @@ public class AnnouncerConfig : NotifyBase
 
     public AnnouncerConfig()
     {
-        // 如果 Ini 反序列化后再填充，这里可以后处理 <- this is a vibe-coding product but I thought It's a useful note
+        // 如果 Ini 反序列化后再填充，这里可以后处理 <- this is a vibe-coding product, but I thought It's a useful note
         CategorySetting.CollectionChanged += (s, e) => RaiseChanged(nameof(CategorySetting));
         CategorySetting.PropertyChanged += (s, e) => RaiseChanged(nameof(CategorySetting));
     }
@@ -29,7 +29,8 @@ public class AnnouncerConfig : NotifyBase
     /// I strongly recommand using SetCategorySettingMap to create th dictionary of CategorySetting
     /// If you really want to add a new CategorySetting in the Dictionary
     /// PLEASE USE THIS METHOD
-    /// Otherwise the AnnouncerConfig can't track the value change on that CategorySetting and blow up whole program
+    /// Otherwise the AnnouncerConfig can't track the value change
+    /// on that CategorySetting and blow up whole program
     /// </summary>
     /// <param name="key"></param>
     /// <param name="setting"></param>
@@ -171,7 +172,7 @@ public class AnnouncerConfig : NotifyBase
 
     public AnnouncerConfig()
     {
-        // 如果 Ini 反序列化后再填充，这里可以后处理 <- this is a vibe-coding product but I thought It's a useful note
+        // 如果 Ini 反序列化后再填充，这里可以后处理 <- this is a vibe-coding product, but I thought It's a useful note
     }
     
     /// <summary>

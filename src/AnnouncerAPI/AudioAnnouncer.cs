@@ -37,7 +37,6 @@ public class AudioAnnouncer
         {
             LogHelper.LogDebug($"announcerPath seted");
             _announcerPath = value;
-            iniPath = Path.Combine(value, "config.ini");
             AnnouncerIndex.Set(title, value);
             ReloadAudio();
         }
@@ -78,7 +77,7 @@ public class AudioAnnouncer
     }
 
 
-    private string iniPath;
+    private string iniPath => Path.Combine(announcerPath, "config.ini");
 
 
     public AudioAnnouncer(IAudioLoader audioLoader,

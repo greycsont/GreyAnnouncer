@@ -27,7 +27,6 @@ public class Plugin : BaseUnityPlugin
         LoadMainModule();
         LoadOptionalModule();
         PatchHarmony();
-
     }
 
     private void LoadMainModule()

@@ -1,9 +1,11 @@
 using BepInEx;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 
 namespace GreyAnnouncer.Util;
@@ -118,5 +120,41 @@ public static class PathHelper
         var dir = Path.GetDirectoryName(filePath);
         if (!Directory.Exists(dir))
             Directory.CreateDirectory(dir);
+    }
+
+    public static void CopyDirectoryParallel(string source, string target)
+    {
+        try
+        {
+            var stack = new Stack<(string s, string t)>();
+            stack.Push((source, target));
+
+            while (stack.Count > 0)
+            {
+                var (currSrc, currExt) = stack.Pop();
+                Directory.CreateDirectory(currExt);
+
+                // 获取当前层所有文件
+                string[] files = Directory.GetFiles(currSrc);
+                
+                // 并行复制文件：这比一个个复制快得多
+                Parallel.ForEach(files, new ParallelOptions { MaxDegreeOfParallelism = 8 }, (file) =>
+                {
+                    string dest = Path.Combine(currExt, Path.GetFileName(file));
+                    File.Copy(file, dest, true);
+                });
+
+                // 压入子目录
+                foreach (var dir in Directory.GetDirectories(currSrc))
+                {
+                    stack.Push((dir, Path.Combine(currExt, Path.GetFileName(dir))));
+                }
+            }
+        }
+        catch(Exception e)
+        {
+            LogHelper.LogError($"Error occured when copy files to new directory: {e}");
+        }
+
     }
 }

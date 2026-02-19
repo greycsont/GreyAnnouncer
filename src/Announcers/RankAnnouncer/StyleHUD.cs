@@ -1,4 +1,7 @@
 using HarmonyLib;
+using UnityEngine;
+using System.Reflection;
+using System.IO;
 
 namespace GreyAnnouncer.RankAnnouncer;
 
@@ -6,7 +9,7 @@ namespace GreyAnnouncer.RankAnnouncer;
     The rankIndex is basically the pointer to another arrays, list sth.
     More information in the Announcer.cs 
     StyleHUD.cs -> RankAnnouncer.cs */
-
+    
 [HarmonyPatch(typeof(StyleHUD))]
 public static class StyleHUDPatcher
 {
@@ -15,7 +18,7 @@ public static class StyleHUDPatcher
     public static void GetNonDrankAscend(StyleHUD __instance)
     {
         var rank = __instance.rankIndex;
-        if (rank >= 0 && rank <= 7)
+        if (rank is >= 0 and <= 7)
         {
             RankAnnouncer.PlayRankSound(rank);
         }
@@ -32,6 +35,7 @@ public static class StyleHUDPatcher
         }
     }
 }
+
 
 
 /*[HarmonyPatch(typeof(StyleHUD), "UpdateMeter")]  // For D rank only, left for review silly code, why do you want to patch a Update() function? 

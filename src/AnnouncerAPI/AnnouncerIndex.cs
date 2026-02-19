@@ -4,7 +4,7 @@ using System.IO;
 using System.Collections.Generic;
 
 using GreyAnnouncer.Util;
-
+using GreyAnnouncer.Config;
 
 namespace GreyAnnouncer.AnnouncerAPI;
 
@@ -14,13 +14,16 @@ public static class AnnouncerIndex
     
     private static readonly Dictionary<string, string> _data = Read();
 
-    private static string _announcersPath;
-
     public static string announcersPath
     {
-        get => _announcersPath ??= PathHelper.GetCurrentPluginPath("announcers");
-        set => _announcersPath = value;
-    }
+        get => BepInExConfig.announcersPath.Value;
+        set 
+        {
+            PathHelper.CopyDirectoryParallel(BepInExConfig.announcersPath.Value, value);
+            BepInExConfig.announcersPath.Value = value;
+        } 
+
+    } 
 
     public static void Set(string guid, string fullPath)
     {
@@ -50,6 +53,8 @@ public static class AnnouncerIndex
 
         return Path.Combine(announcersPath, defaultAnnouncerRelativePath);
     }
+
+    // No One uses this right?
     public static bool Remove(string guid)
     {
         if (_data.Remove(guid))
@@ -60,9 +65,12 @@ public static class AnnouncerIndex
         return false;
     }
 
+    public static void ChangeDirectory(string newAnnouncersPath)
+        => announcersPath = newAnnouncersPath;
+
     private static Dictionary<string,string> Read()
     {
-        Dictionary<string, string> dict = null;
+        Dictionary<string, string> dict;
 
         try
         {

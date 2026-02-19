@@ -28,7 +28,7 @@ public class AudioLoader : IAudioLoader
 {
     public AnnouncerConfig announcerConfig { get; set; }
 
-    public  HashSet<string> categoryFailedLoading { get; private set; } = new HashSet<string>();
+    public HashSet<string> categoryFailedLoading { get; private set; } = new HashSet<string>();
 
     private Dictionary<string, List<AudioClip>> _audioClips = new Dictionary<string, List<AudioClip>>();
 
@@ -47,7 +47,7 @@ public class AudioLoader : IAudioLoader
     {
         (string, AudioClip) clipWithCategory;
 
-        if (BepInExConfig.audioLoadingStategy.Value == 0)
+        if (BepInExConfig.audioLoadingStrategy.Value == 0)
         {
             var currentRequestId = ++AnnouncerManager.playRequestId;
 
@@ -60,29 +60,27 @@ public class AudioLoader : IAudioLoader
                 currentRequestId != AnnouncerManager.playRequestId
                 && BepInExConfig.audioPlayOptions.Value == 0
             )
-            {
                 return null;
-            }
         }
         else
         {
             if (announcerConfig.RandomizeAudioOnPlay == false)
-            {
                 clipWithCategory = GetClipFromCache(category);
-            }
             else
-            {
                 clipWithCategory = GetRandomClipFromAudioClips();
-            }
         }
 
         if (clipWithCategory == (null, null))
         {
-            LogCategoryFailure(category, $"No audio clip available to play, current loading strategy: {BepInExConfig.audioLoadingStategy.Value}");
+            LogCategoryFailure(category, $"No audio clip available to play, current loading strategy: {BepInExConfig.audioLoadingStrategy.Value}");
             return null;
         }
 
-        return new Sound(clipWithCategory.Item1, clipWithCategory.Item2, announcerConfig.CategorySetting[clipWithCategory.Item1].VolumeMultiplier);
+        return new Sound(
+            clipWithCategory.Item1, 
+            clipWithCategory.Item2, 
+            announcerConfig.CategorySetting[clipWithCategory.Item1].VolumeMultiplier
+        );
     }
 
 
@@ -112,11 +110,11 @@ public class AudioLoader : IAudioLoader
     public (string category, AudioClip clip) GetRandomClipFromAudioClips()
     {
         var validEntries = _audioClips
-        .Where(kvp => announcerConfig.CategorySetting.TryGetValue(kvp.Key, out var data) && data.Enabled)
-        .SelectMany(kvp => kvp.Value
+            .Where(kvp => announcerConfig.CategorySetting.TryGetValue(kvp.Key, out var data) && data.Enabled)
+            .SelectMany(kvp => kvp.Value
             .Where(clip => clip != null)
             .Select(clip => (kvp.Key, clip)))  // 这里保留 key
-        .ToList();
+            .ToList();
 
         if (validEntries.Count == 0) 
             return (null, null);
@@ -134,7 +132,7 @@ public class AudioLoader : IAudioLoader
     {
         if (!TryGetValidAudioFiles(category, out var validFiles)) return (null, null);
 
-        string selectedPath = validFiles[UnityEngine.Random.Range(0, validFiles.Count)];
+        var selectedPath = validFiles[UnityEngine.Random.Range(0, validFiles.Count)];
         var clip = await AudioClipLoader.LoadAudioClipAsync(selectedPath);
 
         if (clip == null) LogCategoryFailure(category, "Selected file failed to load");
@@ -173,7 +171,7 @@ public class AudioLoader : IAudioLoader
     {
         LogHelper.LogInfo("Starting to find available audio asynchronously.");
         ClearCache();
-        if (BepInExConfig.audioLoadingStategy.Value == 0) return;
+        if (BepInExConfig.audioLoadingStrategy.Value == 0) return;
         await LoadAllCategoriesAsync();
         LogLoadingResults();
     }
@@ -219,9 +217,7 @@ public class AudioLoader : IAudioLoader
     private async Task<List<AudioClip>> LoadCategoryAsync(string category)
     {
         if (!TryGetValidAudioFiles(category, out var validFiles))
-        {
             return null;
-        }
 
         LogHelper.LogInfo($"Loading category {category} with {validFiles.Count} files");
 

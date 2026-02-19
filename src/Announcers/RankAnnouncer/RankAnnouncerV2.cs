@@ -1,15 +1,14 @@
-using System.IO;
-using System.Linq;
+
 using System.Collections.Generic;
 
 using GreyAnnouncer.AnnouncerAPI;
-using GreyAnnouncer.FrontEnd;
+
 
 namespace GreyAnnouncer.RankAnnouncer;
 
 public static class RankAnnouncer
 {
-    private static readonly List<string> category = new List<string>(){   //used only for creating json
+    private static readonly List<string> category = new List<string>(){   //used only for creating JSON
         "Destruction",
         "Chaotic",
         "Brutal",
@@ -34,6 +33,6 @@ public static class RankAnnouncer
         );
     }
 
-    public static void PlayRankSound(int rank)
-       => _ = _announcer.PlayAudioViaCategory(category[rank]);
+    public static void PlayRankSound(int rank) 
+        => _ = _announcer.PlayAudioViaCategory(category[rank]);
 }

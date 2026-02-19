@@ -28,7 +28,7 @@ public static class AssetBundleUI
         }
 
         // Initialize UI
-        var uiObject = GameObject.Instantiate(uiPrefab);
+        var uiObject = GameObject.Instantiate<GameObject>(uiPrefab);
 
         var canvas = UnityPathManager.FindCanvas();
         if (canvas != null)

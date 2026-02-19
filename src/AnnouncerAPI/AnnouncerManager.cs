@@ -16,7 +16,6 @@ public static class AnnouncerManager
     public static long playRequestId = 0;
 
 
-    #region Public Methods
     public static List<AudioAnnouncer> GetAllAnnouncers()
         => announcers; // Placeholder for future implementation
 
@@ -31,7 +30,5 @@ public static class AnnouncerManager
 
     public static void ClearAudioClipsCache()
         => clearAudioClipCache?.Invoke();
-
-    #endregion
     
 }

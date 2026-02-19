@@ -1,136 +1,81 @@
-using System.Collections.Generic;
 using BepInEx.Configuration;
+using System;
+using System.Reflection;
+using System.Linq;
+using GreyAnnouncer.Util;
 
 namespace GreyAnnouncer.Config;
 
+
 public static class BepInExConfig
 {
-    public static ConfigEntry<float> audioSourceVolume; // Range : 0f ~ 1f
+    [ConfigInfo("Audio", "Audio_source_volume", "Volume of the Announcer (Range: 0f ~ 1f)")]
+    public static ConfigEntry<float> audioSourceVolume;
 
+    [ConfigInfo("Audio", "Under_water_low_pass_filter_Enabled", "Set to true to enable muffle effect when under water")]
     public static ConfigEntry<bool> isLowPassFilterEnabled;
 
+    [ConfigInfo("Audio", "Audio_Play_Option", "0: new audio will override the old one, 1: audio will not effect each other")]
     public static ConfigEntry<int> audioPlayOptions;
 
-    public static ConfigEntry<int> audioLoadingStategy;
+    [ConfigInfo("Audio", "Audio_Loading_Option", "0: load from file (less RAM), 1: preload (less latency)")]
+    public static ConfigEntry<int> audioLoadingStrategy;
 
+    [ConfigInfo("Audio", "Announcers_Path", "The folder path where announcer packs are stored")]
+    public static ConfigEntry<string> announcersPath;
+
+    [ConfigInfo("Advanced", "FFmpeg_Support", "Set to true to enable FFmpeg support for non-Unity audio formats")]
     public static ConfigEntry<bool> isFFmpegSupportEnabled;
-    
 
-    public static readonly Dictionary<string, (string section, string name, object defaultValue, string description)> ConfigEntries = new()
-    {
-        // "Audio" section 
-        { "AudioSourceVolume",      ("Audio",    "Audio_source_volume",                 DEFAULT_AUDIO_SOURCE_VOLUME,         "Volume of the Announcer ( Range : 0f ~ 1f )") },
-        { "LowPassFilter",          ("Audio",    "Under_water_low_pass_filter_Enabled", DEFAULT_LOW_PASS_FILTER_ENABLED,     "Set to true to enable muffle effect when under water") },
-        { "AudioPlayOptions",       ("Audio",    "Audio_Play_Option",                   DEFAULT_AUDIO_PLAY_OPTIONS,          "0 : new audio will override the old one, 1 : audio will not effect each other") },
-        { "AudioLoadingOption",     ("Audio",    "Audio_Loading_Option",                DEFAULT_AUDIO_LOADING_OPTIONS,       "0 : load clip from file (less RAM more latency), 1 : preload clip to games (less latency more RAM)") },
 
-        // "Advanced" section
-        { "FFmpegSupport",          ("Advance",   "FFmpeg_Support",                     false,                               "Set to true to enable FFmpeg support for loading non-unity supported audios")}
-    };
-    
     public static void Initialize(Plugin plugin)
     {
-        BindConfigEntryValues(plugin);
+        var fields = typeof(BepInExConfig)
+            .GetFields(BindingFlags.Public | BindingFlags.Static)
+            .Where(f => f.GetCustomAttribute<ConfigInfoAttribute>() != null);
+
+        foreach (var field in fields)
+        {
+            try
+            {
+                var attr = field.GetCustomAttribute<ConfigInfoAttribute>();
+                object defaultValue = GetDefaultValueForField(field.Name);
+                Type settingType = field.FieldType.GetGenericArguments()[0];
+
+                var description = new ConfigDescription(attr.Description);
+
+                var bindMethod = plugin.Config.GetType().GetMethods()
+                    .First(m => m.Name == "Bind" && 
+                                m.GetParameters().Length == 4 && 
+                                m.GetParameters()[3].ParameterType == typeof(ConfigDescription))
+                    .MakeGenericMethod(settingType);
+
+                var result = bindMethod.Invoke(plugin.Config, new[] { 
+                    attr.Section, 
+                    attr.Name, 
+                    defaultValue, 
+                    description
+                });
+
+                field.SetValue(null, result);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.LogError($"Failed to bind config field {field.Name}: {ex.InnerException?.Message ?? ex.Message}");
+            }
+        }
+
+        LogHelper.LogInfo("BepInExConfig initialized successfully.");
     }
 
-    
-    private static void BindConfigEntryValues(Plugin plugin)
+    private static object GetDefaultValueForField(string fieldName) => fieldName switch
     {
-        foreach (var entry in ConfigEntries)
-        {
-            BindConfigEntry(
-                plugin, 
-                entry.Key, 
-                entry.Value.section, 
-                entry.Value.name, 
-                entry.Value.defaultValue, 
-                entry.Value.description
-            );
-        }
-    }
-
-    private static void BindConfigEntry(Plugin plugin,
-                                        string key,
-                                        string section,
-                                        string name,
-                                        object defaultValue,
-                                        string description)
-    {
-        if (defaultValue is bool)
-        {
-            var configEntry = plugin.Config.Bind(
-                section,
-                name,
-                (bool)defaultValue,
-                description
-            );
-            if      (name == "Under_water_low_pass_filter_Enabled") isLowPassFilterEnabled      = configEntry;
-            else if (name == "FFmpeg_Support")                      isFFmpegSupportEnabled      = configEntry;
-        }
-        else if (defaultValue is float)
-        {
-            var configEntry = plugin.Config.Bind(
-                section,
-                name,
-                (float)defaultValue,
-                description
-            );
-            if (name == "Audio_source_volume")           audioSourceVolume      = configEntry;
-            
-        }
-        else if (defaultValue is string)
-        {
-            var configEntry = plugin.Config.Bind(
-                section,
-                name,
-                (string)defaultValue,
-                description
-            );
-        }
-        else if (defaultValue is int)
-        {
-            var configEntry = plugin.Config.Bind(
-                section,
-                name,
-                (int)defaultValue,
-                description
-            );
-            if      (name == "Audio_Play_Option")    audioPlayOptions    = configEntry;
-            else if (name == "Audio_Loading_Option") audioLoadingStategy = configEntry;
-        }
-        else
-        {
-            LogHelper.LogError($"Unsupported type for config entry: {key}, Type: {defaultValue?.GetType()?.FullName ?? "null"}");
-        }
-    }
-                           
-    private static float _defaultAudioSourceVolume = 1f;
-    public static float DEFAULT_AUDIO_SOURCE_VOLUME 
-    {
-        get => _defaultAudioSourceVolume;
-        private set => _defaultAudioSourceVolume = value;
-    }
-
-    private static bool _defaultLowPassFilterEnabled = true;
-    public static bool DEFAULT_LOW_PASS_FILTER_ENABLED 
-    {
-        get => _defaultLowPassFilterEnabled;
-        private set => _defaultLowPassFilterEnabled = value;
-    }
-
-    private static int _defaultAudioPlayOptions = 0;
-    public static int DEFAULT_AUDIO_PLAY_OPTIONS
-    {
-        get => _defaultAudioPlayOptions < 2 ? _defaultAudioPlayOptions : 0;
-        private set => _defaultAudioPlayOptions = value;
-    }
-
-    private static int _defaultAudioLoadingOptions = 0;
-    public static int DEFAULT_AUDIO_LOADING_OPTIONS
-    {
-        get => _defaultAudioLoadingOptions < 2 ? _defaultAudioLoadingOptions : 0;
-        private set => _defaultAudioLoadingOptions = value;
-    }
+        nameof(audioSourceVolume)       => 1f,
+        nameof(isLowPassFilterEnabled)  => true,
+        nameof(audioPlayOptions)        => 0,
+        nameof(audioLoadingStrategy)    => 0,
+        nameof(isFFmpegSupportEnabled)  => false,
+        nameof(announcersPath)          => PathHelper.GetCurrentPluginPath("announcers"),
+        _ => throw new ArgumentException($"[Config] No default value defined for: {fieldName}")
+    };
 }
-
-    
