@@ -26,6 +26,7 @@ public static class PathHelper
     public static string GetGamePath(string filePath)
         => CleanPath(Path.Combine(Paths.GameRootPath, filePath));
 
+
     [Description("Reference : (因win程序员想偷懒! 竟在剪切板插入隐藏字符) https://www.bilibili.com/video/BV1ebLczjEWZ (Accessed in 24/4/2025)")]
     public static string CleanPath(string path)
     {
@@ -37,7 +38,7 @@ public static class PathHelper
 
         if (!originalPath.Equals(cleanedPath))
         {
-            LogHelper.LogInfo($"Path cleaned: Original='{originalPath}', Cleaned='{cleanedPath}'");
+            LogHelper.LogInfo($"[CleanPath] Path cleaned: Original='{originalPath}', Cleaned='{cleanedPath}'");
         }
 
         return cleanedPath;
@@ -61,11 +62,11 @@ public static class PathHelper
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                 System.Diagnostics.Process.Start("open", path);
             else
-                LogHelper.LogWarning("Unsupported OS platform.");
+                LogHelper.LogWarning("[OpenDirectory] Unsupported OS platform.");
         }
         else
         {
-            LogHelper.LogWarning("The path is not valid or the directory does not exist.");
+            LogHelper.LogWarning("[OpenDirectory] The path is not valid or the directory does not exist.");
         }
     }
 
@@ -122,39 +123,44 @@ public static class PathHelper
             Directory.CreateDirectory(dir);
     }
 
-    public static void CopyDirectoryParallel(string source, string target)
+    public static void CopyDirectoryParallel(string source, string targetRoot)
     {
         try
         {
+            string dirName = Path.GetFileName(source.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
+            
+            string destinationPath = Path.Combine(targetRoot, dirName);
+
             var stack = new Stack<(string s, string t)>();
-            stack.Push((source, target));
+            stack.Push((source, destinationPath));
 
             while (stack.Count > 0)
             {
-                var (currSrc, currExt) = stack.Pop();
-                Directory.CreateDirectory(currExt);
+                var (currSrc, currDest) = stack.Pop();
 
-                // 获取当前层所有文件
+                if (!Directory.Exists(currDest))
+                {
+                    Directory.CreateDirectory(currDest);
+                }
+
                 string[] files = Directory.GetFiles(currSrc);
-                
-                // 并行复制文件：这比一个个复制快得多
                 Parallel.ForEach(files, new ParallelOptions { MaxDegreeOfParallelism = 8 }, (file) =>
                 {
-                    string dest = Path.Combine(currExt, Path.GetFileName(file));
-                    File.Copy(file, dest, true);
+                    string fileName = Path.GetFileName(file);
+                    string destFile = Path.Combine(currDest, fileName);
+                    File.Copy(file, destFile, true);
                 });
 
-                // 压入子目录
                 foreach (var dir in Directory.GetDirectories(currSrc))
                 {
-                    stack.Push((dir, Path.Combine(currExt, Path.GetFileName(dir))));
+                    string subDirName = Path.GetFileName(dir);
+                    stack.Push((dir, Path.Combine(currDest, subDirName)));
                 }
             }
         }
-        catch(Exception e)
+        catch (Exception e)
         {
-            LogHelper.LogError($"Error occured when copy files to new directory: {e}");
+            LogHelper.LogError($"[CopyDirectory] failed to copy: {e.Message}");
         }
-
     }
 }

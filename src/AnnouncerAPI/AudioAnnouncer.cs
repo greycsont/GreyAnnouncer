@@ -27,9 +27,7 @@ public class AudioAnnouncer
 
     private string _announcerPath;
 
-    /// <summary>
-    /// When announcerPath changes, it will automatically reload relative configs.
-    /// </summary>
+    /// <summary>When announcerPath changes, it will automatically reload relative configs.</summary>
     public string announcerPath
     {
         get => _announcerPath;
@@ -76,8 +74,10 @@ public class AudioAnnouncer
         page.ApplyConfigToUI(announcerConfig);
     }
 
-
+    /// <summary>A reference to config.ini's path</summary>
     private string iniPath => Path.Combine(announcerPath, "config.ini");
+
+    private RegistedAnnouncerPage page = new RegistedAnnouncerPage();
 
 
     public AudioAnnouncer(IAudioLoader audioLoader,
@@ -99,11 +99,6 @@ public class AudioAnnouncer
         page.Build(title, this);
     }
 
-    private RegistedAnnouncerPage page = new RegistedAnnouncerPage();
-
-    [Description("Parry balls of Maurice -> Hit Maurice -> AscendingRank() -> Postfix() -> PlaySound() -> CheckPlayValidation(), " +
-                 "This error will skip all the function before CheckPlayValidation(), That's why try-catch has implemented in the fucntion")]
-
     /// <summary>Will Play a random audio in the belong category</summary>
     public async Task PlayAudioViaCategory(string category)
     {
@@ -113,7 +108,7 @@ public class AudioAnnouncer
             if (!ValidateAndLogPlayback(category))
                 return;
 
-            await PlayAudioClip(category, BepInExConfig.audioPlayOptions.Value);
+            await PlayAudioClip(category);
         }
         catch (Exception ex)
         {
@@ -124,6 +119,7 @@ public class AudioAnnouncer
     /// <summary>Will Play a random audio in the belong category by jsonSetting mapping via index</summary>
     public async Task PlayAudioViaIndex(int index)
         => await PlayAudioViaCategory(announcerConfig.CategorySetting.Keys.ToArray()[index]);
+
 
     /// <summary>Reload Audio, only works when using Preload and Play options</summary>
     public void ReloadAudio()
@@ -138,7 +134,7 @@ public class AudioAnnouncer
     }
 
 
-    /// <summary>Resets the announcer's cooldown</summary>
+    /// <summary>Resets the announcer's category's cooldown</summary>
     public void ResetCooldown()
         => _cooldownManager.ResetCooldowns();
 
@@ -147,11 +143,12 @@ public class AudioAnnouncer
     public void ClearAudioClipsCache()
         => _audioLoader.ClearCache();
 
+    /// <summary>Sets cooldown to the targeted category</summary>
     private void SetCooldown(string category, float cooldown)
         => _cooldownManager.StartCooldowns(category, cooldown);
 
 
-    #region Play Audio related
+    /// <summary>Gets bool with validate serveral conditions </summary>
     private bool ValidateAndLogPlayback(string category)
     {
         var validationState = GetPlayValidationState(category);
@@ -163,7 +160,8 @@ public class AudioAnnouncer
         return true;
     }
 
-    private async Task PlayAudioClip(string category, int audioPlayOptions = 0)
+    /// <summary>Play a Sound by category, audioPlayOptions for </summary>
+    private async Task PlayAudioClip(string category)
     {
         LogHelper.LogInfo($"Attempting to play audio for category: {category}");
         Sound sound = await _audioLoader.LoadAudioClip(category);
@@ -181,14 +179,13 @@ public class AudioAnnouncer
 
         LogHelper.LogDebug($"category : {sound.category}, Cooldown : {announcerConfig.CategorySetting[sound.category].Cooldown}");
 
-        SoundDispatcher.SendClipToAudioSource(sound, audioPlayOptions);
+        SoundDispatcher.SendClipToAudioSource(sound);
 
         SetCooldown(sound.category, announcerConfig.CategorySetting[sound.category].Cooldown);
     }
 
     private void LogPlaybackError(Exception ex)
         => LogHelper.LogError($"An error occurred while playing sound: {ex.Message}\n{ex.StackTrace}");
-    #endregion
 
 
     private ValidationState GetPlayValidationState(string category)
@@ -215,6 +212,7 @@ public class AudioAnnouncer
         AnnouncerManager.AddAnnouncer(this);
     }
 
+    
     private AnnouncerConfig AnnouncerConfigIniInitialization(List<string> category)
     {
         LogHelper.LogDebug($"current iniPath for {title}: {iniPath}");

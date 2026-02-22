@@ -1,12 +1,13 @@
 
+using GreyAnnouncer.Config;
+
 namespace GreyAnnouncer.AudioSourceComponent;
 
 public static class SoundDispatcher
 {
-    public static void SendClipToAudioSource(Sound sound,
-                                             int flag)
+    public static void SendClipToAudioSource(Sound sound)
     {
-        switch (flag)
+        switch (BepInExConfig.audioPlayOptions.Value)
         {
             case 0:
                 SoloAudioSource.Instance.Play(sound);

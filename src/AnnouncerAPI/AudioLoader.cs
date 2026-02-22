@@ -100,6 +100,7 @@ public class AudioLoader : IAudioLoader
             LogHelper.LogError("no clip in cache"); 
             return (null, null);
         }
+
         int randomIndex = UnityEngine.Random.Range(0, clips.Count);
 
         var clip = clips[randomIndex];
@@ -113,7 +114,7 @@ public class AudioLoader : IAudioLoader
             .Where(kvp => announcerConfig.CategorySetting.TryGetValue(kvp.Key, out var data) && data.Enabled)
             .SelectMany(kvp => kvp.Value
             .Where(clip => clip != null)
-            .Select(clip => (kvp.Key, clip)))  // 这里保留 key
+            .Select(clip => (kvp.Key, clip)))
             .ToList();
 
         if (validEntries.Count == 0) 

@@ -40,10 +40,7 @@ public class RegistedAnnouncerPage
         ConfigHeader titleHeader = new ConfigHeader(panel, _title, 30);
         titleHeader.textColor = HeaderColor;
 
-        var announcers = Directory
-                             .GetDirectories(AnnouncerIndex.announcersPath)
-                             .Select(Path.GetFileName)
-                             .ToList();
+        var announcers = AnnouncerIndex.GetAnnouncers();
 
         var announcerField = new StringListField(
             panel,                     
@@ -53,6 +50,11 @@ public class RegistedAnnouncerPage
             announcers.FirstOrDefault() ?? "default"
         );
 
+        announcerField.onValueChange += e =>
+        {
+            audioAnnouncer.announcerPath = Path.Combine(AnnouncerIndex.announcersPath, e.value);
+        };
+
         var openDirectoryButtonField = new ButtonField(
             panel,
             "Open Current Announcer Folder",
@@ -61,11 +63,6 @@ public class RegistedAnnouncerPage
         openDirectoryButtonField.onClick += () 
             => _audioAnnouncer.EditExternally();
 
-        // WARNING: This will broken after I create a way to change AnnouncerIndex.announcersPath
-        announcerField.onValueChange += e =>
-        {
-            audioAnnouncer.announcerPath = Path.Combine(AnnouncerIndex.announcersPath, e.value);
-        };
         
         new ConfigSpace(panel, 15f);
 

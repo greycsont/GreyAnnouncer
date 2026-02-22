@@ -21,7 +21,7 @@ public class Plugin : BaseUnityPlugin
     private void Awake()
     {
         log = base.Logger;
-        LogHelper.log = new BepInExLogAdapter(log);
+        LogHelper.log = log;
         LogHelper.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
         
         LoadMainModule();

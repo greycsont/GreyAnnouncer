@@ -1,6 +1,7 @@
 using UnityEngine;
 
 using GreyAnnouncer.Config;
+using UnityEngine.Audio;
 
 namespace GreyAnnouncer.AudioSourceComponent;
 
@@ -23,7 +24,6 @@ public sealed class SoloAudioSource : MonoBehaviour
             return _instance;
         }
     }
-
 
     #region Public API
     public void Play(Sound sound)

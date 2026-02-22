@@ -1,6 +1,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Collections.Generic;
 
 using GreyAnnouncer.Util;
@@ -19,7 +20,7 @@ public static class AnnouncerIndex
         get => BepInExConfig.announcersPath.Value;
         set 
         {
-            PathHelper.CopyDirectoryParallel(BepInExConfig.announcersPath.Value, value);
+            MoveAnnouncersToTargetDirectory(value);
             BepInExConfig.announcersPath.Value = value;
         } 
 
@@ -86,7 +87,19 @@ public static class AnnouncerIndex
     }
 
     private static void Save()
+        => JsonManager.WriteJson(_indexPath, _data);
+
+    private static void MoveAnnouncersToTargetDirectory(string targetRoot)
     {
-        JsonManager.WriteJson(_indexPath, _data);
+        foreach (var announcer in GetAnnouncers())
+        {
+            PathHelper.CopyDirectoryParallel(announcer, targetRoot);
+        }
     }
+
+    public static List<string> GetAnnouncers()
+        =>  Directory
+        .GetDirectories(announcersPath)
+        .Select(Path.GetFileName)
+        .ToList();
 }
