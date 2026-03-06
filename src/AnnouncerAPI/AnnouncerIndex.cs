@@ -15,22 +15,12 @@ public static class AnnouncerIndex
     
     private static readonly Dictionary<string, string> _data = Read();
 
-    public static string announcersPath
-    {
-        get => BepInExConfig.announcersPath.Value;
-        set 
-        {
-            MoveAnnouncersToTargetDirectory(value);
-            BepInExConfig.announcersPath.Value = value;
-        } 
-
-    } 
 
     public static void Set(string guid, string fullPath)
     {
-        string folder = announcersPath.EndsWith(Path.DirectorySeparatorChar.ToString()) 
-                    ? announcersPath 
-                    : announcersPath + Path.DirectorySeparatorChar;
+        string folder = Setting.announcersPath.EndsWith(Path.DirectorySeparatorChar.ToString()) 
+                    ? Setting.announcersPath 
+                    : Setting.announcersPath + Path.DirectorySeparatorChar;
 
         Uri pathUri = new Uri(fullPath);
         Uri folderUri = new Uri(folder);
@@ -46,13 +36,13 @@ public static class AnnouncerIndex
     {
         if (_data.TryGetValue(guid, out var relativePath))
         {
-            return Path.Combine(announcersPath, relativePath);
+            return Path.Combine(Setting.announcersPath, relativePath);
         }
 
-        _data[guid] = Path.Combine(announcersPath, defaultAnnouncerRelativePath);
+        _data[guid] = Path.Combine(Setting.announcersPath, defaultAnnouncerRelativePath);
         Save();
 
-        return Path.Combine(announcersPath, defaultAnnouncerRelativePath);
+        return Path.Combine(Setting.announcersPath, defaultAnnouncerRelativePath);
     }
 
     // No One uses this right?
@@ -67,7 +57,7 @@ public static class AnnouncerIndex
     }
 
     public static void ChangeDirectory(string newAnnouncersPath)
-        => announcersPath = newAnnouncersPath;
+        => Setting.announcersPath = newAnnouncersPath;
 
     private static Dictionary<string,string> Read()
     {
@@ -89,17 +79,9 @@ public static class AnnouncerIndex
     private static void Save()
         => JsonManager.WriteJson(_indexPath, _data);
 
-    private static void MoveAnnouncersToTargetDirectory(string targetRoot)
-    {
-        foreach (var announcer in GetAnnouncers())
-        {
-            PathHelper.CopyDirectoryParallel(announcer, targetRoot);
-        }
-    }
-
     public static List<string> GetAnnouncers()
         =>  Directory
-        .GetDirectories(announcersPath)
+        .GetDirectories(Setting.announcersPath)
         .Select(Path.GetFileName)
         .ToList();
 }

@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.IO;
 using GreyAnnouncer.AnnouncerAPI;
 using GreyAnnouncer.AudioLoading;
 using GreyAnnouncer.AudioSourceComponent;
+using GreyAnnouncer.Util;
 
 namespace GreyAnnouncer.Config;
 
@@ -55,7 +57,16 @@ public static class Setting
     public static string announcersPath
     {
         get => BepInExConfig.announcersPath.Value;
-        set => BepInExConfig.announcersPath.Value = value;
+        set 
+        {
+            if (!Directory.Exists(Path.GetDirectoryName(value)))
+            {
+                LogHelper.LogWarning("Given Directory not exists");
+                return;
+            }
+            BepInExConfig.announcersPath.Value = value;
+            MoveAnnouncersToTargetDirectory(value);
+        }
     }
 
     public static bool isFFmpegSupportEnabled
@@ -75,6 +86,14 @@ public static class Setting
     private static void ClearAudioClipsCache()
     {
         AnnouncerManager.ClearAudioClipsCache();
+    }
+
+    private static void MoveAnnouncersToTargetDirectory(string targetRoot)
+    {
+        foreach (var announcer in AnnouncerIndex.GetAnnouncers())
+        {
+            PathHelper.CopyDirectoryParallel(announcer, targetRoot);
+        }
     }
     #endregion
 }

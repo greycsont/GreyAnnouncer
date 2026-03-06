@@ -11,7 +11,7 @@ using PluginConfig.API.Functionals;
 
 using GreyAnnouncer.AnnouncerAPI;
 using GreyAnnouncer.Util;
-
+using GreyAnnouncer.Config;
 
 namespace GreyAnnouncer.FrontEnd;
 
@@ -52,7 +52,7 @@ public class RegistedAnnouncerPage
 
         announcerField.onValueChange += e =>
         {
-            audioAnnouncer.announcerPath = Path.Combine(AnnouncerIndex.announcersPath, e.value);
+            audioAnnouncer.announcerPath = Path.Combine(Setting.announcersPath, e.value);
         };
 
         var openDirectoryButtonField = new ButtonField(

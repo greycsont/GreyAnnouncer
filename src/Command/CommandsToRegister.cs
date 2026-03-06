@@ -65,11 +65,11 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
 
             Branch("announcerspath",
                 Branch("get", Leaf(() =>
-                    Log.Info($"Current Announcers Path: {AnnouncerIndex.announcersPath}"))
+                    Log.Info($"Current Announcers Path: {Setting.announcersPath}"))
                 ),
                 Branch("set", Leaf<string>(val =>
                 {
-                    AnnouncerIndex.announcersPath = val;
+                    Setting.announcersPath = val;
                     Log.Info($"Announcers Path set to {val}");
                 }))
             )
