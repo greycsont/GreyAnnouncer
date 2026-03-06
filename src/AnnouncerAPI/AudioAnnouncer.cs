@@ -71,13 +71,13 @@ public class AudioAnnouncer
     {
         _audioLoader.UpdateSetting(announcerConfig, announcerPath);
         WriteConfigToIni(announcerConfig);
-        page.ApplyConfigToUI(announcerConfig);
+        //page.ApplyConfigToUI(announcerConfig);
     }
 
     /// <summary>A reference to config.ini's path</summary>
     private string iniPath => Path.Combine(announcerPath, "config.ini");
 
-    private RegistedAnnouncerPage page = new RegistedAnnouncerPage();
+    private RegistedAnnouncerPage page;
 
 
     public AudioAnnouncer(IAudioLoader audioLoader,
@@ -96,7 +96,7 @@ public class AudioAnnouncer
 
         SubscribeAnnouncerManager();
 
-        page.Build(title, this);
+        //page.Build(title, this);
     }
 
     /// <summary>Will Play a random audio in the belong category</summary>

@@ -47,7 +47,7 @@ public sealed class SoloAudioSource : MonoBehaviour
 
     private void ConfigureAndPlayAudioSource(Sound sound, AudioSource audioSource)
     {
-        audioSource.spatialBlend = sound.spatialBlend;
+        audioSource.SetSpatialBlend(sound.spatialBlend);
         audioSource.priority = sound.priority;
         audioSource.volume = Mathf.Clamp01(BepInExConfig.audioSourceVolume.Value * sound.volume);
         audioSource.clip = sound.clip;
@@ -60,7 +60,7 @@ public sealed class SoloAudioSource : MonoBehaviour
                             $"Pitch={audioSource.pitch}, " +
                             $"SpatialBlend={audioSource.spatialBlend}, " +
                             $"Priority={audioSource.priority}");
-        audioSource.PlayOneShot(sound.clip, sound.volume);
+        audioSource.PlayOneShot(sound.clip, sound.volume, true);
     }
 
     public void AddAudioLowPassFilter()

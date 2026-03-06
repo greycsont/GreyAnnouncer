@@ -7,6 +7,7 @@ using GreyAnnouncer.AnnouncerAPI;
 using GreyAnnouncer.Config;
 using GreyAnnouncer.AudioSourceComponent;
 using GreyAnnouncer.Util;
+using GreyAnnouncer.FrontEnd;
 
 namespace GreyAnnouncer.Commands;
 
@@ -139,7 +140,9 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
                       );
 
     private Branch GetTestBranches()
-        => null;
+        => Branch("test",
+            Leaf("showui", () => UIFactory.CreateUI())
+        );
 
     public Logger Log { get; } = new("grey");
 }

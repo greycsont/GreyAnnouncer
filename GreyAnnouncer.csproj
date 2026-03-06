@@ -15,10 +15,12 @@
 
   <!-- Game's instruction set -->
   <ItemGroup>
-    <Reference Include="Assembly-CSharp_publicized">
-      <HintPath>lib\Assembly-CSharp_publicized.dll</HintPath>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(ManagedDir)\Assembly-CSharp.dll</HintPath>
       <Private>false</Private>
     </Reference>
+
+    <Publicize Include="Assembly-CSharp" />
 
     <Reference Include="PluginConfigurator">
       <HintPath>lib\PluginConfigurator.dll</HintPath>
@@ -43,6 +45,11 @@
 
     <Reference Include="UnityEngine.UIModule">
       <HintPath>$(ManagedDir)\UnityEngine.UIModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="UnityEngine.UI">
+      <HintPath>$(ManagedDir)\UnityEngine.UI.dll</HintPath>
       <Private>false</Private>
     </Reference>
 
@@ -95,6 +102,10 @@
     <PackageReference Include="HarmonyX" Version="2.10.2" />
     <PackageReference Include="BepInEx.Analyzers" Version="1.0.8" PrivateAssets="all" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Krafs.Publicizer" Version="2.3.0">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <PropertyGroup>
