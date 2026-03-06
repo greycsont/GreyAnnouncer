@@ -46,6 +46,7 @@ public static class AnnouncerIndex
     }
 
     // No One uses this right?
+    // RIGHT??
     public static bool Remove(string guid)
     {
         if (_data.Remove(guid))
@@ -55,9 +56,6 @@ public static class AnnouncerIndex
         }
         return false;
     }
-
-    public static void ChangeDirectory(string newAnnouncersPath)
-        => Setting.announcersPath = newAnnouncersPath;
 
     private static Dictionary<string,string> Read()
     {
