@@ -134,10 +134,7 @@ public static class MainPanelBuilder
         );
         lowpassToggle.defaultValue = true;
         lowpassToggle.onValueChange += (e) =>
-        {
             Setting.isLowPassFilterEnabled = e.value;
-            UnderwaterController_inWater_Instance.CheckIsInWater();
-        };
 
         var ffmpegToggle = new BoolField(
             advancedPanel,

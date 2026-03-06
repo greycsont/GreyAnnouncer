@@ -20,7 +20,11 @@ public static class Setting
     public static bool isLowPassFilterEnabled
     {
         get => BepInExConfig.isLowPassFilterEnabled.Value;
-        set => BepInExConfig.isLowPassFilterEnabled.Value = value;
+        set
+        {
+            BepInExConfig.isLowPassFilterEnabled.Value = value;
+            UnderwaterController_inWater_Instance.CheckIsInWater();
+        }
     }
 
     public static int audioPlayOptions
