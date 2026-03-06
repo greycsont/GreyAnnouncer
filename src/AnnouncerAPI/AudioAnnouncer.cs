@@ -17,6 +17,8 @@ public class AudioAnnouncer
 {
     public string title;
 
+    public string GUID;
+
     private IAudioLoader _audioLoader;
 
     private ICooldownManager _cooldownManager;
@@ -77,26 +79,28 @@ public class AudioAnnouncer
     /// <summary>A reference to config.ini's path</summary>
     private string iniPath => Path.Combine(announcerPath, "config.ini");
 
-    private RegistedAnnouncerPage page;
+    private RegistedAnnouncerPage page = new RegistedAnnouncerPage();
 
 
     public AudioAnnouncer(IAudioLoader audioLoader,
                            ICooldownManager cooldownManager,
                            List<string> displayNameMapping,
                            string title,
-                           string defaultAnnouoncerConfigPath)
+                           string defaultAnnouoncerConfigPath,
+                           string GUID)
     {
         this._audioLoader = audioLoader;
         this._cooldownManager = cooldownManager;
         this.category = displayNameMapping;
         this.title = title;
         this._defaultAnnouncerConfigPath = defaultAnnouoncerConfigPath;
+        this.GUID = GUID;
 
-        announcerPath = AnnouncerIndex.Get(this.title, _defaultAnnouncerConfigPath);
+        announcerPath = AnnouncerIndex.Get(this.GUID, _defaultAnnouncerConfigPath);
 
         SubscribeAnnouncerManager();
 
-        //page.Build(title, this);
+        page.Build(title, this);
     }
 
     /// <summary>Will Play a random audio in the belong category</summary>

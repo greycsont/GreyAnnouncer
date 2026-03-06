@@ -21,6 +21,7 @@ public static class RankAnnouncer
 
     private static AudioAnnouncer _announcer;
     private static readonly string _title = "RankAnnouncer";
+    private static readonly string _GUID = "com.greycsont.rankannouncer";
 
     public static void Initialize()
     {
@@ -29,7 +30,8 @@ public static class RankAnnouncer
             new CooldownManager(category.ToArray()),
             category,
             _title,
-            "greythroat"
+            "greythroat",
+            _GUID
         );
     }
 

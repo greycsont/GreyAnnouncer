@@ -39,7 +39,7 @@ public static class AnnouncerIndex
             return Path.Combine(Setting.announcersPath, relativePath);
         }
 
-        _data[guid] = Path.Combine(Setting.announcersPath, defaultAnnouncerRelativePath);
+        _data[guid] = defaultAnnouncerRelativePath;
         Save();
 
         return Path.Combine(Setting.announcersPath, defaultAnnouncerRelativePath);
