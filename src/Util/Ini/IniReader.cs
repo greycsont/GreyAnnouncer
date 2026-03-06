@@ -7,6 +7,11 @@ namespace GreyAnnouncer.Util.Ini;
 
 public static class IniReader
 {
+    /// <summary>
+    /// Reads an INI file and returns an <see cref="IniDocument"/>.
+    /// Supports ; # // comments, inline comments, and multi-value keys via comma separation.
+    /// Returns an empty document if the file does not exist.
+    /// </summary>
     public static IniDocument Read(string path)
     {
         var doc = new IniDocument();
@@ -22,17 +27,18 @@ public static class IniReader
             if (string.IsNullOrWhiteSpace(line))
                 continue;
 
-            // ---- 跳过注释行 ----
-            if (line.StartsWith("//"))
+            // Skip full-line comments (;, #, //)
+            if (line.StartsWith(";") || line.StartsWith("#") || line.StartsWith("//"))
                 continue;
 
-            // Section: [SectionName]
+            // Section header: [SectionName]
             if (line.StartsWith("[") && line.EndsWith("]"))
             {
                 var sectionName = line.Substring(1, line.Length - 2).Trim();
                 if (sectionName.Length == 0)
                     continue;
 
+                // Reuse existing section if already present (handles duplicate section headers)
                 if (!doc.Sections.TryGetValue(sectionName, out currentSection))
                 {
                     currentSection = new IniSection(sectionName);
@@ -42,14 +48,19 @@ public static class IniReader
                 continue;
             }
 
-            // 如果还没 section，就忽略
+            // Ignore keys before any section header
             if (currentSection == null)
                 continue;
 
-            // Key: Value 或 Key=Value
-            int separatorIndex = line.IndexOf(':');
+            // Strip inline comments before parsing key/value
+            int commentIdx = IndexOfInlineComment(line);
+            if (commentIdx > 0)
+                line = line.Substring(0, commentIdx).Trim();
+
+            // Support both Key = Value and Key: Value formats
+            int separatorIndex = line.IndexOf('=');
             if (separatorIndex < 0)
-                separatorIndex = line.IndexOf('=');
+                separatorIndex = line.IndexOf(':');
 
             if (separatorIndex <= 0)
                 continue;
@@ -60,6 +71,7 @@ public static class IniReader
             if (key.Length == 0)
                 continue;
 
+            // Get or create the value list for this key
             if (!currentSection.Values.TryGetValue(key, out var list))
             {
                 list = new List<string>();
@@ -69,7 +81,7 @@ public static class IniReader
             if (value.Length == 0)
                 continue;
 
-            // 用逗号拆分成多值
+            // Split comma-separated values and append to the key's list
             var parts = value.Split(',')
                              .Select(x => x.Trim())
                              .Where(x => x.Length > 0);
@@ -78,5 +90,21 @@ public static class IniReader
         }
 
         return doc;
+    }
+
+    /// <summary>
+    /// Returns the index of the first inline comment character (; or #)
+    /// that is not inside a double-quoted string, or -1 if none found.
+    /// </summary>
+    private static int IndexOfInlineComment(string line)
+    {
+        bool inQuote = false;
+        for (int i = 0; i < line.Length; i++)
+        {
+            if (line[i] == '"') inQuote = !inQuote;
+            if (!inQuote && (line[i] == ';' || line[i] == '#'))
+                return i;
+        }
+        return -1;
     }
 }

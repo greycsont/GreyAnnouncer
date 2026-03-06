@@ -37,7 +37,7 @@ public class AudioAnnouncer
         {
             LogHelper.LogDebug($"announcerPath seted");
             _announcerPath = value;
-            AnnouncerIndex.Set(title, value);
+            AnnouncerIndex.Set(GUID, value);
             ReloadAudio();
         }
     }
@@ -228,6 +228,7 @@ public class AudioAnnouncer
                 cat => new CategorySetting{}
             );
             var announcerConfig = new AnnouncerConfig().SetCategorySettingMap(audioDict);
+            announcerConfig.AnnouncerGUID = this.GUID;
             WriteConfigToIni(announcerConfig);
         }
 
@@ -251,8 +252,15 @@ public class AudioAnnouncer
         var doc = IniReader.Read(iniPath);
 
         var announcerConfig = AnnouncerIniMapper.FromIni(doc);
-
+        CheckConfigUpdate(ref announcerConfig);
         return announcerConfig;
+    }
+
+    private void CheckConfigUpdate(ref AnnouncerConfig announcerConfig)
+    {
+        // 1.4.0
+        if (string.IsNullOrEmpty(announcerConfig.AnnouncerGUID))
+            announcerConfig.AnnouncerGUID = this.GUID;
     }
 
     public void EditExternally()

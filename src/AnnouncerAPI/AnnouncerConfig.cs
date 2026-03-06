@@ -6,9 +6,20 @@ using GreyAnnouncer.Base;
 
 namespace GreyAnnouncer.AnnouncerAPI;
 
+/// <summary>
+/// Holds the full configuration for a single announcer instance,
+/// including general settings and per-category audio settings.
+/// Implements <see cref="NotifyBase"/> to propagate change notifications
+/// to subscribers such as the UI and audio loader.
+/// </summary>
 public class AnnouncerConfig : NotifyBase
 {
     private bool _randomizeAudioOnPlay;
+
+    /// <summary>
+    /// When true, a random category will be selected on each playback
+    /// instead of using the requested category directly.
+    /// </summary>
     [IniKey("RandomizeAudioOnPlay")]
     public bool RandomizeAudioOnPlay
     {
@@ -16,33 +27,49 @@ public class AnnouncerConfig : NotifyBase
         set => SetField(ref _randomizeAudioOnPlay, value);
     }
 
+    private string _announcerGUID;
+
+    /// <summary>
+    /// Unique identifier for this announcer instance.
+    /// Used to persist and retrieve the selected announcer path via <see cref="AnnouncerIndex"/>.
+    /// </summary>
+    [IniKey("AnnouncerGUID")]
+    public string AnnouncerGUID
+    {
+        get => _announcerGUID;
+        set => SetField(ref _announcerGUID, value);
+    }
+
+    /// <summary>
+    /// Per-category settings keyed by category name.
+    /// Use <see cref="AddCategory"/> or <see cref="SetCategorySettingMap"/> to modify —
+    /// direct dictionary manipulation will bypass change tracking.
+    /// </summary>
     public ObservableDictionary<string, CategorySetting> CategorySetting { get; } = new();
 
+    /// <param name="announcerGUID">
+    /// The unique identifier for this announcer. Must match the GUID
+    /// used when registering with <see cref="AnnouncerIndex"/>.
+    /// </param>
     public AnnouncerConfig()
     {
-        // 如果 Ini 反序列化后再填充，这里可以后处理 <- this is a vibe-coding product, but I thought It's a useful note
+        // Bubble up any collection or property changes from CategorySetting
         CategorySetting.CollectionChanged += (s, e) => RaiseChanged(nameof(CategorySetting));
         CategorySetting.PropertyChanged += (s, e) => RaiseChanged(nameof(CategorySetting));
     }
-    
+
     /// <summary>
-    /// I strongly recommand using SetCategorySettingMap to create th dictionary of CategorySetting
-    /// If you really want to add a new CategorySetting in the Dictionary
-    /// PLEASE USE THIS METHOD
-    /// Otherwise the AnnouncerConfig can't track the value change
-    /// on that CategorySetting and blow up whole program
+    /// Adds or replaces a category entry.
+    /// Always use this instead of indexing <see cref="CategorySetting"/> directly
+    /// to ensure change notifications are fired correctly.
     /// </summary>
-    /// <param name="key"></param>
-    /// <param name="setting"></param>
     public void AddCategory(string key, CategorySetting setting)
         => CategorySetting[key] = setting;
 
-
     /// <summary>
-    /// Use this method if you want to initialize the dictionary
+    /// Clears and reinitializes <see cref="CategorySetting"/> from the given map.
+    /// Use this when building a fresh config from a category list.
     /// </summary>
-    /// <param name="map"></param>
-    /// <returns></returns>
     public AnnouncerConfig SetCategorySettingMap(Dictionary<string, CategorySetting> map)
     {
         CategorySetting.Clear();
@@ -53,23 +80,32 @@ public class AnnouncerConfig : NotifyBase
         return this;
     }
 
+    /// <summary>
+    /// Applies all values from <paramref name="src"/> into this instance in-place,
+    /// preserving existing <see cref="CategorySetting"/> object references where possible.
+    /// New categories are added, removed categories are cleaned up,
+    /// and all changes are batched into a single notification via BeginUpdate/EndUpdate.
+    /// Note: <see cref="AnnouncerGUID"/> is not overwritten as it identifies this instance.
+    /// </summary>
     public void ApplyFrom(AnnouncerConfig src)
     {
         base.BeginUpdate();
 
         if (src == null)
+        {
+            base.EndUpdate();
             return;
+        }
 
-        // ---------- General ----------
+        // --- General ---
         RandomizeAudioOnPlay = src.RandomizeAudioOnPlay;
 
-        // ---------- Categories ----------
-        // 1. 新增 / 更新
+        // --- Categories: add or update ---
         foreach (var kv in src.CategorySetting)
         {
             var key = kv.Key;
             var srcCat = kv.Value;
-            
+
             if (!CategorySetting.TryGetValue(key, out var dstCat))
             {
                 dstCat = new CategorySetting();
@@ -79,24 +115,28 @@ public class AnnouncerConfig : NotifyBase
             dstCat.ApplyFrom(srcCat);
         }
 
-        // 2. 反向清理（ini 里不存在的）
+        // --- Categories: remove entries no longer present in src ---
         var toRemove = CategorySetting.Keys
             .Where(k => !src.CategorySetting.ContainsKey(k))
             .ToList();
 
         foreach (var key in toRemove)
-        {
             CategorySetting.Remove(key);
-        }
 
         base.EndUpdate();
     }
-
 }
 
+/// <summary>
+/// Configuration for a single audio category, controlling
+/// whether it is active, its volume scaling, cooldown duration,
+/// and which audio files belong to it.
+/// </summary>
 public class CategorySetting : NotifyBase
 {
     private bool _enabled = true;
+
+    /// <summary>Whether this category is allowed to play.</summary>
     [IniKey("Enabled")]
     public bool Enabled
     {
@@ -105,6 +145,8 @@ public class CategorySetting : NotifyBase
     }
 
     private float _volumeMultiplier = 1.0f;
+
+    /// <summary>Scales the playback volume relative to the global announcer volume.</summary>
     [IniKey("VolumeMultiplier")]
     public float VolumeMultiplier
     {
@@ -113,6 +155,8 @@ public class CategorySetting : NotifyBase
     }
 
     private float _cooldown = 1.5f;
+
+    /// <summary>Minimum seconds that must pass before this category can play again.</summary>
     [IniKey("Cooldown")]
     public float Cooldown
     {
@@ -120,13 +164,13 @@ public class CategorySetting : NotifyBase
         set => SetField(ref _cooldown, value);
     }
 
-    /// <summary>
-    /// This MF maybe just switch to use a single string to deal it
-    /// But I don't think
-    /// IT COULD CHANGE IN-GAME
-    /// </summary>
     private List<string> _audioFiles = new();
 
+    /// <summary>
+    /// List of audio file paths or names assigned to this category.
+    /// A random entry is selected at playback time.
+    /// Not expected to change at runtime.
+    /// </summary>
     [IniKey("AudioFiles")]
     public List<string> AudioFiles
     {
@@ -134,6 +178,9 @@ public class CategorySetting : NotifyBase
         set => _audioFiles = value ?? new List<string>();
     }
 
+    /// <summary>
+    /// Copies all values from <paramref name="src"/> into this instance in-place.
+    /// </summary>
     public void ApplyFrom(CategorySetting src)
     {
         if (src == null)
