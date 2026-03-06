@@ -26,7 +26,7 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
                       );
 
     private Branch GetMainSettingBranches()
-        => Branch("mainsetting",
+        => Branch("m",
             // audiosourcevolume
             Branch("audiosourcevolume",
                 Branch("get", Leaf(() =>
@@ -78,7 +78,7 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
 
     private Branch GetAnnouncerBranches()
     {
-        return Branch("announcers",
+        return Branch("a",
             AnnouncerManager.GetAllAnnouncers().Select(a =>
             {
                 return Branch(a.title,
@@ -134,13 +134,13 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
 
 
     public Branch GetUtilBranches()
-        => Branch("util",
+        => Branch("u",
                       Leaf("reloadannouncers", () => AnnouncerManager.ReloadAllAnnouncers()),
                       Leaf("stopallaudiosources", () => AudioSourceManager.StopAllAudioSource())
                       );
 
     private Branch GetTestBranches()
-        => Branch("test",
+        => Branch("t",
             Leaf("showui", () => UIFactory.CreateUI())
         );
 
