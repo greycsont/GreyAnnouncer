@@ -7,7 +7,7 @@ public static class SoundDispatcher
 {
     public static void SendClipToAudioSource(Sound sound)
     {
-        switch (BepInExConfig.audioPlayOptions.Value)
+        switch (Setting.audioPlayOptions)
         {
             case 0:
                 SoloAudioSource.Instance.Play(sound);

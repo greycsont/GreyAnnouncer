@@ -19,7 +19,7 @@ public static class AudioClipLoader
             if (unityAudioType.HasValue) {
                 clip = await UnitySupport.LoadWithUnityAsync(path, unityAudioType.Value);
                 
-            } else if (BepInExConfig.isFFmpegSupportEnabled.Value) {
+            } else if (Setting.isFFmpegSupportEnabled) {
                 clip = await FFmpegSupport.DecodeAndLoad(path);
                 
             } else {

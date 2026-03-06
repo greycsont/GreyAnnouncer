@@ -117,8 +117,8 @@
 	
   <PropertyGroup>
     <StartAction>Program</StartAction>
-    <StartProgram>E:\SteamLibrary\steamapps\common\ULTRAKILL\ULTRAKILL.exe</StartProgram>
-    <StartWorkingDirectory>E:\SteamLibrary\steamapps\common\ULTRAKILL</StartWorkingDirectory>
+    <StartProgram>$(ULTRAKILLDir)\ULTRAKILL.exe</StartProgram>
+    <StartWorkingDirectory>$(ULTRAKILLDir)\ULTRAKILL</StartWorkingDirectory>
   </PropertyGroup>
 	
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

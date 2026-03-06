@@ -30,11 +30,11 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
             // audiosourcevolume
             Branch("audiosourcevolume",
                 Branch("get", Leaf(() =>
-                    Log.Info($"Audio Source Volume: {BepInExConfig.audioSourceVolume.Value}"))
+                    Log.Info($"Audio Source Volume: {Setting.audioSourceVolume}"))
                 ),
                 Branch("set", Leaf<float>(val =>
                 {
-                    BepInExConfig.audioSourceVolume.Value = val;
+                    Setting.audioSourceVolume = val;
                     Log.Info($"Audio Source Volume set to {val}");
                 }))
             ),
@@ -42,11 +42,11 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
             // ffmpegenabled
             Branch("ffmpegenabled",
                 Branch("get", Leaf(() =>
-                    Log.Info($"FFmpeg Support Enabled: {BepInExConfig.isFFmpegSupportEnabled.Value}"))
+                    Log.Info($"FFmpeg Support Enabled: {Setting.isFFmpegSupportEnabled}"))
                 ),
                 Branch("set", Leaf<bool>(val =>
                 {
-                    BepInExConfig.isFFmpegSupportEnabled.Value = val;
+                    Setting.isFFmpegSupportEnabled = val;
                     Log.Info($"FFmpeg Support Enabled set to {val}");
                 }))
             ),
@@ -54,11 +54,11 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
             // lowpassenabled
             Branch("lowpassenabled",
                 Branch("get", Leaf(() =>
-                    Log.Info($"Under Water Low Pass Filter Enabled: {BepInExConfig.isLowPassFilterEnabled.Value}"))
+                    Log.Info($"Under Water Low Pass Filter Enabled: {Setting.isLowPassFilterEnabled}"))
                 ),
                 Branch("set", Leaf<bool>(val =>
                 {
-                    BepInExConfig.isLowPassFilterEnabled.Value = val;
+                    Setting.isLowPassFilterEnabled = val;
                     Log.Info($"Under Water Low Pass Filter Enabled set to {val}");
                 }))
             ),

@@ -47,20 +47,19 @@ public sealed class SoloAudioSource : MonoBehaviour
 
     private void ConfigureAndPlayAudioSource(Sound sound, AudioSource audioSource)
     {
-        audioSource.SetSpatialBlend(sound.spatialBlend);
+        audioSource.spatialBlend = sound.spatialBlend;
         audioSource.priority = sound.priority;
-        audioSource.volume = Mathf.Clamp01(BepInExConfig.audioSourceVolume.Value * sound.volume);
         audioSource.clip = sound.clip;
         audioSource = UnderwaterController_inWater_Instance.GetAudioSourceWithLowPassFilter(_audioSource);
 
         LogHelper.LogDebug("Playing solo audio source: " +
                             $"Category={sound.category}, " +
                             $"Clip={sound.clip.name}, " +
-                            $"Volume={audioSource.volume}, " +
+                            $"Volume={Mathf.Clamp01(Setting.audioSourceVolume * sound.volume)}, " +
                             $"Pitch={audioSource.pitch}, " +
                             $"SpatialBlend={audioSource.spatialBlend}, " +
                             $"Priority={audioSource.priority}");
-        audioSource.PlayOneShot(sound.clip, sound.volume, true);
+        audioSource.PlayOneShot(sound.clip, Mathf.Clamp01(Setting.audioSourceVolume * sound.volume));
     }
 
     public void AddAudioLowPassFilter()

@@ -10,6 +10,7 @@ using PluginConfig.API.Functionals;
 using GreyAnnouncer.AnnouncerAPI;
 using GreyAnnouncer.AudioSourceComponent;
 using GreyAnnouncer.Config;
+using System.IO;
 
 
 namespace GreyAnnouncer.FrontEnd;
@@ -68,15 +69,12 @@ public static class MainPanelBuilder
             "Master Volume",
             "Audio_Volume",
             Tuple.Create(0f, 1f),
-            BepInExConfig.audioSourceVolume.Value,
+            Setting.audioSourceVolume,
             2   // 2nd decimal
         );
         volumeSlider.defaultValue = 1f;
         volumeSlider.onValueChange += e =>
-        {
-            BepInExConfig.audioSourceVolume.Value = e.newValue;
-            SoloAudioSource.Instance.UpdateSoloAudioSourceVolume(e.newValue);
-        };
+            Setting.audioSourceVolume = e.newValue;
 
         // It worked, but not working great as there's ton of audio when from low rank directly to the high rank
         // May be add a short cooldown as limitation
@@ -85,35 +83,21 @@ public static class MainPanelBuilder
             m_pluginConfigurator.rootPanel,
             "Audio Play Strategy",
             "Audio_Play_Strategy",
-            (PlayOptions)BepInExConfig.audioPlayOptions.Value
+            (PlayOptions)Setting.audioPlayOptions
         );
         playOption.defaultValue = (PlayOptions)0;
         playOption.onValueChange += e =>
-        {
-            BepInExConfig.audioPlayOptions.Value = (int)e.value;
-        };
+            Setting.audioPlayOptions = (int)e.value;
 
         var loadingOption = new EnumField<audioLoadingOptions>(
             m_pluginConfigurator.rootPanel,
             "Audio Load Strategy",
             "Audio_Load_Strategy",
-            (audioLoadingOptions)BepInExConfig.audioLoadingStrategy.Value
+            (audioLoadingOptions)Setting.audioLoadingStrategy
         );
         loadingOption.defaultValue = (audioLoadingOptions)0;
         loadingOption.onValueChange += e =>
-        {
-            BepInExConfig.audioLoadingStrategy.Value = (int)e.value;
-            if (e.value.Equals((audioLoadingOptions.Load_then_Play)))
-            {
-                LogHelper.LogInfo("Clear audio clip cache");
-                ClearAudioClipsCache();
-            }
-            if (e.value.Equals(audioLoadingOptions.Preload_and_Play))
-            {
-                LogHelper.LogInfo("Reloading all announcer audio");
-                ReloadAllAnnouncers();
-            }
-        };
+            Setting.audioLoadingStrategy = (int)e.value;
 
         new ConfigSpace(m_pluginConfigurator.rootPanel, 7f);
 
@@ -146,12 +130,12 @@ public static class MainPanelBuilder
             advancedPanel,
             "LowPassFilter when under water",
             "LowPassFilter_Enabled",
-            BepInExConfig.isLowPassFilterEnabled.Value
+            Setting.isLowPassFilterEnabled
         );
         lowpassToggle.defaultValue = true;
         lowpassToggle.onValueChange += (e) =>
         {
-            BepInExConfig.isLowPassFilterEnabled.Value = e.value;
+            Setting.isLowPassFilterEnabled = e.value;
             UnderwaterController_inWater_Instance.CheckIsInWater();
         };
 
@@ -159,14 +143,11 @@ public static class MainPanelBuilder
             advancedPanel,
             "FFmpeg Support",
             "FFmpeg_Support",
-            BepInExConfig.isFFmpegSupportEnabled.Value
+            Setting.isFFmpegSupportEnabled
         );
         ffmpegToggle.defaultValue = false;
         ffmpegToggle.onValueChange += (e) =>
-        {
-            BepInExConfig.isFFmpegSupportEnabled.Value = e.value;
-            LogHelper.LogInfo($"Switched FFmpeg support : {e.value}");
-        };
+            Setting.isFFmpegSupportEnabled = e.value;
 
         var ffmpegLogHeader = new ConfigHeader(advancedPanel, "To Endabled this will try to load unknown audio/video to AudioClip via FFmpeg\n makesure there's a executable in environment path `ffmpeg` or `PATH`\n\n ");
         ffmpegLogHeader.tmpAnchor = TMPro.TextAlignmentOptions.Top;
@@ -233,34 +214,5 @@ public static class MainPanelBuilder
             audioLoaderLogHeader.text = log + "\n";
         };
     }
-
-    #region enum
-    private enum PlayOptions
-    {
-        Override_Last = 0,
-        Independent = 1
-    }
-
-    private enum audioLoadingOptions
-    {
-        Load_then_Play = 0,
-        Preload_and_Play = 1
-    }
-    #endregion
-
-
-    #region function
-    private static void ReloadAllAnnouncers()
-    {
-        audioLoaderLogHeader.text = string.Empty;
-        AnnouncerManager.ReloadAllAnnouncers();
-    }
-
-    private static void ClearAudioClipsCache()
-    {
-        audioLoaderLogHeader.text = string.Empty;
-        AnnouncerManager.ClearAudioClipsCache();
-    }
-    #endregion
 }
 

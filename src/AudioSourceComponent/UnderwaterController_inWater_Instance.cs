@@ -19,7 +19,7 @@ public static class UnderwaterController_inWater_Instance
 
     public static void CheckIsInWater()
     {
-        if (isInWater == false || BepInExConfig.isLowPassFilterEnabled.Value == false)
+        if (isInWater == false || Setting.isLowPassFilterEnabled == false)
         {
             RemoveAudioLowPassFilterFromAllAudioSource();
         }
@@ -32,7 +32,7 @@ public static class UnderwaterController_inWater_Instance
     public static AudioSource GetAudioSourceWithLowPassFilter(AudioSource audioSource)
     {
         if (audioSource == null) return null;
-        if (isInWater && BepInExConfig.isLowPassFilterEnabled.Value == true)
+        if (isInWater && Setting.isLowPassFilterEnabled == true)
         {
             audioSource = AudioSourceManager.AddLowPassFilter(audioSource);
         }

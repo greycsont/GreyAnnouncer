@@ -47,7 +47,7 @@ public class AudioLoader : IAudioLoader
     {
         (string, AudioClip) clipWithCategory;
 
-        if (BepInExConfig.audioLoadingStrategy.Value == 0)
+        if (Setting.audioLoadingStrategy == 0)
         {
             var currentRequestId = ++AnnouncerManager.playRequestId;
 
@@ -58,7 +58,7 @@ public class AudioLoader : IAudioLoader
 
             if (
                 currentRequestId != AnnouncerManager.playRequestId
-                && BepInExConfig.audioPlayOptions.Value == 0
+                && Setting.audioPlayOptions == 0
             )
                 return null;
         }
@@ -72,7 +72,7 @@ public class AudioLoader : IAudioLoader
 
         if (clipWithCategory == (null, null))
         {
-            LogCategoryFailure(category, $"No audio clip available to play, current loading strategy: {BepInExConfig.audioLoadingStrategy.Value}");
+            LogCategoryFailure(category, $"No audio clip available to play, current loading strategy: {Setting.audioLoadingStrategy}");
             return null;
         }
 
@@ -172,7 +172,7 @@ public class AudioLoader : IAudioLoader
     {
         LogHelper.LogInfo("Starting to find available audio asynchronously.");
         ClearCache();
-        if (BepInExConfig.audioLoadingStrategy.Value == 0) return;
+        if (Setting.audioLoadingStrategy == 0) return;
         await LoadAllCategoriesAsync();
         LogLoadingResults();
     }
