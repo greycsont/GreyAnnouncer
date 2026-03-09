@@ -38,6 +38,7 @@ public class Plugin : BaseUnityPlugin
     {
         CheckPluginLoaded();
         RankAnnouncer.RankAnnouncer.Initialize();
+        FinalRankAnnouncer.FinalRankAnnouncer.Initialize();
     }
 
     private void PatchHarmony()

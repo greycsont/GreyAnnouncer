@@ -45,7 +45,7 @@ public class RegistedAnnouncerPage
         var announcerField = new StringListField(
             panel,                     
             "Selected Announcer",             
-            "Selected_Announcer",     
+            _audioAnnouncer.GUID + "_" + "Selected_Announcer",     
             announcers,                
             announcers.FirstOrDefault() ?? "default"
         );
@@ -58,7 +58,7 @@ public class RegistedAnnouncerPage
         var openDirectoryButtonField = new ButtonField(
             panel,
             "Open Current Announcer Folder",
-            "Open_Current_Announcer_Folder"
+            _audioAnnouncer.GUID + "_" + "Open_Current_Announcer_Folder"
         );
         openDirectoryButtonField.onClick += () 
             => _audioAnnouncer.EditExternally();
@@ -71,7 +71,7 @@ public class RegistedAnnouncerPage
         _fields.RandomizeAudioField = new BoolField(
             panel,
             "Randomize Audio On Play",
-            GuidPrefixAdder.AddPrefixToGUID("RandomizeAudioOnPlay", _title),
+            _audioAnnouncer.GUID + "_" + "RandomizeAudioOnPlay",
             _audioAnnouncer.announcerConfig.RandomizeAudioOnPlay
         );
         _fields.RandomizeAudioField.defaultValue = false;
@@ -103,7 +103,7 @@ public class RegistedAnnouncerPage
                                                 AnnouncerConfig AnnouncerConfig,
                                                 bool defaultValue)
     {
-        var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid, "Enabled");
+        var fullGuid = _audioAnnouncer.GUID + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "Enabled");
         var field = new BoolField(panel, "Enabled", fullGuid, AnnouncerConfig.CategorySetting[guid].Enabled);
         field.defaultValue = defaultValue;
         field.onValueChange += e =>
@@ -122,7 +122,7 @@ public class RegistedAnnouncerPage
                                              AnnouncerConfig AnnouncerConfig,
                                              float defaultValue)
     {
-        var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid, "VolumeMultiplier");
+        var fullGuid = _audioAnnouncer.GUID + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "VolumeMultiplier");
         var field = new FloatField(panel, "Volume", fullGuid, AnnouncerConfig.CategorySetting[guid].VolumeMultiplier);
         field.defaultValue = defaultValue;
         field.onValueChange += e =>
@@ -139,7 +139,7 @@ public class RegistedAnnouncerPage
                                                      AnnouncerConfig AnnouncerConfig,
                                                      float defaultValue)
     {
-        var fullGuid = GuidPrefixAdder.AddPrefixToGUID(guid, "Cooldown");
+        var fullGuid = _audioAnnouncer.GUID + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "Cooldown");
         var field = new FloatSliderField(panel, "Cooldown", fullGuid, Tuple.Create(0.2f, 6f), AnnouncerConfig.CategorySetting[guid].Cooldown, 1);
         field.defaultValue = defaultValue;
         field.onValueChange += e =>

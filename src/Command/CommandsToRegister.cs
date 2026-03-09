@@ -6,14 +6,12 @@ using System.Linq;
 using GreyAnnouncer.AnnouncerAPI;
 using GreyAnnouncer.Config;
 using GreyAnnouncer.AudioSourceComponent;
-using GreyAnnouncer.Util;
 using GreyAnnouncer.FrontEnd;
 
 namespace GreyAnnouncer.Commands;
 
 public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsoleLogger
 {
-
     public override string Name => "grey";
     public override string Description => "";
 
@@ -22,7 +20,35 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
                       GetMainSettingBranches(),
                       GetUtilBranches(),
                       GetAnnouncerBranches(),
-                      GetTestBranches()
+                      GetTestBranches(),
+                      Leaf("help", () =>
+                        {
+                            Log.Info("=== GreyAnnouncer Command Reference ===");
+                            Log.Info("");
+                            Log.Info("[Main Settings] grey m");
+                            Log.Info("  audiosourcevolume get/set <float>   - Global announcer volume (0.0 ~ 1.0)");
+                            Log.Info("  ffmpegenabled     get/set <bool>    - Enable FFmpeg support for non-Unity audio formats");
+                            Log.Info("  lowpassenabled    get/set <bool>    - Enable underwater low-pass filter effect");
+                            Log.Info("  announcerspath    get/set <string>  - Folder path where announcer packs are stored");
+                            Log.Info("");
+                            Log.Info("[Announcer] grey a <announcer>");
+                            Log.Info("  randomize         get/set <bool>    - Randomize category selection on playback");
+                            Log.Info("  category <name>   get/set");
+                            Log.Info("    enabled         get/set <bool>    - Enable or disable this category");
+                            Log.Info("    volume          get/set <float>   - Volume multiplier for this category");
+                            Log.Info("    cooldown        get/set <float>   - Cooldown in seconds between plays");
+                            Log.Info("    audiofiles      get/set <files>   - Audio files assigned to this category");
+                            Log.Info("  editexternal                        - Open announcer folder in file explorer");
+                            Log.Info("  reload                              - Reload announcer config from disk");
+                            Log.Info("  structure                           - Print announcer object tree");
+                            Log.Info("");
+                            Log.Info("[Utilities] grey u");
+                            Log.Info("  reloadannouncers                   - Reload all announcers");
+                            Log.Info("  stopallaudiosources                - Stop all active audio sources");
+                            Log.Info("");
+                            Log.Info("[Test] grey t");
+                            Log.Info("  showui                             - Open the GreyAnnouncer UI");
+                        })
                       );
 
     private Branch GetMainSettingBranches()

@@ -73,7 +73,7 @@ public class AudioAnnouncer
     {
         _audioLoader.UpdateSetting(announcerConfig, announcerPath);
         WriteConfigToIni(announcerConfig);
-        //page.ApplyConfigToUI(announcerConfig);
+        page.ApplyConfigToUI(announcerConfig);
     }
 
     /// <summary>A reference to config.ini's path</summary>

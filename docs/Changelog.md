@@ -1,4 +1,10 @@
 ### Known issue/TODO
+### v1.4.0
+- rework of ini
+- adds GUID in announcerConfig
+- adds FinalRank announcer
+- rework setting
+- fix commands
 
 ### v1.3.0
 - Removed Pitch setting in announcer Config
