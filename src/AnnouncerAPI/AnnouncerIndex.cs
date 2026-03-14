@@ -78,8 +78,14 @@ public static class AnnouncerIndex
         => JsonManager.WriteJson(_indexPath, _data);
 
     public static List<string> GetAnnouncers()
-        =>  Directory
+    {
+        List<string> potentialPath = Directory
         .GetDirectories(Setting.announcersPath)
         .Select(Path.GetFileName)
         .ToList();
+
+        return potentialPath
+        .Where(p => Directory.Exists(Path.Combine(p, "config.ini")))
+        .ToList();
+    }
 }

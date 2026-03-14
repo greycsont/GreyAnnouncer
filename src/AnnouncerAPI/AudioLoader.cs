@@ -120,7 +120,7 @@ public class AudioLoader : IAudioLoader
         if (validEntries.Count == 0) 
             return (null, null);
 
-        var (category, clip) = validEntries[UnityEngine.Random.Range(0, validEntries.Count)];
+        (string category, AudioClip clip) = validEntries[UnityEngine.Random.Range(0, validEntries.Count)];
 
         return (category, clip);
     }
@@ -199,7 +199,7 @@ public class AudioLoader : IAudioLoader
 
         foreach (var category in announcerConfig.CategorySetting.Keys)
         {
-            loadingTasks.Add(LoadCategoryAsync(category).ContinueWith(task => (category, task.Result)));
+            loadingTasks.Add(WrapWithCategory(category));
         }
 
         var results = await Task.WhenAll(loadingTasks);
@@ -214,6 +214,11 @@ public class AudioLoader : IAudioLoader
         }
     }
 
+    private async Task<(string, List<AudioClip>)> WrapWithCategory(string cat)
+    {
+        var clips = await LoadCategoryAsync(cat);
+        return (cat, clips);
+    }
 
     private async Task<List<AudioClip>> LoadCategoryAsync(string category)
     {

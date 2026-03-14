@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 
 
 namespace GreyAnnouncer.Util;
@@ -114,6 +115,32 @@ public static class PathHelper
 
         return null;
     }
+
+
+    public static bool TryGetExtension(string filePath, out string foundExtension, params string[] extensions)
+    {
+        foundExtension = null;
+        if (string.IsNullOrWhiteSpace(filePath)) return false;
+
+        var exts = extensions.SelectMany(e => e.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                            .Select(e => e.Trim())
+                            .ToArray();
+
+        string path = filePath.Trim();
+        while (!string.IsNullOrEmpty(path))
+        {
+            var ext = Path.GetExtension(path)?.Trim();
+            if (string.IsNullOrEmpty(ext)) break;
+            if (exts.Any(e => e.Equals(ext, StringComparison.OrdinalIgnoreCase)))
+            {
+                foundExtension = ext;
+                return true;
+            }
+            path = Path.Combine(Path.GetDirectoryName(path) ?? "", Path.GetFileNameWithoutExtension(path));
+        }
+        return false;
+    }
+
 
 
     public static void EnsureDirectoryExists(string filePath)
