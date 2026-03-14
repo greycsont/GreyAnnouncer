@@ -122,7 +122,7 @@ public static class PathHelper
         foundExtension = null;
         if (string.IsNullOrWhiteSpace(filePath)) return false;
 
-        var exts = extensions.SelectMany(e => e.Split(',', StringSplitOptions.RemoveEmptyEntries))
+        var exts = extensions.SelectMany(e => e.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                             .Select(e => e.Trim())
                             .ToArray();
 

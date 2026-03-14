@@ -301,6 +301,7 @@ public class AudioLoader : IAudioLoader
         if (!announcerConfig.CategorySetting[category].Enabled)
         {
             LogCategoryFailure(category, "Stopped by Config");
+            return false;
         }
 
         if (!announcerConfig.CategorySetting.TryGetValue(category, out var categorySetting)
