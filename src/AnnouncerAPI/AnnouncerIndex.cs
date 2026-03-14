@@ -79,13 +79,10 @@ public static class AnnouncerIndex
 
     public static List<string> GetAnnouncers()
     {
-        List<string> potentialPath = Directory
-        .GetDirectories(Setting.announcersPath)
-        .Select(Path.GetFileName)
-        .ToList();
-
-        return potentialPath
-        .Where(p => Directory.Exists(Path.Combine(p, "config.ini")))
-        .ToList();
+        return Directory
+            .GetDirectories(Setting.announcersPath)
+            .Where(p => File.Exists(Path.Combine(p, "config.ini")))
+            .Select(Path.GetFileName)
+            .ToList();
     }
 }
