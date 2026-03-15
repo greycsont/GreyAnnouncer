@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>GreyAnnouncer</AssemblyName>
     <Description>My first plugin</Description>
-    <Version>1.3.0</Version>
+    <Version>1.4.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
@@ -127,7 +127,38 @@
   </PropertyGroup>
 	
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>$(MSBuildProjectDirectory)\bin\Release\dist</OutputPath>
     <Optimize>True</Optimize>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>$(ULTRAKILLDir)\BepInEx\plugins\GreyAnnouncer</OutputPath>
+  </PropertyGroup>
+
+  <Target Name="PackRelease" AfterTargets="Build" Condition="'$(Configuration)'=='Release'">
+  <PropertyGroup>
+    <PackDir>$(MSBuildProjectDirectory)\bin\pack</PackDir>
+  </PropertyGroup>
+
+  <!-- 清理旧的中间目录 -->
+  <RemoveDir Directories="$(PackDir)" />
+  <MakeDir Directories="$(PackDir)" />
+
+  <!-- 只复制需要的 DLL -->
+  <Copy SourceFiles="
+    $(OutputPath)\GreyAnnouncer.dll;
+    $(OutputPath)\FFmpeg.AutoGen.dll;
+    $(OutputPath)\Newtonsoft.Json.dll"
+    DestinationFolder="$(PackDir)" />
+
+  <!-- 打包 -->
+  <ZipDirectory
+    SourceDirectory="$(PackDir)"
+    DestinationFile="$(MSBuildProjectDirectory)\bin\GreyAnnouncer-v$(Version).zip"
+    Overwrite="true" />
+
+  <!-- 清理中间目录 -->
+  <RemoveDir Directories="$(PackDir)" />
+  </Target>
 
 </Project>
