@@ -60,7 +60,7 @@ public sealed class SoloAudioSource : MonoBehaviour
                             $"Clip's volume={sound.volume}, " +
                             $"Pitch={audioSource.pitch}, " +
                             $"SpatialBlend={audioSource.spatialBlend}, " +
-                            $"Priority={audioSource.priority}");
+                            $"Priority={audioSource.priority}", -1);
         audioSource.PlayOneShot(sound.clip, sound.volume, true);
     }
 

@@ -79,23 +79,23 @@ public static class MainPanelBuilder
         // It worked, but not working great as there's ton of audio when from low rank directly to the high rank
         // May be add a short cooldown as limitation
 
-        var playOption = new EnumField<PlayOptions>(
+        var playOption = new EnumField<AudioPlayOptions>(
             m_pluginConfigurator.rootPanel,
             "Audio Play Strategy",
             "Audio_Play_Strategy",
-            (PlayOptions)Setting.audioPlayOptions
+            (AudioPlayOptions)Setting.audioPlayOptions
         );
-        playOption.defaultValue = (PlayOptions)0;
+        playOption.defaultValue = (AudioPlayOptions)0;
         playOption.onValueChange += e =>
             Setting.audioPlayOptions = (int)e.value;
 
-        var loadingOption = new EnumField<audioLoadingOptions>(
+        var loadingOption = new EnumField<AudioLoadOptions>(
             m_pluginConfigurator.rootPanel,
             "Audio Load Strategy",
             "Audio_Load_Strategy",
-            (audioLoadingOptions)Setting.audioLoadingStrategy
+            (AudioLoadOptions)Setting.audioLoadingStrategy
         );
-        loadingOption.defaultValue = (audioLoadingOptions)0;
+        loadingOption.defaultValue = (AudioLoadOptions)0;
         loadingOption.onValueChange += e =>
             Setting.audioLoadingStrategy = (int)e.value;
 

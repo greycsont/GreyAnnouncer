@@ -40,12 +40,12 @@ public static class Setting
         get => BepInExConfig.audioLoadingStrategy.Value;
         set
         {
-            if (value.Equals((audioLoadingOptions.Load_then_Play)))
+            if (value.Equals((AudioLoadOptions.Load_then_Play)))
             {
                 LogHelper.LogInfo("Clear audio clip cache");
                 ClearAudioClipsCache();
             }
-            if (value.Equals(audioLoadingOptions.Preload_and_Play))
+            if (value.Equals(AudioLoadOptions.Preload_and_Play))
             {
                 LogHelper.LogInfo("Reloading all announcer audio");
                 ReloadAllAnnouncers();

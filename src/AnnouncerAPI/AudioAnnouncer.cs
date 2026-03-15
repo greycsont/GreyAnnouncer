@@ -131,10 +131,7 @@ public class AudioAnnouncer
         if (announcerConfig == null)
             announcerConfig = AnnouncerConfigIniInitialization(category);
         else
-        {
             announcerConfig.ApplyFrom(AnnouncerConfigIniInitialization(category));
-            ApplyAnnouncerConfig();
-        }
     }
 
 
@@ -197,8 +194,7 @@ public class AudioAnnouncer
         if (_cooldownManager == null || _audioLoader == null)
             return ValidationState.ComponentsNotInitialized;
 
-        if (_audioLoader.announcerConfig.CategorySetting.Keys == null
-            || !_audioLoader.announcerConfig.CategorySetting.Keys.Contains(category))
+        if (!_audioLoader.announcerConfig.CategorySetting.ContainsKey(category))
             return ValidationState.InvalidKey;
 
         if (!announcerConfig.CategorySetting[category].Enabled && announcerConfig.RandomizeAudioOnPlay == false)
@@ -227,9 +223,9 @@ public class AudioAnnouncer
                 cat => cat,
                 cat => new CategorySetting{}
             );
-            var announcerConfig = new AnnouncerConfig().SetCategorySettingMap(audioDict);
-            announcerConfig.AnnouncerGUID = this.GUID;
-            WriteConfigToIni(announcerConfig);
+            var newConfig = new AnnouncerConfig().SetCategorySettingMap(audioDict);
+            newConfig.AnnouncerGUID = this.GUID;
+            WriteConfigToIni(newConfig);
         }
 
         return ReadConfigFromIni();

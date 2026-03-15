@@ -167,19 +167,19 @@ public class RegistedAnnouncerPage
                 continue;
 
             if (fields.Enabled.value != data.Enabled)
-                LogHelper.LogDebug($"Category '{category}': Enabled changed from {fields.Enabled.value} -> {data.Enabled}");
+                LogHelper.LogDebug($"Category '{category}': Enabled changed from {fields.Enabled.value} -> {data.Enabled}", -1);
             else
-                LogHelper.LogDebug($"Category '{category}': Enabled unchanged ({fields.Enabled.value})");
+                LogHelper.LogDebug($"Category '{category}': Enabled unchanged ({fields.Enabled.value})", -1);
 
             if (Math.Abs(fields.Volume.value - data.VolumeMultiplier) > 0.0001f)
-                LogHelper.LogDebug($"Category '{category}': Volume changed from {fields.Volume.value} -> {data.VolumeMultiplier}");
+                LogHelper.LogDebug($"Category '{category}': Volume changed from {fields.Volume.value} -> {data.VolumeMultiplier}", -1);
             else
-                LogHelper.LogDebug($"Category '{category}': Volume unchanged ({fields.Volume.value})");
+                LogHelper.LogDebug($"Category '{category}': Volume unchanged ({fields.Volume.value})", -1);
 
             if (Math.Abs(fields.Cooldown.value - data.Cooldown) > 0.0001f)
-                LogHelper.LogDebug($"Category '{category}': Cooldown changed from {fields.Cooldown.value} -> {data.Cooldown}");
+                LogHelper.LogDebug($"Category '{category}': Cooldown changed from {fields.Cooldown.value} -> {data.Cooldown}", -1);
             else
-                LogHelper.LogDebug($"Category '{category}': Cooldown unchanged ({fields.Cooldown.value})");
+                LogHelper.LogDebug($"Category '{category}': Cooldown unchanged ({fields.Cooldown.value})", -1);
 
             fields.Enabled.value  = data.Enabled;
             fields.Volume.value   = data.VolumeMultiplier;
