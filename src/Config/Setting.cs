@@ -92,7 +92,7 @@ public static class Setting
     {
         foreach (var announcer in AnnouncerIndex.GetAnnouncers())
         {
-            PathHelper.CopyDirectoryParallel(announcer, targetRoot);
+           FileSystemUtil.CopyDirectoryParallel(announcer, targetRoot);
         }
     }
     #endregion

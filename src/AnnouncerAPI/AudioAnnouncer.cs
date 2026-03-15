@@ -260,6 +260,6 @@ public class AudioAnnouncer
     }
 
     public void EditExternally()
-        => PathHelper.OpenDirectory(announcerPath);
+        => ProcessHelper.OpenDirectory(announcerPath);
 
 }

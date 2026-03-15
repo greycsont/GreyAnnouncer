@@ -10,7 +10,7 @@ public static class IniWriter
 {
     public static void Write(string path, IniDocument doc)
     {
-        PathHelper.EnsureDirectoryExists(path);
+        FileSystemUtil.EnsureDirectoryExists(path);
 
         if (!File.Exists(path))
         {

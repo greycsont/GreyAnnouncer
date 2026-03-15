@@ -11,7 +11,7 @@ public static class JsonManager
     {
         ValidateJsonName(jsonName);
         
-        PathHelper.EnsureDirectoryExists(PathHelper.GetCurrentPluginPath()); 
+        FileSystemUtil.EnsureDirectoryExists(PathHelper.GetCurrentPluginPath()); 
 
         var jsonFilePath = PathHelper.GetCurrentPluginPath(jsonName);
 
@@ -29,7 +29,7 @@ public static class JsonManager
     { 
         ValidateJsonName(jsonName); 
 
-        PathHelper.EnsureDirectoryExists(PathHelper.GetCurrentPluginPath()); 
+        FileSystemUtil.EnsureDirectoryExists(PathHelper.GetCurrentPluginPath()); 
 
         var jsonFilePath = PathHelper.GetCurrentPluginPath(jsonName);
 

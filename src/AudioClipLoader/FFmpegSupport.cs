@@ -11,8 +11,6 @@
 
 
 using System;
-using System.Diagnostics;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using FFmpeg.AutoGen;
@@ -26,12 +24,15 @@ namespace GreyAnnouncer.AudioLoading;
 
 public static class FFmpegSupport
 {
+    static FFmpegSupport()
+    {
+        ffmpeg.RootPath = ProcessHelper.FindExecutable("ffmpeg");
+    }
+
     public static unsafe Task<AudioClip> DecodeAndLoad(string filePath)
     {
         return Task.Run(() =>
         {
-            var stopwatch = new Stopwatch();
-
             AVFormatContext*    formatContext    = null;
             AVCodecContext*     codecCtx         = null;
             SwrContext*         swrCtx           = null;
@@ -40,47 +41,45 @@ public static class FFmpegSupport
 
             int                 audioStreamIndex;
 
-            ffmpeg.RootPath = PathHelper.FindExecutable("ffmpeg");
-
             LogHelper.LogDebug($"ffmpeg path: {ffmpeg.RootPath}");
             
             LogHelper.LogDebug($"ffmpeg version: {ffmpeg.av_version_info()}");
 
             ffmpeg.avformat_network_init();
 
-            formatContext = InitializeFormatContext(filePath);
-            // 查找音频流
-            audioStreamIndex = FindAudioStreamIndex(formatContext);
+            try
+            {
+                formatContext = InitializeFormatContext(filePath);
+                // 查找音频流
+                audioStreamIndex = FindAudioStreamIndex(formatContext);
 
-            // 设置解码器
-            codecCtx = InitializeCodecContext(formatContext, audioStreamIndex);
+                // 设置解码器
+                codecCtx = InitializeCodecContext(formatContext, audioStreamIndex);
 
-            // swrCtx 初始化方式
-            swrCtx = InitializeResampler(codecCtx);
+                // swrCtx 初始化方式
+                swrCtx = InitializeResampler(codecCtx);
 
-            packet = ffmpeg.av_packet_alloc();
+                packet = ffmpeg.av_packet_alloc();
 
-            frame = ffmpeg.av_frame_alloc();
+                frame = ffmpeg.av_frame_alloc();
 
-            var streamedData = DecodeAudioFrames(formatContext, codecCtx, swrCtx, packet, frame, audioStreamIndex);
+                var streamedData = DecodeAudioFrames(formatContext, codecCtx, swrCtx, packet, frame, audioStreamIndex);
 
+                // 创建 Unity AudioClip
+                float[] sampleArray = streamedData.GetAllSamples();
+                int channelCount    = codecCtx->ch_layout.nb_channels;
+                int sampleRate      = codecCtx->sample_rate;
+                int sampleCount     = sampleArray.Length / channelCount;
 
-            // 创建 Unity AudioClip
+                AudioClip clip = AudioClip.Create("decoded_clip", sampleCount, channelCount, sampleRate, false);
+                clip.SetData(sampleArray, 0);
 
-            float[] sampleArray = streamedData.GetAllSamples();
-            int channelCount    = codecCtx->ch_layout.nb_channels;
-            int sampleRate      = codecCtx->sample_rate;
-            int sampleCount     = sampleArray.Length / channelCount;
-
-
-
-            AudioClip clip = AudioClip.Create("decoded_clip", sampleCount, channelCount, sampleRate, false);
-            clip.SetData(sampleArray, 0);
-
-            CleanupResources(frame, packet, codecCtx, swrCtx, formatContext);
-
-
-            return clip;
+                return clip;
+            }
+            finally
+            {
+                CleanupResources(frame, packet, codecCtx, swrCtx, formatContext);
+            }
         });
     }
 
@@ -182,7 +181,10 @@ public static class FFmpegSupport
     {
         byte** convertedData = stackalloc byte*[1];
         int outLinesize;
-        ffmpeg.avcodec_send_packet(codecCtx, packet);
+        int sendResult = ffmpeg.avcodec_send_packet(codecCtx, packet);
+        if (sendResult < 0 && sendResult != ffmpeg.AVERROR(ffmpeg.EAGAIN))
+            throw new Exception($"avcodec_send_packet failed: {sendResult}");
+
         while (ffmpeg.avcodec_receive_frame(codecCtx, frame) == 0)
         {
 

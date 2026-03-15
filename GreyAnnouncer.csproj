@@ -84,6 +84,11 @@
       <Private>false</Private>
     </Reference>
 
+    <Reference Include="UnityEngine.UnityWebRequestTextureModule">
+      <HintPath>$(ManagedDir)\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
     <Reference Include="UnityEngine.AssetBundleModule">
       <HintPath>$(ManagedDir)\UnityEngine.AssetBundleModule.dll</HintPath>
       <Private>false</Private>
