@@ -116,7 +116,6 @@
   <PropertyGroup>
     <ULTRAKILLDir>E:\SteamLibrary\steamapps\common\ULTRAKILL</ULTRAKILLDir>
     <ManagedDir>$(ULTRAKILLDir)\ULTRAKILL_Data\Managed</ManagedDir>
-    <OutputPath>$(ULTRAKILLDir)\BepInEx\plugins\GreyAnnouncer</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 	
