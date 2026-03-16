@@ -21,18 +21,18 @@ public class RegistedAnnouncerPage
 
     private string _title;
 
-    private IAnnouncerProvider _audioAnnouncer;
+    private IAnnouncer _announcer;
 
     private AnnouncerConfigFields _fields = new AnnouncerConfigFields
     {
         CategoryFields = new Dictionary<string, CategoryFields>()
     };
 
-    public void Build(IAnnouncerProvider announcer)
+    public void Build(IAnnouncer announcer)
     {
         _pluginConfigurator = PluginConfiguratorEntry.config;
         _title = announcer.title;
-        _audioAnnouncer = announcer;
+        _announcer = announcer;
 
         ConfigPanel panel = new ConfigPanel(_pluginConfigurator.rootPanel, _title, _title);
         new ConfigSpace(panel, 15f);
@@ -45,23 +45,23 @@ public class RegistedAnnouncerPage
         var announcerField = new StringListField(
             panel,                     
             "Selected Announcer",             
-            _audioAnnouncer.GUID + "_" + "Selected_Announcer",     
+            _announcer.GUID + "_" + "Selected_Announcer",     
             announcers,                
             announcers.FirstOrDefault() ?? "default"
         );
 
         announcerField.onValueChange += e =>
         {
-            _audioAnnouncer.announcerPath = Path.Combine(Setting.announcersPath, e.value);
+            _announcer.announcerPath = Path.Combine(Setting.announcersPath, e.value);
         };
 
         var openDirectoryButtonField = new ButtonField(
             panel,
             "Open Current Announcer Folder",
-            _audioAnnouncer.GUID + "_" + "Open_Current_Announcer_Folder"
+            _announcer.GUID + "_" + "Open_Current_Announcer_Folder"
         );
         openDirectoryButtonField.onClick += () 
-            => _audioAnnouncer.EditExternally();
+            => _announcer.EditExternally();
 
         
         new ConfigSpace(panel, 15f);
@@ -71,16 +71,16 @@ public class RegistedAnnouncerPage
         _fields.RandomizeAudioField = new BoolField(
             panel,
             "Randomize Audio On Play",
-            _audioAnnouncer.GUID + "_" + "RandomizeAudioOnPlay",
-            _audioAnnouncer.announcerConfig.RandomizeAudioOnPlay
+            _announcer.GUID + "_" + "RandomizeAudioOnPlay",
+            _announcer.announcerConfig.RandomizeAudioOnPlay
         );
         _fields.RandomizeAudioField.defaultValue = false;
         _fields.RandomizeAudioField.onValueChange += e =>
         {
-            _audioAnnouncer.announcerConfig.RandomizeAudioOnPlay = e.value;
+            _announcer.announcerConfig.RandomizeAudioOnPlay = e.value;
         };
         
-        foreach (var category in _audioAnnouncer.announcerConfig.CategorySetting)
+        foreach (var category in _announcer.announcerConfig.CategorySetting)
         {
             string key = category.Key;
 
@@ -89,9 +89,9 @@ public class RegistedAnnouncerPage
 
             var fields = new CategoryFields
             {
-                Enabled = CreateEnabledField(panel, key, _audioAnnouncer.announcerConfig, true),
-                Volume  = CreateVolumeField(panel, key, _audioAnnouncer.announcerConfig, 1f),
-                Cooldown = CreateCooldownField(panel, key, _audioAnnouncer.announcerConfig, 3.0f)
+                Enabled = CreateEnabledField(panel, key, _announcer.announcerConfig, true),
+                Volume  = CreateVolumeField(panel, key, _announcer.announcerConfig, 1f),
+                Cooldown = CreateCooldownField(panel, key, _announcer.announcerConfig, 3.0f)
             };
 
             _fields.CategoryFields[key] = fields;
@@ -103,7 +103,7 @@ public class RegistedAnnouncerPage
                                                 AnnouncerConfig AnnouncerConfig,
                                                 bool defaultValue)
     {
-        var fullGuid = _audioAnnouncer.GUID + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "Enabled");
+        var fullGuid = _announcer.GUID + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "Enabled");
         var field = new BoolField(panel, "Enabled", fullGuid, AnnouncerConfig.CategorySetting[guid].Enabled);
         field.defaultValue = defaultValue;
         field.onValueChange += e =>
@@ -122,7 +122,7 @@ public class RegistedAnnouncerPage
                                              AnnouncerConfig AnnouncerConfig,
                                              float defaultValue)
     {
-        var fullGuid = _audioAnnouncer.GUID + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "VolumeMultiplier");
+        var fullGuid = _announcer.GUID + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "VolumeMultiplier");
         var field = new FloatField(panel, "Volume", fullGuid, AnnouncerConfig.CategorySetting[guid].VolumeMultiplier);
         field.defaultValue = defaultValue;
         field.onValueChange += e =>
@@ -139,7 +139,7 @@ public class RegistedAnnouncerPage
                                                      AnnouncerConfig AnnouncerConfig,
                                                      float defaultValue)
     {
-        var fullGuid = _audioAnnouncer.GUID + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "Cooldown");
+        var fullGuid = _announcer.GUID + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "Cooldown");
         var field = new FloatSliderField(panel, "Cooldown", fullGuid, Tuple.Create(0.2f, 6f), AnnouncerConfig.CategorySetting[guid].Cooldown, 1);
         field.defaultValue = defaultValue;
         field.onValueChange += e =>
@@ -153,8 +153,8 @@ public class RegistedAnnouncerPage
 
     public void ApplyConfigToUI()
     {
-        var config = _audioAnnouncer.announcerConfig;
-        
+        var config = _announcer.announcerConfig;
+
         LogHelper.LogDebug($"ApplyConfigToUI called");
 
         if (_fields.RandomizeAudioField != null)
@@ -189,18 +189,4 @@ public class RegistedAnnouncerPage
         }
     }
     private static readonly Color HeaderColor = new Color(0.85f, 0.85f, 0.85f, 1f);
-}
-
-public class CategoryFields
-{
-    public BoolField Enabled;
-    public FloatField Volume;
-    public FloatSliderField Cooldown;
-}
-
-public class AnnouncerConfigFields
-{
-    public BoolField RandomizeAudioField;
-    public Dictionary<string, CategoryFields> CategoryFields;
-
 }

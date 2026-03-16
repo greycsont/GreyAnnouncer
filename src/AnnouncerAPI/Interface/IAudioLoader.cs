@@ -12,5 +12,5 @@ public interface IAudioLoader
 
     public void ClearCache();
 
-    public void SetProvider(IAnnouncerProvider provider);
+    public void SetProvider(IAnnouncer provider);
 }

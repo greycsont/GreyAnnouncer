@@ -13,7 +13,7 @@ using GreyAnnouncer.Util;
 
 namespace GreyAnnouncer.AnnouncerAPI;
 
-public class AudioAnnouncer : IAnnouncerProvider
+public class AudioAnnouncer : IAnnouncer
 {
     public string title { get; private set; }
 

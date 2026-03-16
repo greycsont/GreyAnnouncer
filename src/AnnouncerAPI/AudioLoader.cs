@@ -20,9 +20,9 @@ namespace GreyAnnouncer.AnnouncerAPI;
 
 public class AudioLoader : IAudioLoader
 {
-    private IAnnouncerProvider _provider;
-    public AnnouncerConfig announcerConfig => _provider?.announcerConfig;
-    public string announcerPath => _provider?.announcerPath;
+    private IAnnouncer _announcer;
+    public AnnouncerConfig announcerConfig => _announcer?.announcerConfig;
+    public string announcerPath => _announcer?.announcerPath;
 
     public static Action<string> onPluginConfiguratorLogUpdated;
 
@@ -184,9 +184,9 @@ public class AudioLoader : IAudioLoader
         LogLoadingResults();
     }
 
-    public void SetProvider(IAnnouncerProvider provider)
+    public void SetProvider(IAnnouncer provider)
     {
-        _provider = provider;
+        _announcer = provider;
     }
 
     public void ClearCache()

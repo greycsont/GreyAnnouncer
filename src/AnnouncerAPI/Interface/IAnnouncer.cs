@@ -2,7 +2,7 @@ using GreyAnnouncer.Config;
 
 namespace GreyAnnouncer.AnnouncerAPI;
 
-public interface IAnnouncerProvider
+public interface IAnnouncer
 {
     string title { get; }
     string GUID { get; }
