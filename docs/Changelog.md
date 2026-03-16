@@ -1,10 +1,12 @@
 ### Known issue/TODO
 ### v1.4.0
-- rework of ini
+- Rework of config.ini
 - adds GUID in announcerConfig
-- adds FinalRank announcer
-- rework setting
+- Encapsulate Setting to individual class
 - fix commands
+- Adds experiment UI
+- Refactor on AudioLoader, AudioAnnouncer and UI
+- Support Layer 8 AudioSource Extension
 
 ### v1.3.0
 - Removed Pitch setting in announcer Config

@@ -120,7 +120,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>$(MSBuildProjectDirectory)\bin\Release\dist</OutputPath>
+    <OutputPath>$(MSBuildProjectDirectory)\bin\Release\build</OutputPath>
     <Optimize>True</Optimize>
   </PropertyGroup>
 
@@ -150,6 +150,20 @@
     $(OutputPath)\Newtonsoft.Json.dll"
     DestinationFolder="$(PackDir)" />
 
+  <ItemGroup>
+    <DistFiles Include="$(MSBuildProjectDirectory)\dist\*" />
+  </ItemGroup>
+  <Copy SourceFiles="@(DistFiles)"
+    DestinationFolder="$(PackDir)"
+    Condition="'@(DistFiles)' != ''" />
+
+  <ItemGroup>
+    <DocsFiles Include="$(MSBuildProjectDirectory)\docs\README.md;$(MSBuildProjectDirectory)\docs\Changelog.md" />
+  </ItemGroup>
+  <Copy SourceFiles="@(DocsFiles)"
+    DestinationFolder="$(PackDir)"
+    Condition="'@(DocsFiles)' != ''" />
+
   <!-- 打包 -->
   <ZipDirectory
     SourceDirectory="$(PackDir)"
@@ -158,6 +172,7 @@
 
   <!-- 清理中间目录 -->
   <RemoveDir Directories="$(PackDir)" />
+  <RemoveDir Directories="$(OutputPath)" />
   </Target>
 
 </Project>
