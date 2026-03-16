@@ -21,18 +21,18 @@ public class RegistedAnnouncerPage
 
     private string _title;
 
-    private AudioAnnouncer _audioAnnouncer;
-    
+    private IAnnouncerProvider _audioAnnouncer;
+
     private AnnouncerConfigFields _fields = new AnnouncerConfigFields
     {
         CategoryFields = new Dictionary<string, CategoryFields>()
     };
-        
-    public void Build(string title, AudioAnnouncer audioAnnouncer)
+
+    public void Build(IAnnouncerProvider announcer)
     {
         _pluginConfigurator = PluginConfiguratorEntry.config;
-        _title = title;
-        _audioAnnouncer = audioAnnouncer;
+        _title = announcer.title;
+        _audioAnnouncer = announcer;
 
         ConfigPanel panel = new ConfigPanel(_pluginConfigurator.rootPanel, _title, _title);
         new ConfigSpace(panel, 15f);
@@ -52,7 +52,7 @@ public class RegistedAnnouncerPage
 
         announcerField.onValueChange += e =>
         {
-            audioAnnouncer.announcerPath = Path.Combine(Setting.announcersPath, e.value);
+            _audioAnnouncer.announcerPath = Path.Combine(Setting.announcersPath, e.value);
         };
 
         var openDirectoryButtonField = new ButtonField(
@@ -151,8 +151,10 @@ public class RegistedAnnouncerPage
         return field;
     }
 
-    public void ApplyConfigToUI(AnnouncerConfig config)
+    public void ApplyConfigToUI()
     {
+        var config = _audioAnnouncer.announcerConfig;
+        
         LogHelper.LogDebug($"ApplyConfigToUI called");
 
         if (_fields.RandomizeAudioField != null)

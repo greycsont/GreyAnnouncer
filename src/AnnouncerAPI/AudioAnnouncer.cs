@@ -13,11 +13,11 @@ using GreyAnnouncer.Util;
 
 namespace GreyAnnouncer.AnnouncerAPI;
 
-public class AudioAnnouncer : IAnnouncerPathProvider
+public class AudioAnnouncer : IAnnouncerProvider
 {
-    public string title;
+    public string title { get; private set; }
 
-    public string GUID;
+    public string GUID { get; private set; }
 
     private IAudioLoader _audioLoader;
 
@@ -71,9 +71,9 @@ public class AudioAnnouncer : IAnnouncerPathProvider
 
     private void ApplyAnnouncerConfig()
     {
-        _audioLoader.UpdateSetting(announcerConfig);
+        _ = _audioLoader.FindAvailableAudioAsync();
         WriteConfigToIni(announcerConfig);
-        page.ApplyConfigToUI(announcerConfig);
+        page.ApplyConfigToUI();
     }
 
     /// <summary>A reference to config.ini's path</summary>
@@ -90,7 +90,7 @@ public class AudioAnnouncer : IAnnouncerPathProvider
                            string GUID)
     {
         this._audioLoader = audioLoader;
-        this._audioLoader.SetPathProvider(this);
+        this._audioLoader.SetProvider(this);
         this._cooldownManager = cooldownManager;
         this._defaultAnnouncerConfigPath = defaultAnnouoncerConfigPath;
         this.category = displayNameMapping;
@@ -101,7 +101,7 @@ public class AudioAnnouncer : IAnnouncerPathProvider
 
         SubscribeAnnouncerManager();
 
-        page.Build(title, this);
+        page.Build(this);
     }
 
     /// <summary>Will Play a random audio in the belong category</summary>
@@ -195,7 +195,7 @@ public class AudioAnnouncer : IAnnouncerPathProvider
         if (_cooldownManager == null || _audioLoader == null)
             return ValidationState.ComponentsNotInitialized;
 
-        if (!_audioLoader.announcerConfig.CategorySetting.ContainsKey(category))
+        if (!announcerConfig.CategorySetting.ContainsKey(category))
             return ValidationState.InvalidKey;
 
         if (!announcerConfig.CategorySetting[category].Enabled && announcerConfig.RandomizeAudioOnPlay == false)

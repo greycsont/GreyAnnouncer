@@ -1,6 +1,12 @@
+using GreyAnnouncer.Config;
+
 namespace GreyAnnouncer.AnnouncerAPI;
 
-public interface IAnnouncerPathProvider
+public interface IAnnouncerProvider
 {
-    string announcerPath { get; }
+    string title { get; }
+    string GUID { get; }
+    string announcerPath { get; set; }
+    AnnouncerConfig announcerConfig { get; }
+    void EditExternally();
 }
