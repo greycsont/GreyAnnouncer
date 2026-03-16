@@ -4,63 +4,99 @@ using TMPro;
 
 public class Category : MonoBehaviour
 {
-    // 这里的变量会在创建后被赋值，方便后续引用
-    public TextMeshProUGUI titleText;
-    public Toggle boolToggle;
-    public Slider floatSlider1;
-    public Slider floatSlider2;
+    public Toggle enabledToggle;
+    public Slider volumeSlider;
+    public Slider cooldownSlider;
+
+    private TextMeshProUGUI _titleText;
+    private TextMeshProUGUI _volumeLabel;
+    private TextMeshProUGUI _cooldownLabel;
 
     public void Awake()
     {
-        // 1. 设置自身容器 (Category) 的布局
-        var rt = GetComponent<RectTransform>() ?? gameObject.AddComponent<RectTransform>();
-        rt.anchorMin = new Vector2(0f, 0.3f);
-        rt.anchorMax = new Vector2(1f, 0.7f);
-        rt.offsetMin = Vector2.zero;
-        rt.offsetMax = Vector2.zero;
+        gameObject.AddComponent<Image>().color = new Color(0.12f, 0.12f, 0.12f, 1f);
 
-        // 2. 创建标题 (TextMeshPro)
-        GameObject titleObj = new GameObject("Title", typeof(RectTransform), typeof(TextMeshProUGUI));
-        titleObj.transform.SetParent(transform, false);
-        titleText = titleObj.GetComponent<TextMeshProUGUI>();
-        titleText.text = "Mod Category Title";
-        titleText.fontSize = 24;
-        titleText.alignment = TextAlignmentOptions.Center;
-        SetRect(titleObj.GetComponent<RectTransform>(), new Vector2(0.5f, 0.9f), new Vector2(200, 50));
+        var hlg = gameObject.AddComponent<HorizontalLayoutGroup>();
+        hlg.childControlWidth = true;
+        hlg.childControlHeight = false;
+        hlg.childForceExpandWidth = false;
+        hlg.childForceExpandHeight = false;
+        hlg.spacing = 6;
+        hlg.padding = new RectOffset(8, 8, 3, 3);
+        gameObject.AddComponent<LayoutElement>().preferredHeight = 28;
 
-        // 3. 创建布尔开关 (Toggle)
-        // 使用内置工具创建基础 UI 结构
-        DefaultControls.Resources res = new DefaultControls.Resources(); 
-        GameObject toggleObj = DefaultControls.CreateToggle(res);
-        toggleObj.transform.SetParent(transform, false);
-        boolToggle = toggleObj.GetComponent<Toggle>();
-        SetRect(toggleObj.GetComponent<RectTransform>(), new Vector2(0.5f, 0.7f), new Vector2(100, 30));
+        _titleText = AddText("CategoryTitle", "Category", 13, new Color(0f, 1f, 1f), 110);
 
-        // 4. 创建两个滑动条 (Slider)
-        floatSlider1 = CreateSlider("Slider_1", new Vector2(0.5f, 0.5f));
-        floatSlider2 = CreateSlider("Slider_2", new Vector2(0.5f, 0.3f));
+        // Enabled
+        AddText("EnabledLabel", "En", 12, Color.white, 18);
+        enabledToggle = AddToggle();
+
+        // Volume
+        AddText("VolumeLabel", "Vol", 12, Color.white, 24);
+        volumeSlider = AddSlider("VolumeSlider", 0f, 5f, 0.1f);
+        _volumeLabel = AddText("VolumeValue", "1.0", 12, Color.white, 32);
+        volumeSlider.onValueChanged.AddListener(v => _volumeLabel.text = v.ToString("F1"));
+
+        // Cooldown
+        AddText("CooldownLabel", "CD", 12, Color.white, 22);
+        cooldownSlider = AddSlider("CooldownSlider", 0f, 10f, 0.1f);
+        _cooldownLabel = AddText("CooldownValue", "3.0", 12, Color.white, 32);
+        cooldownSlider.onValueChanged.AddListener(v => _cooldownLabel.text = v.ToString("F1"));
     }
 
-    // 辅助方法：创建一个 Slider 并设置位置
-    private Slider CreateSlider(string name, Vector2 anchorPos)
+    public void SetName(string name) => _titleText.text = name;
+
+    public void SetVolume(float v)
     {
-        DefaultControls.Resources res = new DefaultControls.Resources();
-        GameObject sliderObj = DefaultControls.CreateSlider(res);
-        sliderObj.name = name;
-        sliderObj.transform.SetParent(transform, false);
-        
-        RectTransform rt = sliderObj.GetComponent<RectTransform>();
-        rt.anchorMin = rt.anchorMax = anchorPos;
-        rt.sizeDelta = new Vector2(160, 20);
-        
-        return sliderObj.GetComponent<Slider>();
+        volumeSlider.SetValueWithoutNotify(v);
+        _volumeLabel.text = v.ToString("F1");
     }
 
-    // 辅助方法：快速设置 RectTransform
-    private void SetRect(RectTransform rt, Vector2 anchorPos, Vector2 size)
+    public void SetCooldown(float v)
     {
-        rt.anchorMin = rt.anchorMax = anchorPos;
-        rt.sizeDelta = size;
-        rt.anchoredPosition = Vector2.zero;
+        cooldownSlider.SetValueWithoutNotify(v);
+        _cooldownLabel.text = v.ToString("F1");
+    }
+
+    // ── helpers ─────────────────────────────────────────────
+
+    private TextMeshProUGUI AddText(string name, string text, int size, Color color, float width)
+    {
+        var obj = new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI));
+        obj.transform.SetParent(transform, false);
+        var le = obj.AddComponent<LayoutElement>();
+        le.preferredWidth = width;
+        le.flexibleWidth = 0;
+        var tmp = obj.GetComponent<TextMeshProUGUI>();
+        tmp.text = text;
+        tmp.fontSize = size;
+        tmp.color = color;
+        tmp.alignment = TextAlignmentOptions.MidlineLeft;
+        return tmp;
+    }
+
+    private Toggle AddToggle()
+    {
+        var obj = DefaultControls.CreateToggle(new DefaultControls.Resources());
+        obj.name = "EnabledToggle";
+        obj.transform.SetParent(transform, false);
+        var le = obj.AddComponent<LayoutElement>();
+        le.preferredWidth = 24;
+        le.flexibleWidth = 0;
+        return obj.GetComponent<Toggle>();
+    }
+
+    private Slider AddSlider(string name, float min, float max, float step)
+    {
+        var obj = DefaultControls.CreateSlider(new DefaultControls.Resources());
+        obj.name = name;
+        obj.transform.SetParent(transform, false);
+        obj.AddComponent<LayoutElement>().flexibleWidth = 1;
+        var s = obj.GetComponent<Slider>();
+        s.minValue = min;
+        s.maxValue = max;
+        s.wholeNumbers = false;
+        s.onValueChanged.AddListener(v => s.SetValueWithoutNotify(Mathf.Round(v / step) * step));
+        return s;
     }
 }

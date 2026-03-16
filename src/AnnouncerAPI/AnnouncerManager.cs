@@ -5,7 +5,7 @@ namespace GreyAnnouncer.AnnouncerAPI;
                                                       
 public static class AnnouncerManager
 {
-    public static List<AudioAnnouncer> announcers = new List<AudioAnnouncer>();
+    public static List<IAnnouncer> announcers = new List<IAnnouncer>();
 
     public static Action reloadAnnouncer;
 
@@ -16,11 +16,16 @@ public static class AnnouncerManager
     public static long playRequestId = 0;
 
 
-    public static List<AudioAnnouncer> GetAllAnnouncers()
+    public static List<IAnnouncer> GetAllAnnouncers()
         => announcers; // Placeholder for future implementation
 
-    public static void AddAnnouncer(AudioAnnouncer announcer)
-        => announcers.Add(announcer);
+    public static event Action<IAnnouncer> OnRegistered;
+
+    public static void AddAnnouncer(IAnnouncer announcer)
+    {
+        announcers.Add(announcer);
+        OnRegistered?.Invoke(announcer);
+    }
 
     public static void ReloadAllAnnouncers()
         => reloadAnnouncer?.Invoke();

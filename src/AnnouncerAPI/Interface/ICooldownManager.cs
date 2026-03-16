@@ -8,6 +8,4 @@ public interface ICooldownManager
     public void StartCooldowns(string category, float duration);
 
     public void ResetCooldowns();
-    
-
 }

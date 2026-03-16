@@ -73,11 +73,14 @@ public class AudioAnnouncer : IAnnouncer
     {
         _ = _audioLoader.FindAvailableAudioAsync();
         WriteConfigToIni(announcerConfig);
-        page.ApplyConfigToUI();
+        if (_initialized)
+            page.ApplyConfigToUI();
     }
 
     /// <summary>A reference to config.ini's path</summary>
     private string iniPath => Path.Combine(announcerPath, "config.ini");
+
+    private bool _initialized = false;
 
     private RegistedAnnouncerPage page = new RegistedAnnouncerPage();
 
@@ -102,6 +105,7 @@ public class AudioAnnouncer : IAnnouncer
         SubscribeAnnouncerManager();
 
         page.Build(this);
+        _initialized = true;
     }
 
     /// <summary>Will Play a random audio in the belong category</summary>
@@ -132,7 +136,10 @@ public class AudioAnnouncer : IAnnouncer
         if (announcerConfig == null)
             announcerConfig = AnnouncerConfigIniInitialization(category);
         else
+        {
             announcerConfig.ApplyFrom(AnnouncerConfigIniInitialization(category));
+            ApplyAnnouncerConfig();
+        }
     }
 
 

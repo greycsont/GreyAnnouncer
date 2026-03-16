@@ -17,7 +17,7 @@ namespace GreyAnnouncer.FrontEnd;
 
 public class RegistedAnnouncerPage
 {
-    private PluginConfigurator _pluginConfigurator;
+    private PluginConfigurator _pluginConfigurator => PluginConfiguratorEntry.config;
 
     private string _title;
 
@@ -30,7 +30,6 @@ public class RegistedAnnouncerPage
 
     public void Build(IAnnouncer announcer)
     {
-        _pluginConfigurator = PluginConfiguratorEntry.config;
         _title = announcer.title;
         _announcer = announcer;
 

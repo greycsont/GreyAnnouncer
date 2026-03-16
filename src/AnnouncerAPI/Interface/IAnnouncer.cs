@@ -1,12 +1,12 @@
-using GreyAnnouncer.Config;
 
 namespace GreyAnnouncer.AnnouncerAPI;
 
 public interface IAnnouncer
 {
-    string title { get; }
-    string GUID { get; }
-    string announcerPath { get; set; }
-    AnnouncerConfig announcerConfig { get; }
-    void EditExternally();
+    public string title { get; }
+    public string GUID { get; }
+    public string announcerPath { get; set; }
+    public AnnouncerConfig announcerConfig { get; }
+    public void EditExternally();
+    public void ReloadAudio();
 }
