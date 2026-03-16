@@ -3,7 +3,7 @@
 - Rework of config.ini
 - adds GUID in announcerConfig
 - Encapsulate Setting to individual class
-- fix commands
+- simplified command aliases
 - Adds experiment UI
 - Refactor on AudioLoader, AudioAnnouncer and UI
 - Support Layer 8 AudioSource Extension
