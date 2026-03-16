@@ -13,7 +13,7 @@ using GreyAnnouncer.Util;
 
 namespace GreyAnnouncer.AnnouncerAPI;
 
-public class AudioAnnouncer
+public class AudioAnnouncer : IAnnouncerPathProvider
 {
     public string title;
 
@@ -71,7 +71,7 @@ public class AudioAnnouncer
 
     private void ApplyAnnouncerConfig()
     {
-        _audioLoader.UpdateSetting(announcerConfig, announcerPath);
+        _audioLoader.UpdateSetting(announcerConfig);
         WriteConfigToIni(announcerConfig);
         page.ApplyConfigToUI(announcerConfig);
     }
@@ -90,10 +90,11 @@ public class AudioAnnouncer
                            string GUID)
     {
         this._audioLoader = audioLoader;
+        this._audioLoader.SetPathProvider(this);
         this._cooldownManager = cooldownManager;
+        this._defaultAnnouncerConfigPath = defaultAnnouoncerConfigPath;
         this.category = displayNameMapping;
         this.title = title;
-        this._defaultAnnouncerConfigPath = defaultAnnouoncerConfigPath;
         this.GUID = GUID;
 
         announcerPath = AnnouncerIndex.Get(this.GUID, _defaultAnnouncerConfigPath);

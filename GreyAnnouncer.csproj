@@ -118,13 +118,7 @@
     <ManagedDir>$(ULTRAKILLDir)\ULTRAKILL_Data\Managed</ManagedDir>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
-	
-  <PropertyGroup>
-    <StartAction>Program</StartAction>
-    <StartProgram>$(ULTRAKILLDir)\ULTRAKILL.exe</StartProgram>
-    <StartWorkingDirectory>$(ULTRAKILLDir)\ULTRAKILL</StartWorkingDirectory>
-  </PropertyGroup>
-	
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>$(MSBuildProjectDirectory)\bin\Release\dist</OutputPath>
     <Optimize>True</Optimize>
@@ -132,6 +126,12 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>$(ULTRAKILLDir)\BepInEx\plugins\GreyAnnouncer</OutputPath>
+  </PropertyGroup>
+	
+  <PropertyGroup>
+    <StartAction>Program</StartAction>
+    <StartProgram>$(ULTRAKILLDir)\ULTRAKILL.exe</StartProgram>
+    <StartWorkingDirectory>$(ULTRAKILLDir)\ULTRAKILL</StartWorkingDirectory>
   </PropertyGroup>
 
   <Target Name="PackRelease" AfterTargets="Build" Condition="'$(Configuration)'=='Release'">

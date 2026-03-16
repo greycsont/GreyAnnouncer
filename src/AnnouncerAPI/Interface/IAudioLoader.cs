@@ -5,7 +5,7 @@ using GreyAnnouncer.AudioSourceComponent;
 namespace GreyAnnouncer.AnnouncerAPI;
 public interface IAudioLoader
 {
-    public AnnouncerConfig announcerConfig  { get; set; }
+    public AnnouncerConfig announcerConfig { get; set; }
 
     public Task<Sound> LoadAudioClip(string category);
 
@@ -13,6 +13,7 @@ public interface IAudioLoader
 
     public void ClearCache();
 
-    public void UpdateSetting(AnnouncerConfig jsonSetting, string announcerPath);
-    
+    public void SetPathProvider(IAnnouncerPathProvider provider);
+
+    public void UpdateSetting(AnnouncerConfig jsonSetting);
 }
