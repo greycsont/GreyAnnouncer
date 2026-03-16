@@ -1,4 +1,6 @@
 
+using System;
+
 namespace GreyAnnouncer.AnnouncerAPI;
 
 public interface IAnnouncer
@@ -9,4 +11,5 @@ public interface IAnnouncer
     public AnnouncerConfig announcerConfig { get; }
     public void EditExternally();
     public void ReloadAudio();
+    public Action syncUI { get; set; }
 }

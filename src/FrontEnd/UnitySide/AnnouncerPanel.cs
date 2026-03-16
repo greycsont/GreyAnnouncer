@@ -25,7 +25,7 @@ public class AnnouncerPanel : MonoBehaviour
     public void Initialize(IAnnouncer announcer)
     {
         _announcer = announcer;
-        _announcer.announcerConfig.PropertyChanged += (_, __) => Refresh();
+        _announcer.syncUI += Refresh;
         Build();
     }
 
@@ -33,6 +33,7 @@ public class AnnouncerPanel : MonoBehaviour
     public void Refresh()
     {
         if (_announcer == null) return;
+        LogHelper.LogDebug($"Refresh called from {_announcer.title}");
         var cfg = _announcer.announcerConfig;
 
         if (_randomizeToggle != null)

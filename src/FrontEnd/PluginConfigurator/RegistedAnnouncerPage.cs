@@ -95,6 +95,8 @@ public class RegistedAnnouncerPage
 
             _fields.CategoryFields[key] = fields;
         }
+
+        _announcer.syncUI += ApplyConfigToUI;
     }
 
     private BoolField CreateEnabledField(ConfigPanel panel,

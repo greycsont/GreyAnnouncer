@@ -29,6 +29,9 @@ public class AudioAnnouncer : IAnnouncer
 
     private string _announcerPath;
 
+    public Action syncUI { get; set; }
+
+
     /// <summary>When announcerPath changes, it will automatically reload relative configs.</summary>
     public string announcerPath
     {
@@ -74,7 +77,7 @@ public class AudioAnnouncer : IAnnouncer
         _ = _audioLoader.FindAvailableAudioAsync();
         WriteConfigToIni(announcerConfig);
         if (_initialized)
-            page.ApplyConfigToUI();
+            syncUI.Invoke();
     }
 
     /// <summary>A reference to config.ini's path</summary>
