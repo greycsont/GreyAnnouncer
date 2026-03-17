@@ -14,6 +14,8 @@ public class MainPanel : MonoBehaviour
     private Transform _rightPanelRoot;
     private readonly List<AnnouncerPanel> _panels = [];
     private readonly List<GameObject> _navButtons = [];
+    private GameObject _advancedPanelObj;
+    private GameObject _creditsPanelObj;
 
     public void Awake()
     {
@@ -27,6 +29,9 @@ public class MainPanel : MonoBehaviour
 
         var rightPanel = CreatePanel("RightPanel", 0.4f, 1f, new Color(0.1f, 0.1f, 0.1f, 1f));
         _rightPanelRoot = rightPanel.transform;
+
+        _advancedPanelObj = CreateSpecialPanel<AdvancedPanel>("AdvancedPanel");
+        _creditsPanelObj  = CreateSpecialPanel<CreditsPanel>("CreditsPanel");
 
         foreach (var announcer in AnnouncerManager.GetAllAnnouncers())
             AddAnnouncerPanel(announcer);
@@ -61,8 +66,19 @@ public class MainPanel : MonoBehaviour
         loadDd.value = Setting.audioLoadingStrategy;
         loadDd.onValueChanged.AddListener(v => Setting.audioLoadingStrategy = v);
 
-        UIBuilder.AddButton(parent, "Reload", fontSize: 13)
-            .onClick.AddListener(AnnouncerManager.ReloadAllAnnouncers);
+        var actionRow = UIBuilder.AddRow(parent, "ActionRow", height: 36).transform;
+
+        var reloadBtn = UIBuilder.AddButton(actionRow, "Reload", fontSize: 12);
+        reloadBtn.GetComponent<LayoutElement>().flexibleWidth = 1;
+        reloadBtn.onClick.AddListener(AnnouncerManager.ReloadAllAnnouncers);
+
+        var advBtn = UIBuilder.AddButton(actionRow, "Advanced", fontSize: 12);
+        advBtn.GetComponent<LayoutElement>().flexibleWidth = 1;
+        advBtn.onClick.AddListener(ShowAdvanced);
+
+        var creditBtn = UIBuilder.AddButton(actionRow, "Credits", fontSize: 12);
+        creditBtn.GetComponent<LayoutElement>().flexibleWidth = 1;
+        creditBtn.onClick.AddListener(ShowCredits);
 
         UIBuilder.AddSeparator(parent);
         UIBuilder.AddLabel(parent, "Announcers", 13, new Color(1f, 0.7f, 0.3f), preferredHeight: 21);
@@ -92,11 +108,39 @@ public class MainPanel : MonoBehaviour
 
     private void ShowPanel(int index)
     {
+        _advancedPanelObj.SetActive(false);
+        _creditsPanelObj.SetActive(false);
         for (int i = 0; i < _panels.Count; i++)
         {
             _panels[i].gameObject.SetActive(i == index);
             UIBuilder.StyleButton(_navButtons[i], i == index);
         }
+    }
+
+    private void ShowAdvanced()
+    {
+        foreach (var p in _panels) p.gameObject.SetActive(false);
+        foreach (var b in _navButtons) UIBuilder.StyleButton(b, false);
+        _advancedPanelObj.SetActive(true);
+        _creditsPanelObj.SetActive(false);
+    }
+
+    private void ShowCredits()
+    {
+        foreach (var p in _panels) p.gameObject.SetActive(false);
+        foreach (var b in _navButtons) UIBuilder.StyleButton(b, false);
+        _advancedPanelObj.SetActive(false);
+        _creditsPanelObj.SetActive(true);
+    }
+
+    private GameObject CreateSpecialPanel<T>(string name) where T : MonoBehaviour
+    {
+        var obj = new GameObject(name, typeof(RectTransform));
+        obj.transform.SetParent(_rightPanelRoot, false);
+        UIBuilder.SetFullStretch(obj.GetComponent<RectTransform>());
+        obj.AddComponent<T>();
+        obj.SetActive(false);
+        return obj;
     }
 
     // ── Helpers ───────────────────────────────────────────────

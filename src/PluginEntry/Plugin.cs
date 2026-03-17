@@ -17,8 +17,6 @@ namespace GreyAnnouncer;
 [BepInDependency(PluginDependencies.PLUGINCONFIGURATOR_GUID, BepInDependency.DependencyFlags.SoftDependency)]
 public class Plugin : BaseUnityPlugin
 {
-    private         Harmony         _harmony;
-
     private void Awake()
     {
         gameObject.hideFlags = HideFlags.DontSaveInEditor;
@@ -45,7 +43,7 @@ public class Plugin : BaseUnityPlugin
 
     private void PatchHarmony()
     {
-        _harmony = new Harmony(PluginInfo.PLUGIN_GUID + ".harmony");
+        new Harmony(PluginInfo.PLUGIN_GUID + ".harmony").PatchAll();
     }
 
     private void CheckPluginLoaded()

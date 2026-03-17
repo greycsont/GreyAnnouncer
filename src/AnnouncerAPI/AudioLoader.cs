@@ -282,7 +282,7 @@ public class AudioLoader : IAudioLoader
 
     private void LogLoadingResults()
     {
-        LogHelper.LogDebug("Loading directory: " + announcerPath);
+        LogHelper.LogDebug($"{_announcer.GUID} Loading directory: {announcerPath}");
 
         var failed   = _categoryStatus.Where(x => x.Value == CategoryStatus.Failed).Select(x => x.Key).ToList();
         var disabled = _categoryStatus.Where(x => x.Value == CategoryStatus.Disabled).Select(x => x.Key).ToList();
