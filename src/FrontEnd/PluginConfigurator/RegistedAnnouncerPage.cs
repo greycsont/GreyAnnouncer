@@ -28,6 +28,11 @@ public class RegistedAnnouncerPage
         CategoryFields = new Dictionary<string, CategoryFields>()
     };
 
+    public RegistedAnnouncerPage(IAnnouncer announcer)
+    {
+        Build(announcer);
+    }
+
     public void Build(IAnnouncer announcer)
     {
         _title = announcer.title;

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Text;
+using System.Collections.Generic;
 
 using PluginConfig.API;
 using PluginConfig.API.Fields;
@@ -36,12 +37,16 @@ public static class MainPanelBuilder
 
     private static ConfigPanel creditPanel;
 
+    private static List<RegistedAnnouncerPage> _pages = new List<RegistedAnnouncerPage>();
+
+
 
     public static void Build(PluginConfigurator config)
     {
         m_pluginConfigurator = config;
 
         CreateMainSettingSectionTitle();
+        CreateAnnouncerPage();
         CreateAudioControls();
         CreateAdvancedOptionPanel();
         CreateCreditsPanel();
@@ -49,6 +54,17 @@ public static class MainPanelBuilder
         
 
         CreateDelegateTextFromBackEnd();
+
+        AnnouncerManager.OnRegistered += AddAnnouncerPage;
+    }
+
+    public static void CreateAnnouncerPage()
+    {
+        foreach (var announcer in AnnouncerManager.announcers)
+        {
+            var newPage = new RegistedAnnouncerPage(announcer);
+            _pages.Add(newPage);
+        }
     }
 
     private static void CreateMainSettingSectionTitle()
@@ -210,6 +226,12 @@ public static class MainPanelBuilder
         {
             audioLoaderLogHeader.text = log + "\n";
         };
+    }
+
+    private static void AddAnnouncerPage(IAnnouncer announcer)
+    {
+        var newPage = new RegistedAnnouncerPage(announcer);
+        _pages.Add(newPage);
     }
 }
 

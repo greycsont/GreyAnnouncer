@@ -85,9 +85,6 @@ public class AudioAnnouncer : IAnnouncer
 
     private bool _initialized = false;
 
-    private RegistedAnnouncerPage page = new RegistedAnnouncerPage();
-
-
     public AudioAnnouncer(IAudioLoader audioLoader,
                            ICooldownManager cooldownManager,
                            List<string> category,
@@ -107,7 +104,6 @@ public class AudioAnnouncer : IAnnouncer
 
         SubscribeAnnouncerManager();
 
-        page.Build(this);
         _initialized = true;
     }
 

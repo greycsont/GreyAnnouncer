@@ -14,7 +14,6 @@ namespace GreyAnnouncer.FrontEnd;
 public class AnnouncerPanel : MonoBehaviour
 {
     private IAnnouncer _announcer;
-
     private Dropdown _announcerDropdown;
     private Toggle _randomizeToggle;
     private readonly Dictionary<string, Category> _categories = new();

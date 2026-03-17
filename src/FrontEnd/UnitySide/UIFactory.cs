@@ -15,7 +15,8 @@ public class UIFactory : MonoBehaviour
 
     public void Start()
     {
-        _toggleUIAction = new InputAction(binding: "<Keyboard>/backslash", interactions: "hold(duration=0.75)");
+        LogHelper.LogDebug("Register UIFactory Actions");
+        _toggleUIAction = new InputAction(binding: "<Keyboard>/backslash", interactions: "hold(duration=0.5)");
         _toggleUIAction.performed += _ => isAllowTrigger = true;
         _toggleUIAction.canceled += _ => TryOpenUI();
 
@@ -24,6 +25,7 @@ public class UIFactory : MonoBehaviour
     
     public void TryOpenUI()
     {   
+        LogHelper.LogDebug("TryOpenUI Called");
         if (isAllowTrigger == false) return;
 
         if (mainPanel == null)

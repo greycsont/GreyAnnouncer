@@ -22,6 +22,7 @@ public class Plugin : BaseUnityPlugin
 
     private void Awake()
     {
+        this.gameObject.hideFlags = HideFlags.DontSaveInEditor;
         log = base.Logger;
         LogHelper.log = log;
         LogHelper.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
@@ -29,7 +30,7 @@ public class Plugin : BaseUnityPlugin
         LoadMainModule();
         LoadOptionalModule();
         PatchHarmony();
-        this.GetOrAddComponent<UIFactory>();
+        this.gameObject.AddComponent<UIFactory>();
     }
 
     private void LoadMainModule()
@@ -47,8 +48,6 @@ public class Plugin : BaseUnityPlugin
     private void PatchHarmony()
     {
         _harmony = new Harmony(PluginInfo.PLUGIN_GUID + ".harmony");
-        _harmony.PatchAll();
-
     }
 
     private void CheckPluginLoaded()
