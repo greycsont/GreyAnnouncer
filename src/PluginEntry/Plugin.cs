@@ -17,20 +17,18 @@ namespace GreyAnnouncer;
 [BepInDependency(PluginDependencies.PLUGINCONFIGURATOR_GUID, BepInDependency.DependencyFlags.SoftDependency)]
 public class Plugin : BaseUnityPlugin
 {
-    internal static ManualLogSource log;
     private         Harmony         _harmony;
 
     private void Awake()
     {
-        this.gameObject.hideFlags = HideFlags.DontSaveInEditor;
-        log = base.Logger;
-        LogHelper.log = log;
+        gameObject.hideFlags = HideFlags.DontSaveInEditor;
+        LogHelper.log = base.Logger;
         LogHelper.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
         
         LoadMainModule();
         LoadOptionalModule();
         PatchHarmony();
-        this.gameObject.AddComponent<UIFactory>();
+        gameObject.AddComponent<UIFactory>();
     }
 
     private void LoadMainModule()

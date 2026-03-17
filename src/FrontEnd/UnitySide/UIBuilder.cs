@@ -89,7 +89,7 @@ public static class UIBuilder
 
     // ── Toggle ────────────────────────────────────────────────
 
-    public static Toggle AddToggle(Transform parent, float preferredWidth = 24, float preferredHeight = -1)
+    public static Toggle AddToggle(Transform parent, float preferredWidth = 24, float preferredHeight = 28)
     {
         var obj = DefaultControls.CreateToggle(new DefaultControls.Resources());
         obj.transform.SetParent(parent, false);
@@ -103,7 +103,7 @@ public static class UIBuilder
     // ── Slider ────────────────────────────────────────────────
 
     public static Slider AddSlider(Transform parent, float value, float min, float max,
-        float preferredHeight = 20, float preferredWidth = -1)
+        float preferredHeight = 28, float preferredWidth = -1)
     {
         var obj = DefaultControls.CreateSlider(new DefaultControls.Resources());
         obj.transform.SetParent(parent, false);

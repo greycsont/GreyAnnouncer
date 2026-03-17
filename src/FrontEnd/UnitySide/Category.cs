@@ -22,6 +22,7 @@ public class Category : MonoBehaviour
         hlg.childControlHeight     = false;
         hlg.childForceExpandWidth  = false;
         hlg.childForceExpandHeight = false;
+        hlg.childAlignment = TextAnchor.MiddleLeft;
         hlg.spacing = 6;
         hlg.padding = new RectOffset(8, 8, 3, 3);
         gameObject.AddComponent<LayoutElement>().preferredHeight = 28;
