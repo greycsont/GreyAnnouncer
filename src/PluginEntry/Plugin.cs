@@ -1,9 +1,11 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
-
+using UnityEngine;
+using UnityEngine.InputSystem;
 using GreyAnnouncer.Util;
 using GreyAnnouncer.Config;
+using GreyAnnouncer.FrontEnd;
 
 /* The StyleHUD.cs in the HarmonyPatches folder is the starting point of the whole sequence of announcer 
    But for the initialize of the program like loading audio or something, you should start from here */
@@ -27,6 +29,7 @@ public class Plugin : BaseUnityPlugin
         LoadMainModule();
         LoadOptionalModule();
         PatchHarmony();
+        this.GetOrAddComponent<UIFactory>();
     }
 
     private void LoadMainModule()

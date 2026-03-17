@@ -1,27 +1,53 @@
-using System.IO;
 using UnityEngine;
-using UnityEngine.Video;
+using UnityEngine.InputSystem;
 
 using GreyAnnouncer.Util;
 
 namespace GreyAnnouncer.FrontEnd;
 
-public static class UIFactory
+public class UIFactory : MonoBehaviour
 {
-    public static void CreateUI()
+    public GameObject mainPanel;
+
+    public InputAction _toggleUIAction;
+
+    public bool isAllowTrigger = false;
+
+    public void Start()
+    {
+        _toggleUIAction = new InputAction(binding: "<Keyboard>/backslash", interactions: "hold(duration=0.75)");
+        _toggleUIAction.performed += _ => isAllowTrigger = true;
+        _toggleUIAction.canceled += _ => TryOpenUI();
+
+        _toggleUIAction.Enable();
+    }
+    
+    public void TryOpenUI()
     {   
+        if (isAllowTrigger == false) return;
+
+        if (mainPanel == null)
+            CreateUI();
+        else
+            mainPanel.SetActive(!mainPanel.activeSelf);
+
+        isAllowTrigger = false;
+    }
+
+    public void CreateUI()
+    {
         LogHelper.LogInfo("Loading UI...");
 
         var canvas = UnityPathManager.FindCanvas();
         if (canvas == null) return;
 
-        GameObject go = new GameObject("MainPanelHost");
+        mainPanel = new GameObject("MainPanelHost");
         
-        go.transform.SetParent(canvas.transform, false);
+        mainPanel.transform.SetParent(canvas.transform, false);
 
-        go.AddComponent<MainPanel>();
+        mainPanel.AddComponent<MainPanel>();
 
-        var rt = go.GetComponent<RectTransform>() ?? go.AddComponent<RectTransform>();
+        var rt = mainPanel.GetComponent<RectTransform>() ?? mainPanel.AddComponent<RectTransform>();
         
         rt.anchorMin = Vector2.zero;
         rt.anchorMax = Vector2.one;
@@ -33,4 +59,5 @@ public static class UIFactory
 
         LogHelper.LogInfo("UI Initialized at full size with margins."); 
     }
+
 }

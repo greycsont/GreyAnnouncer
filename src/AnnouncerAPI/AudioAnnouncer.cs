@@ -90,7 +90,7 @@ public class AudioAnnouncer : IAnnouncer
 
     public AudioAnnouncer(IAudioLoader audioLoader,
                            ICooldownManager cooldownManager,
-                           List<string> displayNameMapping,
+                           List<string> category,
                            string title,
                            string defaultAnnouoncerConfigPath,
                            string GUID)
@@ -99,7 +99,7 @@ public class AudioAnnouncer : IAnnouncer
         this._audioLoader.SetProvider(this);
         this._cooldownManager = cooldownManager;
         this._defaultAnnouncerConfigPath = defaultAnnouoncerConfigPath;
-        this.category = displayNameMapping;
+        this.category = category;
         this.title = title;
         this.GUID = GUID;
 

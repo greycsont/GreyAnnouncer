@@ -166,8 +166,7 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
                       );
 
     private Branch GetTestBranches()
-        => Branch("t",
-            Leaf("showui", () => UIFactory.CreateUI())
+        => Branch("t"
         );
 
     public Logger Log { get; } = new("grey");

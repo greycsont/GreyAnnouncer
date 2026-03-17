@@ -26,12 +26,12 @@ public static class RankAnnouncer
     public static void Initialize()
     {
         _announcer = new AudioAnnouncer(
-            new AudioLoader(),
-            new CooldownManager(category.ToArray()),
-            category,
-            _title,
-            "greythroat",
-            _GUID
+            audioLoader: new AudioLoader(),
+            cooldownManager: new CooldownManager(category.ToArray()),
+            category: category,
+            title: _title,
+            defaultAnnouoncerConfigPath: "greythroat",
+            GUID: _GUID
         );
     }
 
