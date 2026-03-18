@@ -97,7 +97,22 @@ public static class UIBuilder
         le.preferredWidth = preferredWidth;
         le.flexibleWidth  = 0;
         if (preferredHeight >= 0) le.preferredHeight = preferredHeight;
-        return obj.GetComponent<Toggle>();
+
+        var toggle = obj.GetComponent<Toggle>();
+
+        var indicatorObj = new GameObject("Indicator", typeof(RectTransform), typeof(TextMeshProUGUI));
+        indicatorObj.transform.SetParent(obj.transform, false);
+        SetFullStretch(indicatorObj.GetComponent<RectTransform>());
+        var tmp = indicatorObj.GetComponent<TextMeshProUGUI>();
+        tmp.text         = toggle.isOn ? "x" : "";
+        tmp.fontSize     = 14;
+        tmp.color        = Color.white;
+        tmp.alignment    = TextAlignmentOptions.Center;
+        tmp.raycastTarget = false;
+
+        toggle.onValueChanged.AddListener(v => tmp.text = v ? "x" : "");
+
+        return toggle;
     }
 
     // ── Slider ────────────────────────────────────────────────

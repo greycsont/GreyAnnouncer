@@ -44,25 +44,25 @@ public class RegistedAnnouncerPage
         ConfigHeader titleHeader = new ConfigHeader(panel, _title, 30);
         titleHeader.textColor = HeaderColor;
 
-        var announcers = AnnouncerIndex.GetAnnouncers();
+        var announcers = AnnouncerIndex.GetTargetAnnouncer(_announcer.title);
 
         var announcerField = new StringListField(
             panel,                     
             "Selected Announcer",             
-            _announcer.GUID + "_" + "Selected_Announcer",     
+            _announcer.title + "_" + "Selected_Announcer",     
             announcers,                
             announcers.FirstOrDefault() ?? "default"
         );
 
         announcerField.onValueChange += e =>
         {
-            _announcer.announcerPath = Path.Combine(Setting.announcersPath, e.value);
+            _announcer.announcerPath = Path.Combine(Setting.announcersPath, _announcer.title, e.value);
         };
 
         var openDirectoryButtonField = new ButtonField(
             panel,
             "Open Current Announcer Folder",
-            _announcer.GUID + "_" + "Open_Current_Announcer_Folder"
+            _announcer.title + "_" + "Open_Current_Announcer_Folder"
         );
         openDirectoryButtonField.onClick += () 
             => _announcer.EditExternally();
@@ -75,7 +75,7 @@ public class RegistedAnnouncerPage
         _fields.RandomizeAudioField = new BoolField(
             panel,
             "Randomize Audio On Play",
-            _announcer.GUID + "_" + "RandomizeAudioOnPlay",
+            _announcer.title + "_" + "RandomizeAudioOnPlay",
             _announcer.announcerConfig.RandomizeAudioOnPlay
         );
         _fields.RandomizeAudioField.defaultValue = false;
@@ -109,7 +109,7 @@ public class RegistedAnnouncerPage
                                                 AnnouncerConfig AnnouncerConfig,
                                                 bool defaultValue)
     {
-        var fullGuid = _announcer.GUID + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "Enabled");
+        var fullGuid = _announcer.title + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "Enabled");
         var field = new BoolField(panel, "Enabled", fullGuid, AnnouncerConfig.CategorySetting[guid].Enabled);
         field.defaultValue = defaultValue;
         field.onValueChange += e =>
@@ -128,7 +128,7 @@ public class RegistedAnnouncerPage
                                              AnnouncerConfig AnnouncerConfig,
                                              float defaultValue)
     {
-        var fullGuid = _announcer.GUID + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "VolumeMultiplier");
+        var fullGuid = _announcer.title + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "VolumeMultiplier");
         var field = new FloatField(panel, "Volume", fullGuid, AnnouncerConfig.CategorySetting[guid].VolumeMultiplier);
         field.defaultValue = defaultValue;
         field.onValueChange += e =>
@@ -145,7 +145,7 @@ public class RegistedAnnouncerPage
                                                      AnnouncerConfig AnnouncerConfig,
                                                      float defaultValue)
     {
-        var fullGuid = _announcer.GUID + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "Cooldown");
+        var fullGuid = _announcer.title + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "Cooldown");
         var field = new FloatSliderField(panel, "Cooldown", fullGuid, Tuple.Create(0.2f, 6f), AnnouncerConfig.CategorySetting[guid].Cooldown, 1);
         field.defaultValue = defaultValue;
         field.onValueChange += e =>

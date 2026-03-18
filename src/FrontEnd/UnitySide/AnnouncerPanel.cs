@@ -58,11 +58,15 @@ public class AnnouncerPanel : MonoBehaviour
 
         // Announcer selector
         UIBuilder.AddLabel(content, "Selected Announcer", 13, UIBuilder.SubLabelColor, preferredHeight: 22);
-        _announcerDropdown = UIBuilder.AddDropdown(content, AnnouncerIndex.GetAnnouncers());
+        var announcerOptions = AnnouncerIndex.GetTargetAnnouncer(_announcer.title);
+        _announcerDropdown = UIBuilder.AddDropdown(content, announcerOptions);
+        var currentPack = Path.GetFileName(_announcer.announcerPath);
+        var initIdx = announcerOptions.IndexOf(currentPack);
+        if (initIdx >= 0) _announcerDropdown.SetValueWithoutNotify(initIdx);
         _announcerDropdown.onValueChanged.AddListener(idx =>
         {
             var selected = _announcerDropdown.options[idx].text;
-            _announcer.announcerPath = Path.Combine(Setting.announcersPath, selected);
+            _announcer.announcerPath = Path.Combine(Setting.announcersPath, _announcer.title, selected);
         });
         UIBuilder.AddSpace(content, 3);
 

@@ -30,8 +30,7 @@ public static class RankAnnouncer
             cooldownManager: new CooldownManager(category.ToArray()),
             category: category,
             title: _title,
-            defaultAnnouoncerConfigPath: "greythroat",
-            GUID: _GUID
+            defaultAnnouoncerConfigPath: "greythroat"
         );
     }
 

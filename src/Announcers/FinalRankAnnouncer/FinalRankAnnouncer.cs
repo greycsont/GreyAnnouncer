@@ -19,18 +19,16 @@ public static class FinalRankAnnouncer
 
     private static AudioAnnouncer _announcer;
     private static readonly string _title = "ResultAnnouncer";
-    private static readonly string _GUID = "com.greycsont.resultannouncer";
 
     public static void Initialize()
     {
-        _announcer = new AudioAnnouncer(
+        /*_announcer = new AudioAnnouncer(
             new AudioLoader(),
             new CooldownManager(category.ToArray()),
             category,
             _title,
-            "spzeta",
-            _GUID
-        );
+            "spzeta"
+        );*/
     }
 
     public static void PlayRankSound(int rank) 

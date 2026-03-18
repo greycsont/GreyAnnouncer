@@ -39,6 +39,16 @@ public static class MainPanelBuilder
 
     private static List<RegistedAnnouncerPage> _pages = new List<RegistedAnnouncerPage>();
 
+    private static FloatSliderField volumeSlider;
+
+    private static EnumField<AudioPlayOptions> playOption;
+
+    private static EnumField<AudioLoadOptions> loadOption;
+
+    private static BoolField lowpassToggle;
+
+    private static BoolField ffmpegToggle;
+
 
 
     public static void Build(PluginConfigurator config)
@@ -56,6 +66,16 @@ public static class MainPanelBuilder
         CreateDelegateTextFromBackEnd();
 
         AnnouncerManager.OnRegistered += AddAnnouncerPage;
+        Setting.syncUI += SyncUI;
+    }
+
+    public static void SyncUI()
+    {
+        volumeSlider.value = Setting.audioSourceVolume;
+        playOption.value = (AudioPlayOptions)Setting.audioPlayOptions;
+        loadOption.value = (AudioLoadOptions)Setting.audioLoadingStrategy;
+        lowpassToggle.value = Setting.isLowPassFilterEnabled;
+        ffmpegToggle.value = Setting.isFFmpegSupportEnabled;
     }
 
     public static void CreateAnnouncerPage()
@@ -80,7 +100,7 @@ public static class MainPanelBuilder
     private static void CreateAudioControls()
     {
 
-        var volumeSlider = new FloatSliderField(
+        volumeSlider = new FloatSliderField(
             m_pluginConfigurator.rootPanel,
             "Master Volume",
             "Audio_Volume",
@@ -95,7 +115,7 @@ public static class MainPanelBuilder
         // It worked, but not working great as there's ton of audio when from low rank directly to the high rank
         // May be add a short cooldown as limitation
 
-        var playOption = new EnumField<AudioPlayOptions>(
+        playOption = new EnumField<AudioPlayOptions>(
             m_pluginConfigurator.rootPanel,
             "Audio Play Strategy",
             "Audio_Play_Strategy",
@@ -105,14 +125,14 @@ public static class MainPanelBuilder
         playOption.onValueChange += e =>
             Setting.audioPlayOptions = (int)e.value;
 
-        var loadingOption = new EnumField<AudioLoadOptions>(
+        loadOption = new EnumField<AudioLoadOptions>(
             m_pluginConfigurator.rootPanel,
             "Audio Load Strategy",
             "Audio_Load_Strategy",
             (AudioLoadOptions)Setting.audioLoadingStrategy
         );
-        loadingOption.defaultValue = (AudioLoadOptions)0;
-        loadingOption.onValueChange += e =>
+        loadOption.defaultValue = (AudioLoadOptions)0;
+        loadOption.onValueChange += e =>
             Setting.audioLoadingStrategy = (int)e.value;
 
         new ConfigSpace(m_pluginConfigurator.rootPanel, 7f);
@@ -142,7 +162,7 @@ public static class MainPanelBuilder
         advancedPanel.hidden = true;
         new ConfigSpace(advancedPanel, 15f);
 
-        var lowpassToggle = new BoolField(
+        lowpassToggle = new BoolField(
             advancedPanel,
             "LowPassFilter when under water",
             "LowPassFilter_Enabled",
@@ -152,7 +172,7 @@ public static class MainPanelBuilder
         lowpassToggle.onValueChange += (e) =>
             Setting.isLowPassFilterEnabled = e.value;
 
-        var ffmpegToggle = new BoolField(
+        ffmpegToggle = new BoolField(
             advancedPanel,
             "FFmpeg Support",
             "FFmpeg_Support",

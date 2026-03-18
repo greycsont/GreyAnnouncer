@@ -17,8 +17,6 @@ public class AudioAnnouncer : IAnnouncer
 {
     public string title { get; private set; }
 
-    public string GUID { get; private set; }
-
     private IAudioLoader _audioLoader;
 
     private ICooldownManager _cooldownManager;
@@ -31,7 +29,6 @@ public class AudioAnnouncer : IAnnouncer
 
     public Action syncUI { get; set; }
 
-
     /// <summary>When announcerPath changes, it will automatically reload relative configs.</summary>
     public string announcerPath
     {
@@ -40,7 +37,7 @@ public class AudioAnnouncer : IAnnouncer
         {
             LogHelper.LogDebug($"announcerPath seted");
             _announcerPath = value;
-            AnnouncerIndex.Set(GUID, value);
+            AnnouncerIndex.Set(title, value);
             ReloadAudio();
         }
     }
@@ -89,8 +86,8 @@ public class AudioAnnouncer : IAnnouncer
                            ICooldownManager cooldownManager,
                            List<string> category,
                            string title,
-                           string defaultAnnouoncerConfigPath,
-                           string GUID)
+                           string defaultAnnouoncerConfigPath
+                           )
     {
         this._audioLoader = audioLoader;
         this._audioLoader.SetProvider(this);
@@ -98,9 +95,8 @@ public class AudioAnnouncer : IAnnouncer
         this._defaultAnnouncerConfigPath = defaultAnnouoncerConfigPath;
         this.category = category;
         this.title = title;
-        this.GUID = GUID;
 
-        announcerPath = AnnouncerIndex.Get(this.GUID, _defaultAnnouncerConfigPath);
+        announcerPath = AnnouncerIndex.Get(this.title, _defaultAnnouncerConfigPath);
 
         SubscribeAnnouncerManager();
 
@@ -231,7 +227,6 @@ public class AudioAnnouncer : IAnnouncer
                 cat => new CategorySetting{}
             );
             var newConfig = new AnnouncerConfig().SetCategorySettingMap(audioDict);
-            newConfig.AnnouncerGUID = this.GUID;
             WriteConfigToIni(newConfig);
         }
 
@@ -261,9 +256,7 @@ public class AudioAnnouncer : IAnnouncer
 
     private void CheckConfigUpdate(ref AnnouncerConfig announcerConfig)
     {
-        // 1.4.0
-        if (string.IsNullOrEmpty(announcerConfig.AnnouncerGUID))
-            announcerConfig.AnnouncerGUID = this.GUID;
+        
     }
 
     public void EditExternally()

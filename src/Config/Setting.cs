@@ -1,14 +1,13 @@
-using System.Collections.Generic;
+using System;
 using System.IO;
 using GreyAnnouncer.AnnouncerAPI;
-using GreyAnnouncer.AudioLoading;
 using GreyAnnouncer.AudioSourceComponent;
 using GreyAnnouncer.Util;
-
 namespace GreyAnnouncer.Config;
 
 public static class Setting
 {
+    public static Action syncUI;
     public static float audioSourceVolume
     {
         get => BepInExConfig.audioSourceVolume.Value;
@@ -16,6 +15,7 @@ public static class Setting
         {
             BepInExConfig.audioSourceVolume.Value = value;
             SoloAudioSource.Instance.UpdateSoloAudioSourceVolume(value);
+            syncUI?.Invoke();
         }
     }
 
@@ -26,13 +26,17 @@ public static class Setting
         {
             BepInExConfig.isLowPassFilterEnabled.Value = value;
             UnderwaterController_inWater_Instance.CheckIsInWater();
+            syncUI?.Invoke();
         }
     }
 
     public static int audioPlayOptions
     {
         get => BepInExConfig.audioPlayOptions.Value;
-        set => BepInExConfig.audioPlayOptions.Value = value;
+        set {
+            BepInExConfig.audioPlayOptions.Value = value;
+            syncUI?.Invoke();
+        }
     }
 
     public static int audioLoadingStrategy
@@ -51,6 +55,7 @@ public static class Setting
                 ReloadAllAnnouncers();
             }
             BepInExConfig.audioLoadingStrategy.Value = value;
+            syncUI?.Invoke();
         } 
     }
 
@@ -66,13 +71,19 @@ public static class Setting
             }
             BepInExConfig.announcersPath.Value = value;
             MoveAnnouncersToTargetDirectory(value);
+            syncUI?.Invoke();
         }
     }
+
 
     public static bool isFFmpegSupportEnabled
     {
         get => BepInExConfig.isFFmpegSupportEnabled.Value;
-        set => BepInExConfig.isFFmpegSupportEnabled.Value = value;
+        set 
+        {
+            BepInExConfig.isFFmpegSupportEnabled.Value = value;
+            syncUI?.Invoke();
+        }
     }
 
 

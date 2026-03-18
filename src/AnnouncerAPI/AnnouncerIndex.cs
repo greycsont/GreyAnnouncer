@@ -15,12 +15,13 @@ public static class AnnouncerIndex
     
     private static readonly Dictionary<string, string> _data = Read();
 
-
-    public static void Set(string guid, string fullPath)
+    public static void Set(string title, string fullPath)
     {
-        string folder = Setting.announcersPath.EndsWith(Path.DirectorySeparatorChar.ToString()) 
-                    ? Setting.announcersPath 
-                    : Setting.announcersPath + Path.DirectorySeparatorChar;
+        var targetAnnouncerPath = Path.Combine(Setting.announcersPath, title);
+        
+        string folder = targetAnnouncerPath.EndsWith(Path.DirectorySeparatorChar.ToString()) 
+                    ? targetAnnouncerPath 
+                    : targetAnnouncerPath + Path.DirectorySeparatorChar;
 
         Uri pathUri = new Uri(fullPath);
         Uri folderUri = new Uri(folder);
@@ -28,28 +29,28 @@ public static class AnnouncerIndex
         string relativePath = Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri).ToString())
                                  .Replace('/', Path.DirectorySeparatorChar);
 
-        _data[guid] = relativePath;
+        _data[title] = relativePath;
         Save();
     }
 
-    public static string Get(string guid, string defaultAnnouncerRelativePath)
+    public static string Get(string title, string defaultAnnouncerRelativePath)
     {
-        if (_data.TryGetValue(guid, out var relativePath))
+        if (_data.TryGetValue(title, out var relativePath))
         {
-            return Path.Combine(Setting.announcersPath, relativePath);
+            return Path.Combine(Setting.announcersPath, title, relativePath);
         }
 
-        _data[guid] = defaultAnnouncerRelativePath;
+        _data[title] = defaultAnnouncerRelativePath;
         Save();
 
-        return Path.Combine(Setting.announcersPath, defaultAnnouncerRelativePath);
+        return Path.Combine(Setting.announcersPath, title, defaultAnnouncerRelativePath);
     }
 
     // No One uses this right?
     // RIGHT??
-    public static bool Remove(string guid)
+    public static bool Remove(string title)
     {
-        if (_data.Remove(guid))
+        if (_data.Remove(title))
         {
             Save();
             return true;
@@ -81,6 +82,15 @@ public static class AnnouncerIndex
     {
         return Directory
             .GetDirectories(Setting.announcersPath)
+            .Where(p => File.Exists(Path.Combine(p, "config.ini")))
+            .Select(Path.GetFileName)
+            .ToList();
+    }
+
+    public static List<string> GetTargetAnnouncer(string title)
+    {
+        return Directory
+            .GetDirectories(Path.Combine(Setting.announcersPath, title))
             .Where(p => File.Exists(Path.Combine(p, "config.ini")))
             .Select(Path.GetFileName)
             .ToList();

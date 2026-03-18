@@ -17,6 +17,10 @@ public class MainPanel : MonoBehaviour
     private GameObject _advancedPanelObj;
     private GameObject _creditsPanelObj;
 
+    private Slider _volumeSlider;
+    private Dropdown _playDd;
+    private Dropdown _loadDd;
+
     public void Awake()
     {
         UIBuilder.SetFullStretch(GetComponent<RectTransform>() ?? gameObject.AddComponent<RectTransform>());
@@ -37,11 +41,20 @@ public class MainPanel : MonoBehaviour
             AddAnnouncerPanel(announcer);
 
         AnnouncerManager.OnRegistered += AddAnnouncerPanel;
+        Setting.syncUI += SyncUI;
     }
 
     private void OnDestroy()
     {
         AnnouncerManager.OnRegistered -= AddAnnouncerPanel;
+        Setting.syncUI -= SyncUI;
+    }
+
+    private void SyncUI()
+    {
+        _volumeSlider.SetValueWithoutNotify(Setting.audioSourceVolume);
+        _playDd.SetValueWithoutNotify(Setting.audioPlayOptions);
+        _loadDd.SetValueWithoutNotify(Setting.audioLoadingStrategy);
     }
 
     // ── Global settings block ────────────────────────────────
@@ -51,20 +64,20 @@ public class MainPanel : MonoBehaviour
         UIBuilder.AddLabel(parent, "Settings", 15, new Color(0.5f, 0.8f, 1f), preferredHeight: 23);
 
         UIBuilder.AddLabel(parent, "Master Volume", 12, UIBuilder.SubLabelColor, preferredHeight: 20);
-        UIBuilder.AddSlider(parent, Setting.audioSourceVolume, 0f, 1f)
-            .onValueChanged.AddListener(v => Setting.audioSourceVolume = v);
+        _volumeSlider = UIBuilder.AddSlider(parent, Setting.audioSourceVolume, 0f, 1f);
+        _volumeSlider.onValueChanged.AddListener(v => Setting.audioSourceVolume = v);
 
         UIBuilder.AddLabel(parent, "Play Strategy", 12, UIBuilder.SubLabelColor, preferredHeight: 20);
-        var playDd = UIBuilder.AddDropdown(parent,
+        _playDd = UIBuilder.AddDropdown(parent,
             [..Enum.GetNames(typeof(AudioPlayOptions)).Select(s => s.Replace('_', ' '))], height: 30);
-        playDd.value = Setting.audioPlayOptions;
-        playDd.onValueChanged.AddListener(v => Setting.audioPlayOptions = v);
+        _playDd.value = Setting.audioPlayOptions;
+        _playDd.onValueChanged.AddListener(v => Setting.audioPlayOptions = v);
 
         UIBuilder.AddLabel(parent, "Load Strategy", 12, UIBuilder.SubLabelColor, preferredHeight: 20);
-        var loadDd = UIBuilder.AddDropdown(parent,
+        _loadDd = UIBuilder.AddDropdown(parent,
             [..Enum.GetNames(typeof(AudioLoadOptions)).Select(s => s.Replace('_', ' '))], height: 30);
-        loadDd.value = Setting.audioLoadingStrategy;
-        loadDd.onValueChanged.AddListener(v => Setting.audioLoadingStrategy = v);
+        _loadDd.value = Setting.audioLoadingStrategy;
+        _loadDd.onValueChanged.AddListener(v => Setting.audioLoadingStrategy = v);
 
         var actionRow = UIBuilder.AddRow(parent, "ActionRow", height: 36).transform;
 
