@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using GreyAnnouncer.AudioSourceComponent;
-using GreyAnnouncer.Config;
-using GreyAnnouncer.FrontEnd;
 using GreyAnnouncer.Util.Ini;
 using GreyAnnouncer.Util;
 
