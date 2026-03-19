@@ -1,11 +1,10 @@
-
 using System.Collections.Generic;
 
 using GreyAnnouncer.AnnouncerAPI;
 
-
 namespace GreyAnnouncer.FinalRankAnnouncer;
 
+[EntryPoint]
 public static class FinalRankAnnouncer
 {
     private static readonly List<string> category = new List<string>(){   //used only for creating JSON
@@ -18,8 +17,8 @@ public static class FinalRankAnnouncer
     };
 
     private static AudioAnnouncer _announcer;
-    private static readonly string _title = "ResultAnnouncer";
 
+    [EntryPoint]
     public static void Initialize()
     {
         /*_announcer = new AudioAnnouncer(

@@ -43,7 +43,12 @@ public class CreditsPanel : MonoBehaviour
         sb.AppendLine("  Easy to use tbh (except changing font)");
         sb.AppendLine();
         sb.AppendLine("- Maxwell's puzzling demon");
-        sb.AppendLine("  (https://store.steampowered.com/app/2770160/) Fun puzzle game");
+        sb.AppendLine("  (https://store.steampowered.com/app/2770160/)");
+        sb.AppendLine("  Fun puzzle game");
+        sb.AppendLine();
+        sb.AppendLine("- A mod that currently WIP");
+        sb.AppendLine("  (Advert Placeholder)");
+        sb.AppendLine("  Pretty FUN I would say");
         sb.AppendLine();
         sb.AppendLine("- 快乐萨卡兹厨, jamcame, 夕柱.");
         sb.AppendLine();

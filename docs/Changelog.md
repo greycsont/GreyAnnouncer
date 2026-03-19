@@ -1,4 +1,7 @@
-### Known issue/TODO
+### v1.4.1
+- Add more Unity.AudioType in AudioClipLoader
+
+
 ### v1.4.0
 - Rework of config.ini
 - adds GUID in announcerConfig

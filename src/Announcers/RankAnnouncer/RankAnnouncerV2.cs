@@ -1,11 +1,10 @@
-
 using System.Collections.Generic;
 
 using GreyAnnouncer.AnnouncerAPI;
 
-
 namespace GreyAnnouncer.RankAnnouncer;
 
+[EntryPoint]
 public static class RankAnnouncer
 {
     private static readonly List<string> category = new List<string>(){   //used only for creating JSON
@@ -20,16 +19,16 @@ public static class RankAnnouncer
     };
 
     private static AudioAnnouncer _announcer;
-    private static readonly string _title = "RankAnnouncer";
-    private static readonly string _GUID = "com.greycsont.rankannouncer";
+    public static readonly string title = "RankAnnouncer";
 
+    [EntryPoint]
     public static void Initialize()
     {
         _announcer = new AudioAnnouncer(
             audioLoader: new AudioLoader(),
             cooldownManager: new CooldownManager(category.ToArray()),
             category: category,
-            title: _title,
+            title: title,
             defaultAnnouoncerConfigPath: "greythroat"
         );
     }

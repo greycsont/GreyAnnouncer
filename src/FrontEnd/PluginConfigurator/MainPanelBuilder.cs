@@ -16,7 +16,7 @@ using System.IO;
 
 namespace GreyAnnouncer.FrontEnd;
 
-// Chaotic
+[EntryPoint]
 public static class MainPanelBuilder
 {
     private static readonly Color m_greyColour = new UnityEngine.Color(0.85f, 0.85f, 0.85f, 1f);
@@ -50,7 +50,7 @@ public static class MainPanelBuilder
     private static BoolField ffmpegToggle;
 
 
-
+    [EntryPoint]
     public static void Build(PluginConfigurator config)
     {
         m_pluginConfigurator = config;
@@ -218,6 +218,7 @@ public static class MainPanelBuilder
         creditText.AppendLine("\n- Announcer Mod \n(https://www.nexusmods.com/ultrakill/mods/54) I started of this project is just because the mod isn't update in the few days after revamp");
         creditText.AppendLine("\n- PluginConfigurator doc \n(https://github.com/eternalUnion/UKPluginConfigurator/wiki) Easy to use tbh (except changing font)");
         creditText.AppendLine("\n- Maxwell's puzzling demon \n(https://store.steampowered.com/app/2770160/) Fun puzzle game");
+        creditText.AppendLine("\n- A mod that currently WIP \n(Advert Placeholder) Pretty FUN I would say");
         creditText.AppendLine("\n- 快乐萨卡兹厨, jamcame, 夕柱.");
         creditText.AppendLine("\n");
         creditText.AppendLine("\n- Everyone who used this mod.");
