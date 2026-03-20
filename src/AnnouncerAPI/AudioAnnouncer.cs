@@ -8,6 +8,9 @@ using System.Collections.Generic;
 using GreyAnnouncer.AudioSourceComponent;
 using GreyAnnouncer.Util.Ini;
 using GreyAnnouncer.Util;
+using GameConsole.pcon;
+using System.Runtime.CompilerServices;
+using System.Diagnostics;
 
 namespace GreyAnnouncer.AnnouncerAPI;
 
@@ -46,6 +49,7 @@ public class AudioAnnouncer : IAnnouncer
         get => _announcerConfig;
         set
         {
+            LogHelper.LogDebug("setter trigged");
             if (_announcerConfig == value)
                 return;
 
@@ -57,20 +61,24 @@ public class AudioAnnouncer : IAnnouncer
             if (_announcerConfig != null)
                 _announcerConfig.PropertyChanged += OnAnnouncerConfigChanged;
 
-            ApplyAnnouncerConfig();
+            ApplyConfigToOther();
         }
     }
 
     private void OnAnnouncerConfigChanged(object sender, PropertyChangedEventArgs e)
     {
         LogHelper.LogDebug($"AnnouncerConfig changed: {e.PropertyName}");
-        ApplyAnnouncerConfig();
+        ApplyConfigToOther();
     }
 
-    private void ApplyAnnouncerConfig()
+    private void ApplyConfigToOther()
     {
-        _ = _audioLoader.FindAvailableAudioAsync();
-        WriteConfigToIni(announcerConfig);
+        if (_announcerConfig != null && isConfigLoaded)
+        {
+            _ = _audioLoader.FindAvailableAudioAsync();
+            WriteConfigToIni(announcerConfig);
+        }
+
         if (_initialized)
             syncUI.Invoke();
     }
@@ -79,6 +87,11 @@ public class AudioAnnouncer : IAnnouncer
     private string iniPath => Path.Combine(announcerPath, "config.ini");
 
     private bool _initialized = false;
+
+    public bool isConfigLoaded { get; private set; } = false;
+
+    /// <summary>When isConfigLoaded is false due to category mismatch, describes which keys are missing or extra.</summary>
+    public string configMismatchInfo { get; private set; }
 
     public AudioAnnouncer(IAudioLoader audioLoader,
                            ICooldownManager cooldownManager,
@@ -107,7 +120,7 @@ public class AudioAnnouncer : IAnnouncer
         LogHelper.LogInfo($"Request to play audio for category: {category}");
         try
         {
-            if (!ValidateAndLogPlayback(category))
+            if (!ValidateCondition(category))
                 return;
 
             await PlayAudioClip(category);
@@ -118,6 +131,7 @@ public class AudioAnnouncer : IAnnouncer
         }
     }
 
+
     /// <summary>Will Play a random audio in the belong category by jsonSetting mapping via index</summary>
     public async Task PlayAudioViaIndex(int index)
         => await PlayAudioViaCategory(announcerConfig.CategorySetting.Keys.ToArray()[index]);
@@ -126,13 +140,7 @@ public class AudioAnnouncer : IAnnouncer
     /// <summary>Reload Audio, only works when using Preload and Play options</summary>
     public void ReloadAudio()
     {
-        if (announcerConfig == null)
-            announcerConfig = AnnouncerConfigIniInitialization(category);
-        else
-        {
-            announcerConfig.ApplyFrom(AnnouncerConfigIniInitialization(category));
-            ApplyAnnouncerConfig();
-        }
+        announcerConfig = InitializeConfig(category);
     }
 
 
@@ -151,7 +159,7 @@ public class AudioAnnouncer : IAnnouncer
 
 
     /// <summary>Gets bool with validate serveral conditions </summary>
-    private bool ValidateAndLogPlayback(string category)
+    private bool ValidateCondition(string category)
     {
         var validationState = GetPlayValidationState(category);
         if (validationState != ValidationState.Success)
@@ -195,11 +203,17 @@ public class AudioAnnouncer : IAnnouncer
         if (_cooldownManager == null || _audioLoader == null)
             return ValidationState.ComponentsNotInitialized;
 
+        if (_announcerConfig == null)
+            return ValidationState.ConfigNotLoaded;
+
         if (!announcerConfig.CategorySetting.ContainsKey(category))
             return ValidationState.InvalidKey;
 
         if (!announcerConfig.CategorySetting[category].Enabled && announcerConfig.RandomizeAudioOnPlay == false)
             return ValidationState.DisabledByConfig;
+        
+        if (_cooldownManager.IsIndividualCooldownActive(category) == true)
+            return ValidationState.IndividualCooldown;
 
         return ValidationState.Success;
     }
@@ -214,25 +228,50 @@ public class AudioAnnouncer : IAnnouncer
     }
 
     
-    private AnnouncerConfig AnnouncerConfigIniInitialization(List<string> category)
+    private AnnouncerConfig InitializeConfig(List<string> category)
     {
-        LogHelper.LogDebug($"current iniPath for {title}: {iniPath}");
-        if (File.Exists(iniPath) == false)
+        LogHelper.LogDebug($"current iniPath of {title}: {iniPath}");
+
+        var defaultConfig = new AnnouncerConfig().SetCategorySettingMap(
+            category.ToDictionary(cat => cat, cat => new CategorySetting())
+        );
+
+        if (!File.Exists(iniPath))
         {
             LogHelper.LogDebug($"Initialize new config.ini in: {iniPath}");
-            var audioDict = category.ToDictionary(
-                cat => cat,
-                cat => new CategorySetting{}
-            );
-            var newConfig = new AnnouncerConfig().SetCategorySettingMap(audioDict);
-            WriteConfigToIni(newConfig);
+            WriteConfigToIni(defaultConfig);
+            isConfigLoaded = false;
+            return defaultConfig;
         }
 
-        return ReadConfigFromIni();
+        var iniConfig = ReadConfigFromIni();
+        if (iniConfig == null || !IsCategoryMatch(iniConfig, category))
+        {
+            LogHelper.LogError($"[{title}] AnnouncerConfig category mismatch — {configMismatchInfo}");
+            isConfigLoaded = false;
+            return null;
+        }
+
+        isConfigLoaded = true;
+        return iniConfig;
+    }
+
+    private bool IsCategoryMatch(AnnouncerConfig config, List<string> expected)
+    {
+        var keys = config.CategorySetting.Keys;
+        var missing = expected.Except(keys).ToList();
+        var extra = keys.Except(expected).ToList();
+
+        if (missing.Count == 0)
+            return true;
+
+        configMismatchInfo = $"Missing: [{string.Join(", ", missing)}], Extra: [{string.Join(", ", extra)}]";
+        return false;
     }
 
     private void WriteConfigToIni(AnnouncerConfig announcerConfig)
     {
+        LogHelper.LogDebug($"[WriteConfigToIni] called by {new StackTrace().GetFrame(1).GetMethod().Name}");
         var doc = new IniDocument();
 
         doc = AnnouncerIniMapper.ToIni(doc, announcerConfig);

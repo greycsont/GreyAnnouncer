@@ -11,4 +11,6 @@ public interface IAnnouncer
     public void EditExternally();
     public void ReloadAudio();
     public Action syncUI { get; set; }
+    public bool isConfigLoaded { get;}
+    public string configMismatchInfo { get; }
 }

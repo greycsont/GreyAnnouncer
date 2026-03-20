@@ -2,6 +2,7 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using GreyAnnouncer.AnnouncerAPI;
 using GreyAnnouncer.Config;
 
@@ -14,8 +15,10 @@ namespace GreyAnnouncer.FrontEnd;
 public class AnnouncerPanel : MonoBehaviour
 {
     private IAnnouncer _announcer;
+    private Transform _content;
     private Dropdown _announcerDropdown;
     private Toggle _randomizeToggle;
+    private TextMeshProUGUI _mismatchLabel;
     private readonly Dictionary<string, Category> _categories = new();
 
     // ── public API ──────────────────────────────────────────
@@ -31,7 +34,24 @@ public class AnnouncerPanel : MonoBehaviour
     public void Refresh()
     {
         if (_announcer == null) return;
+
+        var currentPack = Path.GetFileName(_announcer.announcerPath);
+        var idx = _announcerDropdown.options.FindIndex(o => o.text == currentPack);
+        if (idx >= 0) _announcerDropdown.SetValueWithoutNotify(idx);
+
+        if (_announcer.isConfigLoaded == false)
+        {
+            _mismatchLabel.text = string.IsNullOrEmpty(_announcer.configMismatchInfo)
+                ? "Config not loaded."
+                : $"Config mismatch — {_announcer.configMismatchInfo}";
+            return;
+        }
+        _mismatchLabel.text = "";
+
         var cfg = _announcer.announcerConfig;
+
+        if (_randomizeToggle == null)
+            BuildConfigSection(cfg);
 
         _randomizeToggle?.SetIsOnWithoutNotify(cfg.RandomizeAudioOnPlay);
 
@@ -51,6 +71,7 @@ public class AnnouncerPanel : MonoBehaviour
         UIBuilder.SetFullStretch(GetComponent<RectTransform>() ?? gameObject.AddComponent<RectTransform>());
 
         var (_, content) = UIBuilder.BuildScrollView(transform);
+        _content = content;
 
         // Title
         UIBuilder.AddLabel(content, _announcer.title, 26, Color.white, preferredHeight: 36);
@@ -75,26 +96,35 @@ public class AnnouncerPanel : MonoBehaviour
             .onClick.AddListener(() => _announcer.EditExternally());
         UIBuilder.AddSpace(content, 3);
 
+        // Mismatch label (updated by Refresh)
+        _mismatchLabel = UIBuilder.AddLabel(content, "", 14, new Color(1f, 0.4f, 0.4f), preferredHeight: 22);
+
+        if (_announcer.isConfigLoaded)
+            BuildConfigSection(_announcer.announcerConfig);
+    }
+
+    private void BuildConfigSection(AnnouncerConfig cfg)
+    {
         // Randomize toggle row
-        var randomizeRow = UIBuilder.AddRow(content, "RandomizeRow").transform;
-        UIBuilder.AddLabel(randomizeRow, "Randomize Audio On Play", 14, UnityEngine.Color.white,
+        var randomizeRow = UIBuilder.AddRow(_content, "RandomizeRow").transform;
+        UIBuilder.AddLabel(randomizeRow, "Randomize Audio On Play", 14, Color.white,
             preferredWidth: 200, flexibleWidth: 1);
         _randomizeToggle = UIBuilder.AddToggle(randomizeRow, preferredWidth: 30);
-        _randomizeToggle.isOn = _announcer.announcerConfig.RandomizeAudioOnPlay;
+        _randomizeToggle.isOn = cfg.RandomizeAudioOnPlay;
         _randomizeToggle.onValueChanged.AddListener(v =>
             _announcer.announcerConfig.RandomizeAudioOnPlay = v);
-        UIBuilder.AddSpace(content, 3);
+        UIBuilder.AddSpace(_content, 3);
 
         // Per-category configuration
-        UIBuilder.AddLabel(content, "Configuration", 20, new UnityEngine.Color(0.85f, 0.85f, 0.85f),
+        UIBuilder.AddLabel(_content, "Configuration", 20, new Color(0.85f, 0.85f, 0.85f),
             preferredHeight: 30);
 
-        foreach (var kv in _announcer.announcerConfig.CategorySetting)
+        foreach (var kv in cfg.CategorySetting)
         {
             string key = kv.Key;
 
             var catObj = new GameObject("Category_" + key, typeof(RectTransform));
-            catObj.transform.SetParent(content, false);
+            catObj.transform.SetParent(_content, false);
             var cat = catObj.AddComponent<Category>();
             cat.SetName(key);
 
@@ -120,7 +150,7 @@ public class AnnouncerPanel : MonoBehaviour
             });
 
             _categories[key] = cat;
-            UIBuilder.AddSpace(content, 3);
+            UIBuilder.AddSpace(_content, 3);
         }
     }
 }

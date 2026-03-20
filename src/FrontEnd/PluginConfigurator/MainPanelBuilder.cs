@@ -16,7 +16,6 @@ using System.IO;
 
 namespace GreyAnnouncer.FrontEnd;
 
-[EntryPoint]
 public static class MainPanelBuilder
 {
     private static readonly Color m_greyColour = new UnityEngine.Color(0.85f, 0.85f, 0.85f, 1f);
@@ -50,7 +49,6 @@ public static class MainPanelBuilder
     private static BoolField ffmpegToggle;
 
 
-    [EntryPoint]
     public static void Build(PluginConfigurator config)
     {
         m_pluginConfigurator = config;

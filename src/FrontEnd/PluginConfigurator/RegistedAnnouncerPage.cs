@@ -23,10 +23,16 @@ public class RegistedAnnouncerPage
 
     private IAnnouncer _announcer;
 
+    private StringListField _announcerField;
+
+    private ConfigPanel _panel;
+
     private AnnouncerConfigFields _fields = new AnnouncerConfigFields
     {
         CategoryFields = new Dictionary<string, CategoryFields>()
     };
+
+    private ConfigHeader _mismatchHeader;
 
     public RegistedAnnouncerPage(IAnnouncer announcer)
     {
@@ -38,42 +44,54 @@ public class RegistedAnnouncerPage
         _title = announcer.title;
         _announcer = announcer;
 
-        ConfigPanel panel = new ConfigPanel(_pluginConfigurator.rootPanel, _title, _title);
-        new ConfigSpace(panel, 15f);
+        _panel = new ConfigPanel(_pluginConfigurator.rootPanel, _title, _title);
+        new ConfigSpace(_panel, 15f);
 
-        ConfigHeader titleHeader = new ConfigHeader(panel, _title, 30);
+        ConfigHeader titleHeader = new ConfigHeader(_panel, _title, 30);
         titleHeader.textColor = HeaderColor;
 
         var announcers = AnnouncerIndex.GetTargetAnnouncer(_announcer.title);
 
-        var announcerField = new StringListField(
-            panel,                     
+        _announcerField = new StringListField(
+            _panel,                     
             "Selected Announcer",             
             _announcer.title + "_" + "Selected_Announcer",     
             announcers,                
             announcers.FirstOrDefault() ?? "default"
         );
 
-        announcerField.onValueChange += e =>
+        _announcerField.onValueChange += e =>
         {
             _announcer.announcerPath = Path.Combine(Setting.announcersPath, _announcer.title, e.value);
         };
 
         var openDirectoryButtonField = new ButtonField(
-            panel,
+            _panel,
             "Open Current Announcer Folder",
             _announcer.title + "_" + "Open_Current_Announcer_Folder"
         );
-        openDirectoryButtonField.onClick += () 
+        openDirectoryButtonField.onClick += ()
             => _announcer.EditExternally();
 
-        
-        new ConfigSpace(panel, 15f);
+        _mismatchHeader = new ConfigHeader(_panel, ""){
+            textColor = new Color(1f, 0.4f, 0.4f),
+            textSize = 14
+        };
 
-        ConfigHeader configHeader = new ConfigHeader(panel, "Configuration");
+        if (_announcer.isConfigLoaded)
+        {
+            BuildConfigSection();
+        }
+        _announcer.syncUI += ApplyConfigToUI;
+    }
+
+    private void BuildConfigSection()
+    {
+        new ConfigSpace(_panel, 15f);
+        new ConfigHeader(_panel, "Configuration");
 
         _fields.RandomizeAudioField = new BoolField(
-            panel,
+            _panel,
             "Randomize Audio On Play",
             _announcer.title + "_" + "RandomizeAudioOnPlay",
             _announcer.announcerConfig.RandomizeAudioOnPlay
@@ -83,25 +101,23 @@ public class RegistedAnnouncerPage
         {
             _announcer.announcerConfig.RandomizeAudioOnPlay = e.value;
         };
-        
+
         foreach (var category in _announcer.announcerConfig.CategorySetting)
         {
             string key = category.Key;
 
-            ConfigHeader header = new ConfigHeader(panel, category.Key);
-            header.textColor = new Color(0,1,1);
+            ConfigHeader header = new ConfigHeader(_panel, category.Key);
+            header.textColor = new Color(0, 1, 1);
 
             var fields = new CategoryFields
             {
-                Enabled = CreateEnabledField(panel, key, _announcer.announcerConfig, true),
-                Volume  = CreateVolumeField(panel, key, _announcer.announcerConfig, 1f),
-                Cooldown = CreateCooldownField(panel, key, _announcer.announcerConfig, 3.0f)
+                Enabled  = CreateEnabledField(_panel, key, _announcer.announcerConfig, true),
+                Volume   = CreateVolumeField(_panel, key, _announcer.announcerConfig, 1f),
+                Cooldown = CreateCooldownField(_panel, key, _announcer.announcerConfig, 3.0f)
             };
 
             _fields.CategoryFields[key] = fields;
         }
-
-        _announcer.syncUI += ApplyConfigToUI;
     }
 
     private BoolField CreateEnabledField(ConfigPanel panel,
@@ -159,12 +175,26 @@ public class RegistedAnnouncerPage
 
     public void ApplyConfigToUI()
     {
-        var config = _announcer.announcerConfig;
-
         LogHelper.LogDebug($"ApplyConfigToUI called");
 
-        if (_fields.RandomizeAudioField != null)
-            _fields.RandomizeAudioField.value = config.RandomizeAudioOnPlay;
+        var currentPack = Path.GetFileName(_announcer.announcerPath);
+        _announcerField.value = currentPack;
+
+        if (!_announcer.isConfigLoaded)
+        {
+            _mismatchHeader.text = string.IsNullOrEmpty(_announcer.configMismatchInfo)
+                ? "Config not loaded."
+                : $"Config mismatch — {_announcer.configMismatchInfo}";
+            return;
+        }
+        _mismatchHeader.text = "";
+
+        var config = _announcer.announcerConfig;
+
+        if (_fields.RandomizeAudioField == null)
+            BuildConfigSection();
+
+        _fields.RandomizeAudioField.value = config.RandomizeAudioOnPlay;
 
         foreach (KeyValuePair<string, CategoryFields> kv in _fields.CategoryFields)
         {

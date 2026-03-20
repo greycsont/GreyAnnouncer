@@ -177,9 +177,9 @@ public class AudioLoader : IAudioLoader
 
     public async Task FindAvailableAudioAsync()
     {
-        LogHelper.LogInfo("Starting to find available audio asynchronously.");
         ClearCache();
         if (Setting.audioLoadingStrategy == 0) return;
+        LogHelper.LogInfo("Starting to find available audio asynchronously.");
         await LoadAllCategoriesAsync();
         LogLoadingResults();
     }

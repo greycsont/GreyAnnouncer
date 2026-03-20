@@ -10,5 +10,6 @@ public enum ValidationState
     ClipNotFound,
     ValidationError,
     ComponentsNotInitialized,
-    InvalidKey
+    InvalidKey,
+    ConfigNotLoaded
 }

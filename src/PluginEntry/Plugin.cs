@@ -13,7 +13,6 @@ using System.Collections.Generic;
    But for the initialize of the program like loading audio or something, you should start from here */
 namespace GreyAnnouncer;
 
-
 [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
 [BepInProcess("ULTRAKILL.exe")]
 [BepInDependency(PluginDependencies.PLUGINCONFIGURATOR_GUID, BepInDependency.DependencyFlags.SoftDependency)]
@@ -95,15 +94,6 @@ public class Plugin : BaseUnityPlugin
                 LogHelper.LogError(e);
             }
         }
-    }
-
-    private void CheckPluginLoaded()
-    {
-        PluginDependencies.LoadIfPluginExists(
-            PluginDependencies.PLUGINCONFIGURATOR_GUID,
-            "PluginConfiguratorEntry",
-            () => ReflectionManager.LoadByReflection("GreyAnnouncer.FrontEnd.PluginConfiguratorEntry", "Initialize")
-        );
     }
 }
 
