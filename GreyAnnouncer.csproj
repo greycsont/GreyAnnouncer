@@ -7,7 +7,7 @@
     <Version>1.4.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
     <Platforms>AnyCPU</Platforms>
     <NoWarn>CS0436</NoWarn>
   </PropertyGroup>
@@ -15,13 +15,6 @@
 
   <!-- Game's instruction set -->
   <ItemGroup>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>$(ManagedDir)\Assembly-CSharp.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-
-    <Publicize Include="Assembly-CSharp" />
-
     <Reference Include="PluginConfigurator">
       <HintPath>lib\PluginConfigurator.dll</HintPath>
       <private>false</private>
@@ -31,79 +24,20 @@
       <HintPath>$(ManagedDir)\plog.dll</HintPath>
       <Private>false</Private>
     </Reference>
-
-    <Reference Include="Unity.TextMeshPro">
-      <HintPath>$(ManagedDir)\Unity.TextMeshPro.dll</HintPath>
+    <PackageReference Include="UnityEngine.Modules" Version="2022.3.29" IncludeAssets="compile" />
+   
+    <Reference Include="$(ManagedDir)\Unity*.dll">
       <Private>false</Private>
     </Reference>
-
-
-    <Reference Include="Unity.InputSystem">
-      <HintPath>$(ManagedDir)\Unity.InputSystem.dll</HintPath>
+    <Reference Include="$(ManagedDir)\Assembly*.dll">
       <Private>false</Private>
     </Reference>
-
-    <Reference Include="UnityEngine">
-      <HintPath>$(ManagedDir)\UnityEngine.dll</HintPath>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(ManagedDir)\Assembly-CSharp.dll</HintPath>
       <Private>false</Private>
     </Reference>
-
-
-    <Reference Include="UnityEngine.UIModule">
-      <HintPath>$(ManagedDir)\UnityEngine.UIModule.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-
-    <Reference Include="UnityEngine.UI">
-      <HintPath>$(ManagedDir)\UnityEngine.UI.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>$(ManagedDir)\UnityEngine.CoreModule.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-
-    <Reference Include="UnityEngine.AudioModule">
-      <HintPath>$(ManagedDir)\UnityEngine.AudioModule.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-
-
-    <Reference Include="UnityEngine.VideoModule">
-      <HintPath>$(ManagedDir)\UnityEngine.VideoModule.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-
-    <Reference Include="UnityEngine.TextRenderingModule">
-      <HintPath>$(ManagedDir)\UnityEngine.TextRenderingModule.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-
-    <Reference Include="UnityEngine.UnityWebRequestModule">
-      <HintPath>$(ManagedDir)\UnityEngine.UnityWebRequestModule.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-
-    <Reference Include="UnityEngine.UnityWebRequestAudioModule">
-      <HintPath>$(ManagedDir)\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-
-    <Reference Include="UnityEngine.UnityWebRequestTextureModule">
-      <HintPath>$(ManagedDir)\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-
-    <Reference Include="UnityEngine.AssetBundleModule">
-      <HintPath>$(ManagedDir)\UnityEngine.AssetBundleModule.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-
-    <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>$(ManagedDir)\UnityEngine.PhysicsModule.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
+    
+    <Publicize Include="Assembly-CSharp" />
 
   </ItemGroup>
 

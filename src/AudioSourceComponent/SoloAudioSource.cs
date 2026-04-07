@@ -8,7 +8,7 @@ namespace GreyAnnouncer.AudioSourceComponent;
 public sealed class SoloAudioSource : MonoBehaviour
 {
     private AudioSource _audioSource;
-    
+
     private static SoloAudioSource _instance;
 
     public static SoloAudioSource Instance
@@ -28,26 +28,23 @@ public sealed class SoloAudioSource : MonoBehaviour
     #region Public API
     public void Play(Sound sound)
     {
-        if (_audioSource == null)
-            _audioSource = gameObject.AddComponent<AudioSource>();
+        if (TryFindAudioSource() == false) return;
 
         _audioSource.Stop();
-        
+
         ConfigureAndPlayAudioSource(sound, _audioSource);
     }
 
     public void PlayOneShot(Sound sound)
     {
-        if (_audioSource == null)
-            _audioSource = gameObject.AddComponent<AudioSource>();
+        if (TryFindAudioSource() == false) return;
 
         ConfigureAndPlayAudioSource(sound, _audioSource);
-
     }
 
     private void ConfigureAndPlayAudioSource(Sound sound, AudioSource audioSource)
     {
-        audioSource.SetSpatialBlend(sound.spatialBlend);
+        audioSource.SetSpatialBlend(0f);
         audioSource.priority = sound.priority;
         audioSource.clip = sound.clip;
         audioSource = UnderwaterController_inWater_Instance.GetAudioSourceWithLowPassFilter(_audioSource);
@@ -81,5 +78,12 @@ public sealed class SoloAudioSource : MonoBehaviour
         _audioSource.Stop();
         Destroy(_audioSource.clip);
     }
+
+    private bool TryFindAudioSource()
+    {
+        if (_audioSource == null)
+            _audioSource = gameObject.AddComponent<AudioSource>();
+        return _audioSource != null;
+    }
     #endregion
-}        
+}

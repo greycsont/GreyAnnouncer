@@ -13,7 +13,7 @@ using UnityEngine.Networking;
 
 namespace GreyAnnouncer.AudioLoading;
 
-public static class UnitySupport
+public static partial class UnitySupport
 {
     public static async Task<AudioClip> LoadWithUnityAsync(string path, AudioType audioType)
     {

@@ -27,19 +27,6 @@ public class AnnouncerConfig : NotifyBase
         set => SetField(ref _randomizeAudioOnPlay, value);
     }
 
-    private string _announcerGUID;
-
-    /// <summary>
-    /// Unique identifier for this announcer instance.
-    /// Used to persist and retrieve the selected announcer path via <see cref="AnnouncerIndex"/>.
-    /// </summary>
-    [IniKey("AnnouncerGUID")]
-    public string AnnouncerGUID
-    {
-        get => _announcerGUID;
-        set => SetField(ref _announcerGUID, value);
-    }
-
     /// <summary>
     /// Per-category settings keyed by category name.
     /// Use <see cref="AddCategory"/> or <see cref="SetCategorySettingMap"/> to modify —
@@ -134,35 +121,29 @@ public class AnnouncerConfig : NotifyBase
 /// </summary>
 public class CategorySetting : NotifyBase
 {
-    private bool _enabled = true;
-
     /// <summary>Whether this category is allowed to play.</summary>
     [IniKey("Enabled")]
     public bool Enabled
     {
-        get => _enabled;
-        set => SetField(ref _enabled, value);
-    }
-
-    private float _volumeMultiplier = 1.0f;
+        get => field;
+        set => SetField(ref field, value);
+    } = true;
 
     /// <summary>Scales the playback volume relative to the global announcer volume.</summary>
     [IniKey("VolumeMultiplier")]
     public float VolumeMultiplier
     {
-        get => _volumeMultiplier;
-        set => SetField(ref _volumeMultiplier, value);
-    }
-
-    private float _cooldown = 1.5f;
+        get => field;
+        set => SetField(ref field, value);
+    } = 1.0f;
 
     /// <summary>Minimum seconds that must pass before this category can play again.</summary>
     [IniKey("Cooldown")]
     public float Cooldown
     {
-        get => _cooldown;
-        set => SetField(ref _cooldown, value);
-    }
+        get => field;
+        set => SetField(ref field, value);
+    } = 1.5f;
 
     private List<string> _audioFiles = new();
 

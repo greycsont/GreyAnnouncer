@@ -6,7 +6,7 @@ namespace GreyAnnouncer.AnnouncerAPI;
 
 public interface IAudioLoader
 {
-    public Task<Sound> LoadAudioClip(string category);
+    public Task<Sound> GetAudioClip(string category);
 
     public Task FindAvailableAudioAsync();
 

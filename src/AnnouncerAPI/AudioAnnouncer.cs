@@ -26,40 +26,37 @@ public class AudioAnnouncer : IAnnouncer
 
     private string _defaultAnnouncerConfigPath;
 
-    private string _announcerPath;
-
     public Action syncUI { get; set; }
 
     /// <summary>When announcerPath changes, it will automatically reload relative configs.</summary>
     public string announcerPath
     {
-        get => _announcerPath;
+        get => field;
         set
         {
             LogHelper.LogDebug($"announcerPath seted");
-            _announcerPath = value;
+            field = value;
             AnnouncerIndex.Set(title, value);
             ReloadAudio();
         }
     }
 
-    private AnnouncerConfig _announcerConfig;
     public AnnouncerConfig announcerConfig
     {
-        get => _announcerConfig;
+        get => field;
         set
         {
             LogHelper.LogDebug("setter trigged");
-            if (_announcerConfig == value)
+            if (field == value)
                 return;
 
-            if (_announcerConfig != null)
-                _announcerConfig.PropertyChanged -= OnAnnouncerConfigChanged;
+            if (field != null)
+                field.PropertyChanged -= OnAnnouncerConfigChanged;
 
-            _announcerConfig = value;
+            field = value;
 
-            if (_announcerConfig != null)
-                _announcerConfig.PropertyChanged += OnAnnouncerConfigChanged;
+            if (field != null)
+                field.PropertyChanged += OnAnnouncerConfigChanged;
 
             ApplyConfigToOther();
         }
@@ -73,7 +70,7 @@ public class AudioAnnouncer : IAnnouncer
 
     private void ApplyConfigToOther()
     {
-        if (_announcerConfig != null && isConfigLoaded)
+        if (announcerConfig != null && isConfigLoaded)
         {
             _ = _audioLoader.FindAvailableAudioAsync();
             WriteConfigToIni(announcerConfig);
@@ -174,7 +171,7 @@ public class AudioAnnouncer : IAnnouncer
     private async Task PlayAudioClip(string category)
     {
         LogHelper.LogInfo($"Attempting to play audio for category: {category}");
-        Sound sound = await _audioLoader.LoadAudioClip(category);
+        Sound sound = await _audioLoader.GetAudioClip(category);
 
         if (sound == null)
         {
@@ -203,7 +200,7 @@ public class AudioAnnouncer : IAnnouncer
         if (_cooldownManager == null || _audioLoader == null)
             return ValidationState.ComponentsNotInitialized;
 
-        if (_announcerConfig == null)
+        if (announcerConfig == null)
             return ValidationState.ConfigNotLoaded;
 
         if (!announcerConfig.CategorySetting.ContainsKey(category))

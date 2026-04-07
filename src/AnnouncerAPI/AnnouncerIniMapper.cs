@@ -14,7 +14,6 @@ public static class AnnouncerIniMapper
         if (doc.TryGetSection("General", out var general))
         {
             config.RandomizeAudioOnPlay = GetBool(general, "RandomizeAudioOnPlay", false);
-            config.AnnouncerGUID = general.GetLastValue("AnnouncerGUID") ?? string.Empty;
         }
 
         // -------- Categories --------
@@ -65,10 +64,6 @@ public static class AnnouncerIniMapper
         general.Values["RandomizeAudioOnPlay"] = new List<string>
         {
             config.RandomizeAudioOnPlay.ToString()
-        };
-        general.Values["AnnouncerGUID"] = new List<string>
-        {
-            config.AnnouncerGUID ?? string.Empty
         };
 
         // -------- Categories --------

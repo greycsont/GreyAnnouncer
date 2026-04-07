@@ -106,7 +106,7 @@ public static class UIBuilder
         var tmp = indicatorObj.GetComponent<TextMeshProUGUI>();
         tmp.text         = toggle.isOn ? "x" : "";
         tmp.fontSize     = 14;
-        tmp.color        = Color.white;
+        tmp.color        = Color.black;
         tmp.alignment    = TextAlignmentOptions.Center;
         tmp.raycastTarget = false;
 

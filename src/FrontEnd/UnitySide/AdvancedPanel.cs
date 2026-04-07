@@ -5,6 +5,7 @@ using GreyAnnouncer.Config;
 
 namespace GreyAnnouncer.FrontEnd;
 
+// This whole UnitySide folder is a fucking mess, don't touch it
 public class AdvancedPanel : MonoBehaviour
 {
     private Toggle _lpToggle;

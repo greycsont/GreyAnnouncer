@@ -42,7 +42,7 @@ public class AudioLoader : IAudioLoader
     public AudioLoader() { }
 
 
-    public async Task<Sound> LoadAudioClip(string category)
+    public async Task<Sound> GetAudioClip(string category)
     {
         (string, AudioClip) clipWithCategory;
 

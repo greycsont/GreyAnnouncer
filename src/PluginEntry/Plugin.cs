@@ -26,7 +26,6 @@ public class Plugin : BaseUnityPlugin
         
         LoadMainModule();
         LoadOptionalModule();
-        gameObject.AddComponent<UIFactory>();
     }
 
     private void LoadMainModule()

@@ -29,7 +29,7 @@ public static class FFmpegSupport
         ffmpeg.RootPath = ProcessHelper.FindExecutable("ffmpeg");
     }
 
-    public static unsafe Task<AudioClip> DecodeAndLoad(string filePath)
+    public static unsafe Task<AudioClip> DecodeAndLoadViaFFmpeg(string filePath)
     {
         return Task.Run(() =>
         {

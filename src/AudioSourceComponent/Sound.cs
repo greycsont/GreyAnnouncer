@@ -9,8 +9,6 @@ public class Sound
 
     public AudioClip clip;
 
-    public float spatialBlend = 0f;
-
     [Range(0f, 1f)]
     public float volume = 1f;
 
@@ -19,7 +17,7 @@ public class Sound
     public int priority = 0;
 
     public AudioMixerGroup AudioMixerGroup;
-    
+
 
     public Sound(string category, AudioClip clip, float volume)
     {
