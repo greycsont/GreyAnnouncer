@@ -95,7 +95,7 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
                 ),
                 Branch("set", Leaf<string>(val =>
                 {
-                    Setting.announcersPath = val;
+                    Log.Info($"This command doesn't have any effect yet");
                     Log.Info($"Announcers Path set to {val}");
                 }))
             )

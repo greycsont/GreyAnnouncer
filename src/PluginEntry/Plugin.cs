@@ -30,7 +30,7 @@ public class Plugin : BaseUnityPlugin
 
     private void LoadMainModule()
     {
-        BepInExConfig.Initialize(this);
+        PluginSettings.Initialize();
     }
 
     private void LoadOptionalModule()

@@ -1,110 +1,81 @@
 using System;
-using System.IO;
 using GreyAnnouncer.AnnouncerAPI;
 using GreyAnnouncer.AudioSourceComponent;
 using GreyAnnouncer.Util;
+
 namespace GreyAnnouncer.Config;
 
 public static class Setting
 {
     public static Action syncUI;
+
     public static float audioSourceVolume
     {
-        get => BepInExConfig.audioSourceVolume.Value;
+        get => PluginSettings.Instance.AudioSourceVolume;
         set
         {
-            BepInExConfig.audioSourceVolume.Value = value;
+            PluginSettings.Instance.AudioSourceVolume = value;
             SoloAudioSource.Instance.UpdateSoloAudioSourceVolume(value);
-            syncUI?.Invoke();
+            SaveSettings();
         }
     }
 
     public static bool isLowPassFilterEnabled
     {
-        get => BepInExConfig.isLowPassFilterEnabled.Value;
+        get => PluginSettings.Instance.IsLowPassFilterEnabled;
         set
         {
-            BepInExConfig.isLowPassFilterEnabled.Value = value;
+            PluginSettings.Instance.IsLowPassFilterEnabled = value;
             UnderwaterController_inWater_Instance.CheckIsInWater();
-            syncUI?.Invoke();
+            SaveSettings();
         }
     }
 
     public static int audioPlayOptions
     {
-        get => BepInExConfig.audioPlayOptions.Value;
-        set {
-            BepInExConfig.audioPlayOptions.Value = value;
-            syncUI?.Invoke();
+        get => PluginSettings.Instance.AudioPlayOptions;
+        set
+        {
+            PluginSettings.Instance.AudioPlayOptions = value;
+            SaveSettings();
         }
     }
 
     public static int audioLoadingStrategy
     {
-        get => BepInExConfig.audioLoadingStrategy.Value;
+        get => PluginSettings.Instance.AudioLoadingStrategy;
         set
         {
             if (value.Equals((int)AudioLoadOptions.Load_then_Play))
             {
                 LogHelper.LogInfo("Clear audio clip cache");
-                ClearAudioClipsCache();
+                AnnouncerManager.ClearAudioClipsCache();
             }
             if (value.Equals((int)AudioLoadOptions.Preload_and_Play))
             {
                 LogHelper.LogInfo("Reloading all announcer audio");
-                ReloadAllAnnouncers();
+                AnnouncerManager.ReloadAllAnnouncers();
             }
-            BepInExConfig.audioLoadingStrategy.Value = value;
-            syncUI?.Invoke();
-        } 
-    }
-
-    public static string announcersPath
-    {
-        get => BepInExConfig.announcersPath.Value;
-        set 
-        {
-            if (!Directory.Exists(Path.GetDirectoryName(value)))
-            {
-                LogHelper.LogWarning("Given Directory not exists");
-                return;
-            }
-            BepInExConfig.announcersPath.Value = value;
-            MoveAnnouncersToTargetDirectory(value);
-            syncUI?.Invoke();
+            PluginSettings.Instance.AudioLoadingStrategy = value;
+            SaveSettings();
         }
     }
-
-
     public static bool isFFmpegSupportEnabled
     {
-        get => BepInExConfig.isFFmpegSupportEnabled.Value;
-        set 
+        get => PluginSettings.Instance.IsFFmpegSupportEnabled;
+        set
         {
-            BepInExConfig.isFFmpegSupportEnabled.Value = value;
-            syncUI?.Invoke();
+            PluginSettings.Instance.IsFFmpegSupportEnabled = value;
+            SaveSettings();
         }
     }
 
+    public static string announcersPath => PathHelper.GetCurrentPluginPath("announcers");
 
-    
-    #region function
-    private static void ReloadAllAnnouncers()
+    private static void SaveSettings()
     {
-        AnnouncerManager.ReloadAllAnnouncers();
+        PluginSettings.Save();
+        syncUI?.Invoke();
     }
 
-    private static void ClearAudioClipsCache()
-    {
-        AnnouncerManager.ClearAudioClipsCache();
-    }
-
-    private static void MoveAnnouncersToTargetDirectory(string targetRoot)
-    {
-        foreach (var announcer in AnnouncerIndex.GetAnnouncers())
-        {
-           FileSystemUtil.CopyDirectoryParallel(announcer, targetRoot);
-        }
-    }
-    #endregion
 }

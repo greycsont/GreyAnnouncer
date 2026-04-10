@@ -21,9 +21,6 @@ public static class BepInExConfig
     [ConfigInfo("Audio", "Audio_Loading_Option", "0: load from file (less RAM), 1: preload (less latency)")]
     public static ConfigEntry<int> audioLoadingStrategy;
 
-    [ConfigInfo("Audio", "Announcers_Path", "The folder path where announcer packs are stored")]
-    public static ConfigEntry<string> announcersPath;
-
     [ConfigInfo("Advanced", "FFmpeg_Support", "Set to true to enable FFmpeg support for non-Unity audio formats")]
     public static ConfigEntry<bool> isFFmpegSupportEnabled;
 
@@ -75,7 +72,6 @@ public static class BepInExConfig
         nameof(audioPlayOptions)        => 0,
         nameof(audioLoadingStrategy)    => 0,
         nameof(isFFmpegSupportEnabled)  => false,
-        nameof(announcersPath)          => PathHelper.GetCurrentPluginPath("announcers"),
         _ => throw new ArgumentException($"[Config] No default value defined for: {fieldName}")
     };
 }
