@@ -89,7 +89,8 @@ public static partial class PluginConfiguratorEntry
             "Audio_Volume",
             Tuple.Create(0f, 1f),
             Setting.audioSourceVolume,
-            2   // 2nd decimal
+            2,   // 2nd decimal
+            saveToConfig: false
         );
         volumeSlider.defaultValue = 1f;
         volumeSlider.onValueChange += e =>
@@ -102,7 +103,8 @@ public static partial class PluginConfiguratorEntry
             config.rootPanel,
             "Audio Play Strategy",
             "Audio_Play_Strategy",
-            (AudioPlayOptions)Setting.audioPlayOptions
+            (AudioPlayOptions)Setting.audioPlayOptions,
+            saveToConfig: false
         );
         playOption.defaultValue = (AudioPlayOptions)0;
         playOption.onValueChange += e =>
@@ -112,7 +114,8 @@ public static partial class PluginConfiguratorEntry
             config.rootPanel,
             "Audio Load Strategy",
             "Audio_Load_Strategy",
-            (AudioLoadOptions)Setting.audioLoadingStrategy
+            (AudioLoadOptions)Setting.audioLoadingStrategy,
+            saveToConfig: false
         );
         loadOption.defaultValue = (AudioLoadOptions)0;
         loadOption.onValueChange += e =>
@@ -149,7 +152,8 @@ public static partial class PluginConfiguratorEntry
             advancedPanel,
             "LowPassFilter when under water",
             "LowPassFilter_Enabled",
-            Setting.isLowPassFilterEnabled
+            Setting.isLowPassFilterEnabled,
+            saveToConfig: false
         );
         lowpassToggle.defaultValue = true;
         lowpassToggle.onValueChange += (e) =>
@@ -159,7 +163,8 @@ public static partial class PluginConfiguratorEntry
             advancedPanel,
             "FFmpeg Support",
             "FFmpeg_Support",
-            Setting.isFFmpegSupportEnabled
+            Setting.isFFmpegSupportEnabled,
+            saveToConfig: false
         );
         ffmpegToggle.defaultValue = false;
         ffmpegToggle.onValueChange += (e) =>
