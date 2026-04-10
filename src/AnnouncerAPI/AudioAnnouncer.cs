@@ -4,17 +4,15 @@ using System.Linq;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 using GreyAnnouncer.AudioSourceComponent;
 using GreyAnnouncer.Util.Ini;
 using GreyAnnouncer.Util;
-using GameConsole.pcon;
-using System.Runtime.CompilerServices;
-using System.Diagnostics;
 
 namespace GreyAnnouncer.AnnouncerAPI;
 
-public class AudioAnnouncer : IAnnouncer
+public partial class AudioAnnouncer : IAnnouncer
 {
     public string title { get; private set; }
 
@@ -80,9 +78,6 @@ public class AudioAnnouncer : IAnnouncer
             syncUI.Invoke();
     }
 
-    /// <summary>A reference to config.ini's path</summary>
-    private string iniPath => Path.Combine(announcerPath, "config.ini");
-
     private bool _initialized = false;
 
     public bool isConfigLoaded { get; private set; } = false;
@@ -127,12 +122,6 @@ public class AudioAnnouncer : IAnnouncer
             LogPlaybackError(ex);
         }
     }
-
-
-    /// <summary>Will Play a random audio in the belong category by jsonSetting mapping via index</summary>
-    public async Task PlayAudioViaIndex(int index)
-        => await PlayAudioViaCategory(announcerConfig.CategorySetting.Keys.ToArray()[index]);
-
 
     /// <summary>Reload Audio, only works when using Preload and Play options</summary>
     public void ReloadAudio()
@@ -222,75 +211,6 @@ public class AudioAnnouncer : IAnnouncer
         AnnouncerManager.clearAudioClipCache += ClearAudioClipsCache;
 
         AnnouncerManager.AddAnnouncer(this);
-    }
-
-    
-    private AnnouncerConfig InitializeConfig(List<string> category)
-    {
-        LogHelper.LogDebug($"current iniPath of {title}: {iniPath}");
-
-        var defaultConfig = new AnnouncerConfig().SetCategorySettingMap(
-            category.ToDictionary(cat => cat, cat => new CategorySetting())
-        );
-
-        if (!File.Exists(iniPath))
-        {
-            LogHelper.LogDebug($"Initialize new config.ini in: {iniPath}");
-            WriteConfigToIni(defaultConfig);
-            isConfigLoaded = false;
-            return defaultConfig;
-        }
-
-        var iniConfig = ReadConfigFromIni();
-        if (iniConfig == null || !IsCategoryMatch(iniConfig, category))
-        {
-            LogHelper.LogError($"[{title}] AnnouncerConfig category mismatch — {configMismatchInfo}");
-            isConfigLoaded = false;
-            return null;
-        }
-
-        isConfigLoaded = true;
-        return iniConfig;
-    }
-
-    private bool IsCategoryMatch(AnnouncerConfig config, List<string> expected)
-    {
-        var keys = config.CategorySetting.Keys;
-        var missing = expected.Except(keys).ToList();
-        var extra = keys.Except(expected).ToList();
-
-        if (missing.Count == 0)
-            return true;
-
-        configMismatchInfo = $"Missing: [{string.Join(", ", missing)}], Extra: [{string.Join(", ", extra)}]";
-        return false;
-    }
-
-    private void WriteConfigToIni(AnnouncerConfig announcerConfig)
-    {
-        LogHelper.LogDebug($"[WriteConfigToIni] called by {new StackTrace().GetFrame(1).GetMethod().Name}");
-        var doc = new IniDocument();
-
-        doc = AnnouncerIniMapper.ToIni(doc, announcerConfig);
-
-        IniWriter.Write(iniPath, doc);
-    }
-
-    private AnnouncerConfig ReadConfigFromIni()
-    {
-        if (!File.Exists(iniPath))
-            return null;
-
-        var doc = IniReader.Read(iniPath);
-
-        var announcerConfig = AnnouncerIniMapper.FromIni(doc);
-        CheckConfigUpdate(ref announcerConfig);
-        return announcerConfig;
-    }
-
-    private void CheckConfigUpdate(ref AnnouncerConfig announcerConfig)
-    {
-        
     }
 
     public void EditExternally()

@@ -1,4 +1,3 @@
-using UnityEngine;
 using System;
 using System.Text;
 using System.Collections.Generic;
@@ -16,20 +15,8 @@ using System.IO;
 
 namespace GreyAnnouncer.FrontEnd;
 
-public static class MainPanelBuilder
+public static partial class PluginConfiguratorEntry
 {
-    private static readonly Color m_greyColour = new UnityEngine.Color(0.85f, 0.85f, 0.85f, 1f);
-
-    private static readonly Color m_CyanColour = new UnityEngine.Color(0f, 1f, 1f, 1f);
-
-    private static readonly Color m_OrangeColour = new UnityEngine.Color(1f, 0.6f, 0.2f, 1f);
-
-    private static readonly Color m_RedColour = new UnityEngine.Color(1f, 0f, 0f, 1f);
-
-    private static readonly Color m_PurpleColour = new UnityEngine.Color(1f, 0f, 1f, 1f);
-
-    private static PluginConfigurator m_pluginConfigurator;
-
     public static ConfigHeader audioLoaderLogHeader;
 
     private static ConfigPanel advancedPanel;
@@ -49,10 +36,8 @@ public static class MainPanelBuilder
     private static BoolField ffmpegToggle;
 
 
-    public static void Build(PluginConfigurator config)
+    public static void Build()
     {
-        m_pluginConfigurator = config;
-
         CreateMainSettingSectionTitle();
         CreateAnnouncerPage();
         CreateAudioControls();
@@ -87,9 +72,9 @@ public static class MainPanelBuilder
 
     private static void CreateMainSettingSectionTitle()
     {
-        new ConfigSpace(m_pluginConfigurator.rootPanel, 15f);
+        new ConfigSpace(config.rootPanel, 15f);
 
-        ConfigHeader mainHeader = new ConfigHeader(m_pluginConfigurator.rootPanel, "Main Settings");
+        ConfigHeader mainHeader = new ConfigHeader(config.rootPanel, "Main Settings");
         mainHeader.textColor = m_CyanColour;
 
     }
@@ -99,7 +84,7 @@ public static class MainPanelBuilder
     {
 
         volumeSlider = new FloatSliderField(
-            m_pluginConfigurator.rootPanel,
+            config.rootPanel,
             "Master Volume",
             "Audio_Volume",
             Tuple.Create(0f, 1f),
@@ -114,7 +99,7 @@ public static class MainPanelBuilder
         // May be add a short cooldown as limitation
 
         playOption = new EnumField<AudioPlayOptions>(
-            m_pluginConfigurator.rootPanel,
+            config.rootPanel,
             "Audio Play Strategy",
             "Audio_Play_Strategy",
             (AudioPlayOptions)Setting.audioPlayOptions
@@ -124,7 +109,7 @@ public static class MainPanelBuilder
             Setting.audioPlayOptions = (int)e.value;
 
         loadOption = new EnumField<AudioLoadOptions>(
-            m_pluginConfigurator.rootPanel,
+            config.rootPanel,
             "Audio Load Strategy",
             "Audio_Load_Strategy",
             (AudioLoadOptions)Setting.audioLoadingStrategy
@@ -133,10 +118,10 @@ public static class MainPanelBuilder
         loadOption.onValueChange += e =>
             Setting.audioLoadingStrategy = (int)e.value;
 
-        new ConfigSpace(m_pluginConfigurator.rootPanel, 7f);
+        new ConfigSpace(config.rootPanel, 7f);
 
         var audioButtonArray = new ButtonArrayField(
-            m_pluginConfigurator.rootPanel,
+            config.rootPanel,
             "audio_button_array",
             3,
             new float[] { 0.4f, 0.4f, 0.2f },
@@ -156,7 +141,7 @@ public static class MainPanelBuilder
 
     private static void CreateAdvancedOptionPanel()
     {
-        advancedPanel = new ConfigPanel(m_pluginConfigurator.rootPanel, "Advanced", "Advanced_Option");
+        advancedPanel = new ConfigPanel(config.rootPanel, "Advanced", "Advanced_Option");
         advancedPanel.hidden = true;
         new ConfigSpace(advancedPanel, 15f);
 
@@ -185,7 +170,7 @@ public static class MainPanelBuilder
         ffmpegLogHeader.textSize = 12;
         ffmpegLogHeader.textColor = m_greyColour;
 
-        new ConfigSpace(m_pluginConfigurator.rootPanel, 15f);
+        new ConfigSpace(config.rootPanel, 15f);
 
         var emergencyHeader = new ConfigHeader(advancedPanel, "Emergency");
         emergencyHeader.textColor = m_RedColour;
@@ -197,7 +182,7 @@ public static class MainPanelBuilder
     
     private static void CreateCreditsPanel()
     {
-        creditPanel = new ConfigPanel(m_pluginConfigurator.rootPanel, "Credits", "Credits");
+        creditPanel = new ConfigPanel(config.rootPanel, "Credits", "Credits");
         creditPanel.hidden = true;
         new ConfigSpace(creditPanel, 15f);
         var CreditTitle = new ConfigHeader(creditPanel, "Credits");
@@ -229,10 +214,10 @@ public static class MainPanelBuilder
 
     private static void CreateAnnouncerSection()
     {
-        var announcerHeader = new ConfigHeader(m_pluginConfigurator.rootPanel, "Announcer Section");
+        var announcerHeader = new ConfigHeader(config.rootPanel, "Announcer Section");
         announcerHeader.textColor = m_OrangeColour;
 
-        audioLoaderLogHeader = new ConfigHeader(m_pluginConfigurator.rootPanel, "");
+        audioLoaderLogHeader = new ConfigHeader(config.rootPanel, "");
         audioLoaderLogHeader.tmpAnchor = TMPro.TextAlignmentOptions.TopLeft;
         audioLoaderLogHeader.textSize = 12;
         audioLoaderLogHeader.textColor = m_CyanColour;

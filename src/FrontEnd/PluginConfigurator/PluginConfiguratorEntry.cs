@@ -1,5 +1,7 @@
-using PluginConfig.API;
 using System.ComponentModel;
+
+using UnityEngine;
+using PluginConfig.API;
 
 using GreyAnnouncer.Util;
 
@@ -8,24 +10,33 @@ namespace GreyAnnouncer.FrontEnd;
 
 
 [Description("This object is loaded via reflection from Plugin.cs")]
-public static class PluginConfiguratorEntry
+public static partial class PluginConfiguratorEntry
 {
+    private static readonly Color m_greyColour = new UnityEngine.Color(0.85f, 0.85f, 0.85f, 1f);
+
+    private static readonly Color m_CyanColour = new UnityEngine.Color(0f, 1f, 1f, 1f);
+
+    private static readonly Color m_OrangeColour = new UnityEngine.Color(1f, 0.6f, 0.2f, 1f);
+
+    private static readonly Color m_RedColour = new UnityEngine.Color(1f, 0f, 0f, 1f);
+
+    private static readonly Color m_PurpleColour = new UnityEngine.Color(1f, 0f, 1f, 1f);
+
     public static PluginConfigurator config
     {
-        get => _config;
-        private set => _config = value;
+        get => field;
+        private set => field = value;
     }
-    private static PluginConfigurator _config;
 
     public static void Initialize()
     {
         CreatePluginPages();
-        MainPanelBuilder.Build(_config);
+        Build();
     }
 
     private static void CreatePluginPages()
     {
-        _config = PluginConfigurator.Create(PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_GUID);
-        _config.SetIconWithURL(PathHelper.GetCurrentPluginPath("icon.png"));
+        config = PluginConfigurator.Create(PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_GUID);
+        config.SetIconWithURL(PathHelper.GetCurrentPluginPath("icon.png"));
     }                          
 }
