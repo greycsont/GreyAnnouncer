@@ -9,7 +9,9 @@ namespace GreyAnnouncer.RankAnnouncer;
     The rankIndex is basically the pointer to another arrays, list sth.
     More information in the Announcer.cs 
     StyleHUD.cs -> RankAnnouncer.cs */
-    
+
+
+[PatchOnEntry]    
 [HarmonyPatch(typeof(StyleHUD))]
 public static class StyleHUDPatcher
 {
