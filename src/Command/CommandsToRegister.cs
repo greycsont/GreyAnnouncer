@@ -3,7 +3,7 @@ using GameConsole.CommandTree;
 using plog;
 using System.Linq;
 
-using GreyAnnouncer.AnnouncerAPI;
+using GreyAnnouncer.AnnouncerCore;
 using GreyAnnouncer.Config;
 using GreyAnnouncer.AudioSourceComponent;
 using GreyAnnouncer.FrontEnd;

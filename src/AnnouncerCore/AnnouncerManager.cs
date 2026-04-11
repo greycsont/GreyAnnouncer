@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace GreyAnnouncer.AnnouncerAPI;
+namespace GreyAnnouncer.AnnouncerCore;
                                                       
 public static class AnnouncerManager
 {

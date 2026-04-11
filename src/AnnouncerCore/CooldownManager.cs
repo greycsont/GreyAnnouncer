@@ -6,7 +6,7 @@ using UnityEngine;
 
 using GreyAnnouncer.Util;
 
-namespace GreyAnnouncer.AnnouncerAPI;
+namespace GreyAnnouncer.AnnouncerCore;
 
 public class CooldownManager : ICooldownManager
 {

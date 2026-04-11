@@ -1,12 +1,15 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using GreyAnnouncer.AudioSourceComponent;
 using GreyAnnouncer.Util;
+using GreyAnnouncer.Config;
 
-namespace GreyAnnouncer.AnnouncerAPI;
+namespace GreyAnnouncer.AnnouncerCore;
 
 public partial class AudioAnnouncer : IAnnouncer
 {
@@ -32,7 +35,7 @@ public partial class AudioAnnouncer : IAnnouncer
         {
             LogHelper.LogDebug($"announcerPath seted");
             field = value;
-            AnnouncerIndex.Set(title, value);
+            SaveSelectedPack(value);
             ReloadAudio();
         }
     }
@@ -98,7 +101,7 @@ public partial class AudioAnnouncer : IAnnouncer
         this.category = category;
         this.title = title;
 
-        announcerPath = AnnouncerIndex.Get(this.title, _defaultAnnouncerConfigPath);
+        announcerPath = LoadSelectedPack();
 
         SubscribeAnnouncerManager();
 

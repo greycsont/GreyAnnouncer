@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 
 using GreyAnnouncer.AudioSourceComponent;
 
-namespace GreyAnnouncer.AnnouncerAPI;
+namespace GreyAnnouncer.AnnouncerCore;
 
 public interface IAudioLoader
 {

@@ -1,27 +1,16 @@
 using System.IO;
 
-using Newtonsoft.Json;
+using GreyAnnouncer.Util;
 
-namespace GreyAnnouncer.AnnouncerAPI;
+namespace GreyAnnouncer.AnnouncerCore;
 
 public class JsonConfigManager : IConfigManager
 {
     private static string ConfigPath(string directory) => Path.Combine(directory, "config.json");
 
     public AnnouncerConfig Load(string directory)
-    {
-        var path = ConfigPath(directory);
-        if (!File.Exists(path))
-            return null;
-
-        var json = File.ReadAllText(path);
-        return JsonConvert.DeserializeObject<AnnouncerConfig>(json);
-    }
+        => JsonManager.ReadJson<AnnouncerConfig>(ConfigPath(directory));
 
     public void Save(string directory, AnnouncerConfig config)
-    {
-        var path = ConfigPath(directory);
-        var json = JsonConvert.SerializeObject(config, Formatting.Indented);
-        File.WriteAllText(path, json);
-    }
+        => JsonManager.WriteJson(ConfigPath(directory), config);
 }

@@ -7,7 +7,7 @@ using PluginConfig.API.Fields;
 using PluginConfig.API.Decorators;
 using PluginConfig.API.Functionals;
 
-using GreyAnnouncer.AnnouncerAPI;
+using GreyAnnouncer.AnnouncerCore;
 using GreyAnnouncer.AudioSourceComponent;
 using GreyAnnouncer.Config;
 using System.IO;

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-using GreyAnnouncer.AnnouncerAPI;
+using GreyAnnouncer.AnnouncerCore;
 
 namespace GreyAnnouncer.RankAnnouncer;
 

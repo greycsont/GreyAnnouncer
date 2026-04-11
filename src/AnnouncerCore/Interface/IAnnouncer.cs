@@ -1,7 +1,7 @@
 
 using System;
 
-namespace GreyAnnouncer.AnnouncerAPI;
+namespace GreyAnnouncer.AnnouncerCore;
 
 public interface IAnnouncer
 {

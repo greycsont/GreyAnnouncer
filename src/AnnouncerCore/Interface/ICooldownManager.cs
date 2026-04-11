@@ -1,5 +1,5 @@
 
-namespace GreyAnnouncer.AnnouncerAPI;
+namespace GreyAnnouncer.AnnouncerCore;
 
 public interface ICooldownManager
 {

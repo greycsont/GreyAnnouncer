@@ -16,7 +16,7 @@ using GreyAnnouncer.Config;
 using GreyAnnouncer.AudioSourceComponent;
 using GreyAnnouncer.Util;
 
-namespace GreyAnnouncer.AnnouncerAPI;
+namespace GreyAnnouncer.AnnouncerCore;
 
 public partial class AudioLoader : IAudioLoader
 {

@@ -7,7 +7,7 @@ using UnityEngine;
 using GreyAnnouncer.AudioLoading;
 using GreyAnnouncer.Util;
 
-namespace GreyAnnouncer.AnnouncerAPI;
+namespace GreyAnnouncer.AnnouncerCore;
 
 public partial class AudioLoader
 {

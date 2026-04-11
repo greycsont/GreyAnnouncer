@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using GreyAnnouncer.AnnouncerAPI;
+using GreyAnnouncer.AnnouncerCore;
 using GreyAnnouncer.Config;
 
 namespace GreyAnnouncer.FrontEnd;
@@ -79,7 +79,7 @@ public class AnnouncerPanel : MonoBehaviour
 
         // Announcer selector
         UIBuilder.AddLabel(content, "Selected Announcer", 13, UIBuilder.SubLabelColor, preferredHeight: 22);
-        var announcerOptions = AnnouncerIndex.GetTargetAnnouncer(_announcer.title);
+        var announcerOptions = AudioAnnouncer.GetAvailablePacks(_announcer.title);
         _announcerDropdown = UIBuilder.AddDropdown(content, announcerOptions);
         var currentPack = Path.GetFileName(_announcer.announcerPath);
         var initIdx = announcerOptions.IndexOf(currentPack);

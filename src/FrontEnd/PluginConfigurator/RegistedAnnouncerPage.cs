@@ -9,7 +9,7 @@ using UnityEngine;
 
 using PluginConfig.API.Functionals;
 
-using GreyAnnouncer.AnnouncerAPI;
+using GreyAnnouncer.AnnouncerCore;
 using GreyAnnouncer.Util;
 using GreyAnnouncer.Config;
 
@@ -50,7 +50,7 @@ public class RegistedAnnouncerPage
         ConfigHeader titleHeader = new ConfigHeader(_panel, _title, 30);
         titleHeader.textColor = HeaderColor;
 
-        var announcers = AnnouncerIndex.GetTargetAnnouncer(_announcer.title);
+        var announcers = AudioAnnouncer.GetAvailablePacks(_announcer.title);
 
         _announcerField = new StringListField(
             _panel,                     
@@ -123,18 +123,16 @@ public class RegistedAnnouncerPage
     }
 
     private BoolField CreateEnabledField(ConfigPanel panel,
-                                                string guid,
-                                                AnnouncerConfig AnnouncerConfig,
-                                                bool defaultValue)
+                                         string guid,
+                                         AnnouncerConfig AnnouncerConfig,
+                                         bool defaultValue)
     {
         var fullGuid = _announcer.title + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "Enabled");
         var field = new BoolField(panel, "Enabled", fullGuid, AnnouncerConfig.CategorySetting[guid].Enabled, saveToConfig: false);
         field.defaultValue = defaultValue;
-        field.onValueChange += e =>
-        {
-            if (AnnouncerConfig.CategorySetting.ContainsKey(guid))
-                AnnouncerConfig.CategorySetting[guid].Enabled = e.value;
-
+        field.onValueChange += e => {
+            AnnouncerConfig.CategorySetting[guid].Enabled = e.value;
+            LogHelper.LogDebug($"Category {guid} Enabled set to {e.value}");
         };
 
         return field;
@@ -142,17 +140,17 @@ public class RegistedAnnouncerPage
 
 
     private FloatField CreateVolumeField(ConfigPanel panel,
-                                             string guid,
-                                             AnnouncerConfig AnnouncerConfig,
-                                             float defaultValue)
+                                         string guid,
+                                         AnnouncerConfig AnnouncerConfig,
+                                         float defaultValue)
     {
         var fullGuid = _announcer.title + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "VolumeMultiplier");
         var field = new FloatField(panel, "Volume", fullGuid, AnnouncerConfig.CategorySetting[guid].VolumeMultiplier, saveToConfig: false);
         field.defaultValue = defaultValue;
         field.onValueChange += e =>
         {
-            if (AnnouncerConfig.CategorySetting.ContainsKey(guid))
-                AnnouncerConfig.CategorySetting[guid].VolumeMultiplier = e.value;
+            AnnouncerConfig.CategorySetting[guid].VolumeMultiplier = e.value;
+            LogHelper.LogDebug($"Category {guid} VolumeMultiplier set to {e.value}");
         };
 
         return field;
@@ -166,10 +164,9 @@ public class RegistedAnnouncerPage
         var fullGuid = _announcer.title + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "Cooldown");
         var field = new FloatSliderField(panel, "Cooldown", fullGuid, Tuple.Create(0.2f, 6f), AnnouncerConfig.CategorySetting[guid].Cooldown, 1, saveToConfig: false);
         field.defaultValue = defaultValue;
-        field.onValueChange += e =>
-        {
-            if (AnnouncerConfig.CategorySetting.ContainsKey(guid))
-                AnnouncerConfig.CategorySetting[guid].Cooldown = e.newValue;
+        field.onValueChange += e => {
+            AnnouncerConfig.CategorySetting[guid].Cooldown = e.newValue;
+            LogHelper.LogDebug($"Category {guid} Cooldown set to {e.newValue}");
         };
 
         return field;
@@ -182,8 +179,7 @@ public class RegistedAnnouncerPage
         var currentPack = Path.GetFileName(_announcer.announcerPath);
         _announcerField.value = currentPack;
 
-        if (!_announcer.isConfigLoaded)
-        {
+        if (!_announcer.isConfigLoaded) {
             _mismatchHeader.text = string.IsNullOrEmpty(_announcer.configMismatchInfo)
                 ? "Config not loaded."
                 : $"Config mismatch — {_announcer.configMismatchInfo}";
@@ -198,28 +194,12 @@ public class RegistedAnnouncerPage
 
         _fields.RandomizeAudioField.value = config.RandomizeAudioOnPlay;
 
-        foreach (KeyValuePair<string, CategoryFields> kv in _fields.CategoryFields)
-        {
+        foreach (KeyValuePair<string, CategoryFields> kv in _fields.CategoryFields) {
             var category = kv.Key;
             var fields   = kv.Value;
 
             if (!config.CategorySetting.TryGetValue(category, out var data))
                 continue;
-
-            if (fields.Enabled.value != data.Enabled)
-                LogHelper.LogDebug($"Category '{category}': Enabled changed from {fields.Enabled.value} -> {data.Enabled}", -1);
-            else
-                LogHelper.LogDebug($"Category '{category}': Enabled unchanged ({fields.Enabled.value})", -1);
-
-            if (Math.Abs(fields.Volume.value - data.VolumeMultiplier) > 0.0001f)
-                LogHelper.LogDebug($"Category '{category}': Volume changed from {fields.Volume.value} -> {data.VolumeMultiplier}", -1);
-            else
-                LogHelper.LogDebug($"Category '{category}': Volume unchanged ({fields.Volume.value})", -1);
-
-            if (Math.Abs(fields.Cooldown.value - data.Cooldown) > 0.0001f)
-                LogHelper.LogDebug($"Category '{category}': Cooldown changed from {fields.Cooldown.value} -> {data.Cooldown}", -1);
-            else
-                LogHelper.LogDebug($"Category '{category}': Cooldown unchanged ({fields.Cooldown.value})", -1);
 
             fields.Enabled.value  = data.Enabled;
             fields.Volume.value   = data.VolumeMultiplier;

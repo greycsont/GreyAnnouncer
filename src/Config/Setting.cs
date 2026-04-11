@@ -1,5 +1,5 @@
 using System;
-using GreyAnnouncer.AnnouncerAPI;
+using GreyAnnouncer.AnnouncerCore;
 using GreyAnnouncer.AudioSourceComponent;
 using GreyAnnouncer.Util;
 

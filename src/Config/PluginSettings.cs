@@ -17,9 +17,9 @@ public class PluginSettings
 
     public static void Initialize()
     {
-        try { Instance = JsonManager.ReadJson<PluginSettings>(FileName); }
-        catch (FileNotFoundException) { Instance = new PluginSettings(); Save(); }
+        Instance = JsonManager.ReadJson<PluginSettings>(PathHelper.GetCurrentPluginPath(FileName));
+        if (Instance == null) { Instance = new PluginSettings(); Save(); }
     }
 
-    public static void Save() => JsonManager.WriteJson(FileName, Instance);
+    public static void Save() => JsonManager.WriteJson(PathHelper.GetCurrentPluginPath(FileName), Instance);
 }

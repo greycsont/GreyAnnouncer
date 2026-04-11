@@ -3,7 +3,7 @@ using System.Linq;
 
 using GreyAnnouncer.Base;
 
-namespace GreyAnnouncer.AnnouncerAPI;
+namespace GreyAnnouncer.AnnouncerCore;
 
 /// <summary>
 /// Holds the full configuration for a single announcer instance,
@@ -32,10 +32,6 @@ public class AnnouncerConfig : NotifyBase
     /// </summary>
     public ObservableDictionary<string, CategorySetting> CategorySetting { get; } = new();
 
-    /// <param name="announcerGUID">
-    /// The unique identifier for this announcer. Must match the GUID
-    /// used when registering with <see cref="AnnouncerIndex"/>.
-    /// </param>
     public AnnouncerConfig()
     {
         // Bubble up any collection or property changes from CategorySetting
