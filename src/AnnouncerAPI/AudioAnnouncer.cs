@@ -68,8 +68,7 @@ public partial class AudioAnnouncer : IAnnouncer
 
     private void ApplyConfigToOther()
     {
-        if (announcerConfig != null && isConfigLoaded)
-        {
+        if (announcerConfig != null && isConfigLoaded) {
             _ = _audioLoader.FindAvailableAudioAsync();
             WriteConfigToIni(announcerConfig);
         }
@@ -110,15 +109,11 @@ public partial class AudioAnnouncer : IAnnouncer
     public async Task PlayAudioViaCategory(string category)
     {
         LogHelper.LogInfo($"Request to play audio for category: {category}");
-        try
-        {
-            if (!ValidateCondition(category))
-                return;
-
+        try {
+            if (!ValidateCondition(category)) return;
             await PlayAudioClip(category);
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             LogPlaybackError(ex);
         }
     }
@@ -148,9 +143,8 @@ public partial class AudioAnnouncer : IAnnouncer
     private bool ValidateCondition(string category)
     {
         var validationState = GetPlayValidationState(category);
-        if (validationState != ValidationState.Success)
-        {
-            LogHelper.LogInfo($"PlayValidationState: {category}, {validationState}");
+        if (validationState != ValidationState.Success) {
+            LogHelper.LogDebug($"PlayValidationState: {category}, {validationState}");
             return false;
         }
         return true;
@@ -159,17 +153,15 @@ public partial class AudioAnnouncer : IAnnouncer
     /// <summary>Play a Sound by category, audioPlayOptions for </summary>
     private async Task PlayAudioClip(string category)
     {
-        LogHelper.LogInfo($"Attempting to play audio for category: {category}");
+        LogHelper.LogDebug($"Attempting to play audio for category: {category}");
         Sound sound = await _audioLoader.GetAudioClip(category);
 
-        if (sound == null)
-        {
+        if (sound == null) {
             LogHelper.LogError($"Failed to load audio clip may for this category: {category}");
             return;
         }
-        if (_cooldownManager.IsIndividualCooldownActive(sound.category))
-        {
-            LogHelper.LogInfo($"The sound's category {sound.category} is still in cooldown");
+        if (_cooldownManager.IsIndividualCooldownActive(sound.category)) {
+            LogHelper.LogDebug($"The sound's category {sound.category} is still in cooldown");
             return;
         }
 

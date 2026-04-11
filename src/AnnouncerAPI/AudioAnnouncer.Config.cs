@@ -21,8 +21,7 @@ public partial class AudioAnnouncer
             category.ToDictionary(cat => cat, cat => new CategorySetting())
         );
 
-        if (!File.Exists(iniPath))
-        {
+        if (!File.Exists(iniPath)) {
             LogHelper.LogDebug($"Initialize new config.ini in: {iniPath}");
             WriteConfigToIni(defaultConfig);
             isConfigLoaded = false;
@@ -30,8 +29,7 @@ public partial class AudioAnnouncer
         }
 
         var iniConfig = ReadConfigFromIni();
-        if (iniConfig == null || !IsCategoryMatch(iniConfig, category))
-        {
+        if (iniConfig == null || !IsCategoryMatch(iniConfig, category)) {
             LogHelper.LogError($"[{title}] AnnouncerConfig category mismatch — {configMismatchInfo}");
             isConfigLoaded = false;
             return null;
@@ -56,7 +54,6 @@ public partial class AudioAnnouncer
 
     private void WriteConfigToIni(AnnouncerConfig announcerConfig)
     {
-        LogHelper.LogDebug($"[WriteConfigToIni] called by {new StackTrace().GetFrame(1).GetMethod().Name}");
         var doc = new IniDocument();
 
         doc = AnnouncerIniMapper.ToIni(doc, announcerConfig);

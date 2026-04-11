@@ -7,6 +7,8 @@ A mod plays sound when `StyleHUD.AscendRank` and `StyleHUD.ComboStart` is called
 
 considering huge performance issue, it's best to set `Logging.Console.Enabled` to `false` in `ULTRAKILL\BepInEx\config\BepInEx.cfg`
 
+but if you mind that, at least remove the `Debug` in `Logging.Console.LogLevel`
+
 ## How to install it
 1. [r2modman](https://thunderstore.io/c/ultrakill/p/ebkr/r2modman/)
    - IDK I never used it but I think just click download and that's it
