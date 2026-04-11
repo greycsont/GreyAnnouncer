@@ -1,13 +1,9 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 using GreyAnnouncer.AudioSourceComponent;
-using GreyAnnouncer.Util.Ini;
 using GreyAnnouncer.Util;
 
 namespace GreyAnnouncer.AnnouncerAPI;

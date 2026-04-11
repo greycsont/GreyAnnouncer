@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using GreyAnnouncer.Util.Ini;
 using GreyAnnouncer.Base;
 
 namespace GreyAnnouncer.AnnouncerAPI;
@@ -20,7 +19,6 @@ public class AnnouncerConfig : NotifyBase
     /// When true, a random category will be selected on each playback
     /// instead of using the requested category directly.
     /// </summary>
-    [IniKey("RandomizeAudioOnPlay")]
     public bool RandomizeAudioOnPlay
     {
         get => _randomizeAudioOnPlay;
@@ -122,7 +120,6 @@ public class AnnouncerConfig : NotifyBase
 public class CategorySetting : NotifyBase
 {
     /// <summary>Whether this category is allowed to play.</summary>
-    [IniKey("Enabled")]
     public bool Enabled
     {
         get => field;
@@ -130,7 +127,6 @@ public class CategorySetting : NotifyBase
     } = true;
 
     /// <summary>Scales the playback volume relative to the global announcer volume.</summary>
-    [IniKey("VolumeMultiplier")]
     public float VolumeMultiplier
     {
         get => field;
@@ -138,7 +134,6 @@ public class CategorySetting : NotifyBase
     } = 1.0f;
 
     /// <summary>Minimum seconds that must pass before this category can play again.</summary>
-    [IniKey("Cooldown")]
     public float Cooldown
     {
         get => field;
@@ -152,7 +147,6 @@ public class CategorySetting : NotifyBase
     /// A random entry is selected at playback time.
     /// Not expected to change at runtime.
     /// </summary>
-    [IniKey("AudioFiles")]
     public List<string> AudioFiles
     {
         get => _audioFiles;
