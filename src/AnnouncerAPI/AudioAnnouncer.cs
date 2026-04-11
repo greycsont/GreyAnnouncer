@@ -20,6 +20,8 @@ public partial class AudioAnnouncer : IAnnouncer
 
     private ICooldownManager _cooldownManager;
 
+    private IConfigManager _configManager;
+
     private List<string> category;
 
     private string _defaultAnnouncerConfigPath;
@@ -70,7 +72,7 @@ public partial class AudioAnnouncer : IAnnouncer
     {
         if (announcerConfig != null && isConfigLoaded) {
             _ = _audioLoader.FindAvailableAudioAsync();
-            WriteConfigToIni(announcerConfig);
+            _configManager.Save(announcerPath, announcerConfig);
         }
 
         if (_initialized)
@@ -86,6 +88,7 @@ public partial class AudioAnnouncer : IAnnouncer
 
     public AudioAnnouncer(IAudioLoader audioLoader,
                            ICooldownManager cooldownManager,
+                           IConfigManager configManager,
                            List<string> category,
                            string title,
                            string defaultAnnouoncerConfigPath
@@ -94,6 +97,7 @@ public partial class AudioAnnouncer : IAnnouncer
         this._audioLoader = audioLoader;
         this._audioLoader.SetProvider(this);
         this._cooldownManager = cooldownManager;
+        this._configManager = configManager;
         this._defaultAnnouncerConfigPath = defaultAnnouoncerConfigPath;
         this.category = category;
         this.title = title;

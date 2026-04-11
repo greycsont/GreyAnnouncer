@@ -27,6 +27,7 @@ public static class RankAnnouncer
         _announcer = new AudioAnnouncer(
             audioLoader: new AudioLoader(),
             cooldownManager: new CooldownManager(category.ToArray()),
+            configManager: new IniConfigManager(),
             category: category,
             title: title,
             defaultAnnouoncerConfigPath: "greythroat"
