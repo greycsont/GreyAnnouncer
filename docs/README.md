@@ -10,26 +10,15 @@ considering huge performance issue, it's best to set `Logging.Console.Enabled` t
 ## How to install it
 1. [r2modman](https://thunderstore.io/c/ultrakill/p/ebkr/r2modman/)
    - IDK I never used it but I think just click download and that's it
-   
-<br>
 
 2. [BepInEx](https://thunderstore.io/c/ultrakill/p/BepInEx/BepInExPack/) (Manual Installation)
    - Extract all contents from the `.zip` file into the **ULTRAKILL\BepInEx\plugin** folder.
 
 
 ## How to config it
-`PluginConfigurator => GreyAnnouncer => RankAnnouncer => Edit Externally(yeah a Lazer feat) => Edit(add audio etc.) => back to Main setting => Reload`
-
-`But tbh you can create a new one by copy config.ini`
+`PluginConfigurator => GreyAnnouncer => RankAnnouncer => Edit Externally => Edit(add audio etc.) => back to Main setting => Reload`
 
 you can switch between different presets
-
-#### WIP
-| Feature      | Supported |                 
-|-------------|-----------|
-| `ffmpeg`    | ✅        |       
-| `swapperable announcer config`      |  ✅      |
-
 
 ##### Supported Audio Formats
 
@@ -38,14 +27,15 @@ you can switch between different presets
 | `.mp3`      | ✅        |       
 | `.wav`      | ✅        |
 
-`aac, ogg, aiff/aif not tested yet`
+Other `UnityEngine.AudioType` are not tested but it's added
+
+You can enable `Use FFmpeg to load unknown audio format` in advanced setting to load unknown format
 
 ## Bugs & Suggestions
 if you have any throuble or suggestion with the mod, feel free to ask in 
 - [Github issue](https://github.com/greycsont/GreyAnnouncer/issues)
 - Email : 1106230622@qq.com
-- Discord : username : csont.0721
-- Check .\src\RankAnnouncer folder if you want to make your own AudioAnnouncer(
+- Discord : `csont.0721`
 
 ## Resources
 - [1] FFmpeg, used under GNU Lesser General Public License (LGPL) Version 2.1
@@ -55,8 +45,11 @@ if you have any throuble or suggestion with the mod, feel free to ask in
 - [5] PluginConfigurator by eternalUnion, used under MIT License
 - [6] BepInEx, used under GNU Lesser General Public License (LGPL).
 
+## Complants
+FUCK r2modman WHO DID THAT YOU NEED TO MAKE THE FOLDER STRUCTURE LIKE `mod's zip/plugins/modName/subfolder` TO MAKE A SUB-FOLDER? FUCK
+
 ## License
-- The file(s) in the **Lib/** folder are third-party and not authored by me. They are not covered by the License of this project. Please refer to the respective license(s) of those files.
+- The file(s) in the **./lib** folder are third-party and not authored by me. They are not covered by the License of this project. Please refer to the respective license(s) of those files.
 
 - Also the files in ./docs/image folder or any image used in this README.md are not covered by the License of the project.
 

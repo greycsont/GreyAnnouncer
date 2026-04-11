@@ -1,4 +1,5 @@
 ### v1.4.1
+- switch from bepinex config to setting.json to store setting
 - Add more Unity.AudioType in AudioClipLoader
 
 

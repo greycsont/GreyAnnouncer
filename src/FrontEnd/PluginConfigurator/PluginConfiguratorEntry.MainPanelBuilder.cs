@@ -161,7 +161,7 @@ public static partial class PluginConfiguratorEntry
 
         ffmpegToggle = new BoolField(
             advancedPanel,
-            "FFmpeg Support",
+            "Use FFmpeg to load unknown audio format",
             "FFmpeg_Support",
             Setting.isFFmpegSupportEnabled,
             saveToConfig: false
