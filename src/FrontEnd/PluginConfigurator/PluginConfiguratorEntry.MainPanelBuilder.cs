@@ -161,7 +161,7 @@ public static partial class PluginConfiguratorEntry
 
         ffmpegToggle = new BoolField(
             advancedPanel,
-            "Use FFmpeg to load unknown audio format",
+            "Use FFmpeg to load unknown format",
             "FFmpeg_Support",
             Setting.isFFmpegSupportEnabled,
             saveToConfig: false
@@ -170,7 +170,7 @@ public static partial class PluginConfiguratorEntry
         ffmpegToggle.onValueChange += (e) =>
             Setting.isFFmpegSupportEnabled = e.value;
 
-        var ffmpegLogHeader = new ConfigHeader(advancedPanel, "To Endabled this will try to load unknown audio/video to AudioClip via FFmpeg\n makesure there's a executable in environment path `ffmpeg` or `PATH`\n\n ");
+        var ffmpegLogHeader = new ConfigHeader(advancedPanel, "this will try to load unknown format to AudioClip via FFmpeg\n makesure there's a executable in environment path `ffmpeg` or `PATH`\n\n ");
         ffmpegLogHeader.tmpAnchor = TMPro.TextAlignmentOptions.Top;
         ffmpegLogHeader.textSize = 12;
         ffmpegLogHeader.textColor = m_greyColour;
@@ -207,7 +207,7 @@ public static partial class PluginConfiguratorEntry
         creditText.AppendLine("\n- PluginConfigurator doc \n(https://github.com/eternalUnion/UKPluginConfigurator/wiki) Easy to use tbh (except changing font)");
         creditText.AppendLine("\n- Maxwell's puzzling demon \n(https://store.steampowered.com/app/2770160/) Fun puzzle game");
         creditText.AppendLine("\n- A mod that currently WIP \n(Advert Placeholder) Pretty FUN I would say");
-        creditText.AppendLine("\n- 快乐萨卡兹厨, jamcame, 夕柱.");
+        creditText.AppendLine("\n- HappySKZC, jamcame, ZHU!.");
         creditText.AppendLine("\n");
         creditText.AppendLine("\n- Everyone who used this mod.");
         creditText.AppendLine("\n\n\n\n");
