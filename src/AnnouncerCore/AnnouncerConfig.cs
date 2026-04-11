@@ -115,26 +115,30 @@ public class AnnouncerConfig : NotifyBase
 /// </summary>
 public class CategorySetting : NotifyBase
 {
+    private bool _enabled = true;
+    private float _volumeMultiplier = 1.0f;
+    private float _cooldown = 1.5f;
+
     /// <summary>Whether this category is allowed to play.</summary>
     public bool Enabled
     {
-        get => field;
-        set => SetField(ref field, value);
-    } = true;
+        get => _enabled;
+        set => SetField(ref _enabled, value);
+    }
 
     /// <summary>Scales the playback volume relative to the global announcer volume.</summary>
     public float VolumeMultiplier
     {
-        get => field;
-        set => SetField(ref field, value);
-    } = 1.0f;
+        get => _volumeMultiplier;
+        set => SetField(ref _volumeMultiplier, value);
+    }
 
     /// <summary>Minimum seconds that must pass before this category can play again.</summary>
     public float Cooldown
     {
-        get => field;
-        set => SetField(ref field, value);
-    } = 1.5f;
+        get => _cooldown;
+        set => SetField(ref _cooldown, value);
+    }
 
     private List<string> _audioFiles = new();
 

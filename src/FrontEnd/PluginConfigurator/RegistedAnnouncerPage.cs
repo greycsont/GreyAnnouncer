@@ -113,61 +113,44 @@ public class RegistedAnnouncerPage
 
             var fields = new CategoryFields
             {
-                Enabled  = CreateEnabledField(_panel, key, _announcer.announcerConfig, true),
-                Volume   = CreateVolumeField(_panel, key, _announcer.announcerConfig, 1f),
-                Cooldown = CreateCooldownField(_panel, key, _announcer.announcerConfig, 3.0f)
+                Enabled  = CreateEnabledField(_panel, key, true),
+                Volume   = CreateVolumeField(_panel, key, 1f),
+                Cooldown = CreateCooldownField(_panel, key, 3.0f)
             };
 
             _fields.CategoryFields[key] = fields;
         }
     }
 
-    private BoolField CreateEnabledField(ConfigPanel panel,
-                                         string guid,
-                                         AnnouncerConfig AnnouncerConfig,
-                                         bool defaultValue)
+    private BoolField CreateEnabledField(ConfigPanel panel, string guid, bool defaultValue)
     {
         var fullGuid = _announcer.title + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "Enabled");
-        var field = new BoolField(panel, "Enabled", fullGuid, AnnouncerConfig.CategorySetting[guid].Enabled, saveToConfig: false);
-        field.defaultValue = defaultValue;
-        field.onValueChange += e => {
-            AnnouncerConfig.CategorySetting[guid].Enabled = e.value;
-            LogHelper.LogDebug($"Category {guid} Enabled set to {e.value}");
-        };
-
-        return field;
-    }
-
-
-    private FloatField CreateVolumeField(ConfigPanel panel,
-                                         string guid,
-                                         AnnouncerConfig AnnouncerConfig,
-                                         float defaultValue)
-    {
-        var fullGuid = _announcer.title + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "VolumeMultiplier");
-        var field = new FloatField(panel, "Volume", fullGuid, AnnouncerConfig.CategorySetting[guid].VolumeMultiplier, saveToConfig: false);
+        var field = new BoolField(panel, "Enabled", fullGuid, _announcer.announcerConfig.CategorySetting[guid].Enabled, saveToConfig: false);
         field.defaultValue = defaultValue;
         field.onValueChange += e =>
-        {
-            AnnouncerConfig.CategorySetting[guid].VolumeMultiplier = e.value;
-            LogHelper.LogDebug($"Category {guid} VolumeMultiplier set to {e.value}");
-        };
+            _announcer.announcerConfig.CategorySetting[guid].Enabled = e.value;
 
         return field;
     }
 
-    private FloatSliderField CreateCooldownField(ConfigPanel panel,
-                                                     string guid,
-                                                     AnnouncerConfig AnnouncerConfig,
-                                                     float defaultValue)
+    private FloatField CreateVolumeField(ConfigPanel panel, string guid, float defaultValue)
+    {
+        var fullGuid = _announcer.title + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "VolumeMultiplier");
+        var field = new FloatField(panel, "Volume", fullGuid, _announcer.announcerConfig.CategorySetting[guid].VolumeMultiplier, saveToConfig: false);
+        field.defaultValue = defaultValue;
+        field.onValueChange += e =>
+            _announcer.announcerConfig.CategorySetting[guid].VolumeMultiplier = e.value;
+
+        return field;
+    }
+
+    private FloatSliderField CreateCooldownField(ConfigPanel panel, string guid, float defaultValue)
     {
         var fullGuid = _announcer.title + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "Cooldown");
-        var field = new FloatSliderField(panel, "Cooldown", fullGuid, Tuple.Create(0.2f, 6f), AnnouncerConfig.CategorySetting[guid].Cooldown, 1, saveToConfig: false);
+        var field = new FloatSliderField(panel, "Cooldown", fullGuid, Tuple.Create(0.2f, 6f), _announcer.announcerConfig.CategorySetting[guid].Cooldown, 1, saveToConfig: false);
         field.defaultValue = defaultValue;
-        field.onValueChange += e => {
-            AnnouncerConfig.CategorySetting[guid].Cooldown = e.newValue;
-            LogHelper.LogDebug($"Category {guid} Cooldown set to {e.newValue}");
-        };
+        field.onValueChange += e =>
+            _announcer.announcerConfig.CategorySetting[guid].Cooldown = e.newValue;
 
         return field;
     }
