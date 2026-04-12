@@ -27,8 +27,6 @@ public static partial class AudioClipLoader
                 
             }
 
-            if (clip == null) return null;
-
             //LogManager.LogInfo($"Loaded audio: {Path.GetFileName(path)}");
             return clip;
         }

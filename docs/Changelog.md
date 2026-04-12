@@ -1,6 +1,9 @@
 ### v1.4.1
-- switch from bepinex config to setting.json to store setting
+- Switch from bepinex config to setting.json to store setting
+- Switch from config.ini to config.json for scalability
 - Add more Unity.AudioType in AudioClipLoader
+- Add ExcludeFromRandom for more customization on pack
+- Add SpatialBlend to audioSource
 
 
 ### v1.4.0

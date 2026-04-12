@@ -80,14 +80,20 @@ public class PackConfig : NotifyBase
 public class CategorySetting : NotifyBase
 {
     private bool _enabled = true;
+    private bool _excludeFromRandom = false;
     private float _volumeMultiplier = 1.0f;
     private float _cooldown = 1.5f; 
-    private bool _excludeFromRandom = false;
 
     public bool Enabled
     {
         get => _enabled;
         set => SetField(ref _enabled, value);
+    }
+
+    public bool ExcludeFromRandom
+    {
+        get => _excludeFromRandom;
+        set => SetField(ref _excludeFromRandom, value);
     }
 
     public float VolumeMultiplier
@@ -100,12 +106,6 @@ public class CategorySetting : NotifyBase
     {
         get => _cooldown;
         set => SetField(ref _cooldown, value);
-    }
-
-    public bool ExcludeFromRandom
-    {
-        get => _excludeFromRandom;
-        set => SetField(ref _excludeFromRandom, value);
     }
 
     private List<string> _audioFiles = new();

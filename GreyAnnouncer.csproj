@@ -4,10 +4,10 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>GreyAnnouncer</AssemblyName>
     <Description>My first plugin</Description>
-    <Version>1.4.0</Version>
+    <Version>1.4.1</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
-    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <Platforms>AnyCPU</Platforms>
     <NoWarn>CS0436</NoWarn>
   </PropertyGroup>
@@ -44,9 +44,9 @@
   <!-- Add beplnex and Harmony packet -->
   <ItemGroup>
     <PackageReference Include="BepInEx.Core" Version="5.4.21" />
-    <PackageReference Include="FFmpeg.AutoGen" Version="7.1.1" />
     <PackageReference Include="HarmonyX" Version="2.10.2" />
-    <PackageReference Include="BepInEx.Analyzers" Version="1.0.8" PrivateAssets="all" />
+    <PackageReference Include="BepInEx.Analyzers" Version="1.0.8"/>
+    <PackageReference Include="FFmpeg.AutoGen" Version="7.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Krafs.Publicizer" Version="2.3.0">
         <PrivateAssets>all</PrivateAssets>
@@ -58,6 +58,7 @@
     <ULTRAKILLDir>E:\SteamLibrary\steamapps\common\ULTRAKILL</ULTRAKILLDir>
     <ManagedDir>$(ULTRAKILLDir)\ULTRAKILL_Data\Managed</ManagedDir>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -66,7 +67,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>$(ULTRAKILLDir)\BepInEx\plugins\GreyAnnouncer</OutputPath>
+    <OutputPath>$(ULTRAKILLDir)\BepInEx\plugins\GreyAnnouncer\plugins\Grey_Announcer</OutputPath>
   </PropertyGroup>
 	
   <PropertyGroup>
@@ -78,18 +79,19 @@
   <Target Name="PackRelease" AfterTargets="Build" Condition="'$(Configuration)'=='Release'">
   <PropertyGroup>
     <PackDir>$(MSBuildProjectDirectory)\bin\pack</PackDir>
+    <PluginDir>$(PackDir)\plugins\Grey_Announcer</PluginDir>
   </PropertyGroup>
 
   <!-- 清理旧的中间目录 -->
   <RemoveDir Directories="$(PackDir)" />
-  <MakeDir Directories="$(PackDir)" />
+  <MakeDir Directories="$(PluginDir)" />
 
   <!-- 只复制需要的 DLL -->
   <Copy SourceFiles="
     $(OutputPath)\GreyAnnouncer.dll;
     $(OutputPath)\FFmpeg.AutoGen.dll;
     $(OutputPath)\Newtonsoft.Json.dll"
-    DestinationFolder="$(PackDir)" />
+    DestinationFolder="$(PluginDir)" />
 
   <ItemGroup>
     <DistFiles Include="$(MSBuildProjectDirectory)\dist\*" />

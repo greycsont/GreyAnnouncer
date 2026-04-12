@@ -1,6 +1,6 @@
 {
     "name": "Grey_Announcer",
-    "version_number": "1.4.0",
+    "version_number": "1.4.1",
     "website_url": "https://github.com/greycsont/GreyAnnouncer",
     "description": "A mod plays sound when `StyleHUD.AscendRank` and `StyleHUD.ComboStart` is called",
     "dependencies": [

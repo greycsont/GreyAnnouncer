@@ -37,6 +37,6 @@ public static partial class PluginConfiguratorEntry
     private static void CreatePluginPages()
     {
         config = PluginConfigurator.Create(PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_GUID);
-        config.SetIconWithURL(PathHelper.GetCurrentPluginPath("icon.png"));
+        config.SetIconWithURL(PathHelper.GetCurrentPluginPath("./../../icon.png"));
     }                          
 }
