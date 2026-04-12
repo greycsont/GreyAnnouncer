@@ -6,4 +6,5 @@ obj/
 .idea/
 .vscode/
 publish/
+dist/
 *.user

@@ -94,11 +94,19 @@
     DestinationFolder="$(PluginDir)" />
 
   <ItemGroup>
-    <DistFiles Include="$(MSBuildProjectDirectory)\dist\*" />
+    <DistBaseFiles Include="$(MSBuildProjectDirectory)\dist\base\*" />
   </ItemGroup>
-  <Copy SourceFiles="@(DistFiles)"
+  <Copy SourceFiles="@(DistBaseFiles)"
     DestinationFolder="$(PackDir)"
-    Condition="'@(DistFiles)' != ''" />
+    Condition="'@(DistBaseFiles)' != ''" />
+
+  <ItemGroup>
+    <DistAnnouncerFiles Include="$(MSBuildProjectDirectory)\dist\announcers\**\*" />
+  </ItemGroup>
+  <Copy SourceFiles="@(DistAnnouncerFiles)"
+      DestinationFolder="$(PluginDir)\announcers\%(RecursiveDir)"
+      Condition="'@(DistAnnouncerFiles)' != ''" />
+
 
   <ItemGroup>
     <DocsFiles Include="$(MSBuildProjectDirectory)\docs\README.md;$(MSBuildProjectDirectory)\docs\Changelog.md" />

@@ -10,7 +10,7 @@ tl;dr: when your style rank get higher
 
 - Multiple audio format support & Use FFmpeg's lib to load unknown format
 
-- Setting on Volume/SpatialBlend/Load & play options
+- Setting on Volume/SpatialBlend/Load or Play strategies
 
 ## How to Config
 Go to PluginConfigurator
@@ -23,6 +23,9 @@ you can add multiple files in single category's AudioFiles, when that category i
 when you turn on the audio randomization, when a category is called it will select all **valid** category's audio file and choose one of them
 
 e.g. ExcludeFromRandom = false
+
+Last, please ensure the extension of audio file are uses the right audio extension
+e.g. `.mp3`, `.wav`
 
 `Sry I will not switch to .ini and makes a silly broken change again`
 ```json
