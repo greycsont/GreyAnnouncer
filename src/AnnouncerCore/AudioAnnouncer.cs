@@ -34,7 +34,7 @@ public partial class AudioAnnouncer : IAnnouncer
             LogHelper.LogDebug($"announcerPath seted");
             field = value;
             SaveSelectedPack(value);
-            ReloadAudio();
+            ReloadPack();
         }
     }
 
@@ -124,8 +124,8 @@ public partial class AudioAnnouncer : IAnnouncer
         }
     }
 
-    /// <summary>Reload Audio, only works when using Preload and Play options</summary>
-    public void ReloadAudio()
+    /// <summary>Reload Audio</summary>
+    public void ReloadPack()
     {
         announcerConfig = LoadConfig();
     }
@@ -174,7 +174,7 @@ public partial class AudioAnnouncer : IAnnouncer
         }
 
         if (sound == null) {
-            LogHelper.LogError($"Failed to load audio clip may for this category: {category}");
+            LogHelper.LogWarning($"Failed to load audio clip may for this category: {category}, if you are using Load_Then_Play then it's normal");
             return;
         }
         if (_cooldownManager.IsIndividualCooldownActive(sound.category)) {
@@ -211,7 +211,7 @@ public partial class AudioAnnouncer : IAnnouncer
 
     private void SubscribeAnnouncerManager()
     {
-        AnnouncerManager.reloadAnnouncer += ReloadAudio;
+        AnnouncerManager.reloadAnnouncer += ReloadPack;
         AnnouncerManager.resetCooldown += ResetCooldown;
         AnnouncerManager.clearAudioClipCache += ClearAudioClipsCache;
 

@@ -151,7 +151,7 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
                         }).ToArray()
                     ),
                     Leaf("editexternal", () => a.EditExternally()),
-                    Leaf("reload", () => a.ReloadAudio())
+                    Leaf("reload", () => a.ReloadPack())
                 );
             }).ToArray()
         );

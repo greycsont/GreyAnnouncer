@@ -12,6 +12,9 @@ tl;dr: when your style rank get higher
 
 - Setting on Volume/SpatialBlend/Load & play options
 
+## How to Config
+Go to PluginConfigurator
+
 ## Format of config.json
 This is an example of config.json:
 

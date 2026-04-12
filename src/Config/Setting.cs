@@ -56,6 +56,7 @@ public static class Setting
         get => PluginSettings.Instance.AudioLoadingStrategy;
         set
         {
+            PluginSettings.Instance.AudioLoadingStrategy = value;
             if (value.Equals((int)AudioLoadOptions.Load_then_Play))
             {
                 LogHelper.LogInfo("Clear audio clip cache");
@@ -66,7 +67,6 @@ public static class Setting
                 LogHelper.LogInfo("Reloading all announcer audio");
                 AnnouncerManager.ReloadAllAnnouncers();
             }
-            PluginSettings.Instance.AudioLoadingStrategy = value;
             SaveSettings();
         }
     }

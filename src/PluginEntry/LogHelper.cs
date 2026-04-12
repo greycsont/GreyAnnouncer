@@ -21,7 +21,7 @@ internal static class LogHelper
     public static void LogError(object data,
         [CallerMemberName] string member = "")
     {
-        log?.LogError($"[.{member}] {data}");
+        log?.LogError($"[{member}] {data}");
     }
 
     public static void LogDebug(object data,

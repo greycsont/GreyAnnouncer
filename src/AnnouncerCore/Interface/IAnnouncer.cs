@@ -9,7 +9,7 @@ public interface IAnnouncer
     public string announcerPath { get; set; }
     public PackConfig announcerConfig { get; }
     public void EditExternally();
-    public void ReloadAudio();
+    public void ReloadPack();
     public Action syncUI { get; set; }
     public bool isConfigLoaded { get;}
     public string configMismatchInfo { get; }
