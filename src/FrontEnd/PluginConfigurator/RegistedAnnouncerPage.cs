@@ -116,9 +116,10 @@ public class RegistedAnnouncerPage
 
             var fields = new CategoryFields
             {
-                Enabled  = CreateEnabledField(_panel, key, true),
-                Volume   = CreateVolumeField(_panel, key, 1f),
-                Cooldown = CreateCooldownField(_panel, key, 3.0f)
+                Enabled           = CreateEnabledField(_panel, key, true),
+                Volume            = CreateVolumeField(_panel, key, 1f),
+                Cooldown          = CreateCooldownField(_panel, key, 3.0f),
+                ExcludeFromRandom = CreateExcludeFromRandomField(_panel, key, false)
             };
 
             _fields.CategoryFields[key] = fields;
@@ -161,6 +162,20 @@ public class RegistedAnnouncerPage
         return field;
     }
 
+    private BoolField CreateExcludeFromRandomField(ConfigPanel panel, string guid, bool defaultValue)
+    {
+        var fullGuid = _announcer.title + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "ExcludeFromRandom");
+        var field = new BoolField(panel, "Exclude From Random Selection", fullGuid, defaultValue, saveToConfig: false);
+        field.defaultValue = defaultValue;
+        field.value = _announcer.announcerConfig.CategorySetting[guid].ExcludeFromRandom;
+        field.onValueChange += e =>
+            _announcer.announcerConfig.CategorySetting[guid].ExcludeFromRandom = e.value;
+
+        field.hidden = !_announcer.announcerConfig.RandomizeAudioOnPlay;
+
+        return field;
+    }
+
     public void ApplyConfigToUI()
     {
         LogHelper.LogDebug($"ApplyConfigToUI called");
@@ -193,6 +208,8 @@ public class RegistedAnnouncerPage
             fields.Enabled.value  = data.Enabled;
             fields.Volume.value   = data.VolumeMultiplier;
             fields.Cooldown.value = data.Cooldown;
+            fields.ExcludeFromRandom.value = data.ExcludeFromRandom;
+            fields.ExcludeFromRandom.hidden = !config.RandomizeAudioOnPlay;
         }
     }
     private static readonly Color HeaderColor = new Color(0.85f, 0.85f, 0.85f, 1f);

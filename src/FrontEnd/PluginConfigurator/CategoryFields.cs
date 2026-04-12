@@ -7,4 +7,5 @@ public class CategoryFields
     public BoolField Enabled;
     public FloatField Volume;
     public FloatSliderField Cooldown;
+    public BoolField ExcludeFromRandom;
 }
