@@ -137,7 +137,7 @@ if you have any throuble or suggestion with the mod, feel free to ask in
 - Discord : `csont.0721`
 
 ## Complants
-Q: which f mod manager need to have a folder structure like this to make a sub folder:
+Q: guess which f mod manager need to have a folder structure like this to make a sub folder:
 
 whateverfuckisthis.zip/plugins/modName/subfolder
 
