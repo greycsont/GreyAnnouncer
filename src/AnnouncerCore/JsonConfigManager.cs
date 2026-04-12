@@ -6,7 +6,7 @@ namespace GreyAnnouncer.AnnouncerCore;
 
 public class JsonConfigManager : IConfigManager
 {
-    private static string ConfigPath(string directory) => Path.Combine(directory, "config.json");
+    public string ConfigPath(string directory) => Path.Combine(directory, "config.json");
 
     public AnnouncerConfig Load(string directory)
         => JsonManager.ReadJson<AnnouncerConfig>(ConfigPath(directory));

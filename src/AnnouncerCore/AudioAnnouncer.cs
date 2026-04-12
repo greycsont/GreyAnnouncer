@@ -1,13 +1,11 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using GreyAnnouncer.AudioSourceComponent;
 using GreyAnnouncer.Util;
-using GreyAnnouncer.Config;
 
 namespace GreyAnnouncer.AnnouncerCore;
 
@@ -57,23 +55,28 @@ public partial class AudioAnnouncer : IAnnouncer
             if (field != null)
                 field.PropertyChanged += OnAnnouncerConfigChanged;
 
-            ApplyConfigToOther();
+            OnAnnouncerConfigSwitched();
         }
     }
 
     private void OnAnnouncerConfigChanged(object sender, PropertyChangedEventArgs e)
     {
         LogHelper.LogDebug($"AnnouncerConfig changed: {e.PropertyName}");
-        ApplyConfigToOther();
+        SaveConfig();
     }
 
-    private void ApplyConfigToOther()
+    private void OnAnnouncerConfigSwitched()
     {
+        LogHelper.LogDebug($"AnnouncerConfig Switched");
         if (announcerConfig != null && isConfigLoaded) {
             _ = _audioLoader.FindAvailableAudioAsync();
-            _configManager.Save(announcerPath, announcerConfig);
+            SaveConfig();
         }
+    }
 
+    private void SaveConfig()
+    {
+        _configManager.Save(announcerPath, announcerConfig);
         if (_initialized)
             syncUI.Invoke();
     }
@@ -113,7 +116,7 @@ public partial class AudioAnnouncer : IAnnouncer
     {
         LogHelper.LogInfo($"Request to play audio for category: {category}");
         try {
-            if (!ValidateCondition(category)) return;
+            if (!ValidatePlayCondition(category)) return;
             await PlayAudioClip(category);
         }
         catch (Exception ex) {
@@ -124,7 +127,7 @@ public partial class AudioAnnouncer : IAnnouncer
     /// <summary>Reload Audio, only works when using Preload and Play options</summary>
     public void ReloadAudio()
     {
-        announcerConfig = InitializeConfig(category);
+        announcerConfig = LoadConfig();
     }
 
 
@@ -143,7 +146,7 @@ public partial class AudioAnnouncer : IAnnouncer
 
 
     /// <summary>Gets bool with validate serveral conditions </summary>
-    private bool ValidateCondition(string category)
+    private bool ValidatePlayCondition(string category)
     {
         var validationState = GetPlayValidationState(category);
         if (validationState != ValidationState.Success) {
@@ -157,7 +160,18 @@ public partial class AudioAnnouncer : IAnnouncer
     private async Task PlayAudioClip(string category)
     {
         LogHelper.LogDebug($"Attempting to play audio for category: {category}");
-        Sound sound = await _audioLoader.GetAudioClip(category);
+        Sound sound;
+        if (announcerConfig.RandomizeAudioOnPlay)
+        {
+            var validCategories = this.category
+                .Where(c => announcerConfig.CategorySetting[c].ExcludeFromRandom == false)
+                .ToList();
+            sound = await _audioLoader.GetRandomAudioClipInCategory(validCategories);
+        }
+        else
+        {
+            sound = await _audioLoader.GetAudioClipInCategory(category);
+        }
 
         if (sound == null) {
             LogHelper.LogError($"Failed to load audio clip may for this category: {category}");
@@ -175,10 +189,6 @@ public partial class AudioAnnouncer : IAnnouncer
         SetCooldown(sound.category, announcerConfig.CategorySetting[sound.category].Cooldown);
     }
 
-    private void LogPlaybackError(Exception ex)
-        => LogHelper.LogError($"An error occurred while playing sound: {ex.Message}\n{ex.StackTrace}");
-
-
     private ValidationState GetPlayValidationState(string category)
     {
         if (_cooldownManager == null || _audioLoader == null)
@@ -190,7 +200,7 @@ public partial class AudioAnnouncer : IAnnouncer
         if (!announcerConfig.CategorySetting.ContainsKey(category))
             return ValidationState.InvalidKey;
 
-        if (!announcerConfig.CategorySetting[category].Enabled && announcerConfig.RandomizeAudioOnPlay == false)
+        if (!announcerConfig.CategorySetting[category].Enabled)
             return ValidationState.DisabledByConfig;
         
         if (_cooldownManager.IsIndividualCooldownActive(category) == true)
@@ -210,5 +220,10 @@ public partial class AudioAnnouncer : IAnnouncer
 
     public void EditExternally()
         => ProcessHelper.OpenDirectory(announcerPath);
+
+    private void LogPlaybackError(Exception ex)
+        => LogHelper.LogError($"An error occurred while playing sound: {ex.Message}\n{ex.StackTrace}");
+
+
 
 }

@@ -1,4 +1,4 @@
-## Mod description
+## Grey Announcer
 A mod plays sound when `StyleHUD.AscendRank` and `StyleHUD.ComboStart` is called
 
 tldr: when your style rank get higher

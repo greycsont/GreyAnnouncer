@@ -36,10 +36,10 @@ public partial class AudioLoader
         return (category, clip);
     }
 
-    public (string category, AudioClip clip) GetRandomClipFromAudioClips()
+    public (string category, AudioClip clip) GetRandomClipFromAudioClips(List<string> categories)
     {
         var validEntries = _audioClips
-            .Where(kvp => announcerConfig.CategorySetting.ContainsKey(kvp.Key))
+            .Where(kvp => categories.Contains(kvp.Key))
             .SelectMany(kvp => kvp.Value
                 .Where(clip => clip != null)
                 .Select(clip => (kvp.Key, clip)))

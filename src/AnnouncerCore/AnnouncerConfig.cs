@@ -81,7 +81,8 @@ public class CategorySetting : NotifyBase
 {
     private bool _enabled = true;
     private float _volumeMultiplier = 1.0f;
-    private float _cooldown = 1.5f;
+    private float _cooldown = 1.5f; 
+    private bool _excludeFromRandom = false;
 
     public bool Enabled
     {
@@ -99,6 +100,12 @@ public class CategorySetting : NotifyBase
     {
         get => _cooldown;
         set => SetField(ref _cooldown, value);
+    }
+
+    public bool ExcludeFromRandom
+    {
+        get => _excludeFromRandom;
+        set => SetField(ref _excludeFromRandom, value);
     }
 
     private List<string> _audioFiles = new();

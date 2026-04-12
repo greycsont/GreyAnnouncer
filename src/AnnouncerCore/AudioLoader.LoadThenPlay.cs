@@ -18,11 +18,6 @@ public partial class AudioLoader
             return (null, null);
         }
 
-        if (!setting.Enabled) {
-            LogHelper.LogDebug($"Category 「{category}」 is disabled, skipping");
-            return (null, null);
-        }
-
         if (!TryResolveAudioFiles(category, out var validFiles)) return (null, null);
 
         var selectedPath = validFiles[UnityEngine.Random.Range(0, validFiles.Count)];
@@ -34,12 +29,11 @@ public partial class AudioLoader
         return (category, clip);
     }
 
-    public async Task<(string category, AudioClip clip)> GetRandomClipFromAllAvailableFiles()
+    public async Task<(string category, AudioClip clip)> GetRandomClipFromAllAvailableFiles(List<string> categories)
     {
         var allValidFiles = new List<(string category, string path)>();
 
-        foreach (var (category, setting) in announcerConfig.CategorySetting) {
-            if (!setting.Enabled) continue;
+        foreach (var category in categories) {
             if (TryResolveAudioFiles(category, out var validFiles))
                 allValidFiles.AddRange(validFiles.Select(path => (category, path)));
         }

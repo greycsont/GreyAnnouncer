@@ -8,21 +8,16 @@ namespace GreyAnnouncer.AnnouncerCore;
 
 public partial class AudioAnnouncer
 {
-    private AnnouncerConfig InitializeConfig(List<string> category)
+    private AnnouncerConfig LoadConfig()
     {
         LogHelper.LogDebug($"Loading config for {title} from: {announcerPath}");
 
-        var defaultConfig = new AnnouncerConfig().SetCategorySettingMap(
-            category.ToDictionary(cat => cat, cat => new CategorySetting())
-        );
+        if (!File.Exists(_configManager.ConfigPath(announcerPath))) {
+            LogHelper.LogDebug($"No config found in {announcerPath}");
+            return null;
+        }
 
         var config = _configManager.Load(announcerPath);
-        if (config == null) {
-            LogHelper.LogDebug($"No config found, writing default to: {announcerPath}");
-            _configManager.Save(announcerPath, defaultConfig);
-            isConfigLoaded = false;
-            return defaultConfig;
-        }
 
         if (!IsCategoryMatch(config, category)) {
             LogHelper.LogError($"[{title}] AnnouncerConfig category mismatch — {configMismatchInfo}");

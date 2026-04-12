@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using UnityEngine;
 
-using GreyAnnouncer.AudioLoading;
 using GreyAnnouncer.Config;
 using GreyAnnouncer.AudioSourceComponent;
 using GreyAnnouncer.Util;
@@ -31,39 +30,52 @@ public partial class AudioLoader : IAudioLoader
     public AudioLoader() { }
 
 
-    public async Task<Sound> GetAudioClip(string category)
+    public async Task<Sound> GetAudioClipInCategory(string category)
     {
-        (string, AudioClip) clipWithCategory;
+        var clip = await ResolveClip(
+            onDemandLoader: () => LoadAndGetSingleAudioClip(category),
+            cachedLoader:   () => GetClipFromCache(category)
+        );
 
-        if (Setting.audioLoadingStrategy == 0)
-        {
-            var currentRequestId = ++AnnouncerManager.playRequestId;
-
-            clipWithCategory = announcerConfig.RandomizeAudioOnPlay
-                ? await GetRandomClipFromAllAvailableFiles()
-                : await LoadAndGetSingleAudioClip(category);
-
-            if (currentRequestId != AnnouncerManager.playRequestId && Setting.audioPlayOptions == 0)
-                return null;
-        }
-        else
-        {
-            clipWithCategory = announcerConfig.RandomizeAudioOnPlay
-                ? GetRandomClipFromAudioClips()
-                : GetClipFromCache(category);
-        }
-
-        if (clipWithCategory.Item2 == null)
+        if (clip == null || clip.Value.Item2 == null)
         {
             LogHelper.LogWarning($"No audio clip available for category 「{category}」, strategy: {Setting.audioLoadingStrategy}");
             return null;
         }
 
-        return new Sound(
-            clipWithCategory.Item1,
-            clipWithCategory.Item2,
-            announcerConfig.CategorySetting[clipWithCategory.Item1].VolumeMultiplier
+        return new Sound(clip.Value.Item1, clip.Value.Item2, announcerConfig.CategorySetting[clip.Value.Item1].VolumeMultiplier);
+    }
+
+    public async Task<Sound> GetRandomAudioClipInCategory(List<string> categories)
+    {
+        var clip = await ResolveClip(
+            onDemandLoader: () => GetRandomClipFromAllAvailableFiles(categories),
+            cachedLoader:   () => GetRandomClipFromAudioClips(categories)
         );
+
+        if (clip == null || clip.Value.Item2 == null)
+        {
+            LogHelper.LogWarning($"No audio clip available for category 「{string.Join(", ", categories)}」, strategy: {Setting.audioLoadingStrategy}");
+            return null;
+        }
+
+        return new Sound(clip.Value.Item1, clip.Value.Item2, announcerConfig.CategorySetting[clip.Value.Item1].VolumeMultiplier);
+    }
+
+    private async Task<(string, AudioClip)?> ResolveClip(
+        Func<Task<(string, AudioClip)>> onDemandLoader,
+        Func<(string, AudioClip)> cachedLoader)
+    {
+        if (Setting.audioLoadingStrategy == 0)
+        {
+            var currentRequestId = ++AnnouncerManager.playRequestId;
+            var clip = await onDemandLoader();
+            if (currentRequestId != AnnouncerManager.playRequestId && Setting.audioPlayOptions == 0)
+                return null;
+            return clip;
+        }
+
+        return cachedLoader();
     }
 
     public void SetProvider(IAnnouncer provider)
