@@ -22,21 +22,25 @@ public static class ProcessHelper
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                 System.Diagnostics.Process.Start("open", path);
             else
-                LogHelper.LogWarning("[OpenDirectory] Unsupported OS platform.");
+                LogHelper.LogWarning("Unsupported OS platform.");
         }
         else
         {
-            LogHelper.LogWarning("[OpenDirectory] The path is not valid or the directory does not exist.");
+            LogHelper.LogWarning("The path is not valid or the directory does not exist.");
         }
     }
 
-    internal static string FindExecutable(string envVariable, string fallbackPath = null)
+    internal static string FindExecutable(string executableName, string fallbackPath = null)
     {
+        bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+        string exeName = isWindows ? executableName + ".exe" : executableName;
+        char pathSeparator = isWindows ? ';' : ':';
+
         // Enviroment path
-        var envPath = Environment.GetEnvironmentVariable(envVariable);
+        var envPath = Environment.GetEnvironmentVariable(executableName);
         if (!string.IsNullOrEmpty(envPath) && Directory.Exists(envPath))
         {
-            var exe = Path.Combine(envPath, envVariable + ".exe");
+            var exe = Path.Combine(envPath, exeName);
             if (File.Exists(exe))
                 return envPath;
         }
@@ -45,13 +49,13 @@ public static class ProcessHelper
         var pathEnv = Environment.GetEnvironmentVariable("PATH");
         if (!string.IsNullOrEmpty(pathEnv))
         {
-            var dirs = pathEnv.Split(';');
+            var dirs = pathEnv.Split(pathSeparator);
             foreach (var dir in dirs)
             {
                 if (string.IsNullOrWhiteSpace(dir))
                     continue;
 
-                var exe = Path.Combine(dir, envVariable + ".exe");
+                var exe = Path.Combine(dir, exeName);
                 if (File.Exists(exe))
                     return dir;
             }
