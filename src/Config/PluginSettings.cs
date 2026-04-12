@@ -14,6 +14,7 @@ public class PluginSettings
     public int AudioPlayOptions { get; set; } = 0;
     public int AudioLoadingStrategy { get; set; } = 0;
     public bool IsFFmpegSupportEnabled { get; set; } = false;
+    public float SpatialBlend { get; set; } = 0f;
 
     public static void Initialize()
     {

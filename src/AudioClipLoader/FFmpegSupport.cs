@@ -27,6 +27,8 @@ public static class FFmpegSupport
     static FFmpegSupport()
     {
         ffmpeg.RootPath = ProcessHelper.FindExecutable("ffmpeg");
+        if (ffmpeg.RootPath == null)
+            LogHelper.LogWarning("ffmpeg not found. Audio decoding via FFmpeg will fail.");
     }
 
     public static unsafe Task<AudioClip> DecodeAndLoadViaFFmpeg(string filePath)

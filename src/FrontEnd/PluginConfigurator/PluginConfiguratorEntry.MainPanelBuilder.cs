@@ -27,6 +27,8 @@ public static partial class PluginConfiguratorEntry
 
     private static FloatSliderField volumeSlider;
 
+    private static FloatSliderField spatialBlendSlider;
+
     private static EnumField<AudioPlayOptions> playOption;
 
     private static EnumField<AudioLoadOptions> loadOption;
@@ -88,13 +90,26 @@ public static partial class PluginConfiguratorEntry
             "Master Volume",
             "Audio_Volume",
             Tuple.Create(0f, 1f),
-            Setting.audioSourceVolume,
+            1f,
             2,   // 2nd decimal
             saveToConfig: false
         );
-        volumeSlider.defaultValue = 1f;
+        volumeSlider.value = Setting.audioSourceVolume;
         volumeSlider.onValueChange += e =>
             Setting.audioSourceVolume = e.newValue;
+
+        spatialBlendSlider = new FloatSliderField(
+            config.rootPanel,
+            "Spatial Blend",
+            "Spatial_Blend",
+            Tuple.Create(0f, 1f),
+            1f,
+            2,   // 2nd decimal
+            saveToConfig: false
+        );
+        spatialBlendSlider.value = Setting.spatialBlend;
+        spatialBlendSlider.onValueChange += e =>
+            Setting.spatialBlend = e.newValue;
 
         // It worked, but not working great as there's ton of audio when from low rank directly to the high rank
         // May be add a short cooldown as limitation
@@ -103,10 +118,10 @@ public static partial class PluginConfiguratorEntry
             config.rootPanel,
             "Audio Play Strategy",
             "Audio_Play_Strategy",
-            (AudioPlayOptions)Setting.audioPlayOptions,
+            (AudioPlayOptions)0,
             saveToConfig: false
         );
-        playOption.defaultValue = (AudioPlayOptions)0;
+        playOption.value = (AudioPlayOptions)Setting.audioPlayOptions;
         playOption.onValueChange += e =>
             Setting.audioPlayOptions = (int)e.value;
 
@@ -114,10 +129,10 @@ public static partial class PluginConfiguratorEntry
             config.rootPanel,
             "Audio Load Strategy",
             "Audio_Load_Strategy",
-            (AudioLoadOptions)Setting.audioLoadingStrategy,
+            (AudioLoadOptions)0,
             saveToConfig: false
         );
-        loadOption.defaultValue = (AudioLoadOptions)0;
+        loadOption.value = (AudioLoadOptions)Setting.audioLoadingStrategy;
         loadOption.onValueChange += e =>
             Setting.audioLoadingStrategy = (int)e.value;
 
@@ -152,10 +167,10 @@ public static partial class PluginConfiguratorEntry
             advancedPanel,
             "LowPassFilter when under water",
             "LowPassFilter_Enabled",
-            Setting.isLowPassFilterEnabled,
+            true,
             saveToConfig: false
         );
-        lowpassToggle.defaultValue = true;
+        lowpassToggle.value = Setting.isLowPassFilterEnabled;
         lowpassToggle.onValueChange += (e) =>
             Setting.isLowPassFilterEnabled = e.value;
 
@@ -163,10 +178,10 @@ public static partial class PluginConfiguratorEntry
             advancedPanel,
             "Use FFmpeg to load unknown format",
             "FFmpeg_Support",
-            Setting.isFFmpegSupportEnabled,
+            false,
             saveToConfig: false
         );
-        ffmpegToggle.defaultValue = false;
+        ffmpegToggle.value = Setting.isFFmpegSupportEnabled;
         ffmpegToggle.onValueChange += (e) =>
             Setting.isFFmpegSupportEnabled = e.value;
 

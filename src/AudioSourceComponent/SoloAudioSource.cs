@@ -17,8 +17,9 @@ public sealed class SoloAudioSource : MonoBehaviour
         {
             if (_instance == null)
             {
-                var obj = new GameObject("SoloAudioSource");
-                DontDestroyOnLoad(obj);
+                var obj = new GameObject("GreyAnnouncer_SoloAudioSource");
+                obj.transform.SetParent(MonoSingleton<CameraController>.Instance.transform);
+                obj.transform.localPosition = Vector3.zero;
                 _instance = obj.AddComponent<SoloAudioSource>();
             }
             return _instance;
@@ -44,7 +45,7 @@ public sealed class SoloAudioSource : MonoBehaviour
 
     private void ConfigureAndPlayAudioSource(Sound sound, AudioSource audioSource)
     {
-        audioSource.SetSpatialBlend(0f);
+        audioSource.SetSpatialBlend(Mathf.Clamp01(Setting.spatialBlend));
         audioSource.priority = sound.priority;
         audioSource.clip = sound.clip;
         audioSource = UnderwaterController_inWater_Instance.GetAudioSourceWithLowPassFilter(_audioSource);

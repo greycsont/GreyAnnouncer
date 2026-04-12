@@ -20,6 +20,16 @@ public static class Setting
         }
     }
 
+    public static float spatialBlend
+    {
+        get => PluginSettings.Instance.SpatialBlend;
+        set
+        {
+            PluginSettings.Instance.SpatialBlend = value;
+            SaveSettings();
+        }
+    }
+
     public static bool isLowPassFilterEnabled
     {
         get => PluginSettings.Instance.IsLowPassFilterEnabled;

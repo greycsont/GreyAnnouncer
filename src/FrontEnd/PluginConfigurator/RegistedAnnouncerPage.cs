@@ -61,6 +61,8 @@ public class RegistedAnnouncerPage
             saveToConfig: false
         );
 
+        _announcerField.value = Path.GetFileName(_announcer.announcerPath);
+
         _announcerField.onValueChange += e =>
         {
             _announcer.announcerPath = Path.Combine(Setting.announcersPath, _announcer.title, e.value);
@@ -95,10 +97,11 @@ public class RegistedAnnouncerPage
             _panel,
             "Randomize Audio On Play",
             _announcer.title + "_" + "RandomizeAudioOnPlay",
-            _announcer.announcerConfig.RandomizeAudioOnPlay,
+            false,
             saveToConfig: false
         );
         _fields.RandomizeAudioField.defaultValue = false;
+        _fields.RandomizeAudioField.value = _announcer.announcerConfig.RandomizeAudioOnPlay;
         _fields.RandomizeAudioField.onValueChange += e =>
         {
             _announcer.announcerConfig.RandomizeAudioOnPlay = e.value;
@@ -125,8 +128,9 @@ public class RegistedAnnouncerPage
     private BoolField CreateEnabledField(ConfigPanel panel, string guid, bool defaultValue)
     {
         var fullGuid = _announcer.title + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "Enabled");
-        var field = new BoolField(panel, "Enabled", fullGuid, _announcer.announcerConfig.CategorySetting[guid].Enabled, saveToConfig: false);
+        var field = new BoolField(panel, "Enabled", fullGuid, defaultValue, saveToConfig: false);
         field.defaultValue = defaultValue;
+        field.value = _announcer.announcerConfig.CategorySetting[guid].Enabled;
         field.onValueChange += e =>
             _announcer.announcerConfig.CategorySetting[guid].Enabled = e.value;
 
@@ -136,8 +140,9 @@ public class RegistedAnnouncerPage
     private FloatField CreateVolumeField(ConfigPanel panel, string guid, float defaultValue)
     {
         var fullGuid = _announcer.title + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "VolumeMultiplier");
-        var field = new FloatField(panel, "Volume", fullGuid, _announcer.announcerConfig.CategorySetting[guid].VolumeMultiplier, saveToConfig: false);
+        var field = new FloatField(panel, "Volume", fullGuid, defaultValue, saveToConfig: false);
         field.defaultValue = defaultValue;
+        field.value = _announcer.announcerConfig.CategorySetting[guid].VolumeMultiplier;
         field.onValueChange += e =>
             _announcer.announcerConfig.CategorySetting[guid].VolumeMultiplier = e.value;
 
@@ -147,8 +152,9 @@ public class RegistedAnnouncerPage
     private FloatSliderField CreateCooldownField(ConfigPanel panel, string guid, float defaultValue)
     {
         var fullGuid = _announcer.title + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "Cooldown");
-        var field = new FloatSliderField(panel, "Cooldown", fullGuid, Tuple.Create(0.2f, 6f), _announcer.announcerConfig.CategorySetting[guid].Cooldown, 1, saveToConfig: false);
+        var field = new FloatSliderField(panel, "Cooldown", fullGuid, Tuple.Create(0.2f, 6f), defaultValue, 1, saveToConfig: false);
         field.defaultValue = defaultValue;
+        field.value = _announcer.announcerConfig.CategorySetting[guid].Cooldown;
         field.onValueChange += e =>
             _announcer.announcerConfig.CategorySetting[guid].Cooldown = e.newValue;
 

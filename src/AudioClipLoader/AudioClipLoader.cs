@@ -15,14 +15,13 @@ public static partial class AudioClipLoader
         string extension = Path.GetExtension(path).ToLower();
         AudioType unityAudioType = GetUnityAudioType(extension);
         AudioClip clip = null;
-        try
-        {
+        try {
             if (unityAudioType != AudioType.UNKNOWN) {
                 clip = await UnitySupport.LoadWithUnityAsync(path, unityAudioType);
                 
             } else if (Setting.isFFmpegSupportEnabled) {
                 clip = await FFmpegSupport.DecodeAndLoadViaFFmpeg(path);
-                
+
             } else {
                 LogHelper.LogError($"Unsupported audio format: 「{extension}」 for {path}");
                 

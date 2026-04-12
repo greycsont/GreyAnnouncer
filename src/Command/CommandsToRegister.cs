@@ -6,6 +6,7 @@ using System.Linq;
 using GreyAnnouncer.AnnouncerCore;
 using GreyAnnouncer.Config;
 using GreyAnnouncer.AudioSourceComponent;
+using GreyAnnouncer.AudioLoading;
 using GreyAnnouncer.FrontEnd;
 
 namespace GreyAnnouncer.Commands;
@@ -47,7 +48,6 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
                             Log.Info("  stopallaudiosources                - Stop all active audio sources");
                             Log.Info("");
                             Log.Info("[Test] grey t");
-                            Log.Info("  showui                             - Open the GreyAnnouncer UI");
                         })
                       );
 
@@ -165,7 +165,23 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
                       );
 
     private Branch GetTestBranches()
-        => Branch("t"
+        => Branch("t",
+            Leaf<string>("ffmpeg", async path =>
+            {
+                Log.Info($"Testing FFmpeg load: {path}");
+                try
+                {
+                    var clip = await FFmpegSupport.DecodeAndLoadViaFFmpeg(path);
+                    if (clip != null)
+                        Log.Info($"OK — loaded clip: {clip.length:F2}s, ch={clip.channels}, rate={clip.frequency}");
+                    else
+                        Log.Warning("FFmpeg returned null clip.");
+                }
+                catch (System.Exception ex)
+                {
+                    Log.Error($"FFmpeg failed: {ex.Message}");
+                }
+            })
         );
 
     public Logger Log { get; } = new("grey");
