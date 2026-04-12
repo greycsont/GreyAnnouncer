@@ -5,7 +5,7 @@ using GreyAnnouncer.Base;
 
 namespace GreyAnnouncer.AnnouncerCore;
 
-public class AnnouncerConfig : NotifyBase
+public class PackConfig : NotifyBase
 {
     private bool _randomizeAudioOnPlay;
 
@@ -17,7 +17,7 @@ public class AnnouncerConfig : NotifyBase
 
     public ObservableDictionary<string, CategorySetting> CategorySetting { get; } = new();
 
-    public AnnouncerConfig()
+    public PackConfig()
     {
         // Bubble up any collection or property changes from CategorySetting
         CategorySetting.CollectionChanged += (s, e) => RaiseChanged(nameof(CategorySetting));
@@ -27,7 +27,7 @@ public class AnnouncerConfig : NotifyBase
     public void AddCategory(string key, CategorySetting setting)
         => CategorySetting[key] = setting;
 
-    public AnnouncerConfig SetCategorySettingMap(Dictionary<string, CategorySetting> map)
+    public PackConfig SetCategorySettingMap(Dictionary<string, CategorySetting> map)
     {
         CategorySetting.Clear();
 
@@ -37,7 +37,7 @@ public class AnnouncerConfig : NotifyBase
         return this;
     }
 
-    public void ApplyFrom(AnnouncerConfig src)
+    public void ApplyFrom(PackConfig src)
     {
         base.BeginUpdate();
 

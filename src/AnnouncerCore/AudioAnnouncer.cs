@@ -38,7 +38,7 @@ public partial class AudioAnnouncer : IAnnouncer
         }
     }
 
-    public AnnouncerConfig announcerConfig
+    public PackConfig announcerConfig
     {
         get => field;
         set

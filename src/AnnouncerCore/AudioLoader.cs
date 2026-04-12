@@ -20,7 +20,7 @@ namespace GreyAnnouncer.AnnouncerCore;
 public partial class AudioLoader : IAudioLoader
 {
     private IAnnouncer _announcer;
-    public AnnouncerConfig announcerConfig => _announcer?.announcerConfig;
+    public PackConfig announcerConfig => _announcer?.announcerConfig;
     public string announcerPath => _announcer?.announcerPath;
 
     public static Action<string> onPluginConfiguratorLogUpdated;

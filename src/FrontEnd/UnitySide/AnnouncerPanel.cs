@@ -103,7 +103,7 @@ public class AnnouncerPanel : MonoBehaviour
             BuildConfigSection(_announcer.announcerConfig);
     }
 
-    private void BuildConfigSection(AnnouncerConfig cfg)
+    private void BuildConfigSection(PackConfig cfg)
     {
         // Randomize toggle row
         var randomizeRow = UIBuilder.AddRow(_content, "RandomizeRow").transform;

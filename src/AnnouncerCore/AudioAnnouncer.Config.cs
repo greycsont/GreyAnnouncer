@@ -8,7 +8,7 @@ namespace GreyAnnouncer.AnnouncerCore;
 
 public partial class AudioAnnouncer
 {
-    private AnnouncerConfig LoadConfig()
+    private PackConfig LoadConfig()
     {
         LogHelper.LogDebug($"Loading config for {title} from: {announcerPath}");
 
@@ -29,7 +29,7 @@ public partial class AudioAnnouncer
         return config;
     }
 
-    private bool IsCategoryMatch(AnnouncerConfig config, List<string> expected)
+    private bool IsCategoryMatch(PackConfig config, List<string> expected)
     {
         var keys = config.CategorySetting.Keys;
         var missing = expected.Except(keys).ToList();
