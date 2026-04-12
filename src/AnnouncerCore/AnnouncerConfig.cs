@@ -5,31 +5,16 @@ using GreyAnnouncer.Base;
 
 namespace GreyAnnouncer.AnnouncerCore;
 
-/// <summary>
-/// Holds the full configuration for a single announcer instance,
-/// including general settings and per-category audio settings.
-/// Implements <see cref="NotifyBase"/> to propagate change notifications
-/// to subscribers such as the UI and audio loader.
-/// </summary>
 public class AnnouncerConfig : NotifyBase
 {
     private bool _randomizeAudioOnPlay;
 
-    /// <summary>
-    /// When true, a random category will be selected on each playback
-    /// instead of using the requested category directly.
-    /// </summary>
     public bool RandomizeAudioOnPlay
     {
         get => _randomizeAudioOnPlay;
         set => SetField(ref _randomizeAudioOnPlay, value);
     }
 
-    /// <summary>
-    /// Per-category settings keyed by category name.
-    /// Use <see cref="AddCategory"/> or <see cref="SetCategorySettingMap"/> to modify —
-    /// direct dictionary manipulation will bypass change tracking.
-    /// </summary>
     public ObservableDictionary<string, CategorySetting> CategorySetting { get; } = new();
 
     public AnnouncerConfig()
@@ -39,18 +24,9 @@ public class AnnouncerConfig : NotifyBase
         CategorySetting.PropertyChanged += (s, e) => RaiseChanged(nameof(CategorySetting));
     }
 
-    /// <summary>
-    /// Adds or replaces a category entry.
-    /// Always use this instead of indexing <see cref="CategorySetting"/> directly
-    /// to ensure change notifications are fired correctly.
-    /// </summary>
     public void AddCategory(string key, CategorySetting setting)
         => CategorySetting[key] = setting;
 
-    /// <summary>
-    /// Clears and reinitializes <see cref="CategorySetting"/> from the given map.
-    /// Use this when building a fresh config from a category list.
-    /// </summary>
     public AnnouncerConfig SetCategorySettingMap(Dictionary<string, CategorySetting> map)
     {
         CategorySetting.Clear();
@@ -61,13 +37,6 @@ public class AnnouncerConfig : NotifyBase
         return this;
     }
 
-    /// <summary>
-    /// Applies all values from <paramref name="src"/> into this instance in-place,
-    /// preserving existing <see cref="CategorySetting"/> object references where possible.
-    /// New categories are added, removed categories are cleaned up,
-    /// and all changes are batched into a single notification via BeginUpdate/EndUpdate.
-    /// Note: <see cref="AnnouncerGUID"/> is not overwritten as it identifies this instance.
-    /// </summary>
     public void ApplyFrom(AnnouncerConfig src)
     {
         base.BeginUpdate();
@@ -108,32 +77,24 @@ public class AnnouncerConfig : NotifyBase
     }
 }
 
-/// <summary>
-/// Configuration for a single audio category, controlling
-/// whether it is active, its volume scaling, cooldown duration,
-/// and which audio files belong to it.
-/// </summary>
 public class CategorySetting : NotifyBase
 {
     private bool _enabled = true;
     private float _volumeMultiplier = 1.0f;
     private float _cooldown = 1.5f;
 
-    /// <summary>Whether this category is allowed to play.</summary>
     public bool Enabled
     {
         get => _enabled;
         set => SetField(ref _enabled, value);
     }
 
-    /// <summary>Scales the playback volume relative to the global announcer volume.</summary>
     public float VolumeMultiplier
     {
         get => _volumeMultiplier;
         set => SetField(ref _volumeMultiplier, value);
     }
 
-    /// <summary>Minimum seconds that must pass before this category can play again.</summary>
     public float Cooldown
     {
         get => _cooldown;
@@ -141,21 +102,13 @@ public class CategorySetting : NotifyBase
     }
 
     private List<string> _audioFiles = new();
-
-    /// <summary>
-    /// List of audio file paths or names assigned to this category.
-    /// A random entry is selected at playback time.
-    /// Not expected to change at runtime.
-    /// </summary>
+    
     public List<string> AudioFiles
     {
         get => _audioFiles;
         set => _audioFiles = value ?? new List<string>();
     }
 
-    /// <summary>
-    /// Copies all values from <paramref name="src"/> into this instance in-place.
-    /// </summary>
     public void ApplyFrom(CategorySetting src)
     {
         if (src == null)
