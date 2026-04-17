@@ -6,24 +6,25 @@ using System.Threading.Tasks;
 using GreyAnnouncer.Config;
 using System.ComponentModel;
 
+using GreyAnnouncer.Extension;
+
 namespace GreyAnnouncer.AudioLoading;
 
 public static partial class AudioClipLoader
 {
     public static async Task<AudioClip> LoadAudioClipAsync(string path)
     {
-        string extension = Path.GetExtension(path).ToLower();
-        AudioType unityAudioType = GetUnityAudioType(extension);
+        var audioType = path.GetAudioType();
         AudioClip clip = null;
         try {
-            if (unityAudioType != AudioType.UNKNOWN) {
-                clip = await UnitySupport.LoadWithUnityAsync(path, unityAudioType);
+            if (audioType != AudioType.UNKNOWN) {
+                clip = await UnitySupport.LoadWithUnityAsync(path, audioType);
                 
             } else if (Setting.isFFmpegSupportEnabled) {
                 clip = await FFmpegSupport.DecodeAndLoadViaFFmpeg(path);
 
             } else {
-                LogHelper.LogError($"Unsupported audio format: 「{extension}」 for {path}");
+                LogHelper.LogError($"Unsupported audio format for {path}");
                 
             }
 
