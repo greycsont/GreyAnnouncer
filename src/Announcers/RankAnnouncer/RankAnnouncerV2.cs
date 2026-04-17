@@ -30,7 +30,7 @@ public static class RankAnnouncer
             configManager: new JsonConfigManager(),
             category: category,
             title: title,
-            defaultAnnouoncerConfigPath: "greythroat"
+            defaultPackConfigPath: "greythroat"
         );
     }
 

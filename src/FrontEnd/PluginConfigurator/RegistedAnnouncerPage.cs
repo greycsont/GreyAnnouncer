@@ -27,7 +27,7 @@ public class RegistedAnnouncerPage
 
     private ConfigPanel _panel;
 
-    private AnnouncerConfigFields _fields = new AnnouncerConfigFields
+    private PackConfigFields _fields = new PackConfigFields
     {
         CategoryFields = new Dictionary<string, CategoryFields>()
     };
@@ -54,24 +54,24 @@ public class RegistedAnnouncerPage
 
         _announcerField = new StringListField(
             _panel,                     
-            "Selected Announcer",             
-            _announcer.title + "_" + "Selected_Announcer",     
+            "Selected Pack",             
+            _announcer.title + "_" + "Selected_Pack",     
             announcers,                
             announcers.FirstOrDefault() ?? "default",
             saveToConfig: false
         );
 
-        _announcerField.value = Path.GetFileName(_announcer.announcerPath);
+        _announcerField.value = Path.GetFileName(_announcer.packPath);
 
         _announcerField.onValueChange += e =>
         {
-            _announcer.announcerPath = Path.Combine(Setting.announcersPath, _announcer.title, e.value);
+            _announcer.packPath = Path.Combine(Setting.announcersPath, _announcer.title, e.value);
         };
 
         var openDirectoryButtonField = new ButtonField(
             _panel,
-            "Open Current Announcer Folder",
-            _announcer.title + "_" + "Open_Current_Announcer_Folder"
+            "Open Current Pack Folder",
+            _announcer.title + "_" + "Open_Current_Pack_Folder"
         );
         openDirectoryButtonField.onClick += ()
             => _announcer.EditExternally();
@@ -101,13 +101,13 @@ public class RegistedAnnouncerPage
             saveToConfig: false
         );
         _fields.RandomizeAudioField.defaultValue = false;
-        _fields.RandomizeAudioField.value = _announcer.announcerConfig.RandomizeAudioOnPlay;
+        _fields.RandomizeAudioField.value = _announcer.packConfig.RandomizeAudioOnPlay;
         _fields.RandomizeAudioField.onValueChange += e =>
         {
-            _announcer.announcerConfig.RandomizeAudioOnPlay = e.value;
+            _announcer.packConfig.RandomizeAudioOnPlay = e.value;
         };
 
-        foreach (var category in _announcer.announcerConfig.CategorySetting)
+        foreach (var category in _announcer.packConfig.CategorySetting)
         {
             string key = category.Key;
 
@@ -131,9 +131,9 @@ public class RegistedAnnouncerPage
         var fullGuid = _announcer.title + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "Enabled");
         var field = new BoolField(panel, "Enabled", fullGuid, defaultValue, saveToConfig: false);
         field.defaultValue = defaultValue;
-        field.value = _announcer.announcerConfig.CategorySetting[guid].Enabled;
+        field.value = _announcer.packConfig.CategorySetting[guid].Enabled;
         field.onValueChange += e =>
-            _announcer.announcerConfig.CategorySetting[guid].Enabled = e.value;
+            _announcer.packConfig.CategorySetting[guid].Enabled = e.value;
 
         return field;
     }
@@ -143,9 +143,9 @@ public class RegistedAnnouncerPage
         var fullGuid = _announcer.title + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "VolumeMultiplier");
         var field = new FloatField(panel, "Volume", fullGuid, defaultValue, saveToConfig: false);
         field.defaultValue = defaultValue;
-        field.value = _announcer.announcerConfig.CategorySetting[guid].VolumeMultiplier;
+        field.value = _announcer.packConfig.CategorySetting[guid].VolumeMultiplier;
         field.onValueChange += e =>
-            _announcer.announcerConfig.CategorySetting[guid].VolumeMultiplier = e.value;
+            _announcer.packConfig.CategorySetting[guid].VolumeMultiplier = e.value;
 
         return field;
     }
@@ -155,9 +155,9 @@ public class RegistedAnnouncerPage
         var fullGuid = _announcer.title + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "Cooldown");
         var field = new FloatSliderField(panel, "Cooldown", fullGuid, Tuple.Create(0.2f, 6f), defaultValue, 1, saveToConfig: false);
         field.defaultValue = defaultValue;
-        field.value = _announcer.announcerConfig.CategorySetting[guid].Cooldown;
+        field.value = _announcer.packConfig.CategorySetting[guid].Cooldown;
         field.onValueChange += e =>
-            _announcer.announcerConfig.CategorySetting[guid].Cooldown = e.newValue;
+            _announcer.packConfig.CategorySetting[guid].Cooldown = e.newValue;
 
         return field;
     }
@@ -167,11 +167,11 @@ public class RegistedAnnouncerPage
         var fullGuid = _announcer.title + "_" + GuidPrefixAdder.AddPrefixToGUID(guid, "ExcludeFromRandom");
         var field = new BoolField(panel, "Exclude From Random Selection", fullGuid, defaultValue, saveToConfig: false);
         field.defaultValue = defaultValue;
-        field.value = _announcer.announcerConfig.CategorySetting[guid].ExcludeFromRandom;
+        field.value = _announcer.packConfig.CategorySetting[guid].ExcludeFromRandom;
         field.onValueChange += e =>
-            _announcer.announcerConfig.CategorySetting[guid].ExcludeFromRandom = e.value;
+            _announcer.packConfig.CategorySetting[guid].ExcludeFromRandom = e.value;
 
-        field.hidden = !_announcer.announcerConfig.RandomizeAudioOnPlay;
+        field.hidden = !_announcer.packConfig.RandomizeAudioOnPlay;
 
         return field;
     }
@@ -180,7 +180,7 @@ public class RegistedAnnouncerPage
     {
         LogHelper.LogDebug($"ApplyConfigToUI called");
 
-        var currentPack = Path.GetFileName(_announcer.announcerPath);
+        var currentPack = Path.GetFileName(_announcer.packPath);
         _announcerField.value = currentPack;
 
         if (!_announcer.isConfigLoaded) {
@@ -191,7 +191,7 @@ public class RegistedAnnouncerPage
         }
         _mismatchHeader.text = "";
 
-        var config = _announcer.announcerConfig;
+        var config = _announcer.packConfig;
 
         if (_fields.RandomizeAudioField == null)
             BuildConfigSection();

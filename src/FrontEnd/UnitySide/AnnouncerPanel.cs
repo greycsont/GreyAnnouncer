@@ -35,7 +35,7 @@ public class AnnouncerPanel : MonoBehaviour
     {
         if (_announcer == null) return;
 
-        var currentPack = Path.GetFileName(_announcer.announcerPath);
+        var currentPack = Path.GetFileName(_announcer.packPath);
         var idx = _announcerDropdown.options.FindIndex(o => o.text == currentPack);
         if (idx >= 0) _announcerDropdown.SetValueWithoutNotify(idx);
 
@@ -48,7 +48,7 @@ public class AnnouncerPanel : MonoBehaviour
         }
         _mismatchLabel.text = "";
 
-        var cfg = _announcer.announcerConfig;
+        var cfg = _announcer.packConfig;
 
         if (_randomizeToggle == null)
             BuildConfigSection(cfg);
@@ -81,13 +81,13 @@ public class AnnouncerPanel : MonoBehaviour
         UIBuilder.AddLabel(content, "Selected Announcer", 13, UIBuilder.SubLabelColor, preferredHeight: 22);
         var announcerOptions = AudioAnnouncer.GetAvailablePacks(_announcer.title);
         _announcerDropdown = UIBuilder.AddDropdown(content, announcerOptions);
-        var currentPack = Path.GetFileName(_announcer.announcerPath);
+        var currentPack = Path.GetFileName(_announcer.packPath);
         var initIdx = announcerOptions.IndexOf(currentPack);
         if (initIdx >= 0) _announcerDropdown.SetValueWithoutNotify(initIdx);
         _announcerDropdown.onValueChanged.AddListener(idx =>
         {
             var selected = _announcerDropdown.options[idx].text;
-            _announcer.announcerPath = Path.Combine(Setting.announcersPath, _announcer.title, selected);
+            _announcer.packPath = Path.Combine(Setting.announcersPath, _announcer.title, selected);
         });
         UIBuilder.AddSpace(content, 3);
 
@@ -100,7 +100,7 @@ public class AnnouncerPanel : MonoBehaviour
         _mismatchLabel = UIBuilder.AddLabel(content, "", 14, new Color(1f, 0.4f, 0.4f), preferredHeight: 22);
 
         if (_announcer.isConfigLoaded)
-            BuildConfigSection(_announcer.announcerConfig);
+            BuildConfigSection(_announcer.packConfig);
     }
 
     private void BuildConfigSection(PackConfig cfg)
@@ -112,7 +112,7 @@ public class AnnouncerPanel : MonoBehaviour
         _randomizeToggle = UIBuilder.AddToggle(randomizeRow, preferredWidth: 30);
         _randomizeToggle.isOn = cfg.RandomizeAudioOnPlay;
         _randomizeToggle.onValueChanged.AddListener(v =>
-            _announcer.announcerConfig.RandomizeAudioOnPlay = v);
+            _announcer.packConfig.RandomizeAudioOnPlay = v);
         UIBuilder.AddSpace(_content, 3);
 
         // Per-category configuration
@@ -131,21 +131,21 @@ public class AnnouncerPanel : MonoBehaviour
             cat.enabledToggle.isOn = kv.Value.Enabled;
             cat.enabledToggle.onValueChanged.AddListener(v =>
             {
-                if (_announcer.announcerConfig.CategorySetting.TryGetValue(key, out var d))
+                if (_announcer.packConfig.CategorySetting.TryGetValue(key, out var d))
                     d.Enabled = v;
             });
 
             cat.SetVolume(kv.Value.VolumeMultiplier);
             cat.volumeSlider.onValueChanged.AddListener(v =>
             {
-                if (_announcer.announcerConfig.CategorySetting.TryGetValue(key, out var d))
+                if (_announcer.packConfig.CategorySetting.TryGetValue(key, out var d))
                     d.VolumeMultiplier = v;
             });
 
             cat.SetCooldown(kv.Value.Cooldown);
             cat.cooldownSlider.onValueChanged.AddListener(v =>
             {
-                if (_announcer.announcerConfig.CategorySetting.TryGetValue(key, out var d))
+                if (_announcer.packConfig.CategorySetting.TryGetValue(key, out var d))
                     d.Cooldown = v;
             });
 

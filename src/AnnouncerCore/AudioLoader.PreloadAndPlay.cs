@@ -22,7 +22,7 @@ public partial class AudioLoader
             return (null, null);
         }
 
-        if (!announcerConfig.CategorySetting.ContainsKey(category)) {
+        if (!packConfig.CategorySetting.ContainsKey(category)) {
             LogHelper.LogError($"Category 「{category}」 not found in config");
             return (null, null);
         }
@@ -61,7 +61,7 @@ public partial class AudioLoader
             return (cat, clips);
         }
 
-        var tasks = announcerConfig.CategorySetting.Keys.Select(WrapWithCategory);
+        var tasks = packConfig.CategorySetting.Keys.Select(WrapWithCategory);
         var results = await Task.WhenAll(tasks);
 
         foreach (var (category, clips) in results) {
@@ -110,7 +110,7 @@ public partial class AudioLoader
 
     private void LogLoadingResults()
     {
-        LogHelper.LogDebug($"{_announcer.title} Loading directory: {announcerPath}");
+        LogHelper.LogDebug($"{_announcer.title} Loading directory: {packPath}");
 
         if (_categoryFailed.Count > 0)
             LogHelper.LogWarning("Failed to load categories: " + string.Join(", ", _categoryFailed));

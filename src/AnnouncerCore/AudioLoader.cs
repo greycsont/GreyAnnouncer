@@ -20,8 +20,8 @@ namespace GreyAnnouncer.AnnouncerCore;
 public partial class AudioLoader : IAudioLoader
 {
     private IAnnouncer _announcer;
-    public PackConfig announcerConfig => _announcer?.announcerConfig;
-    public string announcerPath => _announcer?.announcerPath;
+    public PackConfig packConfig => _announcer?.packConfig;
+    public string packPath => _announcer?.packPath;
 
     public static Action<string> onPluginConfiguratorLogUpdated;
 
@@ -43,7 +43,7 @@ public partial class AudioLoader : IAudioLoader
             return null;
         }
 
-        return new Sound(clip.Value.Item1, clip.Value.Item2, announcerConfig.CategorySetting[clip.Value.Item1].VolumeMultiplier);
+        return new Sound(clip.Value.Item1, clip.Value.Item2, packConfig.CategorySetting[clip.Value.Item1].VolumeMultiplier);
     }
 
     public async Task<Sound> GetRandomAudioClipInCategory(List<string> categories)
@@ -59,7 +59,7 @@ public partial class AudioLoader : IAudioLoader
             return null;
         }
 
-        return new Sound(clip.Value.Item1, clip.Value.Item2, announcerConfig.CategorySetting[clip.Value.Item1].VolumeMultiplier);
+        return new Sound(clip.Value.Item1, clip.Value.Item2, packConfig.CategorySetting[clip.Value.Item1].VolumeMultiplier);
     }
 
     private async Task<(string, AudioClip)?> ResolveClip(
@@ -103,14 +103,14 @@ public partial class AudioLoader : IAudioLoader
     {
         validFiles = null;
 
-        if (!announcerConfig.CategorySetting.TryGetValue(category, out var categorySetting))
+        if (!packConfig.CategorySetting.TryGetValue(category, out var categorySetting))
             return false;
 
         if (categorySetting.AudioFiles == null || categorySetting.AudioFiles.Count == 0)
             return false;
 
         validFiles = categorySetting.AudioFiles
-            .Select(name => PathHelper.GetFile(announcerPath, name))
+            .Select(name => PathHelper.GetFile(packPath, name))
             .Where(File.Exists)
             .ToList();
 

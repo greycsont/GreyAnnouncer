@@ -10,10 +10,9 @@ namespace GreyAnnouncer.AnnouncerCore;
 
 public partial class AudioLoader
 {
-    // Enabled is only checked here — Load then Play respects it, Preload does not.
     public async Task<(string category, AudioClip clip)> LoadAndGetSingleAudioClip(string category)
     {
-        if (!announcerConfig.CategorySetting.TryGetValue(category, out var setting)) {
+        if (!packConfig.CategorySetting.TryGetValue(category, out var setting)) {
             LogHelper.LogError($"Category 「{category}」 not found in config");
             return (null, null);
         }

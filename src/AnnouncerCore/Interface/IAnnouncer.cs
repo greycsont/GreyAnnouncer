@@ -6,8 +6,8 @@ namespace GreyAnnouncer.AnnouncerCore;
 public interface IAnnouncer
 {
     public string title { get; }
-    public string announcerPath { get; set; }
-    public PackConfig announcerConfig { get; }
+    public string packPath { get; set; }
+    public PackConfig packConfig { get; }
     public void EditExternally();
     public void ReloadPack();
     public Action syncUI { get; set; }

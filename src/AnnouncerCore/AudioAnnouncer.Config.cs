@@ -10,14 +10,14 @@ public partial class AudioAnnouncer
 {
     private PackConfig LoadConfig()
     {
-        LogHelper.LogDebug($"Loading config for {title} from: {announcerPath}");
+        LogHelper.LogDebug($"Loading config for {title} from: {packPath}");
 
-        if (!File.Exists(_configManager.ConfigPath(announcerPath))) {
-            LogHelper.LogDebug($"No config found in {announcerPath}");
+        if (!File.Exists(_configManager.ConfigPath(packPath))) {
+            LogHelper.LogDebug($"No config found in {packPath}");
             return null;
         }
 
-        var config = _configManager.Load(announcerPath);
+        var config = _configManager.Load(packPath);
 
         if (!IsCategoryMatch(config, category)) {
             LogHelper.LogError($"[{title}] AnnouncerConfig category mismatch — {configMismatchInfo}");

@@ -111,19 +111,19 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
 
                     Branch("randomize",
                         Branch("get",
-                            Leaf(() => Log.Info($"RandomizeAudioOnPlay: {a.announcerConfig.RandomizeAudioOnPlay}"))
+                            Leaf(() => Log.Info($"RandomizeAudioOnPlay: {a.packConfig.RandomizeAudioOnPlay}"))
                         ),
                         Branch("set",
                             Leaf<bool>(val =>
                             {
-                                a.announcerConfig.RandomizeAudioOnPlay = val;
+                                a.packConfig.RandomizeAudioOnPlay = val;
                                 Log.Info($"Set RandomizeAudioOnPlay to {val}");
                             })
                         )
                     ),
 
                     Branch("category",
-                        a.announcerConfig.CategorySetting.Select(kvp =>
+                        a.packConfig.CategorySetting.Select(kvp =>
                         {
                             var categoryName = kvp.Key;
                             var category = kvp.Value;
@@ -131,6 +131,7 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
                             return Branch(categoryName,
                                 Branch("get",
                                     Leaf("enabled", () => Log.Info($"Enabled: {category.Enabled}")),
+                                    Leaf("excludefromrandom", () => Log.Info($"Exclude from random: {category.ExcludeFromRandom}")),
                                     Leaf("volume", () => Log.Info($"VolumeMultiplier: {category.VolumeMultiplier}")),
                                     Leaf("cooldown", () => Log.Info($"Cooldown: {category.Cooldown}")),
                                     Leaf("audiofiles", () => 
@@ -138,6 +139,7 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
                                 ),
                                 Branch("set",
                                     Leaf<bool>("enabled", val => category.Enabled = val),
+                                    Leaf<bool>("excludefromrandom", val => category.ExcludeFromRandom = val),
                                     Leaf<float>("volume", val => category.VolumeMultiplier = val),
                                     Leaf<float>("cooldown", val => category.Cooldown = val),
                                     Leaf<string[]>("audiofiles", files =>

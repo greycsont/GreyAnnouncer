@@ -220,6 +220,7 @@ public static partial class PluginConfiguratorEntry
         creditText.AppendLine("\n- Artless Games \n(https://space.bilibili.com/1237125233) 14 Minesweeper variants");
         creditText.AppendLine("\n- Announcer Mod \n(https://www.nexusmods.com/ultrakill/mods/54) I started of this project is just because the mod isn't update in the few days after revamp");
         creditText.AppendLine("\n- PluginConfigurator doc \n(https://github.com/eternalUnion/UKPluginConfigurator/wiki) Easy to use tbh (except changing font)");
+        creditText.AppendLine("\n- ULTRASTATS \n(https://thunderstore.io/c/ultrakill/p/AtomSmasher/ULTRASTATS/)\n Great mod, Goat dev");
         creditText.AppendLine("\n- Maxwell's puzzling demon \n(https://store.steampowered.com/app/2770160/) Fun puzzle game");
         creditText.AppendLine("\n- A mod that currently WIP \n(Advert Placeholder) Pretty FUN I would say");
         creditText.AppendLine("\n- HappySKZC, jamcame, ZHU!.");

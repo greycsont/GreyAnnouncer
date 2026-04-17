@@ -17,7 +17,7 @@ public partial class AudioAnnouncer
     {
         var pack = JsonManager.ReadJson<string>(IndexPath);
         if (pack == null) {
-            pack = _defaultAnnouncerConfigPath;
+            pack = _defaultPackConfigPath;
             JsonManager.WriteJson(IndexPath, pack);
         }
         return Path.Combine(Setting.announcersPath, title, pack);

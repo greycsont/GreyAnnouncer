@@ -110,7 +110,14 @@ e.g. `.mp3`, `.wav`
 ## Default Packs
 There's two default pack in this mod: greythroat and irene
 
-one is used to show the default action of config.json, second one is used to show the randomization work on announcer 
+one is used to show the default action of config.json, second one is used to show the randomization work on announcer
+
+## File Structure
+The pack should be place in the relative audio announcer's folder indeed to detecd them
+
+e.g. the pack want to use by style rank is in the RankAnnouncer folder
+
+![()](https://github.com/user-attachments/assets/bc868dc6-3871-4c64-9139-1e856b9c526b)
 
 ## Audio Credits
 GreyThroat's Voice Lines (from Arknights):

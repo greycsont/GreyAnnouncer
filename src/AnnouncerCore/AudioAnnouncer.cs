@@ -21,12 +21,12 @@ public partial class AudioAnnouncer : IAnnouncer
 
     private List<string> category;
 
-    private string _defaultAnnouncerConfigPath;
+    private string _defaultPackConfigPath;
 
     public Action syncUI { get; set; }
 
     /// <summary>When announcerPath changes, it will automatically reload relative configs.</summary>
-    public string announcerPath
+    public string packPath
     {
         get => field;
         set
@@ -38,7 +38,11 @@ public partial class AudioAnnouncer : IAnnouncer
         }
     }
 
-    public PackConfig announcerConfig
+    /// <Summary> 
+    ///  When the values stored in packConfig is changed, OnAnnouncerConfigChanged triggers
+    ///  When it's totally assigned by a new packConfig, OnAnnouncerConfigSwitched triggers
+    /// </Summary>
+    public PackConfig packConfig
     {
         get => field;
         set
@@ -68,7 +72,7 @@ public partial class AudioAnnouncer : IAnnouncer
     private void OnAnnouncerConfigSwitched()
     {
         LogHelper.LogDebug($"AnnouncerConfig Switched");
-        if (announcerConfig != null && isConfigLoaded) {
+        if (packConfig != null && isConfigLoaded) {
             _ = _audioLoader.FindAvailableAudioAsync();
             SaveConfig();
         }
@@ -76,7 +80,7 @@ public partial class AudioAnnouncer : IAnnouncer
 
     private void SaveConfig()
     {
-        _configManager.Save(announcerPath, announcerConfig);
+        _configManager.Save(packPath, packConfig);
         if (_initialized)
             syncUI.Invoke();
     }
@@ -93,18 +97,18 @@ public partial class AudioAnnouncer : IAnnouncer
                            IConfigManager configManager,
                            List<string> category,
                            string title,
-                           string defaultAnnouoncerConfigPath
+                           string defaultPackConfigPath
                            )
     {
         this._audioLoader = audioLoader;
         this._audioLoader.SetProvider(this);
         this._cooldownManager = cooldownManager;
         this._configManager = configManager;
-        this._defaultAnnouncerConfigPath = defaultAnnouoncerConfigPath;
+        this._defaultPackConfigPath = defaultPackConfigPath;
         this.category = category;
         this.title = title;
 
-        announcerPath = LoadSelectedPack();
+        packPath = LoadSelectedPack();
 
         SubscribeAnnouncerManager();
 
@@ -127,7 +131,7 @@ public partial class AudioAnnouncer : IAnnouncer
     /// <summary>Reload Audio</summary>
     public void ReloadPack()
     {
-        announcerConfig = LoadConfig();
+        packConfig = LoadConfig();
     }
 
 
@@ -161,10 +165,10 @@ public partial class AudioAnnouncer : IAnnouncer
     {
         LogHelper.LogDebug($"Attempting to play audio for category: {category}");
         Sound sound;
-        if (announcerConfig.RandomizeAudioOnPlay)
+        if (packConfig.RandomizeAudioOnPlay)
         {
             var validCategories = this.category
-                .Where(c => announcerConfig.CategorySetting[c].ExcludeFromRandom == false)
+                .Where(c => packConfig.CategorySetting[c].ExcludeFromRandom == false)
                 .ToList();
             sound = await _audioLoader.GetRandomAudioClipInCategory(validCategories);
         }
@@ -182,11 +186,11 @@ public partial class AudioAnnouncer : IAnnouncer
             return;
         }
 
-        LogHelper.LogDebug($"category : {sound.category}, Cooldown : {announcerConfig.CategorySetting[sound.category].Cooldown}");
+        LogHelper.LogDebug($"category : {sound.category}, Cooldown : {packConfig.CategorySetting[sound.category].Cooldown}");
 
         SoundDispatcher.SendClipToAudioSource(sound);
 
-        SetCooldown(sound.category, announcerConfig.CategorySetting[sound.category].Cooldown);
+        SetCooldown(sound.category, packConfig.CategorySetting[sound.category].Cooldown);
     }
 
     private ValidationState GetPlayValidationState(string category)
@@ -194,13 +198,13 @@ public partial class AudioAnnouncer : IAnnouncer
         if (_cooldownManager == null || _audioLoader == null)
             return ValidationState.ComponentsNotInitialized;
 
-        if (announcerConfig == null)
+        if (packConfig == null)
             return ValidationState.ConfigNotLoaded;
 
-        if (!announcerConfig.CategorySetting.ContainsKey(category))
+        if (packConfig.CategorySetting.ContainsKey(category) == false)
             return ValidationState.InvalidKey;
 
-        if (!announcerConfig.CategorySetting[category].Enabled)
+        if (packConfig.CategorySetting[category].Enabled == false)
             return ValidationState.DisabledByConfig;
         
         if (_cooldownManager.IsIndividualCooldownActive(category) == true)
@@ -219,7 +223,7 @@ public partial class AudioAnnouncer : IAnnouncer
     }
 
     public void EditExternally()
-        => ProcessHelper.OpenDirectory(announcerPath);
+        => ProcessHelper.OpenDirectory(packPath);
 
     private void LogPlaybackError(Exception ex)
         => LogHelper.LogError($"An error occurred while playing sound: {ex.Message}\n{ex.StackTrace}");
