@@ -2,13 +2,13 @@ using UnityEngine;
 
 using System.ComponentModel;
 
-namespace GreyAnnouncer.Extension;
+namespace GreyAnnouncer.AudioClipLoad;
 
 public static class StringExtension
 {
     extension(string value)
     {
-        public AudioType GetAudioType()
+        public AudioType TryGetAudioType()
         {
             var parts = value.Split('.');
             for (int i = 1; i <= parts.Length; i++)

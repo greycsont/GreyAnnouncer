@@ -29,9 +29,6 @@
     <Reference Include="$(ManagedDir)\Unity*.dll">
       <Private>false</Private>
     </Reference>
-    <Reference Include="$(ManagedDir)\Assembly*.dll">
-      <Private>false</Private>
-    </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>$(ManagedDir)\Assembly-CSharp.dll</HintPath>
       <Private>false</Private>

@@ -11,7 +11,7 @@ using System;
 using System.Threading.Tasks;
 using UnityEngine.Networking;
 
-namespace GreyAnnouncer.AudioLoading;
+namespace GreyAnnouncer.AudioClipLoad;
 
 public static partial class UnitySupport
 {

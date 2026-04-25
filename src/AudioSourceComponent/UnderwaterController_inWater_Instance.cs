@@ -34,11 +34,11 @@ public static class UnderwaterController_inWater_Instance
         if (audioSource == null) return null;
         if (isInWater && Setting.isLowPassFilterEnabled == true)
         {
-            audioSource = AudioSourceManager.AddLowPassFilter(audioSource);
+            audioSource.AddLowPassFilter();
         }
         else
         {
-            audioSource = AudioSourceManager.RemoveLowPassFilter(audioSource);
+            audioSource.RemoveLowPassFilter();
         }
 
         return audioSource;

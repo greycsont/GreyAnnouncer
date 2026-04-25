@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-using GreyAnnouncer.AudioLoading;
+using GreyAnnouncer.AudioClipLoad;
 using GreyAnnouncer.Util;
 
 namespace GreyAnnouncer.AnnouncerCore;

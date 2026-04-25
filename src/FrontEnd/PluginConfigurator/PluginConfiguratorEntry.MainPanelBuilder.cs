@@ -91,7 +91,7 @@ public static partial class PluginConfiguratorEntry
             "Audio_Volume",
             Tuple.Create(0f, 1f),
             1f,
-            2,   // 2nd decimal
+            2,
             saveToConfig: false
         );
         volumeSlider.value = Setting.audioSourceVolume;
@@ -104,7 +104,7 @@ public static partial class PluginConfiguratorEntry
             "Spatial_Blend",
             Tuple.Create(0f, 1f),
             1f,
-            2,   // 2nd decimal
+            2,
             saveToConfig: false
         );
         spatialBlendSlider.value = Setting.spatialBlend;

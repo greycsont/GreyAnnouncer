@@ -6,15 +6,13 @@ using System.Threading.Tasks;
 using GreyAnnouncer.Config;
 using System.ComponentModel;
 
-using GreyAnnouncer.Extension;
-
-namespace GreyAnnouncer.AudioLoading;
+namespace GreyAnnouncer.AudioClipLoad;
 
 public static partial class AudioClipLoader
 {
     public static async Task<AudioClip> LoadAudioClipAsync(string path)
     {
-        var audioType = path.GetAudioType();
+        var audioType = path.TryGetAudioType();
         AudioClip clip = null;
         try {
             if (audioType != AudioType.UNKNOWN) {

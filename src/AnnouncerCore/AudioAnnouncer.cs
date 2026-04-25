@@ -59,19 +59,19 @@ public partial class AudioAnnouncer : IAnnouncer
             if (field != null)
                 field.PropertyChanged += OnAnnouncerConfigChanged;
 
-            OnAnnouncerConfigSwitched();
+            OnPackConfigSwitched();
         }
     }
 
     private void OnAnnouncerConfigChanged(object sender, PropertyChangedEventArgs e)
     {
-        LogHelper.LogDebug($"AnnouncerConfig changed: {e.PropertyName}");
+        LogHelper.LogDebug($"PackConfig changed: {e.PropertyName}");
         SaveConfig();
     }
 
-    private void OnAnnouncerConfigSwitched()
+    private void OnPackConfigSwitched()
     {
-        LogHelper.LogDebug($"AnnouncerConfig Switched");
+        LogHelper.LogDebug($"PackConfig Switched");
         if (packConfig != null && isConfigLoaded) {
             _ = _audioLoader.FindAvailableAudioAsync();
             SaveConfig();

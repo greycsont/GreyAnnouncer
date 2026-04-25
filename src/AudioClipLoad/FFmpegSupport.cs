@@ -19,7 +19,7 @@ using UnityEngine;
 using GreyAnnouncer.Util;
 
 
-namespace GreyAnnouncer.AudioLoading;
+namespace GreyAnnouncer.AudioClipLoad;
 
 
 public static class FFmpegSupport

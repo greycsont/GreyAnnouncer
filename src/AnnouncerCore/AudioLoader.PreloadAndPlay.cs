@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-using GreyAnnouncer.AudioLoading;
+using GreyAnnouncer.AudioClipLoad;
 using GreyAnnouncer.Util;
 
 namespace GreyAnnouncer.AnnouncerCore;
@@ -80,7 +80,7 @@ public partial class AudioLoader
         LogHelper.LogInfo($"Loading category 「{category}」 with {validFiles.Count} files");
 
         try {
-            var results = await Task.WhenAll(validFiles.Select(AudioClipLoader.LoadAudioClipAsync));
+            var results = await Task.WhenAll(validFiles.Select(AudioClipLoad.AudioClipLoader.LoadAudioClipAsync));
             var loadedClips = results.Where(c => c != null).ToList();
 
             if (loadedClips.Count > 0) {

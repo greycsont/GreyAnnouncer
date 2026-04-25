@@ -6,7 +6,7 @@ using System.Linq;
 using GreyAnnouncer.AnnouncerCore;
 using GreyAnnouncer.Config;
 using GreyAnnouncer.AudioSourceComponent;
-using GreyAnnouncer.AudioLoading;
+using GreyAnnouncer.AudioClipLoad;
 using GreyAnnouncer.FrontEnd;
 
 namespace GreyAnnouncer.Commands;
