@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="xunit" Version="2.5.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- compile-time only; the real DLL is copied below -->
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(ManagedDir)\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <ProjectReference Include="..\GreyAnnouncer.csproj" />
+  </ItemGroup>
+
+  <!-- copy all Unity DLLs before tests run; delete them after -->
+  <Target Name="CopyUnityDllsForTests" AfterTargets="Build">
+    <ItemGroup>
+      <_UnityDlls Include="$(ManagedDir)\Unity*.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_UnityDlls)"
+          DestinationFolder="$(OutDir)"
+          SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="CleanUnityDllsAfterTests" AfterTargets="VSTest">
+    <ItemGroup>
+      <_UnityDllsToDelete Include="$(OutDir)Unity*.dll" />
+    </ItemGroup>
+    <Delete Files="@(_UnityDllsToDelete)" />
+  </Target>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>
