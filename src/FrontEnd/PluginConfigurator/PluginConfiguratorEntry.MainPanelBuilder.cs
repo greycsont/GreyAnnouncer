@@ -11,6 +11,7 @@ using GreyAnnouncer.AnnouncerCore;
 using GreyAnnouncer.AudioSourceComponent;
 using GreyAnnouncer.Config;
 using System.IO;
+using UnityEngine;
 
 
 namespace GreyAnnouncer.FrontEnd;
@@ -36,6 +37,8 @@ public static partial class PluginConfiguratorEntry
     private static BoolField lowpassToggle;
 
     private static BoolField ffmpegToggle;
+
+    private static StringField announcersPathField;
 
 
     public static void Build()
@@ -189,6 +192,18 @@ public static partial class PluginConfiguratorEntry
         ffmpegLogHeader.tmpAnchor = TMPro.TextAlignmentOptions.Top;
         ffmpegLogHeader.textSize = 12;
         ffmpegLogHeader.textColor = m_greyColour;
+
+        announcersPathField = new StringField(
+            advancedPanel,
+            "Announcers Folder Path",
+            "Announcers_Folder_Path",
+            "",
+            false,
+            saveToConfig: false
+        );
+        announcersPathField.value = Setting.announcersPath;
+        announcersPathField.onValueChange += (e) =>
+            Setting.announcersPath = e.value;
 
         new ConfigSpace(config.rootPanel, 15f);
 

@@ -80,7 +80,15 @@ public static class Setting
         }
     }
 
-    public static string announcersPath => PathHelper.GetCurrentPluginPath("announcers");
+    public static string announcersPath
+    {
+        get => PathHelper.ResolveUserPath(PluginSettings.Instance.AnnouncersPath);
+        set
+        {
+            PluginSettings.Instance.AnnouncersPath = value;
+            SaveSettings();
+        }
+    }
 
     private static void SaveSettings()
     {

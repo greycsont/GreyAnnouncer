@@ -24,6 +24,14 @@ public static class PathHelper
     public static string GetGamePath(string filePath)
         => CleanPath(Path.Combine(Paths.GameRootPath, filePath));
 
+    public static string ResolveUserPath(string userPath)
+    {
+        var cleaned = CleanPath(userPath);
+        if (Path.IsPathRooted(cleaned))
+            return cleaned;
+        return GetCurrentPluginPath(cleaned);
+    }
+
 
     [Description("Reference : (因win程序员想偷懒! 竟在剪切板插入隐藏字符) https://www.bilibili.com/video/BV1ebLczjEWZ (Accessed in 24/4/2025)")]
     public static string CleanPath(string path)

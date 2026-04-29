@@ -17,6 +17,7 @@ using FFmpeg.AutoGen;
 using UnityEngine;
 
 using GreyAnnouncer.Util;
+using System.IO;
 
 
 namespace GreyAnnouncer.AudioClipLoad;
@@ -73,7 +74,10 @@ public static class FFmpegSupport
                 int sampleRate      = codecCtx->sample_rate;
                 int sampleCount     = sampleArray.Length / channelCount;
 
-                AudioClip clip = AudioClip.Create("decoded_clip", sampleCount, channelCount, sampleRate, false);
+                string clipName = GetMetadataTitle(formatContext)
+                    ?? Path.GetFileNameWithoutExtension(filePath);
+
+                AudioClip clip = AudioClip.Create(clipName, sampleCount, channelCount, sampleRate, false);
                 clip.SetData(sampleArray, 0);
 
                 return clip;
@@ -83,6 +87,13 @@ public static class FFmpegSupport
                 CleanupResources(frame, packet, codecCtx, swrCtx, formatContext);
             }
         });
+    }
+
+    private static unsafe string GetMetadataTitle(AVFormatContext* formatContext)
+    {
+        AVDictionaryEntry* tag = ffmpeg.av_dict_get(formatContext->metadata, "title", null, 0);
+        if (tag == null) return null;
+        return Marshal.PtrToStringUTF8((IntPtr)tag->value);
     }
 
     private static unsafe AVFormatContext* InitializeFormatContext(string filePath)
