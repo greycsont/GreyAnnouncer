@@ -32,8 +32,9 @@ public static class RankAnnouncer
             title: title,
             defaultPackConfigPath: "greythroat"
         );
+        EventTriggers.StyleHUD.OnTriggered += PlayRankSound;
     }
 
-    public static void PlayRankSound(int rank) 
+    private static void PlayRankSound(int rank)
         => _ = _announcer?.PlayAudioViaCategory(category[rank]);
 }

@@ -198,7 +198,7 @@ public static partial class PluginConfiguratorEntry
             "Announcers Folder Path",
             "Announcers_Folder_Path",
             "",
-            false,
+            true,
             saveToConfig: false
         );
         announcersPathField.value = Setting.announcersPath;
