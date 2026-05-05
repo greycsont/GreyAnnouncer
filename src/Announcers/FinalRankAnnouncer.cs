@@ -17,7 +17,7 @@ public static class FinalRankAnnouncer
 
     private static AudioAnnouncer _announcer;
     public const string title = "FinalRankAnnouncer";
-
+    /*
     public static void Initialize()
     {
         _announcer = new AudioAnnouncer(
@@ -29,7 +29,7 @@ public static class FinalRankAnnouncer
             defaultPackConfigPath: "spzeta"
         );
     }
-
+*/
     public static void PlayRankSound(int rank) 
         => _ = _announcer?.PlayAudioViaCategory(category[rank]);
 }

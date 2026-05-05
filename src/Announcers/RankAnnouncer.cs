@@ -28,6 +28,7 @@ public static class RankAnnouncer
             audioLoader: new AudioLoader(),
             cooldownManager: new CooldownManager(category.ToArray()),
             configManager: new JsonConfigManager(),
+            source : category,
             category: category,
             title: title,
             defaultPackConfigPath: "greythroat"

@@ -5,6 +5,7 @@ using GreyAnnouncer.Base;
 
 namespace GreyAnnouncer.AnnouncerCore;
 
+// 这里以后应该会是一个trigger，一个linktable，以及category
 public class PackConfig : NotifyBase
 {
     private bool _randomizeAudioOnPlay;
@@ -17,11 +18,17 @@ public class PackConfig : NotifyBase
 
     public ObservableDictionary<string, CategorySetting> CategorySetting { get; } = new();
 
+    public ObservableDictionary<string, Source> Source { get; } = new();
+
     public PackConfig()
     {
         // Bubble up any collection or property changes from CategorySetting
         CategorySetting.CollectionChanged += (s, e) => RaiseChanged(nameof(CategorySetting));
         CategorySetting.PropertyChanged += (s, e) => RaiseChanged(nameof(CategorySetting));
+
+        // Bubble up any collection or property changes from Source
+        Source.CollectionChanged += (s, e) => RaiseChanged(nameof(Source));
+        Source.PropertyChanged += (s, e) => RaiseChanged(nameof(Source));
     }
 
     public void AddCategory(string key, CategorySetting setting)
@@ -65,13 +72,28 @@ public class PackConfig : NotifyBase
             dstCat.ApplyFrom(srcCat);
         }
 
-        // --- Categories: remove entries no longer present in src ---
         var toRemove = CategorySetting.Keys
             .Where(k => !src.CategorySetting.ContainsKey(k))
             .ToList();
-
         foreach (var key in toRemove)
             CategorySetting.Remove(key);
+
+        // --- Source: add or update ---
+        foreach (var kv in src.Source)
+        {
+            if (!Source.TryGetValue(kv.Key, out var dstSource))
+            {
+                dstSource = new Source();
+                Source[kv.Key] = dstSource;
+            }
+            dstSource.ApplyFrom(kv.Value);
+        }
+
+        var sourcesToRemove = Source.Keys
+            .Where(k => !src.Source.ContainsKey(k))
+            .ToList();
+        foreach (var key in sourcesToRemove)
+            Source.Remove(key);
 
         base.EndUpdate();
     }
@@ -118,8 +140,7 @@ public class CategorySetting : NotifyBase
 
     public void ApplyFrom(CategorySetting src)
     {
-        if (src == null)
-            return;
+        if (src == null) return;
 
         Enabled = src.Enabled;
         VolumeMultiplier = src.VolumeMultiplier;
@@ -127,6 +148,22 @@ public class CategorySetting : NotifyBase
 
         AudioFiles.Clear();
         AudioFiles.AddRange(src.AudioFiles);
+    }
+}
+
+public class Source : NotifyBase
+{
+    private bool _enabled = true;
+    public bool Enabled
+    {
+        get => _enabled;
+        set => SetField(ref _enabled, value);
+    }
+
+    public void ApplyFrom(Source src)
+    {
+        if (src == null) return;
+        Enabled = src.Enabled;
     }
 }
 

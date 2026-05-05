@@ -19,6 +19,8 @@ public partial class AudioAnnouncer : IAnnouncer
 
     private IConfigManager _configManager;
 
+    private List<string> source;
+
     private List<string> category;
 
     private string _defaultPackConfigPath;
@@ -95,6 +97,7 @@ public partial class AudioAnnouncer : IAnnouncer
     public AudioAnnouncer(IAudioLoader audioLoader,
                            ICooldownManager cooldownManager,
                            IConfigManager configManager,
+                           List<string> source,
                            List<string> category,
                            string title,
                            string defaultPackConfigPath
@@ -105,6 +108,7 @@ public partial class AudioAnnouncer : IAnnouncer
         this._cooldownManager = cooldownManager;
         this._configManager = configManager;
         this._defaultPackConfigPath = defaultPackConfigPath;
+        this.source = source;
         this.category = category;
         this.title = title;
 
@@ -115,10 +119,22 @@ public partial class AudioAnnouncer : IAnnouncer
         _initialized = true;
     }
 
-    /// <summary>Will Play a random audio in the belong category</summary>
+    public void PlayAudioWithSource(string source, string category)
+    {
+        LogHelper.LogInfo($"Play Audio Request | Source: {source} | category: {category}");
+        if (!this.source.Contains(source)) {
+            LogHelper.LogError($"Invalid audio source: {source}");
+            return;
+        }
+        if (packConfig.Source[source].Enabled == false) {
+            LogHelper.LogDebug($"Audio source {source} is disabled by config");
+            return;
+        }
+        _ = PlayAudioViaCategory(category);
+    }
     public async Task PlayAudioViaCategory(string category)
     {
-        LogHelper.LogInfo($"Request to play audio for category: {category}");
+        LogHelper.LogInfo($"Play Audio Request | category: {category}");
         try {
             if (!ValidatePlayCondition(category)) return;
             await PlayAudioClip(category);
