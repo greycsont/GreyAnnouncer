@@ -17,17 +17,19 @@ public static class FinalRankAnnouncer
     };
 
     private static AudioAnnouncer _announcer;
+    public const string title = "FinalRankAnnouncer";
 
     [EntryPoint]
     public static void Initialize()
     {
-        /*_announcer = new AudioAnnouncer(
-            new AudioLoader(),
-            new CooldownManager(category.ToArray()),
-            category,
-            _title,
-            "spzeta"
-        );*/
+        _announcer = new AudioAnnouncer(
+            audioLoader: new AudioLoader(),
+            cooldownManager: new CooldownManager(category.ToArray()),
+            configManager: new JsonConfigManager(),
+            category: category,
+            title: title,
+            defaultPackConfigPath: "spzeta"
+        );
     }
 
     public static void PlayRankSound(int rank) 

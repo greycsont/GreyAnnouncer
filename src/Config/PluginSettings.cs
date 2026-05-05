@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using GreyAnnouncer.Util;
 
@@ -6,6 +7,12 @@ namespace GreyAnnouncer.Config;
 public class PluginSettings
 {
     private const string FileName = "settings.json";
+
+    private static readonly string SettingsPath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+        "GreyAnnouncer",
+        FileName
+    );
 
     public static PluginSettings Instance { get; private set; }
 
@@ -19,9 +26,9 @@ public class PluginSettings
 
     public static void Initialize()
     {
-        Instance = JsonManager.ReadJson<PluginSettings>(PathHelper.GetCurrentPluginPath(FileName));
+        Instance = JsonManager.ReadJson<PluginSettings>(SettingsPath);
         if (Instance == null) { Instance = new PluginSettings(); Save(); }
     }
 
-    public static void Save() => JsonManager.WriteJson(PathHelper.GetCurrentPluginPath(FileName), Instance);
+    public static void Save() => JsonManager.WriteJson(SettingsPath, Instance);
 }
