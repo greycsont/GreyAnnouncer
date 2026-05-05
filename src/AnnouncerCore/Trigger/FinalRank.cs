@@ -2,6 +2,8 @@ using HarmonyLib;
 using UnityEngine;
 using TMPro;
 
+using GreyAnnouncer.Announcers;
+
 namespace GreyAnnouncer.AnnouncerCore;
 
 [HarmonyPatch(typeof(FinalRank))]
@@ -37,7 +39,6 @@ public static class FinalRankPatcher
             _ => -1
         };
     
-        if (rankIndex >= 0)
-            EventTriggers.FinalRank.Raise(rankIndex);
+            // placeholder
     }
 }

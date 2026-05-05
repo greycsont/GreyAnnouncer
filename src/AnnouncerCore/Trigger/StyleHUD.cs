@@ -1,4 +1,8 @@
+using System.Collections.Generic;
+
 using HarmonyLib;
+
+using GreyAnnouncer.Announcers;
 
 namespace GreyAnnouncer.AnnouncerCore;
 
@@ -12,7 +16,7 @@ public static class StyleHUDPatcher
     {
         var rank = __instance.rankIndex;
         if (rank is >= 0 and <= 7)
-            EventTriggers.StyleHUD.Raise(rank);
+            RankAnnouncer.PlayRankSound(rank);
     }
 
     [HarmonyPostfix]
@@ -20,6 +24,6 @@ public static class StyleHUDPatcher
     public static void GetDrank(StyleHUD __instance)
     {
         if (__instance.rankIndex == 0)
-            EventTriggers.StyleHUD.Raise(0);
+            RankAnnouncer.PlayRankSound(0);
     }
 }

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 using GreyAnnouncer.AnnouncerCore;
 
-namespace GreyAnnouncer.RankAnnouncer;
+namespace GreyAnnouncer.Announcers;
 
 [EntryPoint]
 public static class RankAnnouncer
@@ -33,9 +33,8 @@ public static class RankAnnouncer
             title: title,
             defaultPackConfigPath: "greythroat"
         );
-        EventTriggers.StyleHUD.OnTriggered += PlayRankSound;
     }
 
-    private static void PlayRankSound(int rank)
+    public static void PlayRankSound(int rank)
         => _ = _announcer?.PlayAudioViaCategory(category[rank]);
 }
