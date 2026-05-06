@@ -25,18 +25,8 @@ public partial class AudioAnnouncer
             return null;
         }
 
-        UpgradeConfig(config);
-
         isConfigLoaded = true;
         return config;
-    }
-
-    private void UpgradeConfig(PackConfig config)
-    {
-        if (source == null) return;
-        foreach (var key in source)
-            if (!config.Source.ContainsKey(key))
-                config.Source[key] = new Source();
     }
 
     private bool IsCategoryMatch(PackConfig config, List<string> expected)
