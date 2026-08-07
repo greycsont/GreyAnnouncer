@@ -112,7 +112,7 @@ public class AnnouncerPanel : MonoBehaviour
         _randomizeToggle = UIBuilder.AddToggle(randomizeRow, preferredWidth: 30);
         _randomizeToggle.isOn = cfg.RandomizeAudioOnPlay;
         _randomizeToggle.onValueChanged.AddListener(v =>
-            _announcer.packConfig.RandomizeAudioOnPlay = v);
+            _announcer.packConfig.Edit(config => config.RandomizeAudioOnPlay = v));
         UIBuilder.AddSpace(_content, 3);
 
         // Per-category configuration
@@ -132,21 +132,21 @@ public class AnnouncerPanel : MonoBehaviour
             cat.enabledToggle.onValueChanged.AddListener(v =>
             {
                 if (_announcer.packConfig.CategorySetting.TryGetValue(key, out var d))
-                    d.Enabled = v;
+                    _announcer.packConfig.Edit(config => config.CategorySetting[key].Enabled = v);
             });
 
             cat.SetVolume(kv.Value.VolumeMultiplier);
             cat.volumeSlider.onValueChanged.AddListener(v =>
             {
                 if (_announcer.packConfig.CategorySetting.TryGetValue(key, out var d))
-                    d.VolumeMultiplier = v;
+                    _announcer.packConfig.Edit(config => config.CategorySetting[key].VolumeMultiplier = v);
             });
 
             cat.SetCooldown(kv.Value.Cooldown);
             cat.cooldownSlider.onValueChanged.AddListener(v =>
             {
                 if (_announcer.packConfig.CategorySetting.TryGetValue(key, out var d))
-                    d.Cooldown = v;
+                    _announcer.packConfig.Edit(config => config.CategorySetting[key].Cooldown = v);
             });
 
             _categories[key] = cat;

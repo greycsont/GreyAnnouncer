@@ -104,7 +104,7 @@ public class RegistedAnnouncerPage
         _fields.RandomizeAudioField.value = _announcer.packConfig.RandomizeAudioOnPlay;
         _fields.RandomizeAudioField.onValueChange += e =>
         {
-            _announcer.packConfig.RandomizeAudioOnPlay = e.value;
+            _announcer.packConfig.Edit(config => config.RandomizeAudioOnPlay = e.value);
         };
 
         foreach (var category in _announcer.packConfig.CategorySetting)
@@ -133,7 +133,7 @@ public class RegistedAnnouncerPage
         field.defaultValue = defaultValue;
         field.value = _announcer.packConfig.CategorySetting[guid].Enabled;
         field.onValueChange += e =>
-            _announcer.packConfig.CategorySetting[guid].Enabled = e.value;
+            _announcer.packConfig.Edit(config => config.CategorySetting[guid].Enabled = e.value);
 
         return field;
     }
@@ -145,7 +145,7 @@ public class RegistedAnnouncerPage
         field.defaultValue = defaultValue;
         field.value = _announcer.packConfig.CategorySetting[guid].VolumeMultiplier;
         field.onValueChange += e =>
-            _announcer.packConfig.CategorySetting[guid].VolumeMultiplier = e.value;
+            _announcer.packConfig.Edit(config => config.CategorySetting[guid].VolumeMultiplier = e.value);
 
         return field;
     }
@@ -157,7 +157,7 @@ public class RegistedAnnouncerPage
         field.defaultValue = defaultValue;
         field.value = _announcer.packConfig.CategorySetting[guid].Cooldown;
         field.onValueChange += e =>
-            _announcer.packConfig.CategorySetting[guid].Cooldown = e.newValue;
+            _announcer.packConfig.Edit(config => config.CategorySetting[guid].Cooldown = e.newValue);
 
         return field;
     }
@@ -169,7 +169,7 @@ public class RegistedAnnouncerPage
         field.defaultValue = defaultValue;
         field.value = _announcer.packConfig.CategorySetting[guid].ExcludeFromRandom;
         field.onValueChange += e =>
-            _announcer.packConfig.CategorySetting[guid].ExcludeFromRandom = e.value;
+            _announcer.packConfig.Edit(config => config.CategorySetting[guid].ExcludeFromRandom = e.value);
 
         field.hidden = !_announcer.packConfig.RandomizeAudioOnPlay;
 

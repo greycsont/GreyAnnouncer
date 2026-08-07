@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -37,10 +36,6 @@ public partial class AudioAnnouncer : IAnnouncer
         }
     }
 
-    /// <Summary> 
-    ///  When the values stored in packConfig is changed, OnAnnouncerConfigChanged triggers
-    ///  When it's totally assigned by a new packConfig, OnAnnouncerConfigSwitched triggers
-    /// </Summary>
     public PackConfig packConfig
     {
         get => field;
@@ -51,20 +46,20 @@ public partial class AudioAnnouncer : IAnnouncer
                 return;
 
             if (field != null)
-                field.PropertyChanged -= OnAnnouncerConfigChanged;
+                field.Changed -= OnAnnouncerConfigChanged;
 
             field = value;
 
             if (field != null)
-                field.PropertyChanged += OnAnnouncerConfigChanged;
+                field.Changed += OnAnnouncerConfigChanged;
 
             OnPackConfigSwitched();
         }
     }
 
-    private void OnAnnouncerConfigChanged(object sender, PropertyChangedEventArgs e)
+    private void OnAnnouncerConfigChanged()
     {
-        LogHelper.LogDebug($"PackConfig changed: {e.PropertyName}");
+        LogHelper.LogDebug("PackConfig changed");
         SaveConfig();
     }
 
@@ -81,7 +76,7 @@ public partial class AudioAnnouncer : IAnnouncer
     {
         _configManager.Save(packPath, packConfig);
         if (_initialized)
-            syncUI.Invoke();
+            syncUI?.Invoke();
     }
 
     private bool _initialized = false;

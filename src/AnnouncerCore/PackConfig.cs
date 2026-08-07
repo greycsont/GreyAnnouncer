@@ -1,234 +1,96 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using GreyAnnouncer.Base;
-
 namespace GreyAnnouncer.AnnouncerCore;
 
-// 这里以后应该会是一个trigger，一个linktable，以及category
-public class PackConfig : NotifyBase
+public class PackConfig
 {
-    private bool _randomizeAudioOnPlay;
-
-    public bool RandomizeAudioOnPlay
-    {
-        get => _randomizeAudioOnPlay;
-        set => SetField(ref _randomizeAudioOnPlay, value);
-    }
-
-    public ObservableDictionary<string, CategorySetting> CategorySetting { get; } = new();
-    public PackConfig()
-    {
-        // Bubble up any collection or property changes from CategorySetting
-        CategorySetting.CollectionChanged += (s, e) => RaiseChanged(nameof(CategorySetting));
-        CategorySetting.PropertyChanged += (s, e) => RaiseChanged(nameof(CategorySetting));
-    }
-
-    public void AddCategory(string key, CategorySetting setting)
-        => CategorySetting[key] = setting;
-
-    public PackConfig SetCategorySettingMap(Dictionary<string, CategorySetting> map)
-    {
-        CategorySetting.Clear();
-
-        foreach (var kv in map)
-            AddCategory(kv.Key, kv.Value);
-
-        return this;
-    }
-
-    public void ApplyFrom(PackConfig src)
-    {
-        base.BeginUpdate();
-
-        if (src == null)
-        {
-            base.EndUpdate();
-            return;
-        }
-
-        // --- General ---
-        RandomizeAudioOnPlay = src.RandomizeAudioOnPlay;
-
-        // --- Categories: add or update ---
-        foreach (var kv in src.CategorySetting)
-        {
-            var key = kv.Key;
-            var srcCat = kv.Value;
-
-            if (!CategorySetting.TryGetValue(key, out var dstCat))
-            {
-                dstCat = new CategorySetting();
-                CategorySetting[key] = dstCat;
-            }
-
-            dstCat.ApplyFrom(srcCat);
-        }
-
-        var toRemove = CategorySetting.Keys
-            .Where(k => !src.CategorySetting.ContainsKey(k))
-            .ToList();
-        foreach (var key in toRemove)
-            CategorySetting.Remove(key);
-
-        base.EndUpdate();
-    }
-}
-
-public class CategorySetting : NotifyBase
-{
-    private bool _enabled = true;
-    private bool _excludeFromRandom = false;
-    private float _volumeMultiplier = 1.0f;
-    private float _cooldown = 1.5f; 
-
-    public bool Enabled
-    {
-        get => _enabled;
-        set => SetField(ref _enabled, value);
-    }
-
-    public bool ExcludeFromRandom
-    {
-        get => _excludeFromRandom;
-        set => SetField(ref _excludeFromRandom, value);
-    }
-
-    public float VolumeMultiplier
-    {
-        get => _volumeMultiplier;
-        set => SetField(ref _volumeMultiplier, value);
-    }
-
-    public float Cooldown
-    {
-        get => _cooldown;
-        set => SetField(ref _cooldown, value);
-    }
-
-    private List<string> _audioFiles = new();
-    
-    public List<string> AudioFiles
-    {
-        get => _audioFiles;
-        set => _audioFiles = value ?? new List<string>();
-    }
-
-    public void ApplyFrom(CategorySetting src)
-    {
-        if (src == null) return;
-
-        Enabled = src.Enabled;
-        VolumeMultiplier = src.VolumeMultiplier;
-        Cooldown = src.Cooldown;
-
-        AudioFiles.Clear();
-        AudioFiles.AddRange(src.AudioFiles);
-    }
-}
-
-/*
-using System.Collections.Generic;
-using System.ComponentModel;
-
-using GreyAnnouncer.Util.Ini;
-using GreyAnnouncer.Base;
-
-namespace GreyAnnouncer.AnnouncerAPI;
-
-public class AnnouncerConfig : NotifyBase
-{
-    private bool _randomizeAudioOnPlay;
-    [IniKey("RandomizeAudioOnPlay")]
-    public bool RandomizeAudioOnPlay
-    {
-        get => _randomizeAudioOnPlay;
-        set => SetField(ref _randomizeAudioOnPlay, value);
-    }
+    public bool RandomizeAudioOnPlay { get; set; }
 
     public Dictionary<string, CategorySetting> CategorySetting { get; } = new();
 
-    public AnnouncerConfig()
+    public event Action Changed;
+
+    public void Edit(Action<PackConfig> edit)
     {
-        // 如果 Ini 反序列化后再填充，这里可以后处理 <- this is a vibe-coding product, but I thought It's a useful note
+        if (edit == null)
+            throw new ArgumentNullException(nameof(edit));
+
+        edit(this);
+        Changed?.Invoke();
     }
-    
-    /// <summary>
-    /// I strongly recommand using SetCategorySettingMap to create th dictionary of CategorySetting
-    /// If you really want to add a new CategorySetting in the Dictionary
-    /// PLEASE USE THIS METHOD
-    /// Otherwise the AnnouncerConfig can't track the value change on that CategorySetting and blow up whole program
-    /// </summary>
-    /// <param name="key"></param>
-    /// <param name="setting"></param>
+
     public void AddCategory(string key, CategorySetting setting)
+        => Edit(config => config.CategorySetting[key] = setting);
+
+    public PackConfig SetCategorySettingMap(Dictionary<string, CategorySetting> map)
     {
-        CategorySetting[key] = setting;
-        setting.PropertyChanged += OnCategoryChanged;
-        RaiseChanged(nameof(CategorySetting));
-    }
+        if (map == null)
+            throw new ArgumentNullException(nameof(map));
 
+        Edit(config =>
+        {
+            config.CategorySetting.Clear();
 
-    /// <summary>
-    /// Use this method if you want to initialize the dictionary
-    /// </summary>
-    /// <param name="map"></param>
-    /// <returns></returns>
-    public AnnouncerConfig SetCategorySettingMap(Dictionary<string, CategorySetting> map)
-    {
-        CategorySetting.Clear();
-
-        foreach (var kv in map)
-            AddCategory(kv.Key, kv.Value);
+            foreach (var pair in map)
+                config.CategorySetting[pair.Key] = pair.Value;
+        });
 
         return this;
     }
 
-    private void OnCategoryChanged(object sender, PropertyChangedEventArgs e)
+    public void ApplyFrom(PackConfig source)
     {
-        LogManager.LogDebug($"Triggerd OnCategoryChanged");
-        RaiseChanged(nameof(AnnouncerConfig));
-        //RaiseChanged($"Category.{e.PropertyName}");
+        if (source == null)
+            return;
+
+        Edit(config =>
+        {
+            config.RandomizeAudioOnPlay = source.RandomizeAudioOnPlay;
+
+            foreach (var pair in source.CategorySetting)
+            {
+                if (!config.CategorySetting.TryGetValue(pair.Key, out var destination))
+                {
+                    destination = new CategorySetting();
+                    config.CategorySetting[pair.Key] = destination;
+                }
+
+                destination.ApplyFrom(pair.Value);
+            }
+
+            var categoriesToRemove = config.CategorySetting.Keys
+                .Where(key => !source.CategorySetting.ContainsKey(key))
+                .ToList();
+
+            foreach (var key in categoriesToRemove)
+                config.CategorySetting.Remove(key);
+        });
     }
 }
 
-public class CategorySetting : NotifyBase
+public class CategorySetting
 {
-    private bool _enabled = true;
-    [IniKey("Enabled")]
-    public bool Enabled
-    {
-        get => _enabled;
-        set => SetField(ref _enabled, value);
-    }
+    public bool Enabled { get; set; } = true;
 
-    private float _volumeMultiplier = 1.0f;
-    [IniKey("VolumeMultiplier")]
-    public float VolumeMultiplier
-    {
-        get => _volumeMultiplier;
-        set => SetField(ref _volumeMultiplier, value);
-    }
+    public bool ExcludeFromRandom { get; set; }
 
-    private float _cooldown = 1.5f;
-    [IniKey("Cooldown")]
-    public float Cooldown
-    {
-        get => _cooldown;
-        set => SetField(ref _cooldown, value);
-    }
+    public float VolumeMultiplier { get; set; } = 1.0f;
 
-    /// <summary>
-    /// This MF maybe just switch to use a single string to deal it
-    /// But I don't think
-    /// IT COULD CHANGE IN-GAME
-    /// </summary>
-    private List<string> _audioFiles = new();
+    public float Cooldown { get; set; } = 1.5f;
 
-    [IniKey("AudioFiles")]
-    public List<string> AudioFiles
+    public List<string> AudioFiles { get; set; } = new();
+
+    public void ApplyFrom(CategorySetting source)
     {
-        get => _audioFiles;
-        set => _audioFiles = value ?? new List<string>();
+        if (source == null)
+            return;
+
+        Enabled = source.Enabled;
+        ExcludeFromRandom = source.ExcludeFromRandom;
+        VolumeMultiplier = source.VolumeMultiplier;
+        Cooldown = source.Cooldown;
+        AudioFiles = source.AudioFiles?.ToList() ?? new List<string>();
     }
-}*/
+}

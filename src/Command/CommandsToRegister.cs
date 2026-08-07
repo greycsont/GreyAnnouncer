@@ -116,7 +116,7 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
                         Branch("set",
                             Leaf<bool>(val =>
                             {
-                                a.packConfig.RandomizeAudioOnPlay = val;
+                                a.packConfig.Edit(config => config.RandomizeAudioOnPlay = val);
                                 Log.Info($"Set RandomizeAudioOnPlay to {val}");
                             })
                         )
@@ -138,14 +138,22 @@ public sealed class CommandsToRegister(Console con) : CommandRoot(con), IConsole
                                         Log.Info($"AudioFiles: {string.Join(", ", category.AudioFiles)}"))
                                 ),
                                 Branch("set",
-                                    Leaf<bool>("enabled", val => category.Enabled = val),
-                                    Leaf<bool>("excludefromrandom", val => category.ExcludeFromRandom = val),
-                                    Leaf<float>("volume", val => category.VolumeMultiplier = val),
-                                    Leaf<float>("cooldown", val => category.Cooldown = val),
+                                    Leaf<bool>("enabled", val =>
+                                        a.packConfig.Edit(config => config.CategorySetting[categoryName].Enabled = val)),
+                                    Leaf<bool>("excludefromrandom", val =>
+                                        a.packConfig.Edit(config => config.CategorySetting[categoryName].ExcludeFromRandom = val)),
+                                    Leaf<float>("volume", val =>
+                                        a.packConfig.Edit(config => config.CategorySetting[categoryName].VolumeMultiplier = val)),
+                                    Leaf<float>("cooldown", val =>
+                                        a.packConfig.Edit(config => config.CategorySetting[categoryName].Cooldown = val)),
                                     Leaf<string[]>("audiofiles", files =>
                                     {
-                                        category.AudioFiles.Clear();
-                                        category.AudioFiles.AddRange(files);
+                                        a.packConfig.Edit(config =>
+                                        {
+                                            var audioFiles = config.CategorySetting[categoryName].AudioFiles;
+                                            audioFiles.Clear();
+                                            audioFiles.AddRange(files);
+                                        });
                                         Log.Info($"AudioFiles set: {string.Join(", ", files)}");
                                     })
                                 )
